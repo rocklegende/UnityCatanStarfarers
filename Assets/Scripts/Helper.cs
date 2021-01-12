@@ -3,6 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public class BoundingBox
+{
+    public float minY;
+    public float maxY;
+    public float minX;
+    public float maxX;
+
+    public BoundingBox(float minY, float maxY, float minX, float maxX)
+    {
+        this.minY = minY;
+        this.maxY = maxY;
+        this.minX = minX;
+        this.maxX = maxX;
+    }
+}
+
 public class Helper
 {
 
@@ -11,7 +27,48 @@ public class Helper
         return Vector3.zero;
         
     }
-    
+
+    public BoundingBox GetLowestPoint(Transform parent)
+    {
+        float minY = 10000.0f;
+        float minX = 10000.0f;
+        float maxX = -10000.0f;
+        float maxY = -10000.0f;
+        Transform[] childObjects = parent.GetComponentsInChildren<Transform>();
+        Debug.Log("hallo");
+        foreach (Transform child in childObjects)
+        {
+            Debug.Log(child.gameObject.name);
+            Debug.Log(child.transform.position.y);
+            Renderer renderer = child.GetComponent<Renderer>();
+            //if (renderer != null)
+            //{
+                float y = child.transform.position.y;
+                float x = child.transform.position.x;
+                //Debug.Log(child.transform.position.y);
+                //float lowPoint = child.transform.position.y - renderer.bounds.extents.y;
+                if (y < minY)
+                {
+                    minY = y;
+                }
+                if (y > maxY)
+                {
+                    maxY = y;
+                }
+                if (x < minX)
+                {
+                    minX = x;
+                }
+                if (x > maxX)
+                {
+                    maxX = x;
+                }
+            //}
+            
+        }
+        return new BoundingBox(minY, maxY, minX, maxX);
+    }
+
 
     public int cubeDistance(Vector3 a, Vector3 b)
     {

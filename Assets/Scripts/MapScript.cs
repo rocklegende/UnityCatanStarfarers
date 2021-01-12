@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Constants {
     public const float HEX_RADIUS = 1.0f;
-    public const float paddingRight = 1.1f;
-    public const float paddingDown = 1.1f;
+    public const float paddingRight = 1.0f;
+    public const float paddingDown = 1.0f;
 }
 
 
@@ -40,12 +40,33 @@ public class MapScript : MonoBehaviour
 
 
         // test getAllAvailableCityPositions
-        SpacePoint[] allPositions = map.getAllAvailableSpacePoints();
-        foreach (SpacePoint pos in allPositions)
-        {
-            Debug.Log("q: " + pos.coordinates.q + ", r: " + pos.coordinates.r + ", v: " + pos.vertexNumber);
-        }
+        //SpacePoint[] allPositions = map.getAllAvailableSpacePoints();
+        //foreach (SpacePoint pos in allPositions)
+        //{
+        //    Debug.Log("q: " + pos.coordinates.q + ", r: " + pos.coordinates.r + ", v: " + pos.vertexNumber);
+        //}
 
+        CenterCamera();
+
+    }
+
+    void CenterCamera()
+    {
+        Helper helper = new Helper();
+        //Debug.Log("Lowest Y:" + helper.GetLowestPoint(this.gameObject.transform).minY);
+        BoundingBox bbox = helper.GetLowestPoint(this.gameObject.transform);
+        Debug.Log("Lowest X:" + bbox.minX);
+        Debug.Log("Lowest Y:" + bbox.minY);
+        Debug.Log("Highest Y:" + bbox.maxY);
+        Debug.Log("Higest X:" + bbox.maxX);
+
+        Vector2 topLeft = new Vector2(bbox.minX, bbox.maxY);
+        Vector2 bottomRight = new Vector2(bbox.maxX, bbox.minY);
+
+        Vector2 middle = (topLeft + bottomRight) / 2;
+        Debug.Log(middle);
+
+        Camera.main.transform.position = new Vector3(middle.x, middle.y, Camera.main.transform.position.z);
     }
 
     public void CreateButtonAtSpacePoint(SpacePoint point)
@@ -59,10 +80,6 @@ public class MapScript : MonoBehaviour
         Vector3 bla = rt.transform.position;
 
         Debug.Log(cam.WorldToScreenPoint(point.ToUnityPosition()));
-        //rt.transform.position = point.ToUnityPosition();
-        //rt.transform.localPosition = cam.WorldToScreenPoint(point.ToUnityPosition());
-        //rt.transform.localPosition = new Vector3(0, 100, 0);
-        //btn.transform.position = point.ToUnityPosition();
         
     }
 
