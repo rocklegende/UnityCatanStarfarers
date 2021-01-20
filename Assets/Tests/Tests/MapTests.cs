@@ -13,10 +13,10 @@ namespace Tests
 
         private Map CreateSampleMap3x3()
         {
-            Tile[,] mapRepresentation = {
-                { Tile.NULL, Tile.BORDER, Tile.BORDER },
-                { Tile.BORDER, Tile.VALID, Tile.BORDER },
-                { Tile.BORDER, Tile.BORDER, Tile.BORDER },
+            Tile_[,] mapRepresentation = {
+                { new NullTile(), new BorderTile(), new BorderTile() },
+                { new BorderTile(), new FoodResourceTile(), new BorderTile() },
+                { new BorderTile(), new BorderTile(), new BorderTile() },
             };
 
             return new Map(mapRepresentation);
@@ -25,10 +25,10 @@ namespace Tests
 
         private Map CreateSampleMap4x3()
         {
-            Tile[,] mapRepresentation = {
-                { Tile.NULL, Tile.VALID, Tile.VALID, Tile.BORDER },
-                { Tile.NULL, Tile.VALID, Tile.VALID, Tile.BORDER },
-                { Tile.VALID, Tile.VALID, Tile.BORDER, Tile.NULL },
+            Tile_[,] mapRepresentation = {
+                { new NullTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
+                { new NullTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
+                { new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new NullTile() },
             };
 
             return new Map(mapRepresentation);
@@ -36,11 +36,11 @@ namespace Tests
 
         private Map CreateSampleMap4x4()
         {
-            Tile[,] mapRepresentation = {
-                { Tile.NULL, Tile.VALID, Tile.VALID, Tile.BORDER },
-                { Tile.NULL, Tile.VALID, Tile.VALID, Tile.BORDER },
-                { Tile.VALID, Tile.VALID, Tile.BORDER, Tile.NULL },
-                { Tile.BORDER, Tile.BORDER, Tile.BORDER, Tile.NULL },
+            Tile_[,] mapRepresentation = {
+                { new NullTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
+                { new NullTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
+                { new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new NullTile() },
+                { new BorderTile(), new BorderTile(), new BorderTile(), new NullTile() },
             };
 
             return new Map(mapRepresentation);
@@ -48,12 +48,12 @@ namespace Tests
 
         private Map CreateSampleMap4x5()
         {
-            Tile[,] mapRepresentation = {
-                { Tile.NULL, Tile.VALID, Tile.VALID, Tile.BORDER },
-                { Tile.NULL, Tile.VALID, Tile.VALID, Tile.BORDER },
-                { Tile.VALID, Tile.VALID, Tile.BORDER, Tile.NULL },
-                { Tile.BORDER, Tile.BORDER, Tile.BORDER, Tile.NULL },
-                { Tile.BORDER, Tile.BORDER, Tile.BORDER, Tile.NULL },
+            Tile_[,] mapRepresentation = {
+                { new NullTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
+                { new NullTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
+                { new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new NullTile() },
+                { new BorderTile(), new BorderTile(), new BorderTile(), new NullTile() },
+                { new BorderTile(), new BorderTile(), new BorderTile(), new NullTile() },
             };
 
             return new Map(mapRepresentation);
@@ -61,13 +61,13 @@ namespace Tests
 
         private Map CreateSampleMap5x6()
         {
-            Tile[,] mapRepresentation = {
-                { Tile.NULL, Tile.VALID, Tile.VALID, Tile.BORDER, Tile.BORDER },
-                { Tile.NULL, Tile.VALID, Tile.VALID, Tile.BORDER, Tile.BORDER },
-                { Tile.VALID, Tile.VALID, Tile.BORDER, Tile.BORDER, Tile.NULL },
-                { Tile.BORDER, Tile.BORDER, Tile.BORDER, Tile.BORDER, Tile.NULL },
-                { Tile.BORDER, Tile.BORDER, Tile.BORDER, Tile.BORDER, Tile.NULL },
-                { Tile.BORDER, Tile.BORDER, Tile.BORDER, Tile.BORDER, Tile.NULL },
+            Tile_[,] mapRepresentation = {
+                { new NullTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile() },
+                { new NullTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile() },
+                { new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile(), new NullTile() },
+                { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile(), new NullTile() },
+                { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile(), new NullTile() },
+                { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile(), new NullTile() },
             };
 
             return new Map(mapRepresentation);
@@ -190,8 +190,17 @@ namespace Tests
         public void MapCoordAreInBounds()
         {
             Map map = CreateSampleMap4x3();
+            Assert.False(map.coordsAreInBounds(new HexCoordinates(3, 0)));
+            Assert.True(map.coordsAreInBounds(new HexCoordinates(2, 0)));
             Assert.True(map.coordsAreInBounds(new HexCoordinates(-1, 0)));
             Assert.False(map.coordsAreInBounds(new HexCoordinates(-2, 0)));
+
+
+            Assert.False(map.coordsAreInBounds(new HexCoordinates(0, -1)));
+            Assert.True(map.coordsAreInBounds(new HexCoordinates(0, 0)));
+            Assert.True(map.coordsAreInBounds(new HexCoordinates(0, 1)));
+            Assert.True(map.coordsAreInBounds(new HexCoordinates(0, 2)));
+            Assert.False(map.coordsAreInBounds(new HexCoordinates(0, 3)));
         }
 
         [Test]
@@ -200,7 +209,7 @@ namespace Tests
             Map map = CreateSampleMap4x4();
 
             SpacePoint point = new SpacePoint(new HexCoordinates(1, 0), 1);
-            HexCoordinates[] validCoords = map.getHexesAtPoint(point);
+            HexCoordinates[] validCoords = map.getValidHexCoordinatesAtPoint(point);
             HexCoordinates[] expected = new HexCoordinates[]
             {
                 new HexCoordinates(0, 0),
@@ -216,7 +225,7 @@ namespace Tests
             Map map = CreateSampleMap4x4();
 
             SpacePoint point = new SpacePoint(new HexCoordinates(0, 0), 1);
-            HexCoordinates[] validCoords = map.getHexesAtPoint(point);
+            HexCoordinates[] validCoords = map.getValidHexCoordinatesAtPoint(point);
             HexCoordinates[] expected = new HexCoordinates[]
             {
                 new HexCoordinates(0, 0),
@@ -231,7 +240,7 @@ namespace Tests
             Map map = CreateSampleMap4x4();
 
             SpacePoint point = new SpacePoint(new HexCoordinates(1, 0), 0);
-            HexCoordinates[] validCoords = map.getHexesAtPoint(point);
+            HexCoordinates[] validCoords = map.getValidHexCoordinatesAtPoint(point);
             HexCoordinates[] expected = new HexCoordinates[]
             {
                 new HexCoordinates(1, 0),

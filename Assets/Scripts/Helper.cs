@@ -35,7 +35,6 @@ public class Helper
         float maxX = -10000.0f;
         float maxY = -10000.0f;
         Transform[] childObjects = parent.GetComponentsInChildren<Transform>();
-        Debug.Log("hallo");
         foreach (Transform child in childObjects)
         {
             Debug.Log(child.gameObject.name);
@@ -142,11 +141,13 @@ public class Helper
 
     public HexCoordinates[] getCoordinatesOfHexesAtPoint(SpacePoint point)
     {
+        // returns HexCoordinates at given SpacePoint in clock-wise manner (can return 1,2 or 3 pairs of coordinates)
+
         int q = point.coordinates.q;
         int r = point.coordinates.r;
         if (point.vertexNumber == 0)
         {
-            HexCoordinates[] coords = { new HexCoordinates(q, r), new HexCoordinates(q + 1, r - 1), new HexCoordinates(q, r - 1) };
+            HexCoordinates[] coords = { new HexCoordinates(q, r), new HexCoordinates(q, r - 1), new HexCoordinates(q + 1, r - 1) };
             return coords;
         }
         else

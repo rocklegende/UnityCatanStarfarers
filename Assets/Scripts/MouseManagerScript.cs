@@ -72,7 +72,6 @@ public class MouseManagerScript : MonoBehaviour
 
             }
             delta = Camera.main.ScreenToWorldPoint(Input.mousePosition) - Camera.main.ScreenToWorldPoint((Vector3)initialMousePosition);
-            Debug.Log(delta);
 
 
             Camera.main.transform.position = (Vector3)initialCameraPosition - delta;

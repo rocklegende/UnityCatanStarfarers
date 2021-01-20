@@ -1,24 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
-
-public enum Tile
-{
-    NULL,
-    BORDER,
-    VALID
-};
 
 public class Map
 {
 
-    private Tile[,] mapRepresentation;
+    private Tile_[,] mapRepresentation;
     private int offset;
+    private MapScript changeDelegate;
 
-    public Map(Tile[,] mapRepresentation)
+    public Map(Tile_[,] mapRepresentation, MapScript changeDelegate = null)
     {
         this.mapRepresentation = mapRepresentation;
         this.offset = getOffset();
+        this.changeDelegate = changeDelegate;
+    }
+
+    public Tile_[,] getRepresentation()
+    {
+        return this.mapRepresentation;
     }
 
     public int getOffset()
@@ -26,26 +27,39 @@ public class Map
         return ((int)Mathf.Ceil((float)height() / 2.0f) - 1);
     }
 
-    public Tile getTileAt(HexCoordinates coords)
+    public (int, int) coordsToArrayIndexes(HexCoordinates coords)
     {
-        return mapRepresentation[coords.r, coords.q + offset];
+        return (coords.r, coords.q + offset);
+    }
+
+    public Tile_ getTileAt(HexCoordinates coords)
+    {
+        (int, int) arrayIndexes = coordsToArrayIndexes(coords);
+        return mapRepresentation[arrayIndexes.Item1, arrayIndexes.Item2];
     }
 
     public bool coordsAreInBounds(HexCoordinates coords)
     {
-        var rIsValid = coords.r < height() - 1 && coords.r > -1;
-        var qIsValid = coords.q + offset > -1 && coords.q + offset < width() - 1;
+        /*
+         * Returns True if the coords are inside the bounds of the mapRepresentation array
+         */
+
+        var rIsValid = coords.r < height() && coords.r > -1;
+        var qIsValid = coords.q + offset > -1 && coords.q + offset < width();
         return rIsValid && qIsValid;
     }
 
     public bool coordsAreValid(HexCoordinates coords)
     {
+        /*
+         * Returns True if the coords are inside the bounds of the mapRepresentation array and is not border or null tile/
+         */
         if (!coordsAreInBounds(coords))
         {
             return false;
         } else
         {
-            return getTileAt(coords) == Tile.VALID;
+            return !(getTileAt(coords) is NullTile) && !(getTileAt(coords) is BorderTile);
         }
     }
 
@@ -57,6 +71,31 @@ public class Map
     public int height()
     {
         return mapRepresentation.GetLength(0);
+    }
+
+    public void SetTileGroupAtSpacePoint(TileGroup group, SpacePoint point)
+    {
+        // look if we get 3 valid hex coordinates at this point, if not then we cannot set the TileGroup here
+        HexCoordinates[] coordinates = getValidHexCoordinatesAtPoint(point);
+        
+        if (coordinates.Length != 3)
+        {
+            throw new ArgumentException("Can't set TileGroup at this point, because we don't have 3 valid hexes");
+        }
+
+        for (int i = 0; i < group.GetTiles().Length; i++)
+        {
+            (int, int) indexes = coordsToArrayIndexes(coordinates[i]);
+            mapRepresentation[indexes.Item1, indexes.Item2] = group.GetTiles()[i];
+        }
+
+        RepresentationChanged();
+
+    }
+
+    public void RepresentationChanged()
+    {
+        this.changeDelegate.RepresentationChanged();
     }
 
     public SpacePoint[] getAllSpacePointsInDistance(SpacePoint origin, int distance)
@@ -84,7 +123,8 @@ public class Map
                 var coordinates = new HexCoordinates(q, r);
                 if (onlyValidTiles)
                 {
-                    if (getTileAt(coordinates) == Tile.VALID)
+
+                    if (coordsAreValid(coordinates))
                     {
                         allCoords.Add(coordinates);
                     }
@@ -100,7 +140,7 @@ public class Map
         return allCoords.ToArray();
     }
 
-    public HexCoordinates[] getHexesAtPoint(SpacePoint spacePoint)
+    public HexCoordinates[] getValidHexCoordinatesAtPoint(SpacePoint spacePoint)
     {
         Helper helper = new Helper();
         HexCoordinates[] allHexCoordinates = helper.getCoordinatesOfHexesAtPoint(spacePoint);
@@ -128,45 +168,40 @@ public class Map
         {
             var firstPosition = new SpacePoint(coordinates, 0);
             var secondPosition = new SpacePoint(coordinates, 1);
-            switch (getTileAt(coordinates))
+            Tile_ tile = getTileAt(coordinates);
+
+            if (tile is BorderTile)
             {
-                case Tile.BORDER:
-                    HexCoordinates westNeighborCoords = coordinates.getNeighborCoordinates(Direction.W);
-                    if (coordsAreInBounds(westNeighborCoords))
-                    {
-                        if (getTileAt(westNeighborCoords) == Tile.VALID)
-                        {
-                            positions.Add(secondPosition);
-                        }
-                    }
+                HexCoordinates westNeighborCoords = coordinates.getNeighborCoordinates(Direction.W);
 
-                    HexCoordinates northwestNeighborCoords = coordinates.getNeighborCoordinates(Direction.NW);
-                    if (coordsAreInBounds(northwestNeighborCoords))
-                    {
-                        if (getTileAt(northwestNeighborCoords) == Tile.VALID)
-                        {
-                            positions.Add(firstPosition);
-                            positions.Add(secondPosition);
-                        }
-                    }
+                if (coordsAreValid(westNeighborCoords))
+                {
+                    positions.Add(secondPosition);
+                }
 
-                    HexCoordinates NE_NeighborCoords = coordinates.getNeighborCoordinates(Direction.NE);
-                    if (coordsAreInBounds(NE_NeighborCoords))
-                    {
-                        if (getTileAt(NE_NeighborCoords) == Tile.VALID)
-                        {
-                            positions.Add(firstPosition);
-                        }
-                    }
-
-                    break;
-                case Tile.VALID:
+                HexCoordinates northwestNeighborCoords = coordinates.getNeighborCoordinates(Direction.NW);
+                if (coordsAreValid(northwestNeighborCoords))
+                {
                     positions.Add(firstPosition);
                     positions.Add(secondPosition);
-                    break;
-                case Tile.NULL:
-                    // do nothing
-                    break;
+                }
+
+                HexCoordinates NE_NeighborCoords = coordinates.getNeighborCoordinates(Direction.NE);
+                if (coordsAreValid(NE_NeighborCoords))
+                {
+                    positions.Add(firstPosition);
+                }
+            }
+
+            if (tile is NullTile)
+            {
+                // do nothing
+            }
+
+            // tile is valid
+            if (!(tile is NullTile) && !(tile is BorderTile)) {
+                positions.Add(firstPosition);
+                positions.Add(secondPosition);
             }
         }
 

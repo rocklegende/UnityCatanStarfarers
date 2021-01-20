@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class Constants {
     public const float HEX_RADIUS = 1.0f;
+    public const int TOKEN_LAYER = -2;
     public const float paddingRight = 1.0f;
     public const float paddingDown = 1.0f;
 }
-
-
 
 
 public class MapScript : MonoBehaviour
@@ -16,44 +15,106 @@ public class MapScript : MonoBehaviour
 
     public GameObject spacePointButton;
     public GameObject hexPrefab;
+    public GameObject tokenPrefab;
+    GameObject actualTokenInScene;
     public Camera cam;
+    Map map;
+    GameObject[] hexagonGameObjects;
 
     void Start()
     {
-        Tile[,] mapRepresentation = {
-            { Tile.NULL, Tile.NULL, Tile.VALID, Tile.VALID, Tile.BORDER },
-            { Tile.NULL, Tile.NULL, Tile.VALID, Tile.VALID, Tile.BORDER },
-            { Tile.NULL, Tile.VALID, Tile.VALID, Tile.BORDER, Tile.NULL },
-            { Tile.NULL, Tile.VALID, Tile.VALID, Tile.BORDER, Tile.NULL },
-            { Tile.VALID, Tile.VALID, Tile.BORDER, Tile.BORDER, Tile.NULL },
+        Tile_[,] mapRepresentation = {
+            { new NullTile(), new NullTile(), new OreResourceTile(), new OreResourceTile(), new BorderTile() },
+            { new NullTile(), new NullTile(), new OreResourceTile(), new OreResourceTile(), new BorderTile() },
+            { new NullTile(), new FoodResourceTile(), new FoodResourceTile() , new BorderTile(), new NullTile() },
+            { new NullTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new NullTile() },
+            { new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile(), new NullTile() },
         };
 
-        Map map = new Map(mapRepresentation);
-        DrawMap(map);
+        map = new Map(mapRepresentation, this);
+        hexagonGameObjects = CreateMap(map);
 
-        SpacePoint point = new SpacePoint(new HexCoordinates(0, 1), 0);
-        SpacePoint[] pointsOneStepAway = map.getAllSpacePointsInDistance(point, 0);
+        SpacePoint point = new SpacePoint(new HexCoordinates(0, 2), 1);
 
-        CreateButtonAtSpacePoint(pointsOneStepAway[0]);
-
-        DrawCircleAtSpacePoints(pointsOneStepAway);
+        CreateButtonAtSpacePoint(point);
+        CreateTokenAtSpacePoint(map.getAllSpacePointsInDistance(point, 2)[0]);
 
 
-        // test getAllAvailableCityPositions
-        //SpacePoint[] allPositions = map.getAllAvailableSpacePoints();
-        //foreach (SpacePoint pos in allPositions)
-        //{
-        //    Debug.Log("q: " + pos.coordinates.q + ", r: " + pos.coordinates.r + ", v: " + pos.vertexNumber);
-        //}
+        ChipGroup squareChipGroup = new SquareChipGroup();
+        ChipGroup circleChipGroup = new CircleChipGroup();
+        ChipGroup triangleChipGroup = new TriangleChipGroup();
+
+        AssignDiceChipToHex(new PirateToken(new FreightPodsBeatCondition(3), squareChipGroup), hexagonGameObjects[3]);
+        AssignDiceChipToHex(new PirateToken(new FreightPodsBeatCondition(3), circleChipGroup), hexagonGameObjects[4]);
+        AssignDiceChipToHex(new DiceChip6(triangleChipGroup), hexagonGameObjects[5]);
+
+        //FlipDiceChipAtHex(new HexCoordinates(0, 0));
+
+        //Tile_[] tiles = { new FoodResourceTile(), new OreResourceTile(), new CarbonResourceTile() };
+        //TileGroup startTileGroup = new TileGroup(tiles);
+        //map.SetTileGroupAtSpacePoint(startTileGroup, point);
 
         CenterCamera();
+
+    }
+
+    GameObject FindHexGameobjectAt(HexCoordinates coords)
+    {
+        foreach (GameObject hexObject in hexagonGameObjects)
+        {
+            HexScript script = hexObject.GetComponent<HexScript>();
+            if (script.hexCoords.Equals(coords))
+            {
+                return hexObject;
+            }
+        }
+
+        return null;
+    }
+
+    public void AssignDiceChipToHex(DiceChip dc, GameObject hexGameObject)
+    {
+        hexGameObject.GetComponent<HexScript>().SetDiceChip(dc);
+    }
+
+    public void FlipDiceChipAtHex(HexCoordinates coordinates)
+    {
+        // Option 1:
+        // go through every hexagonObject, retrieve the HexScript and look if the hex coordinates match, then perform action
+
+        GameObject hex = FindHexGameobjectAt(coordinates);
+        HexScript script = hex.GetComponent<HexScript>();
+        script.FlipDiceChip();
+    }
+
+    public void RepresentationChanged()
+    {
+
+        RedrawMap();
+    }
+
+    private void RedrawMap()
+    {
+        foreach (GameObject obj in this.hexagonGameObjects)
+        {
+            (int, int) indexes = obj.GetComponent<HexScript>().mapArrayIndexes;
+            obj.GetComponent<HexScript>().SetTile(this.map.getRepresentation()[indexes.Item1, indexes.Item2]);
+        }
+    }
+
+    public void OnSpacePointClicked(GameObject spacePointObject, SpacePoint point)
+    {
+        actualTokenInScene.GetComponent<Space.TokenScript>().MoveTo(point);
+        Object.Destroy(spacePointObject);
+        CreateButtonAtSpacePoint(map.getAllSpacePointsInDistance(point, 2)[0]);
+
+        FlipDiceChipAtHex(new HexCoordinates(0, 0));
 
     }
 
     void CenterCamera()
     {
         Helper helper = new Helper();
-        //Debug.Log("Lowest Y:" + helper.GetLowestPoint(this.gameObject.transform).minY);
         BoundingBox bbox = helper.GetLowestPoint(this.gameObject.transform);
         Debug.Log("Lowest X:" + bbox.minX);
         Debug.Log("Lowest Y:" + bbox.minY);
@@ -64,51 +125,55 @@ public class MapScript : MonoBehaviour
         Vector2 bottomRight = new Vector2(bbox.maxX, bbox.minY);
 
         Vector2 middle = (topLeft + bottomRight) / 2;
-        Debug.Log(middle);
 
         Camera.main.transform.position = new Vector3(middle.x, middle.y, Camera.main.transform.position.z);
     }
 
     public void CreateButtonAtSpacePoint(SpacePoint point)
     {
-        GameObject canvas = GameObject.Find("Canvas");
-        GameObject btn = Instantiate(spacePointButton, new Vector3(0,0,0), Quaternion.identity);
-        btn.transform.parent = canvas.transform;
-        RectTransform rt = btn.GetComponent<RectTransform>();
+        GameObject btn = (GameObject)Instantiate(spacePointButton, point.ToUnityPosition(), Quaternion.identity);
+        btn.GetComponent<Space.SpacePointButtonScript>().spacePoint = point;
+        btn.GetComponent<Space.SpacePointButtonScript>().referenceToInstance = btn;
+        btn.transform.parent = this.gameObject.transform;
 
-        rt.transform.position = point.ToUnityPosition();
-        Vector3 bla = rt.transform.position;
-
-        Debug.Log(cam.WorldToScreenPoint(point.ToUnityPosition()));
-        
     }
 
-    public void DrawHexagon(Vector2 position)
+    public void CreateTokenAtSpacePoint(SpacePoint point)
     {
-        GameObject hexagon = Instantiate(hexPrefab, position, Quaternion.identity);
+        Vector2 xyInWorldCoords = point.ToUnityPosition();
+        actualTokenInScene = Instantiate(tokenPrefab, new Vector3(xyInWorldCoords.x, xyInWorldCoords.y, Constants.TOKEN_LAYER), Quaternion.identity);
+        actualTokenInScene.GetComponent<Space.TokenScript>().token = actualTokenInScene;
+        actualTokenInScene.transform.parent = this.gameObject.transform;
 
-
-
-
-        //Helper helper = new Helper();
-        //GameObject hexagon = new GameObject("Hex");
-        //helper.AddHexagonRenderer(hexagon, position);
-        hexagon.transform.parent = this.gameObject.transform;
     }
 
-    void DrawMap(Map map)
+    public GameObject CreateHexagon(Vector2 position, HexCoordinates coords)
+    {
+        (int, int) mapArrayIndexes = map.coordsToArrayIndexes(coords);
+
+        GameObject hexagon = Instantiate(hexPrefab, position, Quaternion.identity);
+        hexagon.GetComponent<HexScript>().tile = this.map.getRepresentation()[mapArrayIndexes.Item1, mapArrayIndexes.Item2];
+        hexagon.GetComponent<HexScript>().hexCoords = coords;
+        hexagon.GetComponent<HexScript>().mapArrayIndexes = mapArrayIndexes;
+        hexagon.transform.parent = this.gameObject.transform;
+        return hexagon;
+    }
+
+    GameObject[] CreateMap(Map map)
     {
 
         HexCoordinates[] allValidHexCoords = map.getAllHexCoordinates(true);
+        int len = allValidHexCoords.Length;
 
 
+        List<GameObject> hexagons = new List<GameObject>();
         foreach (HexCoordinates hexCoords in allValidHexCoords)
         {
-            Debug.Log("Drawing Hex with q: " + hexCoords.q + ", r: " + hexCoords.r);
-            Debug.Log(hexCoords.PointyToPixel());
-            DrawHexagon(hexCoords.PointyToPixel());
+            GameObject hexagon = CreateHexagon(hexCoords.PointyToPixel(), hexCoords);
+            hexagons.Add(hexagon);
         }
 
+        return hexagons.ToArray();
     }
 
     public static void DrawCircleAroundGameObject(GameObject container, float radius, float lineWidth)
@@ -165,22 +230,6 @@ public class MapScript : MonoBehaviour
     {
         //TODO
     }
-
-    void AddResourceTileAtPosition(Vector2 position)
-    {
-        GameObject resourceTile = new GameObject("Resource Tile");
-
-        SpriteRenderer renderer = resourceTile.AddComponent<SpriteRenderer>();
-
-        Texture2D texture = Resources.Load("resource") as Texture2D;
-        Debug.Log(texture);
-        Sprite sprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, 150.0f, 150.0f), new Vector2(0.0f, 0.0f));
-        renderer.sprite = sprite;
-        resourceTile.transform.position = position;
-        resourceTile.transform.parent = this.gameObject.transform;
-        
-    }
-
     // Update is called once per frame
     void Update()
     {
