@@ -18,7 +18,36 @@ namespace Tests
             Assert.AreEqual(new HexCoordinates(0, 0).DistanceTo(new HexCoordinates(1, 2)), 3);
         }
 
+        [Test]
+        public void CreateSpacePointArrayFromShortRepresentationNegativeTest()
+        {
+            string[] shortRepresentation = new string[] { "1,1,0", "1,2,2" };
+            try
+            {
+                // this should fail, since we can't have vertexNumber 2
+                SpacePoint[] points = helper.SpacePointArrayFromShortRep(shortRepresentation);
+                // if it comes to this point than the creation succeeded, which should NOT happen
+                Assert.True(false);
+            }
+            catch (ArgumentException e)
+            {
+                Assert.True(true);
+            }
+            
+        }
+
         
+
+        [Test]
+        public void CreateSpacePointArrayFromShortRepresentationPositiveTest()
+        {
+            string[] shortRepresentation = new string[] { "1,1,0", "1,2,1" };
+            SpacePoint[] points = helper.SpacePointArrayFromShortRep(shortRepresentation);
+            Assert.True(points[0].Equals(new SpacePoint(new HexCoordinates(1, 1), 0)));
+            Assert.True(points[1].Equals(new SpacePoint(new HexCoordinates(1, 2), 1)));
+        }
+
+
 
         [Test]
         public void HelperTestsGetHexesAtCityPositionWithVertex1()

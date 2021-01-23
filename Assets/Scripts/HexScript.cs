@@ -7,6 +7,7 @@ public class HexScript : MonoBehaviour
     public Tile_ tile;
     public (int, int) mapArrayIndexes;
     public HexCoordinates hexCoords;
+    public GameObject dockStationPrefab;
 
     // Start is called before the first frame update
     void Start()
@@ -24,8 +25,11 @@ public class HexScript : MonoBehaviour
 
     public void SetDiceChip(DiceChip dc)
     {
-        ResourceTile rt = (ResourceTile)tile;
-        rt.SetDiceChip(dc); 
+        if (tile is ResourceTile)
+        {
+            ResourceTile rt = (ResourceTile)tile;
+            rt.SetDiceChip(dc);
+        }
         Draw();
     }
 
@@ -36,7 +40,7 @@ public class HexScript : MonoBehaviour
         Draw();
     }
 
-    void Draw()
+    public void Draw()
     {
         if (tile is ResourceTile)
         {
@@ -51,9 +55,33 @@ public class HexScript : MonoBehaviour
             
 
         }
+
+        if (tile is TradeStationTile)
+        {
+            // add prefabs for docking stations that are clickable
+            TradeStationTile tst = (TradeStationTile)tile;
+            CreateTradeStationDocks(tst.numDockingPorts);
+        }
+
+
         MeshRenderer mr = this.gameObject.GetComponentInChildren<MeshRenderer>();
+        //mr.material.color = Color.yellow;
         mr.material.color = (Color)tile.GetColor();
     }
+
+    void CreateTradeStationDocks(int numDocks)
+    {
+        for (int i = 0; i < numDocks; i++)
+        {
+            //TODO: use width of tile for calculation
+            var rad = Mathf.Deg2Rad * (i * 360f / numDocks);
+            Vector3 position = new Vector3(Mathf.Cos(rad) * 0.5f, Mathf.Sin(rad) * 0.5f, 0) + this.transform.position;
+            GameObject btn = (GameObject)Instantiate(dockStationPrefab, position, Quaternion.identity);
+            btn.transform.parent = this.gameObject.transform;
+        }
+        
+    }
+    
 
     // Update is called once per frame
     void Update()

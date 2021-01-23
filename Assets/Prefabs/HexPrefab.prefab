@@ -78,7 +78,7 @@ SpriteRenderer:
   m_Size: {x: 1.32, y: 1.38}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &3956066024327263925
@@ -126,6 +126,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65138574d9d7e41548978b10eb28e721, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dockStationPrefab: {fileID: 3768021763241174890, guid: 5ffefc163782241e2a8c274e684accd5,
+    type: 3}
 --- !u!1 &5089598693075711235
 GameObject:
   m_ObjectHideFlags: 0

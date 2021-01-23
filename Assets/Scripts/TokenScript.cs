@@ -22,8 +22,8 @@ namespace Space
 
         public void MoveTo(SpacePoint point)
         {
-            Debug.Log("moving piece");
-            Debug.Log(token);
+            Logger.log("moving piece");
+            Logger.log(token);
             token.transform.position = new Vector3(point.ToUnityPosition().x, point.ToUnityPosition().y, Constants.TOKEN_LAYER);
         }
     }

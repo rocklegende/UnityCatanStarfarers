@@ -32,6 +32,11 @@ public class Map
         return (coords.r, coords.q + offset);
     }
 
+    public HexCoordinates  arrayIndexesToCoords((int, int) indexes)
+    {
+        return new HexCoordinates(indexes.Item2 - offset, indexes.Item1);
+    }
+
     public Tile_ getTileAt(HexCoordinates coords)
     {
         (int, int) arrayIndexes = coordsToArrayIndexes(coords);
@@ -95,7 +100,13 @@ public class Map
 
     public void RepresentationChanged()
     {
-        this.changeDelegate.RepresentationChanged();
+
+        //TODO: use notification system
+        if (changeDelegate != null)
+        {
+            this.changeDelegate.RepresentationChanged();
+        }
+        
     }
 
     public SpacePoint[] getAllSpacePointsInDistance(SpacePoint origin, int distance)

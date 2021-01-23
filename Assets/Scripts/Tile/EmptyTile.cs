@@ -1,14 +1,13 @@
 ﻿using System;
 using UnityEngine;
 
-public class BorderTile : Tile_
-{
-    public BorderTile()
+public class EmptyTile : Tile_ { 
+    public EmptyTile()
     {
     }
 
     public override Color? GetColor()
     {
-        return Color.yellow;
+        return Color.white;
     }
 }

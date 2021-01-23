@@ -249,5 +249,90 @@ namespace Tests
             Assert.True(helper.HexCoordinateGroupsAreEqual(validCoords, expected));
         }
 
+        [Test]
+        public void TestCoordsToArrayIndexes()
+        {
+
+            Map map = CreateSampleMap3x3(); //offset is one
+
+            HexCoordinates coords = new HexCoordinates(-1, 3);
+            (int, int) expectedIndexes = (3, 0);
+            Assert.True(expectedIndexes == map.coordsToArrayIndexes(coords));
+
+
+        }
+
+        [Test]
+        public void TestArrayIndexesToCoords1()
+        {
+
+            Map map = CreateSampleMap3x3(); //offset is one
+
+            (int, int) indexes = (2, 2);
+            HexCoordinates expectedCoords = new HexCoordinates(1, 2);
+
+            Assert.True(expectedCoords.Equals(map.arrayIndexesToCoords(indexes)));
+
+
+        }
+
+        [Test]
+        public void TestArrayIndexesToCoords2()
+        {
+
+            Map map = CreateSampleMap3x3(); //offset is one
+
+            (int, int) indexes = (3, 0);
+            HexCoordinates expectedCoords = new HexCoordinates(-1, 3);
+            Assert.True(expectedCoords.Equals(map.arrayIndexesToCoords(indexes)));
+
+
+        }
+
+
+        [Test]
+        public void TestSetTileGroupAtSpacePointPositiveTest1()
+        {
+            Map map = CreateSampleMap4x4();
+            TileGroup tg = new TileGroup(new Tile_[] { new OreResourceTile(), new FoodResourceTile(), new GoodsResourceTile() });
+            SpacePoint point = new SpacePoint(new HexCoordinates(1, 1), 1);
+            map.SetTileGroupAtSpacePoint(tg, point);
+            Assert.True(map.getTileAt(new HexCoordinates(1, 1)) is OreResourceTile);
+            Assert.True(map.getTileAt(new HexCoordinates(0, 1)) is FoodResourceTile);
+            Assert.True(map.getTileAt(new HexCoordinates(1, 0)) is GoodsResourceTile);
+        }
+
+        [Test]
+        public void TestSetTileGroupAtSpacePointPositiveTest2()
+        {
+            Map map = CreateSampleMap4x4();
+            TileGroup tg = new TileGroup(new Tile_[] { new OreResourceTile(), new FoodResourceTile(), new GoodsResourceTile() });
+            SpacePoint point = new SpacePoint(new HexCoordinates(0, 1), 0);
+            map.SetTileGroupAtSpacePoint(tg, point);
+            Assert.True(map.getTileAt(new HexCoordinates(0, 1)) is OreResourceTile);
+            Assert.True(map.getTileAt(new HexCoordinates(0, 0)) is FoodResourceTile);
+            Assert.True(map.getTileAt(new HexCoordinates(1, 0)) is GoodsResourceTile);
+        }
+
+        [Test]
+        public void TestSetTileGroupAtSpacePointNegativeTest()
+        {
+            Map map = CreateSampleMap4x4();
+            TileGroup tg = new TileGroup(new Tile_[] { new OreResourceTile(), new FoodResourceTile(), new GoodsResourceTile() });
+            SpacePoint point = new SpacePoint(new HexCoordinates(1, 1), 0);
+            try
+            {
+                // should fail since (2,0) is BorderTile and cant be set
+                map.SetTileGroupAtSpacePoint(tg, point);
+                Assert.True(false);
+            }
+            catch (ArgumentException e)
+            {
+                Assert.True(true);
+            }
+            
+            
+        }
+
     }
 }

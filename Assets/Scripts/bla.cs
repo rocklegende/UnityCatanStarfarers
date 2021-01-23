@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class bla : MonoBehaviour
 {
+    public SpacePoint point;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,9 +31,9 @@ public class bla : MonoBehaviour
 
     private void OnMouseDown()
     {
-        Debug.Log("clicked me");
+        point.print();
 
-
+        // Send notification that this button was clicked
         this.transform.parent.gameObject.GetComponent<Space.SpacePointButtonScript>().OnClick();
     }
 

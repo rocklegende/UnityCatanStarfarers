@@ -22,6 +22,19 @@ public class BoundingBox
 public class Helper
 {
 
+    public SpacePoint[] SpacePointArrayFromShortRep(string[] shortRepresentation)
+    {
+        List<SpacePoint> points = new List<SpacePoint>();
+        char[] charSeparators = new char[] { ',' };
+        foreach (string str in shortRepresentation) {
+            string[] result = str.Split(charSeparators);
+            SpacePoint newPoint = new SpacePoint(new HexCoordinates(Int32.Parse(result[0]), Int32.Parse(result[1])), Int32.Parse(result[2]));
+            points.Add(newPoint);
+        }
+
+        return points.ToArray();
+    }
+
     public Vector3 unitsToPixel(Vector3 unityUnitVector)
     {
         return Vector3.zero;
@@ -37,8 +50,8 @@ public class Helper
         Transform[] childObjects = parent.GetComponentsInChildren<Transform>();
         foreach (Transform child in childObjects)
         {
-            Debug.Log(child.gameObject.name);
-            Debug.Log(child.transform.position.y);
+            Logger.log(child.gameObject.name);
+            Logger.log(child.transform.position.y);
             Renderer renderer = child.GetComponent<Renderer>();
             //if (renderer != null)
             //{

@@ -63,7 +63,7 @@ public class HexCoordinates
 
     public void print()
     {
-        Debug.Log("(HEX) q: " + q + "r: " + r);
+        Logger.log("(HEX) q: " + q + "r: " + r);
     }
 
     public float getRadius()

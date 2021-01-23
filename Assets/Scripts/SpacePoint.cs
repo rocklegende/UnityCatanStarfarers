@@ -41,7 +41,7 @@ public class SpacePoint
 
     public void print()
     {
-        Debug.Log("(CityPosition) q:" + this.coordinates.q + ", r:" + this.coordinates.r + "vertex: " + vertexNumber);
+        Logger.log("(CityPosition) q:" + this.coordinates.q + ", r:" + this.coordinates.r + "vertex: " + vertexNumber);
     }
 
     public int DistanceTo(SpacePoint pos)
@@ -71,6 +71,11 @@ public class SpacePoint
     {
         this.coordinates = coordinates;
         this.vertexNumber = vertexNumber;
+
+        if (this.vertexNumber < 0 || this.vertexNumber > 1)
+        {
+            throw new ArgumentOutOfRangeException("vertexNumber has to be 0 or 1");
+        }
     }
 
     public Vector2 ToUnityPosition()

@@ -9,6 +9,6 @@ public class NullTile : Tile_
 
     public override Color? GetColor()
     {
-        return null;
+        return Color.red;
     }
 }

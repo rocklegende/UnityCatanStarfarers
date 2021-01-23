@@ -22,6 +22,8 @@ namespace Space
 
         public void OnClick()
         {
+
+            // TODO; just send a notification that this spacepointbutton was clicked
             GameObject map = GameObject.Find("Map");
             map.GetComponent<MapScript>().OnSpacePointClicked(referenceToInstance, this.spacePoint);
         }

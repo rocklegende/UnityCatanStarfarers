@@ -23,30 +23,36 @@ public class MapScript : MonoBehaviour
 
     void Start()
     {
+        AbstractTradeStation ts = new OrzelTradeStation();
+
         Tile_[,] mapRepresentation = {
             { new NullTile(), new NullTile(), new OreResourceTile(), new OreResourceTile(), new BorderTile() },
             { new NullTile(), new NullTile(), new OreResourceTile(), new OreResourceTile(), new BorderTile() },
-            { new NullTile(), new FoodResourceTile(), new FoodResourceTile() , new BorderTile(), new NullTile() },
+            { new NullTile(), new OrzelTradeStationTile(ts, 2), new FoodResourceTile() , new BorderTile(), new NullTile() },
             { new NullTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new NullTile() },
             { new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile(), new NullTile() },
         };
 
-        map = new Map(mapRepresentation, this);
+        MapGenerator generator = new MapGenerator();
+
+        //map = new Map(mapRepresentation, this);
+        map = generator.GenerateRandomMap();
         hexagonGameObjects = CreateMap(map);
+        ShowAllAvailableSpacePoints();
 
-        SpacePoint point = new SpacePoint(new HexCoordinates(0, 2), 1);
+        //SpacePoint point = new SpacePoint(new HexCoordinates(0, 2), 1);
 
-        CreateButtonAtSpacePoint(point);
-        CreateTokenAtSpacePoint(map.getAllSpacePointsInDistance(point, 2)[0]);
+        //CreateButtonAtSpacePoint(point);
+        //CreateTokenAtSpacePoint(map.getAllSpacePointsInDistance(point, 2)[0]);
 
 
-        ChipGroup squareChipGroup = new SquareChipGroup();
-        ChipGroup circleChipGroup = new CircleChipGroup();
-        ChipGroup triangleChipGroup = new TriangleChipGroup();
+        //ChipGroup squareChipGroup = new SquareChipGroup();
+        //ChipGroup circleChipGroup = new CircleChipGroup();
+        //ChipGroup triangleChipGroup = new TriangleChipGroup();
 
-        AssignDiceChipToHex(new PirateToken(new FreightPodsBeatCondition(3), squareChipGroup), hexagonGameObjects[3]);
-        AssignDiceChipToHex(new PirateToken(new FreightPodsBeatCondition(3), circleChipGroup), hexagonGameObjects[4]);
-        AssignDiceChipToHex(new DiceChip6(triangleChipGroup), hexagonGameObjects[5]);
+        //AssignDiceChipToHex(new PirateToken(new FreightPodsBeatCondition(3), squareChipGroup), hexagonGameObjects[3]);
+        //AssignDiceChipToHex(new PirateToken(new FreightPodsBeatCondition(3), circleChipGroup), hexagonGameObjects[4]);
+        //AssignDiceChipToHex(new DiceChip6(triangleChipGroup), hexagonGameObjects[5]);
 
         //FlipDiceChipAtHex(new HexCoordinates(0, 0));
 
@@ -56,6 +62,15 @@ public class MapScript : MonoBehaviour
 
         CenterCamera();
 
+    }
+
+    void ShowAllAvailableSpacePoints()
+    {
+        SpacePoint[] allSpacePoints = map.getAllAvailableSpacePoints();
+        foreach (SpacePoint point in allSpacePoints)
+        {
+            CreateButtonAtSpacePoint(point);
+        }
     }
 
     GameObject FindHexGameobjectAt(HexCoordinates coords)
@@ -116,10 +131,10 @@ public class MapScript : MonoBehaviour
     {
         Helper helper = new Helper();
         BoundingBox bbox = helper.GetLowestPoint(this.gameObject.transform);
-        Debug.Log("Lowest X:" + bbox.minX);
-        Debug.Log("Lowest Y:" + bbox.minY);
-        Debug.Log("Highest Y:" + bbox.maxY);
-        Debug.Log("Higest X:" + bbox.maxX);
+        Logger.log("Lowest X:" + bbox.minX);
+        Logger.log("Lowest Y:" + bbox.minY);
+        Logger.log("Highest Y:" + bbox.maxY);
+        Logger.log("Higest X:" + bbox.maxX);
 
         Vector2 topLeft = new Vector2(bbox.minX, bbox.maxY);
         Vector2 bottomRight = new Vector2(bbox.maxX, bbox.minY);
@@ -134,6 +149,9 @@ public class MapScript : MonoBehaviour
         GameObject btn = (GameObject)Instantiate(spacePointButton, point.ToUnityPosition(), Quaternion.identity);
         btn.GetComponent<Space.SpacePointButtonScript>().spacePoint = point;
         btn.GetComponent<Space.SpacePointButtonScript>().referenceToInstance = btn;
+
+        btn.GetComponentInChildren<bla>().point = point;
+
         btn.transform.parent = this.gameObject.transform;
 
     }
@@ -156,6 +174,7 @@ public class MapScript : MonoBehaviour
         hexagon.GetComponent<HexScript>().hexCoords = coords;
         hexagon.GetComponent<HexScript>().mapArrayIndexes = mapArrayIndexes;
         hexagon.transform.parent = this.gameObject.transform;
+        hexagon.GetComponent<HexScript>().Draw();
         return hexagon;
     }
 
@@ -163,8 +182,6 @@ public class MapScript : MonoBehaviour
     {
 
         HexCoordinates[] allValidHexCoords = map.getAllHexCoordinates(true);
-        int len = allValidHexCoords.Length;
-
 
         List<GameObject> hexagons = new List<GameObject>();
         foreach (HexCoordinates hexCoords in allValidHexCoords)
