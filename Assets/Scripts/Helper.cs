@@ -22,6 +22,13 @@ public class BoundingBox
 public class Helper
 {
 
+    public Sprite CreateSpriteFromImageName(string imageName) 
+    {
+        Texture2D texture = Resources.Load(imageName) as Texture2D;
+        Sprite sprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.0f, 0.0f));
+        return sprite;
+    }
+
     public SpacePoint[] SpacePointArrayFromShortRep(string[] shortRepresentation)
     {
         List<SpacePoint> points = new List<SpacePoint>();

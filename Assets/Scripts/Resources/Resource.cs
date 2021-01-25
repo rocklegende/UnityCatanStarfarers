@@ -3,12 +3,12 @@ using UnityEngine;
 public abstract class Resource
 {
     public String Name;
-    public Color cardImage;
-    public Color planetImage;
-    public Resource(String name, Color cardImage, Color planetImage)
+    public Color tileColor;
+    public string cardImageName;
+    public Resource(String name, Color tileColor, string cardImageName)
     {
         this.Name = name;
-        this.cardImage = cardImage;
-        this.planetImage = planetImage;
+        this.tileColor = tileColor;
+        this.cardImageName = cardImageName;
     }
 }

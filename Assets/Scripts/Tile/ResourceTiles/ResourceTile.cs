@@ -23,7 +23,7 @@ public abstract class ResourceTile : Tile_
 
     public override Color? GetColor()
     {
-        return this.resource.cardImage;
+        return this.resource.tileColor;
     }
 
 

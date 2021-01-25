@@ -10,7 +10,10 @@ public class Constants {
 }
 
 
-public class MapScript : MonoBehaviour
+
+
+
+public class MapScript : SFController
 {
 
     public GameObject spacePointButton;
@@ -38,7 +41,7 @@ public class MapScript : MonoBehaviour
         //map = new Map(mapRepresentation, this);
         map = generator.GenerateRandomMap();
         hexagonGameObjects = CreateMap(map);
-        ShowAllAvailableSpacePoints();
+        //ShowAllAvailableSpacePoints();
 
         //SpacePoint point = new SpacePoint(new HexCoordinates(0, 2), 1);
 
@@ -67,7 +70,12 @@ public class MapScript : MonoBehaviour
     void ShowAllAvailableSpacePoints()
     {
         SpacePoint[] allSpacePoints = map.getAllAvailableSpacePoints();
-        foreach (SpacePoint point in allSpacePoints)
+        CreateButtonsAtSpacePoints(allSpacePoints);
+    }
+
+    void CreateButtonsAtSpacePoints(SpacePoint[] points)
+    {
+        foreach (SpacePoint point in points)
         {
             CreateButtonAtSpacePoint(point);
         }
@@ -251,5 +259,17 @@ public class MapScript : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)
+    {
+        switch (p_event_path)
+        {
+            case SFNotification.HUD_build_tradeship_button_clicked:
+                ShowAllAvailableSpacePoints();
+                break;
+        }
+
+
     }
 }

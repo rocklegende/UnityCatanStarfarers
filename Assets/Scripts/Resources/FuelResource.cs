@@ -2,7 +2,7 @@
 using UnityEngine;
 public class FuelResource : Resource
 {
-    public FuelResource() : base("Fuel", Color.yellow, Color.yellow)
+    public FuelResource() : base("Fuel", Color.yellow, "resource_card_fuel")
     {
 
     }
