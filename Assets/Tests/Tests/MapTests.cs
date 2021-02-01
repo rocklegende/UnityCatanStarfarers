@@ -14,7 +14,7 @@ namespace Tests
         private Map CreateSampleMap3x3()
         {
             Tile_[,] mapRepresentation = {
-                { new NullTile(), new BorderTile(), new BorderTile() },
+                { new BorderTile(), new BorderTile(), new BorderTile() },
                 { new BorderTile(), new FoodResourceTile(), new BorderTile() },
                 { new BorderTile(), new BorderTile(), new BorderTile() },
             };
@@ -26,9 +26,9 @@ namespace Tests
         private Map CreateSampleMap4x3()
         {
             Tile_[,] mapRepresentation = {
-                { new NullTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
-                { new NullTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
-                { new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new NullTile() },
+                { new BorderTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
+                { new BorderTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
+                { new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile() },
             };
 
             return new Map(mapRepresentation);
@@ -37,10 +37,10 @@ namespace Tests
         private Map CreateSampleMap4x4()
         {
             Tile_[,] mapRepresentation = {
-                { new NullTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
-                { new NullTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
-                { new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new NullTile() },
-                { new BorderTile(), new BorderTile(), new BorderTile(), new NullTile() },
+                { new BorderTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
+                { new BorderTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
+                { new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile() },
+                { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile() },
             };
 
             return new Map(mapRepresentation);
@@ -49,11 +49,11 @@ namespace Tests
         private Map CreateSampleMap4x5()
         {
             Tile_[,] mapRepresentation = {
-                { new NullTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
-                { new NullTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
-                { new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new NullTile() },
-                { new BorderTile(), new BorderTile(), new BorderTile(), new NullTile() },
-                { new BorderTile(), new BorderTile(), new BorderTile(), new NullTile() },
+                { new BorderTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
+                { new BorderTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
+                { new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile() },
+                { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile() },
+                { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile() },
             };
 
             return new Map(mapRepresentation);
@@ -62,12 +62,12 @@ namespace Tests
         private Map CreateSampleMap5x6()
         {
             Tile_[,] mapRepresentation = {
-                { new NullTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile() },
-                { new NullTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile() },
-                { new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile(), new NullTile() },
-                { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile(), new NullTile() },
-                { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile(), new NullTile() },
-                { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile(), new NullTile() },
+                { new BorderTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile() },
+                { new BorderTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile() },
+                { new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile(), new BorderTile(), },
+                { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile() },
+                { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile() },
+                { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile()},
             };
 
             return new Map(mapRepresentation);

@@ -1,7 +1,7 @@
 ﻿using System;
-public class GoodsCard : Card
+public class GoodsCard : ResourceCard
 {
-    public GoodsCard() : base(new GoodsResource().cardImageName)
+    public GoodsCard() : base(new GoodsResource())
     {
     }
 }

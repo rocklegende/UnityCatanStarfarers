@@ -1,7 +1,7 @@
 ﻿using System;
-public class FuelCard : Card
+public class FuelCard : ResourceCard
 {
-    public FuelCard() : base(new FuelResource().cardImageName)
+    public FuelCard() : base(new FuelResource())
     {
     }
 }

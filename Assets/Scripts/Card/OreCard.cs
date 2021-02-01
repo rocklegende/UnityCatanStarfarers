@@ -1,7 +1,7 @@
 ﻿using System;
-public class OreCard : Card
+public class OreCard : ResourceCard
 {
-    public OreCard() : base(new OreResource().cardImageName)
+    public OreCard() : base(new OreResource())
     {
     }
 }

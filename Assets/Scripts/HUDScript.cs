@@ -5,21 +5,29 @@ using UnityEngine.UI;
 
 public class HUDScript : SFController
 {
+    public Player player;
     public Text oreCardStackText;
     public Text carbonCardStackText;
     public Text foodCardStackText;
     public Text fuelCardStackText;
     public Text goodsCardStackText;
-    private int ore = 0;
-    private int food = 0;
-    private int goods = 0;
-    private int fuel = 0;
-    private int carbon = 0;
+    public Text boosterText;
+    public Text cannonsText;
+    public Text freightPodsText;
 
     public GameObject buildShipsDropDownRef;
     public GameObject upgradesDropDownRef;
 
+    public GameObject oreCardStack;
+    public GameObject carbonCardStack;
+    public GameObject fuelCardStack;
+    public GameObject goodsCardStack;
+    public GameObject foodCardStack;
+    public BuildDropDownOption[] buildDropDownOptions;
+
     //GameObject costrendererPrefab;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -27,49 +35,122 @@ public class HUDScript : SFController
         // TODO: optimal, just pass a Hand to the HUDScript and the HUD will render it
         //DrawHand();
 
+        List<BuildDropDownOption> options = new List<BuildDropDownOption>();
+
+        GameObject.FindObjectOfType<Button>();
+
+        Token colonyWithShip = new ColonyBaseToken();
+        colonyWithShip.attachToken(new ShipToken());
+
+        Token tradeWithShip = new TradeBaseToken();
+        tradeWithShip.attachToken(new ShipToken());
+
+        Token spacePortToken = new SpacePortToken();
+        var spacePortOption = new BuildDropDownOption("build_space_port_btn", spacePortToken, BuildTokenBtnPressed);
+        var buildTradeOption = new BuildDropDownOption("build_trade_ship_btn", tradeWithShip, BuildTokenBtnPressed);
+        var buildColonyOption = new BuildDropDownOption("build_colony_ship_btn", colonyWithShip, BuildTokenBtnPressed);
+
         var buildShipsOptions = new BuildDropDownOption[] {
-            new BuildDropDownOption("build_colony_ship_btn", new Cost(new Resource[] { new FoodResource(), new FoodResource(), new GoodsResource() }), PrintSomething),
-            new BuildDropDownOption("build_trade_ship_btn", new Cost(new Resource[] { new FoodResource(), new FoodResource(), new FuelResource() }), BuildTradeShipBtnPressed),
-            new BuildDropDownOption("build_space_port_btn", new Cost(new Resource[] { new GoodsResource(), new GoodsResource(), new GoodsResource() }), PrintSomethingCooler)
+            buildColonyOption,
+            buildTradeOption,
+            spacePortOption
         };
+        options.Add(buildColonyOption);
+        options.Add(buildTradeOption);
+        options.Add(spacePortOption);
+        buildDropDownOptions = options.ToArray();
         buildShipsDropDownRef.GetComponent<BuildDropDown>().SetOptions(buildShipsOptions);
 
         var upgradeOptions = new BuildDropDownOption[] {
-            new BuildDropDownOption("booster", new Cost(new Resource[] { new FuelResource(), new FuelResource() }), PrintSomething),
-            new BuildDropDownOption("cannon", new Cost(new Resource[] { new CarbonResource(), new CarbonResource()}), PrintSomethingCool),
-            new BuildDropDownOption("freightpod", new Cost(new Resource[] { new OreResource(), new OreResource() }), PrintSomethingCooler)
+            new BuildDropDownOption("booster", new BoosterUpgradeToken(), BuildUpgradeBtnPressed),
+            new BuildDropDownOption("cannon", new CannonUpgradeToken(), BuildUpgradeBtnPressed),
+            new BuildDropDownOption("freightpod", new FreightPodUpgradeToken(), BuildUpgradeBtnPressed)
         };
         upgradesDropDownRef.GetComponent<BuildDropDown>().SetOptions(upgradeOptions);
+        
     }
 
     // Update is called once per frame
     void Update()
+    {   if (buildDropDownOptions != null)
+        {
+            foreach(BuildDropDownOption option in buildDropDownOptions)
+            {
+                bool interactable = player.CanBuildToken(option.token);
+                buildShipsDropDownRef.GetComponent<BuildDropDown>().SetOptionInteractable(option, interactable);
+            }
+        }
+    }
+
+    public void SetPlayer (Player player)
     {
+        this.player = player;
+        Draw();
         
     }
 
-    void PrintSomething()
+    void OnPlayerDataChanged()
     {
-        Debug.Log("231");
+        Draw();
     }
 
-    void PrintSomethingCool()
+    private void Draw()
     {
-        Debug.Log("cool");
+        DrawResourceStacks();
+        DrawUpgrades();
+
     }
 
-    void PrintSomethingCooler()
+    void DrawResourceStacks()
     {
-        Debug.Log("cooler");
+        Hand hand = player.hand;
+        carbonCardStackText.text = hand.NumberCardsOfType<CarbonCard>().ToString();
+        goodsCardStackText.text = hand.NumberCardsOfType<GoodsCard>().ToString();
+        fuelCardStackText.text = hand.NumberCardsOfType<FuelCard>().ToString();
+        foodCardStackText.text = hand.NumberCardsOfType<FoodCard>().ToString();
+        oreCardStackText.text = hand.NumberCardsOfType<OreCard>().ToString();
     }
 
-    public void BuildTradeShipBtnPressed()
+    void DrawUpgrades()
     {
-        app.Notify(SFNotification.HUD_build_tradeship_button_clicked, this);
+        boosterText.text = player.ship.Boosters.ToString();
+        cannonsText.text = player.ship.Cannons.ToString();
+        freightPodsText.text = player.ship.FreightPods.ToString();
+    }
+
+    
+
+    void BuildTokenBtnPressed(Token token)
+    {
         CloseAllDropDowns();
+        app.Notify(SFNotification.HUD_build_token_btn_clicked, this, new object[] { token });
     }
 
-    public void BuildColonyShipBtnPressed()
+    void BuildUpgradeBtnPressed(Token token)
+    {
+        CloseAllDropDowns();
+        app.Notify(SFNotification.HUD_build_upgrade_btn_clicked, this, new object[] { token });
+    }
+
+    //public void BuildTradeShipBtnPressed()
+    //{
+    //    app.Notify(SFNotification.HUD_build_token_btn_clicked, this);
+    //    CloseAllDropDowns();
+    //}
+
+    //public void BuildColonyShipBtnPressed()
+    //{
+    //    app.Notify(SFNotification.HUD_build_colonyship_button_clicked, this);
+    //    CloseAllDropDowns();
+    //}
+
+    //public void BuildSpaceportBtnPressed()
+    //{
+    //    app.Notify(SFNotification.HUD_build_spaceport_button_clicked, this);
+    //    CloseAllDropDowns();
+    //}
+
+    public void BuildShipsToggleBtnPressed()
     {
         
         upgradesDropDownRef.GetComponent<BuildDropDown>().hide(); //close other dropdown if open
@@ -84,15 +165,10 @@ public class HUDScript : SFController
         upgradesDropDownRef.GetComponent<BuildDropDown>().hide();
     }
 
-    public void BuildUpgradeBtnPressed()
+    public void BuildUpgradeToggleBtnPressed()
     {
         buildShipsDropDownRef.GetComponent<BuildDropDown>().hide(); //close other dropdown if open
         upgradesDropDownRef.GetComponent<BuildDropDown>().toggle();
-    }
-
-    public void BuildSpaceportBtnPressed()
-    {
-
     }
 
     public void MakeTradeBtnPressed()
@@ -100,39 +176,38 @@ public class HUDScript : SFController
 
     }
 
-
     public void AddOre()
     {
-        ore += 1;
-        oreCardStackText.text = ore.ToString();
+        
     }
 
     public void AddFood()
     {
-        food += 1;
-        foodCardStackText.text = food.ToString();
+        
     }
 
     public void AddGoods()
     {
-        goods += 1;
-        goodsCardStackText.text = goods.ToString();
+        
     }
 
     public void AddFuel()
     {
-        fuel += 1;
-        fuelCardStackText.text = fuel.ToString();
+        
     }
 
     public void AddCarbon()
     {
-        carbon += 1;
-        carbonCardStackText.text = carbon.ToString();
+        
     }
 
     public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)
     {
-        Debug.Log("AHSDKAHSDKSA");
+        switch(p_event_path)
+        {
+            case SFNotification.player_data_changed:
+                OnPlayerDataChanged();
+                break;
+        }
     }
 }

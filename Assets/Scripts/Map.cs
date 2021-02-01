@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
+public abstract class SpacePointFilter
+{
+    public abstract bool pointFulfillsFilter(SpacePoint point, Map map);
+}
+
 public class Map
 {
 
@@ -41,6 +46,18 @@ public class Map
     {
         (int, int) arrayIndexes = coordsToArrayIndexes(coords);
         return mapRepresentation[arrayIndexes.Item1, arrayIndexes.Item2];
+    }
+
+    public Tile_[] getTilesAtPoint(SpacePoint point)
+    {
+        List<Tile_> tiles = new List<Tile_>();
+        HexCoordinates[] hexCoords = getValidHexCoordinatesAtPoint(point);
+        foreach (HexCoordinates coords in hexCoords)
+        {
+            Tile_ tile = getTileAt(coords);
+            tiles.Add(tile);
+        }
+        return tiles.ToArray();
     }
 
     public bool coordsAreInBounds(HexCoordinates coords)
@@ -170,6 +187,22 @@ public class Map
     }
 
 
+    public SpacePoint[] applyFilter(SpacePoint[] points, SpacePointFilter filter)
+    {
+        List<SpacePoint> validPoints = new List<SpacePoint>();
+
+        foreach (SpacePoint point in points)
+        {
+            if (filter.pointFulfillsFilter(point, this))
+            {
+                validPoints.Add(point);
+            }
+        }
+
+        return validPoints.ToArray();
+    }
+
+
     public SpacePoint[] getAllAvailableSpacePoints()
     {
         List<SpacePoint> positions = new List<SpacePoint>();
@@ -204,13 +237,8 @@ public class Map
                 }
             }
 
-            if (tile is NullTile)
-            {
-                // do nothing
-            }
-
-            // tile is valid
-            if (!(tile is NullTile) && !(tile is BorderTile)) {
+            else { 
+                // tile is valid
                 positions.Add(firstPosition);
                 positions.Add(secondPosition);
             }

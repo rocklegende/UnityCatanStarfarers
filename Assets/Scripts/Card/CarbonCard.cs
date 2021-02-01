@@ -1,7 +1,7 @@
 ﻿using System;
-public class CarbonCard : Card
+public class CarbonCard : ResourceCard
 {
-    public CarbonCard() : base(new CarbonResource().cardImageName)
+    public CarbonCard() : base(new CarbonResource())
     {
     }
 }

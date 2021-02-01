@@ -10,8 +10,6 @@ public class CostRenderer : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        //cost = new Cost(new Resource[] { new FoodResource(), new FoodResource(), new GoodsResource() });
-        //Draw();
     }
 
     Dictionary<string, int> GetGroupedResources()
@@ -77,7 +75,7 @@ public class CostRenderer : MonoBehaviour
         ImageContainer.SetActive(true);
 
         RectTransform rt = ImageContainer.GetComponent<RectTransform>();
-        rt.localPosition = position + new Vector3(0, 20, 0);
+        rt.localPosition = position + new Vector3(0, -20, 0);
         rt.pivot = new Vector2(0, 1);
         rt.sizeDelta = new Vector2(30, 40);
 

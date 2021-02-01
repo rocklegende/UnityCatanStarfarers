@@ -3,10 +3,8 @@ using UnityEngine;
 
 public abstract class Card
 {
-    private string imageName;
 
-    public Card(string imageName)
+    public Card()
     {
-        this.imageName = imageName;
     }
 }

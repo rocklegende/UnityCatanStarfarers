@@ -11,7 +11,22 @@ public class Constants {
 
 
 
-
+class TradeshipSpacePointFilter : SpacePointFilter
+{
+    public override bool pointFulfillsFilter(SpacePoint point, Map map)
+    {
+        Tile_[] tiles = map.getTilesAtPoint(point);
+        int numResourceTiles = 0;
+        foreach(Tile_ tile in tiles)
+        {
+            if (tile is ResourceTile)
+            {
+                numResourceTiles += 1;
+            }
+        }
+        return numResourceTiles == 2;
+    }
+}
 
 public class MapScript : SFController
 {
@@ -19,9 +34,12 @@ public class MapScript : SFController
     public GameObject spacePointButton;
     public GameObject hexPrefab;
     public GameObject tokenPrefab;
-    GameObject actualTokenInScene;
+    public GameObject tokenRendererPrefab;
+    
     public Camera cam;
+    GameObject selectedTokenRenderer;
     Map map;
+    List<GameObject> currentlyShownSpacePointButtons = new List<GameObject>();
     GameObject[] hexagonGameObjects;
 
     void Start()
@@ -65,9 +83,39 @@ public class MapScript : SFController
 
         CenterCamera();
 
+        Token tok = new ColonyBaseToken();
+        tok.SetPosition(new SpacePoint(new HexCoordinates(2, 2), 1));
+
+        Token tok2 = new TradeBaseToken();
+        Token tok3 = new ShipToken();
+        tok2.SetPosition(new SpacePoint(new HexCoordinates(3, 3), 1));
+        tok2.attachToken(tok3);
+
+        
+        tok3.SetPosition(new SpacePoint(new HexCoordinates(3, 3), 1));
+        
+
+
+        DisplayToken(tok);
+        DisplayToken(tok2);
+
     }
 
-    void ShowAllAvailableSpacePoints()
+    
+
+    public void DisplayToken(Token token) {
+        GameObject prefab = tokenRendererPrefab;
+        GameObject tokenInstance = Instantiate(prefab, new Vector3(0,0,0), Quaternion.identity);
+        tokenInstance.GetComponent<Space.TokenScript>().tokenGameObject = tokenInstance;
+        tokenInstance.GetComponent<Space.TokenScript>().tokenModel = token;
+        tokenInstance.GetComponent<Space.TokenScript>().Draw();
+
+        tokenInstance.transform.parent = this.gameObject.transform;
+    }
+
+    
+
+    public void ShowAllAvailableSpacePoints()
     {
         SpacePoint[] allSpacePoints = map.getAllAvailableSpacePoints();
         CreateButtonsAtSpacePoints(allSpacePoints);
@@ -116,6 +164,16 @@ public class MapScript : SFController
         RedrawMap();
     }
 
+    public void RemoveAllSpacePointButtons()
+    {
+        foreach (GameObject go in currentlyShownSpacePointButtons)
+        {
+            GameObject.Destroy(go);
+        }
+
+        currentlyShownSpacePointButtons.Clear();
+    }
+
     private void RedrawMap()
     {
         foreach (GameObject obj in this.hexagonGameObjects)
@@ -127,11 +185,14 @@ public class MapScript : SFController
 
     public void OnSpacePointClicked(GameObject spacePointObject, SpacePoint point)
     {
-        actualTokenInScene.GetComponent<Space.TokenScript>().MoveTo(point);
-        Object.Destroy(spacePointObject);
-        CreateButtonAtSpacePoint(map.getAllSpacePointsInDistance(point, 2)[0]);
+        //actualTokenInScene.GetComponent<Space.TokenScript>().MoveTo(point);
+        //Object.Destroy(spacePointObject);
+        //CreateButtonAtSpacePoint(map.getAllSpacePointsInDistance(point, 2)[0]);
 
-        FlipDiceChipAtHex(new HexCoordinates(0, 0));
+        //FlipDiceChipAtHex(new HexCoordinates(0, 0));
+        RemoveAllSpacePointButtons();
+
+        selectedTokenRenderer.GetComponent<Space.TokenScript>().MoveTo(point);
 
     }
 
@@ -159,17 +220,9 @@ public class MapScript : SFController
         btn.GetComponent<Space.SpacePointButtonScript>().referenceToInstance = btn;
 
         btn.GetComponentInChildren<bla>().point = point;
+        currentlyShownSpacePointButtons.Add(btn);
 
         btn.transform.parent = this.gameObject.transform;
-
-    }
-
-    public void CreateTokenAtSpacePoint(SpacePoint point)
-    {
-        Vector2 xyInWorldCoords = point.ToUnityPosition();
-        actualTokenInScene = Instantiate(tokenPrefab, new Vector3(xyInWorldCoords.x, xyInWorldCoords.y, Constants.TOKEN_LAYER), Quaternion.identity);
-        actualTokenInScene.GetComponent<Space.TokenScript>().token = actualTokenInScene;
-        actualTokenInScene.transform.parent = this.gameObject.transform;
 
     }
 
@@ -261,15 +314,41 @@ public class MapScript : SFController
         
     }
 
+    void ShowSpacePointsForTradeship()
+    {
+        SpacePoint[] points = map.getAllAvailableSpacePoints();
+        points = map.applyFilter(points, new TradeshipSpacePointFilter());
+        CreateButtonsAtSpacePoints(points);
+    }
+
+    void ShowSpacePointsForColonyship()
+    {
+        ShowAllAvailableSpacePoints();
+    }
+
+    void ShowSpacePointsForSpaceport()
+    {
+        ShowAllAvailableSpacePoints();
+    }
+
     public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)
     {
         switch (p_event_path)
         {
-            case SFNotification.HUD_build_tradeship_button_clicked:
-                ShowAllAvailableSpacePoints();
-                break;
+            //case SFNotification.HUD_build_colonyship_button_clicked:
+            //    ShowSpacePointsForColonyship();
+            //    break;
+            //case SFNotification.HUD_build_tradeship_button_clicked:
+            //    ShowSpacePointsForTradeship();
+            //    break;
+            //case SFNotification.HUD_build_spaceport_button_clicked:
+            //    ShowSpacePointsForSpaceport();
+            //    break;
+
+            //case SFNotification.token_was_selected:
+            //    selectedTokenRenderer = (GameObject)p_target;
+            //    ShowAllAvailableSpacePoints();
+            //    break;
         }
-
-
     }
 }
