@@ -8,6 +8,6 @@ public class EmptyTile : Tile_ {
 
     public override Color? GetColor()
     {
-        return Color.white;
+        return Color.gray;
     }
 }

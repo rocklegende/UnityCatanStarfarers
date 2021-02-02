@@ -22,6 +22,45 @@ public class BoundingBox
 public class Helper
 {
 
+    public Token[] GetAllTokenOfPlayers(Player[] players)
+    {
+        List<Token> tokens = new List<Token>();
+        foreach (Player player in players)
+        {
+            foreach (Token token in player.tokens)
+            {
+                tokens.Add(token);
+            }
+        }
+        return tokens.ToArray();
+    }
+
+    public ResourceCard CreateResourceCardFromResource(Resource resource)
+    {
+        if (resource is CarbonResource)
+        {
+            return new CarbonCard();
+        } else if (resource is FuelResource)
+        {
+            return new FuelCard();
+        }
+        else if (resource is FoodResource)
+        {
+            return new FoodCard();
+        }
+        else if (resource is GoodsResource)
+        {
+            return new GoodsCard();
+        }
+        else if (resource is OreResource)
+        {
+            return new OreCard();
+        } else
+        {
+            return null;
+        }
+    }
+
     public Sprite CreateSpriteFromImageName(string imageName) 
     {
         Texture2D texture = Resources.Load(imageName) as Texture2D;

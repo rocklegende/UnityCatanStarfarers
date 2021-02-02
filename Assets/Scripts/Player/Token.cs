@@ -8,10 +8,10 @@ public abstract class Token
     public SpacePoint position = null;
     public Cost cost;
     public string id;
-    Color color;
-    bool isSettled;
+    protected Color color;
+    public bool isSettled = true; //TODO: should be false initially
     public Token attachedToken = null;
-    bool isTokenAttachable;
+    protected bool isTokenAttachable;
 
 
 
@@ -22,6 +22,7 @@ public abstract class Token
         this.cost = cost;
     }
 
+    public abstract Token makeCopy();
 
     public int GetVictoryPoints()
     {
@@ -51,10 +52,10 @@ public abstract class Token
 
     public abstract int ResourceProduce();
 
-    public bool IsSettled()
-    {
-        return !(this is ShipToken) && (attachedToken == null);
-    }
+    //public bool IsSettled()
+    //{
+    //    return !(this is ShipToken) && (attachedToken == null);
+    //}
 
     public void attachToken(Token token)
     {

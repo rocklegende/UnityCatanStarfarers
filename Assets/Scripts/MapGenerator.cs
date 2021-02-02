@@ -73,17 +73,16 @@ public class MapGenerator
         randomSpawnTileGroup.Add(new TileGroup(new Tile_[] { new FuelResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
         randomSpawnTileGroup.Add(new TileGroup(new Tile_[] { new FuelResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
         randomSpawnTileGroup.Add(new TileGroup(new Tile_[] { new FuelResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
-        randomSpawnTileGroup.Add(new TileGroup(new Tile_[] { new FuelResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
+        randomSpawnTileGroup.Add(new TileGroup(new Tile_[] { new CarbonResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
     }
 
     public Map GenerateRandomMap() {
         Tile_[,] raw = RawMap();
 
         map = new Map(raw);
-
-        
         PopulateBasePoints();
         PopulateRandomSpawnPoints();
+        AssignDiceChips();
 
         return map;
     }
@@ -106,6 +105,7 @@ public class MapGenerator
 
     void PopulateRandomSpawnPoints()
     {
+        // TODO: bug here at rotating or shuffling the spawn groups
         RotateRandomSpawnTileGroups();
 
         foreach (SpacePoint point in randomSpawnPoints)
@@ -114,7 +114,23 @@ public class MapGenerator
             TileGroup tg = randomSpawnTileGroup[0];
             randomSpawnTileGroup.RemoveAt(0);
 
+
+            var tilesAtSpacePointBefore = map.getTilesAtPoint(point);
+
             map.SetTileGroupAtSpacePoint(tg, point);
+            var tilesAtSpacePointAfter = map.getTilesAtPoint(point);
+            Debug.Log("bla");
+        }
+    }
+
+    void AssignDiceChips()
+    {
+        foreach(ResourceTile resourceTile in map.GetAllTilesOfType<ResourceTile>())
+        {
+            CircleChipGroup group = new CircleChipGroup();
+            DiceChip dc = new DiceChip3(group);
+            dc.Flip();
+            resourceTile.SetDiceChip(dc);
         }
     }
 

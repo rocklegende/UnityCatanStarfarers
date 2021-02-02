@@ -2,117 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class GameState
-{
-    GameController controller;
-    public GameState(GameController controller)
-    {
-        this.controller = controller;
-    }
-
-    public abstract void OnSpacePointClicked(SpacePoint point, GameObject spacePointObject);
-    public abstract void OnTokenClicked(Token tokenModel, GameObject tokenGameObject);
-    public abstract void OnNextButtonClicked();
-    public abstract void OnBackButtonClicked();
-    public abstract void OnBuildShipOptionClicked(Token token);
-    public abstract void OnBuildUpgradeOptionClicked(Token token);
-    
-
-}
-
-public class StartState : GameState
-{
-    GameController controller;
-    public StartState(GameController controller) : base(controller)
-    {
-        this.controller = controller;
-    }
-
-    public override void OnNextButtonClicked()
-    {
-        Debug.Log("jo1");
-    }
-
-    public override void OnSpacePointClicked(SpacePoint point, GameObject spacePointObject)
-    {
-        Debug.Log("jo2");
-    }
-
-    public override void OnTokenClicked(Token tokenModel, GameObject tokenGameObject)
-    {
-        Debug.Log("nothing happening here");
-    }
-
-    public override void OnBuildShipOptionClicked(Token token)
-    {
-        controller.Map.GetComponent<MapScript>().ShowAllAvailableSpacePoints();
-        controller.SetState(new SelectPositionForShipState(controller, token));
-    }
-
-    public override void OnBackButtonClicked()
-    {
-        Debug.Log("pressed back");
-    }
-
-    public override void OnBuildUpgradeOptionClicked(Token token)
-    {
-        controller.player.BuildUpgrade(token);
-        controller.app.Notify(SFNotification.player_data_changed, controller); //TODO: should be done in model class
-    }
-}
-
-public class SelectPositionForShipState : GameState
-{
-    GameController controller;
-    Token token;
-    public SelectPositionForShipState(GameController controller, Token token) : base(controller)
-    {
-        this.controller = controller;
-        this.token = token;
-    }
-
-    public override void OnNextButtonClicked()
-    {
-        Debug.Log("jo1");
-    }
-
-    public override void OnSpacePointClicked(SpacePoint point, GameObject spacePointObject)
-    {
-        // TODO: build ship at position
-        controller.Map.GetComponent<MapScript>().RemoveAllSpacePointButtons();
-
-        // check if it can be build
-        controller.player.BuildToken(token);
-
-        token.SetPosition(point);
-        controller.Map.GetComponent<MapScript>().DisplayToken(token);
-
-        controller.SetState(new StartState(controller));
-        controller.app.Notify(SFNotification.player_data_changed, controller);
-
-        Debug.Log("jo2");
-    }
-
-    public override void OnTokenClicked(Token tokenModel, GameObject tokenGameObject)
-    {
-        Debug.Log("nothing happening here");
-    }
-
-    public override void OnBuildShipOptionClicked(Token token)
-    {
-        Debug.Log("jo");
-    }
-
-    public override void OnBackButtonClicked()
-    {
-        Debug.Log("pressed back");
-    }
-
-    public override void OnBuildUpgradeOptionClicked(Token token)
-    {
-        Debug.Log("sd");
-    }
-}
 
 public class GameController : SFController
 {
@@ -124,6 +13,7 @@ public class GameController : SFController
                 state.OnTokenClicked((Token)p_data[0], (GameObject)p_data[1]);
                 break;
             case SFNotification.spacepoint_selected:
+                var tiles = mapModel.getTilesAtPoint((SpacePoint)p_data[0]);
                 state.OnSpacePointClicked((SpacePoint)p_data[0], (GameObject)p_data[1]);
                 break;
 
@@ -134,11 +24,19 @@ public class GameController : SFController
             case SFNotification.HUD_build_upgrade_btn_clicked:
                 state.OnBuildUpgradeOptionClicked((Token)p_data[0]);
                 break;
+
+
+            case SFNotification.dice_thrown:
+                //PayoutPlayers((DiceThrow)p_data[0]);
+                PayoutPlayers(new DiceThrow(2, 1));
+                break;
+
         }
     }
 
     public GameObject HUD;
     public GameObject Map;
+    private Map mapModel;
 
     public GameState state;
     public Player player;
@@ -146,6 +44,7 @@ public class GameController : SFController
     // Start is called before the first frame update
     void Start()
     {
+
 
         state = new StartState(this);
 
@@ -160,14 +59,58 @@ public class GameController : SFController
             player.hand.AddCard(new OreCard());
         }
 
+        Token spacePort = new ColonyBaseToken();
+        spacePort.attachedToken = new SpacePortToken();
+        spacePort.SetPosition(new SpacePoint(new HexCoordinates(5,5), 1));
+        player.BuildToken(spacePort);
+
+        MapGenerator generator = new MapGenerator();
+        mapModel = generator.GenerateRandomMap();
+
+        Map.GetComponent<MapScript>().SetMap(mapModel);
+        Map.GetComponent<MapScript>().SetPlayers(new Player[] { player });
         HUD.GetComponent<HUDScript>().SetPlayer(player);
+
+
+
         player.hand.AddCard(new CarbonCard());
         app.Notify(SFNotification.player_data_changed, this);
+
     }
 
     public void SetState(GameState state)
     {
         this.state = state;
+    }
+
+
+    // just for testing
+    void PayoutPlayers(DiceThrow dt) 
+    {
+        List<ResourceCard> payout = new List<ResourceCard>();
+        foreach (Token token in player.tokens)
+        {
+            Tile_[] tiles = mapModel.getTilesAtPoint(token.position);
+            ResourceTile[] resourceTiles = mapModel.GetTilesOfType<ResourceTile>(tiles);
+            foreach (ResourceTile resourceTile in resourceTiles)
+            {
+                DiceChip diceChip = resourceTile.diceChip;
+                if (diceChip.isFaceUp && diceChip.fulfillsDiceThrow(dt.GetValue()))
+                {
+                    var helper = new Helper();
+                    var numResources = token.GetResourceProductionMultiplier();
+                    for (int i = 0; i < numResources; i++)
+                    {
+                        ResourceCard resourceCard = helper.CreateResourceCardFromResource(resourceTile.resource);
+                        player.AddCard(resourceCard);
+                        payout.Add(resourceCard);
+                    }                    
+                }
+            } 
+        }
+
+        //TODO: player model should send this notification
+        app.Notify(SFNotification.player_data_changed, this);
     }
 
 

@@ -6,4 +6,6 @@ public class SFNotification
     public const string player_data_changed = "player.data.changed";
     public const string token_was_selected = "token.selected";
     public const string spacepoint_selected = "spacepoint.selected";
+    public const string dice_thrown = "dice.thrown";
+    public const string token_data_changed = "token.data.changed";
 }

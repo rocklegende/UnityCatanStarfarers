@@ -4,7 +4,7 @@ using UnityEngine;
 public abstract class ResourceTile : Tile_
 {
     public DiceChip diceChip = null;
-    protected Resource resource;
+    public readonly Resource resource;
     
     public ResourceTile(Resource resource)
     {

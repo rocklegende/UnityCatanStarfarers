@@ -10,6 +10,19 @@ public class SpacePortToken : Token
         return 1;
     }
 
+    public override Token makeCopy()
+    {
+        SpacePortToken newToken = new SpacePortToken();
+        newToken.position = position;
+        newToken.cost = cost;
+        newToken.id = id;
+        newToken.color = color;
+        newToken.isSettled = isSettled;
+        newToken.attachedToken = attachedToken;
+        newToken.isTokenAttachable = isTokenAttachable;
+        return newToken;
+    }
+
     public override int ResourceProduce()
     {
         return 1;
@@ -26,6 +39,19 @@ public class ColonyBaseToken : Token
     public override int BaseVictoryPoints()
     {
         return 1;
+    }
+
+    public override Token makeCopy()
+    {
+        ColonyBaseToken newToken = new ColonyBaseToken();
+        newToken.position = position;
+        newToken.cost = cost;
+        newToken.id = id;
+        newToken.color = color;
+        newToken.isSettled = isSettled;
+        newToken.attachedToken = attachedToken;
+        newToken.isTokenAttachable = isTokenAttachable;
+        return newToken;
     }
 
     public override int ResourceProduce()
@@ -45,6 +71,19 @@ public class TradeBaseToken : Token
         return 1;
     }
 
+    public override Token makeCopy()
+    {
+        TradeBaseToken newToken = new TradeBaseToken();
+        newToken.position = position;
+        newToken.cost = cost;
+        newToken.id = id;
+        newToken.color = color;
+        newToken.isSettled = isSettled;
+        newToken.attachedToken = attachedToken;
+        newToken.isTokenAttachable = isTokenAttachable;
+        return newToken; ;
+    }
+
     public override int ResourceProduce()
     {
         return 0;
@@ -60,6 +99,19 @@ public class ShipToken : Token
     public override int BaseVictoryPoints()
     {
         return 0;
+    }
+
+    public override Token makeCopy()
+    {
+        ShipToken newToken = new ShipToken();
+        newToken.position = position;
+        newToken.cost = cost;
+        newToken.id = id;
+        newToken.color = color;
+        newToken.isSettled = isSettled;
+        newToken.attachedToken = attachedToken;
+        newToken.isTokenAttachable = isTokenAttachable;
+        return newToken;
     }
 
     public override int ResourceProduce()
@@ -80,6 +132,11 @@ public class BoosterUpgradeToken : Token
         return 0;
     }
 
+    public override Token makeCopy()
+    {
+        throw new NotImplementedException();
+    }
+
     public override int ResourceProduce()
     {
         return 0;
@@ -98,6 +155,11 @@ public class CannonUpgradeToken : Token
         return 0;
     }
 
+    public override Token makeCopy()
+    {
+        throw new NotImplementedException();
+    }
+
     public override int ResourceProduce()
     {
         return 0;
@@ -114,6 +176,11 @@ public class FreightPodUpgradeToken : Token
     public override int BaseVictoryPoints()
     {
         return 0;
+    }
+
+    public override Token makeCopy()
+    {
+        throw new NotImplementedException();
     }
 
     public override int ResourceProduce()

@@ -118,8 +118,6 @@ public class HUDScript : SFController
         freightPodsText.text = player.ship.FreightPods.ToString();
     }
 
-    
-
     void BuildTokenBtnPressed(Token token)
     {
         CloseAllDropDowns();

@@ -9,24 +9,89 @@ public class Constants {
     public const float paddingDown = 1.0f;
 }
 
+public abstract class TokenFilter
+{
+    public abstract bool fullfillsFilter(Token token);
+    
+}
 
+public class IsSettledColonyFilter : TokenFilter
+{
+    public override bool fullfillsFilter(Token token)
+    {
+        if (token is ColonyBaseToken)
+        {
+            ColonyBaseToken cb = (ColonyBaseToken)token;
+            return cb.isSettled;
+        }
+        return false;
+    }
+}
 
 class TradeshipSpacePointFilter : SpacePointFilter
 {
-    public override bool pointFulfillsFilter(SpacePoint point, Map map)
+    public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
     {
         Tile_[] tiles = map.getTilesAtPoint(point);
-        int numResourceTiles = 0;
-        foreach(Tile_ tile in tiles)
-        {
-            if (tile is ResourceTile)
-            {
-                numResourceTiles += 1;
-            }
-        }
-        return numResourceTiles == 2;
+        var t = map.GetTilesOfType<ResourceTile>(tiles);
+        return t.Length == 2;
     }
 }
+
+class IsSpacePointFreeFilter : SpacePointFilter
+{
+    public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
+    {
+        foreach(Token token in GetAllTokenOfPlayers(players))
+        {
+            if (token.position.Equals(point))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
+class IsValidSpacePointFilter : SpacePointFilter
+{
+    public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
+    {
+        var tiles = map.getTilesAtPoint(point);
+        ResourceTile[] resourceTiles = map.GetTilesOfType<ResourceTile>(tiles);
+        if (resourceTiles.Length == 3)
+        {
+            return false;
+        } else
+        {
+            return true;
+        }
+
+    }
+}
+
+class IsNeighborOwnSpacePortFilter : SpacePointFilter
+{
+    public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
+    {
+        SpacePoint[] neighborPoints = map.getAllSpacePointsInDistance(point, 1); //all neighbors
+        foreach (SpacePoint neighbor in neighborPoints)
+        {
+            foreach (Token token in GetAllTokenOfPlayers(players))
+            {
+                if (token.position.Equals(neighbor))
+                {
+                    if (token.attachedToken is SpacePortToken)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+}
+
 
 public class MapScript : SFController
 {
@@ -37,6 +102,7 @@ public class MapScript : SFController
     public GameObject tokenRendererPrefab;
     
     public Camera cam;
+    public Player[] players;
     GameObject selectedTokenRenderer;
     Map map;
     List<GameObject> currentlyShownSpacePointButtons = new List<GameObject>();
@@ -44,61 +110,30 @@ public class MapScript : SFController
 
     void Start()
     {
-        AbstractTradeStation ts = new OrzelTradeStation();
+        
 
-        Tile_[,] mapRepresentation = {
-            { new NullTile(), new NullTile(), new OreResourceTile(), new OreResourceTile(), new BorderTile() },
-            { new NullTile(), new NullTile(), new OreResourceTile(), new OreResourceTile(), new BorderTile() },
-            { new NullTile(), new OrzelTradeStationTile(ts, 2), new FoodResourceTile() , new BorderTile(), new NullTile() },
-            { new NullTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new NullTile() },
-            { new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile(), new NullTile() },
-        };
+    }
 
-        MapGenerator generator = new MapGenerator();
+    public void SetPlayers(Player[] players)
+    {
+        this.players = players;
+        DisplayPlayerTokens();
+    }
 
-        //map = new Map(mapRepresentation, this);
-        map = generator.GenerateRandomMap();
+    public void SetMap(Map map)
+    {
+        this.map = map;
         hexagonGameObjects = CreateMap(map);
-        //ShowAllAvailableSpacePoints();
-
-        //SpacePoint point = new SpacePoint(new HexCoordinates(0, 2), 1);
-
-        //CreateButtonAtSpacePoint(point);
-        //CreateTokenAtSpacePoint(map.getAllSpacePointsInDistance(point, 2)[0]);
-
-
-        //ChipGroup squareChipGroup = new SquareChipGroup();
-        //ChipGroup circleChipGroup = new CircleChipGroup();
-        //ChipGroup triangleChipGroup = new TriangleChipGroup();
-
-        //AssignDiceChipToHex(new PirateToken(new FreightPodsBeatCondition(3), squareChipGroup), hexagonGameObjects[3]);
-        //AssignDiceChipToHex(new PirateToken(new FreightPodsBeatCondition(3), circleChipGroup), hexagonGameObjects[4]);
-        //AssignDiceChipToHex(new DiceChip6(triangleChipGroup), hexagonGameObjects[5]);
-
-        //FlipDiceChipAtHex(new HexCoordinates(0, 0));
-
-        //Tile_[] tiles = { new FoodResourceTile(), new OreResourceTile(), new CarbonResourceTile() };
-        //TileGroup startTileGroup = new TileGroup(tiles);
-        //map.SetTileGroupAtSpacePoint(startTileGroup, point);
-
         CenterCamera();
+    }
 
-        Token tok = new ColonyBaseToken();
-        tok.SetPosition(new SpacePoint(new HexCoordinates(2, 2), 1));
-
-        Token tok2 = new TradeBaseToken();
-        Token tok3 = new ShipToken();
-        tok2.SetPosition(new SpacePoint(new HexCoordinates(3, 3), 1));
-        tok2.attachToken(tok3);
-
-        
-        tok3.SetPosition(new SpacePoint(new HexCoordinates(3, 3), 1));
-        
-
-
-        DisplayToken(tok);
-        DisplayToken(tok2);
-
+    void DisplayPlayerTokens()
+    {
+        var allTokens = new Helper().GetAllTokenOfPlayers(players);
+        foreach(Token token in allTokens)
+        {
+            DisplayToken(token);
+        }
     }
 
     
@@ -161,7 +196,7 @@ public class MapScript : SFController
     public void RepresentationChanged()
     {
 
-        RedrawMap();
+        //RedrawMap();
     }
 
     public void RemoveAllSpacePointButtons()
@@ -183,18 +218,18 @@ public class MapScript : SFController
         }
     }
 
-    public void OnSpacePointClicked(GameObject spacePointObject, SpacePoint point)
-    {
-        //actualTokenInScene.GetComponent<Space.TokenScript>().MoveTo(point);
-        //Object.Destroy(spacePointObject);
-        //CreateButtonAtSpacePoint(map.getAllSpacePointsInDistance(point, 2)[0]);
+    //public void OnSpacePointClicked(GameObject spacePointObject, SpacePoint point)
+    //{
+    //    //actualTokenInScene.GetComponent<Space.TokenScript>().MoveTo(point);
+    //    //Object.Destroy(spacePointObject);
+    //    //CreateButtonAtSpacePoint(map.getAllSpacePointsInDistance(point, 2)[0]);
 
-        //FlipDiceChipAtHex(new HexCoordinates(0, 0));
-        RemoveAllSpacePointButtons();
+    //    //FlipDiceChipAtHex(new HexCoordinates(0, 0));
+    //    RemoveAllSpacePointButtons();
 
-        selectedTokenRenderer.GetComponent<Space.TokenScript>().MoveTo(point);
+    //    selectedTokenRenderer.GetComponent<Space.TokenScript>().MoveTo(point);
 
-    }
+    //}
 
     void CenterCamera()
     {
@@ -275,6 +310,11 @@ public class MapScript : SFController
         line.SetPositions(points);
     }
 
+    public void HighlightToken(Token token)
+    {
+        DrawCircleAtSpacePoint(token.position);
+    }
+
     void DrawCircleAtSpacePoints(SpacePoint[] points)
     {
         foreach( SpacePoint point in points)
@@ -289,35 +329,71 @@ public class MapScript : SFController
         GameObject spacePointObject = new GameObject("Space Point");
         spacePointObject.transform.position = position;
 
-        DrawCircleAroundGameObject(spacePointObject, 0.2f, 0.05f);
+        DrawCircleAroundGameObject(spacePointObject, 1.0f, 0.05f);
         spacePointObject.transform.parent = this.gameObject.transform;
 
     }
 
-    void AddCityToPosition()
-    {
-        //TODO
-    }
-
-    void AddShipToPosition()
-    {
-        //TODO
-    }
-
-    void MoveShipToPosition()
-    {
-        //TODO
-    }
     // Update is called once per frame
     void Update()
     {
         
     }
 
-    void ShowSpacePointsForTradeship()
+    public void HighlightTokensFullfillingFilters(TokenFilter[] filters)
+    {
+        Token[] tokens = GetTokensFullfillingFilters(filters);
+        foreach(Token tok in tokens)
+        {
+            DrawCircleAtSpacePoint(tok.position);
+        }
+    }
+
+    public Token[] GetTokensFullfillingFilters(TokenFilter[] filters)
+    {
+        Token[] tokens = GetAllTokenOnBoard();
+        foreach (var filter in filters)
+        {
+            tokens = FilterToken(tokens, filter);
+        }
+        return tokens;
+
+    }
+
+    Token[] FilterToken(Token[] inputToken, TokenFilter filter)
+    {
+        List<Token> valid = new List<Token>();
+        foreach (Token token in inputToken)
+        {
+            if (filter.fullfillsFilter(token))
+            {
+                valid.Add(token);
+            }
+        }
+        return valid.ToArray();
+    }
+
+    Token[] GetAllTokenOnBoard()
+    {
+        List<Token> allTokens = new List<Token>();
+        foreach (Player player in players)
+        {
+            foreach(Token token in player.tokens)
+            {
+                allTokens.Add(token);
+            }
+        }
+
+        return allTokens.ToArray();
+    }
+
+    public void ShowSpacePointsFulfillingFilters(SpacePointFilter[] filters)
     {
         SpacePoint[] points = map.getAllAvailableSpacePoints();
-        points = map.applyFilter(points, new TradeshipSpacePointFilter());
+        foreach(var filter in filters)
+        {
+            points = map.applyFilter(points, filter, players);
+        }
         CreateButtonsAtSpacePoints(points);
     }
 

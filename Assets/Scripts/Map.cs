@@ -5,7 +5,19 @@ using UnityEngine;
 
 public abstract class SpacePointFilter
 {
-    public abstract bool pointFulfillsFilter(SpacePoint point, Map map);
+    public abstract bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players);
+    public Token[] GetAllTokenOfPlayers(Player[] players)
+    {
+        List<Token> tokens = new List<Token>();
+        foreach (Player player in players)
+        {
+            foreach (Token token in player.tokens)
+            {
+                tokens.Add(token);
+            }
+        }
+        return tokens.ToArray();
+    }
 }
 
 public class Map
@@ -46,6 +58,34 @@ public class Map
     {
         (int, int) arrayIndexes = coordsToArrayIndexes(coords);
         return mapRepresentation[arrayIndexes.Item1, arrayIndexes.Item2];
+    }
+
+    public T[] GetAllTilesOfType<T>() where T : Tile_
+    {
+        List<T> validTiles = new List<T>();
+        foreach (Tile_ tile in mapRepresentation)
+        {
+            if (tile is T)
+            {
+                validTiles.Add((T)tile);
+            }
+        }
+
+        return validTiles.ToArray();
+    }
+
+    public T[] GetTilesOfType<T>(Tile_[] tiles) where T : Tile_
+    {
+        List<T> list = new List<T>();
+        foreach (Tile_ tile in tiles)
+        {
+            if (tile is T)
+            {
+                list.Add((T)tile);
+            }
+        }
+
+        return list.ToArray();
     }
 
     public Tile_[] getTilesAtPoint(SpacePoint point)
@@ -187,13 +227,13 @@ public class Map
     }
 
 
-    public SpacePoint[] applyFilter(SpacePoint[] points, SpacePointFilter filter)
+    public SpacePoint[] applyFilter(SpacePoint[] points, SpacePointFilter filter, Player[] players)
     {
         List<SpacePoint> validPoints = new List<SpacePoint>();
 
         foreach (SpacePoint point in points)
         {
-            if (filter.pointFulfillsFilter(point, this))
+            if (filter.pointFulfillsFilter(point, this, players))
             {
                 validPoints.Add(point);
             }

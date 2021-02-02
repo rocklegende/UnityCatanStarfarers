@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Player
 {
     Color color;
-    Token[] tokens;
+    public List<Token> tokens;
     int fameMedalPieces;
     public SpaceShip ship;
     public Hand hand;
@@ -19,7 +20,7 @@ public class Player
         ship = new SpaceShip();
         hand = new Hand();
         rules = new TradingRules();
-        tokens = new Token[] {};
+        tokens = new List<Token> {};
         friendShipCards = new AbstractFriendshipCard[] {};
         FriendShipChips = 0;
     }
@@ -29,20 +30,30 @@ public class Player
         hand.AddCard(card);
     }
 
+    public void AddToken(Token token)
+    {
+        tokens.Add(token);
+    }
+
     public bool CanBuildToken(Token token)
     {
         return hand.CanPayCost(token.cost);
     }
 
-    public void BuildToken(Token token)
+    public void BuildToken(Token token, SpacePoint position = null)
     {
         hand.PayCost(token.cost);
+        AddToken(token);
+        if (position != null)
+        {
+            token.position = position;
+        }
     }
 
     public void BuildUpgrade(Token token)
     {
         ship.Add(token);
-        hand.PayCost(token.cost); //TODO: could fail if not enough resources
+        hand.PayCost(token.cost);
     }
 
     public int GetVictoryPoints()
