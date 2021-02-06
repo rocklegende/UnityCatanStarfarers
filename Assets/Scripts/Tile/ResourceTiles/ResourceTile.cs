@@ -26,5 +26,10 @@ public abstract class ResourceTile : Tile_
         return this.resource.tileColor;
     }
 
+    public override bool blocksTraffic()
+    {
+        return true;
+    }
+
 
 }

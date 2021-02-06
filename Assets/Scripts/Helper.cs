@@ -22,6 +22,18 @@ public class BoundingBox
 public class Helper
 {
 
+    public bool SpacePointArrayContainsPoint(SpacePoint[] arr, SpacePoint point)
+    {
+        foreach (var p in arr)
+        {
+            if (p.Equals(point))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Token[] GetAllTokenOfPlayers(Player[] players)
     {
         List<Token> tokens = new List<Token>();

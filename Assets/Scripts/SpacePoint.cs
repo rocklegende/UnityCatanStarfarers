@@ -25,6 +25,8 @@ public class SpacePoint
 {
     public int vertexNumber;
     public HexCoordinates coordinates;
+    public bool visited = false;
+    public SpacePoint prev = null;
 
     public override bool Equals(System.Object obj)
     {
@@ -42,6 +44,29 @@ public class SpacePoint
     public void print()
     {
         Logger.log("(CityPosition) q:" + this.coordinates.q + ", r:" + this.coordinates.r + "vertex: " + vertexNumber);
+    }
+
+    public SpacePoint[] GetNeighbors()
+    {
+        if (vertexNumber == 0)
+        {
+            return new SpacePoint[] {
+                new SpacePoint(new HexCoordinates(coordinates.q + 1, coordinates.r), 1 ),
+                new SpacePoint(new HexCoordinates(coordinates.q + 1, coordinates.r - 1), 1 ),
+                new SpacePoint(new HexCoordinates(coordinates.q, coordinates.r), 1 )
+            };
+        } else if (vertexNumber == 1)
+        {
+            return new SpacePoint[] {
+                new SpacePoint(new HexCoordinates(coordinates.q - 1, coordinates.r + 1), 0 ),
+                new SpacePoint(new HexCoordinates(coordinates.q - 1, coordinates.r), 0 ),
+                new SpacePoint(new HexCoordinates(coordinates.q, coordinates.r), 0 )
+            };
+        } else
+        {
+            throw new ArgumentException("Vertexnumber has to be between 0 and 1");
+        }
+
     }
 
     public int DistanceTo(SpacePoint pos)

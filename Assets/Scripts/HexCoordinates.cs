@@ -54,6 +54,36 @@ public class HexCoordinates
         this.r = r;
     }
 
+    public HexCoordinates NW()
+    {
+        return new HexCoordinates(q, r - 1);
+    }
+
+    public HexCoordinates NE()
+    {
+        return new HexCoordinates(q + 1, r - 1);
+    }
+
+    public HexCoordinates E()
+    {
+        return new HexCoordinates(q + 1, r);
+    }
+
+    public HexCoordinates W()
+    {
+        return new HexCoordinates(q - 1, r);
+    }
+
+    public HexCoordinates SW()
+    {
+        return new HexCoordinates(q - 1, r + 1);
+    }
+
+    public HexCoordinates SE()
+    {
+        return new HexCoordinates(q, r + 1);
+    }
+
     public int DistanceTo(HexCoordinates hex)
     {
         Vector3 hex1InCube = this.getCubeRepresentation();

@@ -24,8 +24,9 @@ public class HUDScript : SFController
     public GameObject goodsCardStack;
     public GameObject foodCardStack;
     public BuildDropDownOption[] buildDropDownOptions;
+    public bool isReceivingNotifications = false;
 
-    //GameObject costrendererPrefab;
+    public Text stateText;
 
 
 
@@ -72,7 +73,7 @@ public class HUDScript : SFController
 
     // Update is called once per frame
     void Update()
-    {   if (buildDropDownOptions != null)
+    {   if (buildDropDownOptions != null && player != null)
         {
             foreach(BuildDropDownOption option in buildDropDownOptions)
             {
@@ -82,10 +83,14 @@ public class HUDScript : SFController
         }
     }
 
+    public void SetStateText(string text)
+    {
+        stateText.text = text;
+    }
+
     public void SetPlayer (Player player)
     {
         this.player = player;
-        Draw();
         
     }
 
@@ -98,7 +103,6 @@ public class HUDScript : SFController
     {
         DrawResourceStacks();
         DrawUpgrades();
-
     }
 
     void DrawResourceStacks()
@@ -124,10 +128,20 @@ public class HUDScript : SFController
         app.Notify(SFNotification.HUD_build_token_btn_clicked, this, new object[] { token });
     }
 
+    public void NextButtonClicked()
+    {
+        app.Notify(SFNotification.next_button_clicked, this);
+    }
+
     void BuildUpgradeBtnPressed(Token token)
     {
         CloseAllDropDowns();
         app.Notify(SFNotification.HUD_build_upgrade_btn_clicked, this, new object[] { token });
+    }
+
+    public void SettleButtonPressed()
+    {
+        app.Notify(SFNotification.settle_button_clicked, this);
     }
 
     //public void BuildTradeShipBtnPressed()
@@ -201,11 +215,14 @@ public class HUDScript : SFController
 
     public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)
     {
-        switch(p_event_path)
+        if (isReceivingNotifications)
         {
-            case SFNotification.player_data_changed:
-                OnPlayerDataChanged();
-                break;
+            switch(p_event_path)
+            {
+                case SFNotification.player_data_changed:
+                    OnPlayerDataChanged();
+                    break;
+            }
         }
     }
 }

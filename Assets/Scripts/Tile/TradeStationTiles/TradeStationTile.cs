@@ -10,4 +10,9 @@ public abstract class TradeStationTile : Tile_
         this.assignedTradeStation = assignedTradeStation;
         this.numDockingPorts = numDockingPorts;
     }
+
+    public override bool blocksTraffic()
+    {
+        return false;
+    }
 }

@@ -11,4 +11,9 @@ public class BorderTile : Tile_
     {
         return Color.yellow;
     }
+
+    public override bool blocksTraffic()
+    {
+        return false;
+    }
 }

@@ -10,6 +10,7 @@ public class SelectPositionForShipState : GameState
     {
         this.controller = controller;
         this.token = token;
+        controller.HUD.GetComponent<HUDScript>().SetStateText("SelectPositionForShipState");
         Init();
     }
 
@@ -39,6 +40,7 @@ public class SelectPositionForShipState : GameState
     public override void OnNextButtonClicked()
     {
         Debug.Log("jo1");
+        controller.SetState(new FlyShipsState(controller));
     }
 
     public override void OnSpacePointClicked(SpacePoint point, GameObject spacePointObject)
@@ -47,19 +49,14 @@ public class SelectPositionForShipState : GameState
 
         // TODO: check if it can be build
         controller.player.BuildToken(token, point);
-        controller.Map.GetComponent<MapScript>().DisplayToken(token);
-
         controller.SetState(new StartState(controller));
 
-        // TODO: notification should be send from player model, it should notifies others that it changed
-        controller.app.Notify(SFNotification.player_data_changed, controller);
-
-        Debug.Log("jo2");
+        // TODO: notification should be send from player model, it should notify others that it changed
+        //controller.app.Notify(SFNotification.player_data_changed, controller);
     }
 
     public override void OnTokenClicked(Token tokenModel, GameObject tokenGameObject)
     {
-        Debug.Log("nothing happening here");
         if (tokenModel is ColonyBaseToken)
         {
             tokenModel.attachToken(new SpacePortToken());
@@ -81,5 +78,10 @@ public class SelectPositionForShipState : GameState
     public override void OnBuildUpgradeOptionClicked(Token token)
     {
         Debug.Log("sd");
+    }
+
+    public override void OnSettleButtonPressed()
+    {
+        throw new System.NotImplementedException();
     }
 }

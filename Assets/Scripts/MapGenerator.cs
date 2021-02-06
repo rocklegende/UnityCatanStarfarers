@@ -105,7 +105,6 @@ public class MapGenerator
 
     void PopulateRandomSpawnPoints()
     {
-        // TODO: bug here at rotating or shuffling the spawn groups
         RotateRandomSpawnTileGroups();
 
         foreach (SpacePoint point in randomSpawnPoints)
@@ -114,18 +113,13 @@ public class MapGenerator
             TileGroup tg = randomSpawnTileGroup[0];
             randomSpawnTileGroup.RemoveAt(0);
 
-
-            var tilesAtSpacePointBefore = map.getTilesAtPoint(point);
-
             map.SetTileGroupAtSpacePoint(tg, point);
-            var tilesAtSpacePointAfter = map.getTilesAtPoint(point);
-            Debug.Log("bla");
         }
     }
 
     void AssignDiceChips()
     {
-        foreach(ResourceTile resourceTile in map.GetAllTilesOfType<ResourceTile>())
+        foreach(ResourceTile resourceTile in map.GetTilesOfType<ResourceTile>())
         {
             CircleChipGroup group = new CircleChipGroup();
             DiceChip dc = new DiceChip3(group);

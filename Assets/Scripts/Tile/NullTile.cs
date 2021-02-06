@@ -11,4 +11,9 @@ public class NullTile : Tile_
     {
         return Color.red;
     }
+
+    public override bool blocksTraffic()
+    {
+        return true;
+    }
 }

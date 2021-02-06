@@ -28,7 +28,7 @@ public class IsSettledColonyFilter : TokenFilter
     }
 }
 
-class TradeshipSpacePointFilter : SpacePointFilter
+public class TradeshipSpacePointFilter : SpacePointFilter
 {
     public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
     {
@@ -38,7 +38,7 @@ class TradeshipSpacePointFilter : SpacePointFilter
     }
 }
 
-class IsSpacePointFreeFilter : SpacePointFilter
+public class IsSpacePointFreeFilter : SpacePointFilter
 {
     public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
     {
@@ -53,7 +53,7 @@ class IsSpacePointFreeFilter : SpacePointFilter
     }
 }
 
-class IsValidSpacePointFilter : SpacePointFilter
+public class IsValidSpacePointFilter : SpacePointFilter
 {
     public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
     {
@@ -70,11 +70,11 @@ class IsValidSpacePointFilter : SpacePointFilter
     }
 }
 
-class IsNeighborOwnSpacePortFilter : SpacePointFilter
+public class IsNeighborOwnSpacePortFilter : SpacePointFilter
 {
     public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
     {
-        SpacePoint[] neighborPoints = map.getAllSpacePointsInDistance(point, 1); //all neighbors
+        SpacePoint[] neighborPoints = map.GetNeighborsOfSpacePoint(point); //all neighbors
         foreach (SpacePoint neighbor in neighborPoints)
         {
             foreach (Token token in GetAllTokenOfPlayers(players))
@@ -92,6 +92,21 @@ class IsNeighborOwnSpacePortFilter : SpacePointFilter
     }
 }
 
+public class IsStepsAwayFilter : SpacePointFilter
+{
+    SpacePoint origin;
+    int steps;
+    public IsStepsAwayFilter(SpacePoint origin, int steps)
+    {
+        this.origin = origin;
+        this.steps = steps;
+    }
+    public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
+    {
+        return new Helper().SpacePointArrayContainsPoint(map.GetSpacePointsInsideRange(origin, steps), point);
+    }
+}
+
 
 public class MapScript : SFController
 {
@@ -103,10 +118,12 @@ public class MapScript : SFController
     
     public Camera cam;
     public Player[] players;
+    public bool isReceivingNotifications = false;
     GameObject selectedTokenRenderer;
-    Map map;
+    public Map map;
     List<GameObject> currentlyShownSpacePointButtons = new List<GameObject>();
     GameObject[] hexagonGameObjects;
+    GameObject[] currentlyDisplayedPlayerTokens;
 
     void Start()
     {
@@ -117,7 +134,7 @@ public class MapScript : SFController
     public void SetPlayers(Player[] players)
     {
         this.players = players;
-        DisplayPlayerTokens();
+        currentlyDisplayedPlayerTokens = DisplayPlayerTokens();
     }
 
     public void SetMap(Map map)
@@ -127,18 +144,35 @@ public class MapScript : SFController
         CenterCamera();
     }
 
-    void DisplayPlayerTokens()
+    void RedrawTokens()
     {
+        if (currentlyDisplayedPlayerTokens != null)
+        {
+            foreach (GameObject go in currentlyDisplayedPlayerTokens)
+            {
+                GameObject.Destroy(go);
+            }
+        }
+        
+        currentlyDisplayedPlayerTokens = DisplayPlayerTokens();
+    }
+
+    GameObject[] DisplayPlayerTokens()
+    {
+        List<GameObject> tokens = new List<GameObject>();
         var allTokens = new Helper().GetAllTokenOfPlayers(players);
         foreach(Token token in allTokens)
         {
-            DisplayToken(token);
+            var go = DisplayToken(token);
+            tokens.Add(go);
         }
+
+        return tokens.ToArray();
     }
 
     
 
-    public void DisplayToken(Token token) {
+    public GameObject DisplayToken(Token token) {
         GameObject prefab = tokenRendererPrefab;
         GameObject tokenInstance = Instantiate(prefab, new Vector3(0,0,0), Quaternion.identity);
         tokenInstance.GetComponent<Space.TokenScript>().tokenGameObject = tokenInstance;
@@ -146,6 +180,7 @@ public class MapScript : SFController
         tokenInstance.GetComponent<Space.TokenScript>().Draw();
 
         tokenInstance.transform.parent = this.gameObject.transform;
+        return tokenInstance;
     }
 
     
@@ -409,22 +444,15 @@ public class MapScript : SFController
 
     public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)
     {
-        switch (p_event_path)
+        if (isReceivingNotifications)
         {
-            //case SFNotification.HUD_build_colonyship_button_clicked:
-            //    ShowSpacePointsForColonyship();
-            //    break;
-            //case SFNotification.HUD_build_tradeship_button_clicked:
-            //    ShowSpacePointsForTradeship();
-            //    break;
-            //case SFNotification.HUD_build_spaceport_button_clicked:
-            //    ShowSpacePointsForSpaceport();
-            //    break;
-
-            //case SFNotification.token_was_selected:
-            //    selectedTokenRenderer = (GameObject)p_target;
-            //    ShowAllAvailableSpacePoints();
-            //    break;
+            switch (p_event_path)
+            {
+                case SFNotification.player_data_changed:
+                    RedrawTokens();
+                    break;
+            }
         }
+        
     }
 }

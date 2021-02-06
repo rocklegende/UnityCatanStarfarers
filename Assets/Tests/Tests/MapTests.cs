@@ -22,13 +22,47 @@ namespace Tests
             return new Map(mapRepresentation);
         }
 
-
         private Map CreateSampleMap4x3()
         {
             Tile_[,] mapRepresentation = {
                 { new BorderTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
                 { new BorderTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
                 { new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile() },
+            };
+
+            return new Map(mapRepresentation);
+        }
+
+        private Map CreateSampleMapWithObstacles()
+        {
+            Tile_[,] mapRepresentation = {
+                { new BorderTile(), new EmptyTile(), new FoodResourceTile(), new BorderTile() },
+                { new BorderTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
+                { new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile() },
+            };
+
+            return new Map(mapRepresentation);
+        }
+
+        private Map CreateSampleMapWithObstacles2()
+        {
+            Tile_[,] mapRepresentation = {
+                { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile()  },
+                { new BorderTile(), new EmptyTile(), new FoodResourceTile(), new EmptyTile(),  new BorderTile() },
+                { new BorderTile(), new EmptyTile(), new FoodResourceTile(), new EmptyTile(), new BorderTile() },
+                { new FoodResourceTile(), new EmptyTile(), new EmptyTile(), new EmptyTile(), new BorderTile() },
+            };
+
+            return new Map(mapRepresentation);
+        }
+
+        private Map CreateSampleMapWithObstacles3()
+        {
+            Tile_[,] mapRepresentation = {
+                { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile()  },
+                { new BorderTile(), new BorderTile(), new FoodResourceTile(), new EmptyTile(),  new BorderTile() },
+                { new BorderTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile() },
+                { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile() },
             };
 
             return new Map(mapRepresentation);
@@ -76,6 +110,10 @@ namespace Tests
 
         private bool spacePointArraysAreEqual(SpacePoint[] spacePoints1, SpacePoint[] spacePoints2)
         {
+            if (spacePoints1.Length != spacePoints2.Length)
+            {
+                return false;
+            }
             Array.Sort(spacePoints1, new SpacePointComparer());
             Array.Sort(spacePoints2, new SpacePointComparer());
 
@@ -96,6 +134,79 @@ namespace Tests
             {
                 spacePoint.print();
             }
+        }
+
+        [Test]
+        public void MapGetNeighborsOfSpacePoint1()
+        {
+            Map map = CreateSampleMapWithObstacles();
+
+            var origin = new SpacePoint(new HexCoordinates(0, 1), 0);
+            SpacePoint[] neighbors = map.GetNeighborsOfSpacePoint(origin);
+
+            var se_point = new SpacePoint(new HexCoordinates(1, 1), 1);
+            var n_point = new SpacePoint(new HexCoordinates(1, 0), 1);
+            var sw_point = new SpacePoint(new HexCoordinates(0, 1), 1);
+
+            Assert.False(new Helper().SpacePointArrayContainsPoint(neighbors, se_point)); // should be blocked
+            Assert.True(new Helper().SpacePointArrayContainsPoint(neighbors, n_point)); // should NOT be blocked
+            Assert.True(new Helper().SpacePointArrayContainsPoint(neighbors, sw_point)); // should NOT be blocked
+        }
+
+        [Test]
+        public void MapGetNeighborsOfSpacePoint2()
+        {
+            Map map = CreateSampleMapWithObstacles();
+
+            var origin = new SpacePoint(new HexCoordinates(1, 1), 1);
+            SpacePoint[] neighbors = map.GetNeighborsOfSpacePoint(origin);
+
+            var s_point = new SpacePoint(new HexCoordinates(0, 2), 0);
+            var ne_point = new SpacePoint(new HexCoordinates(1, 1), 0);
+            var nw_point = new SpacePoint(new HexCoordinates(0, 1), 0);
+
+            Assert.False(new Helper().SpacePointArrayContainsPoint(neighbors, s_point)); // should be blocked
+            Assert.False(new Helper().SpacePointArrayContainsPoint(neighbors, ne_point)); // should be blocked
+            Assert.False(new Helper().SpacePointArrayContainsPoint(neighbors, nw_point)); // should be blocked
+        }
+
+        [Test]
+        public void MapGetNeighborsOfSpacePoint3()
+        {
+            Map map = CreateSampleMapWithObstacles();
+
+            var origin = new SpacePoint(new HexCoordinates(0, 1), 1);
+            SpacePoint[] neighbors = map.GetNeighborsOfSpacePoint(origin);
+
+            var s_point = new SpacePoint(new HexCoordinates(-1, 2), 0);
+            var ne_point = new SpacePoint(new HexCoordinates(0, 1), 0);
+            var nw_point = new SpacePoint(new HexCoordinates(-1, 1), 0);
+
+            Assert.True(new Helper().SpacePointArrayContainsPoint(neighbors, s_point)); // should be blocked
+            Assert.True(new Helper().SpacePointArrayContainsPoint(neighbors, ne_point)); // should be blocked
+            Assert.True(new Helper().SpacePointArrayContainsPoint(neighbors, nw_point)); // should be blocked
+        }
+
+        [Test]
+        public void MapGetDistanceBetweenPoints1()
+        {
+            Map map = CreateSampleMapWithObstacles2();
+
+            var origin = new SpacePoint(new HexCoordinates(1, 2), 1);
+            var destination = new SpacePoint(new HexCoordinates(1, 2), 0);
+            Assert.AreEqual(map.distanceBetweenPoints(origin, destination), 5);
+            Assert.AreEqual(map.distanceBetweenPoints(destination, origin), 5);
+        }
+
+        [Test]
+        public void MapGetDistanceBetweenPoints2()
+        {
+            Map map = CreateSampleMapWithObstacles2();
+
+            var origin = new SpacePoint(new HexCoordinates(1, 1), 1);
+            var destination = new SpacePoint(new HexCoordinates(1, 2), 0);
+            Assert.AreEqual(map.distanceBetweenPoints(origin, destination), 3);
+            Assert.AreEqual(map.distanceBetweenPoints(destination, origin), 3);
         }
 
         [Test]
@@ -123,15 +234,16 @@ namespace Tests
         public void MapGetAllSpacePointsInDistance2()
         {
 
-            Map map = CreateSampleMap3x3();
+            Map map = CreateSampleMapWithObstacles3();
 
-            SpacePoint origin = new SpacePoint(new HexCoordinates(0, 1), 0);
-            SpacePoint[] spacePointsTwoStepsAway = map.getAllSpacePointsInDistance(origin, 2);
+            SpacePoint origin = new SpacePoint(new HexCoordinates(1, 1), 0);
+            SpacePoint[] spacePointsTwoStepsAway = map.GetSpacePointsInDistance(origin, 2);
 
             SpacePoint[] expectedPoints = new SpacePoint[]
             {
                 new SpacePoint(new HexCoordinates(0, 2), 0),
-                new SpacePoint(new HexCoordinates(-1, 2), 0)
+                new SpacePoint(new HexCoordinates(1, 2), 0),
+                new SpacePoint(new HexCoordinates(2, 1), 0),
             }; 
 
             Assert.True(spacePointArraysAreEqual(spacePointsTwoStepsAway, expectedPoints));
@@ -141,16 +253,53 @@ namespace Tests
         public void MapGetAllSpacePointsInDistance3()
         {
 
-            Map map = CreateSampleMap3x3();
-            SpacePoint origin = new SpacePoint(new HexCoordinates(0, 1), 0);
+            Map map = CreateSampleMapWithObstacles3();
+            SpacePoint origin = new SpacePoint(new HexCoordinates(2, 1), 0);
 
-            SpacePoint[] spacePointsThreeStepsAway = map.getAllSpacePointsInDistance(origin, 3);
+            SpacePoint[] spacePointsThreeStepsAway = map.GetSpacePointsInDistance(origin, 3);
             SpacePoint[] expectedPoints = new SpacePoint[]
             {
-                new SpacePoint(new HexCoordinates(0, 2), 1),
+                new SpacePoint(new HexCoordinates(1, 1), 1),
+                new SpacePoint(new HexCoordinates(2, 2), 1),
             };
 
-            printSpacePoints(map.getAllAvailableSpacePoints());
+            Assert.True(spacePointArraysAreEqual(spacePointsThreeStepsAway, expectedPoints));
+        }
+
+        [Test]
+        public void MapGetSpacePointsInDistanceZeroCase()
+        {
+
+            Map map = CreateSampleMapWithObstacles3();
+            SpacePoint origin = new SpacePoint(new HexCoordinates(1, 1), 0);
+
+            SpacePoint[] spacePointsThreeStepsAway = map.GetSpacePointsInDistance(origin, 0);
+            SpacePoint[] expectedPoints = new SpacePoint[]
+            {
+                new SpacePoint(new HexCoordinates(1, 1), 0),
+            };
+
+            Assert.True(spacePointArraysAreEqual(spacePointsThreeStepsAway, expectedPoints));
+        }
+
+        [Test]
+        public void MapGetSpacePointsInsideRangeCase()
+        {
+
+            Map map = CreateSampleMapWithObstacles3();
+            SpacePoint origin = new SpacePoint(new HexCoordinates(1, 2), 0);
+
+            SpacePoint[] spacePointsThreeStepsAway = map.GetSpacePointsInsideRange(origin, 3, 2);
+            SpacePoint[] expectedPoints = new SpacePoint[]
+            {
+                new SpacePoint(new HexCoordinates(1, 1), 0),
+                new SpacePoint(new HexCoordinates(1, 1), 1),
+                new SpacePoint(new HexCoordinates(2, 1), 0),
+                new SpacePoint(new HexCoordinates(2, 2), 0),
+                new SpacePoint(new HexCoordinates(1, 3), 0),
+                new SpacePoint(new HexCoordinates(1, 3), 1),
+                new SpacePoint(new HexCoordinates(3, 1), 1),
+            };
 
             Assert.True(spacePointArraysAreEqual(spacePointsThreeStepsAway, expectedPoints));
         }

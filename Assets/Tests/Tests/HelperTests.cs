@@ -12,6 +12,22 @@ namespace Tests
         public Helper helper = new Helper();
 
         [Test]
+        public void TestSpacePointArrayContainsPointPositive()
+        {
+            SpacePoint[] spArray = new SpacePoint[] { new SpacePoint(new HexCoordinates(0, 1), 1) };
+            var searchedPoint = new SpacePoint(new HexCoordinates(0, 1), 1);
+            Assert.True(helper.SpacePointArrayContainsPoint(spArray, searchedPoint));
+        }
+
+        [Test]
+        public void TestSpacePointArrayContainsPointNegative()
+        {
+            SpacePoint[] spArray = new SpacePoint[] { new SpacePoint(new HexCoordinates(0, 1), 1) };
+            var searchedPoint = new SpacePoint(new HexCoordinates(0, 1), 0);
+            Assert.False(helper.SpacePointArrayContainsPoint(spArray, searchedPoint));
+        }
+
+        [Test]
         public void HelperTestsDistanceBetweenHexCoords()
         {
             Assert.AreEqual(new HexCoordinates(0, 0).DistanceTo(new HexCoordinates(-1, 2)), 2);

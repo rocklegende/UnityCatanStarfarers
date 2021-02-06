@@ -30,5 +30,11 @@ namespace Tests
             Assert.AreEqual(new SpacePoint(new HexCoordinates(1, 0), 1).DistanceTo(new SpacePoint(new HexCoordinates(-1, 2), 0)), 3);
         }
 
+        [Test]
+        public void TestIfEqualsWorks()
+        {
+
+        }
+
     }
 }

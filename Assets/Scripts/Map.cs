@@ -34,6 +34,199 @@ public class Map
         this.changeDelegate = changeDelegate;
     }
 
+    bool TilesAreBorders(Tile_ tile1, Tile_ tile2)
+    {
+        return tile1 is BorderTile && tile2 is BorderTile;
+    }
+
+    public SpacePoint[] GetNeighborsOfSpacePoint(SpacePoint point)
+    {
+        var actualValidNeighbors = new List<SpacePoint>();
+        var coords = point.coordinates;
+
+        var e_coords = coords.E();
+        var ne_coords = coords.NE();
+        var s_coords = coords;
+        var nw_coords = coords.NW();
+
+        if (point.vertexNumber == 0)
+        {
+            var n_point = new SpacePoint(ne_coords, 1);
+            var sw_point = new SpacePoint(s_coords, 1);
+            var se_point = new SpacePoint(e_coords, 1);
+
+            var nw_tile = getTileAt(nw_coords);
+            var ne_tile = getTileAt(ne_coords);
+            var s_tile = getTileAt(s_coords);
+
+            if (!TilesAreBorders(ne_tile, nw_tile)) {
+                if (ne_tile != null && nw_tile != null && !(ne_tile.blocksTraffic() && nw_tile.blocksTraffic()))
+                {
+                    actualValidNeighbors.Add(n_point);
+                }
+            }
+
+            if (!TilesAreBorders(ne_tile, s_tile))
+            {
+                if (ne_tile != null && s_tile != null && !(ne_tile.blocksTraffic() && s_tile.blocksTraffic()))
+                {
+                    actualValidNeighbors.Add(se_point);
+                }       
+            }
+
+            if (!TilesAreBorders(nw_tile, s_tile))
+            {
+                if (nw_tile != null && s_tile != null && !(nw_tile.blocksTraffic() && s_tile.blocksTraffic()))
+                {
+                    actualValidNeighbors.Add(sw_point);
+                }
+            }   
+            return actualValidNeighbors.ToArray();
+        }
+        else if (point.vertexNumber == 1)
+        {
+            var s_point = new SpacePoint(coords.SW(), 0);
+            var ne_point = new SpacePoint(coords, 0);
+            var nw_point = new SpacePoint(coords.W(), 0);
+
+            var rechts_unten_tile = getTileAt(coords);
+            var links_unten_tile = getTileAt(coords.W());
+            var oben_tile = getTileAt(coords.NW());
+
+            if (!TilesAreBorders(rechts_unten_tile, links_unten_tile))
+            {
+                if (rechts_unten_tile != null && links_unten_tile != null && !(rechts_unten_tile.blocksTraffic() && links_unten_tile.blocksTraffic()))
+                    {
+                        actualValidNeighbors.Add(s_point);
+                    }
+            }
+
+            if (!TilesAreBorders(links_unten_tile, oben_tile))
+            {
+                if (links_unten_tile != null && oben_tile != null && !(links_unten_tile.blocksTraffic() && oben_tile.blocksTraffic()))
+                {
+                    actualValidNeighbors.Add(nw_point);
+                }
+            }
+
+            if (!TilesAreBorders(rechts_unten_tile, oben_tile))
+            {
+                if (rechts_unten_tile != null && oben_tile != null && !(rechts_unten_tile.blocksTraffic() && oben_tile.blocksTraffic()))
+                {
+                    actualValidNeighbors.Add(ne_point);
+                }
+            }
+            return actualValidNeighbors.ToArray();
+        }
+        else
+        {
+            throw new ArgumentException("Vertexnumber has to be between 0 and 1");
+        }
+    }
+
+    public SpacePoint[] GetSpacePointsInDistance(SpacePoint origin, int distance)
+    {
+        return GetSpacePointsInsideRange(origin, distance, distance);
+    }
+
+    public SpacePoint[] GetSpacePointsInsideRange(SpacePoint origin, int max, int min = 0)
+        //returns every point that is <= 'range' away from given SpacePoint
+    {
+        if (min < 0 || max < 0 || min > max)
+        {
+            throw new ArgumentException("Please insert distance >= 0");
+        }
+
+        if (max == 0 && min == 0)
+        {
+            return new SpacePoint[] { origin };
+        }
+
+        List<SpacePoint> visitedPoints = new List<SpacePoint>();
+        List<List<SpacePoint>> tracker = new List<List<SpacePoint>>();
+        int steps = 0;
+        tracker.Add(new List<SpacePoint>() { origin });
+        visitedPoints.Add(origin);
+
+        while (steps < max)
+        {
+            tracker.Add(new List<SpacePoint>());
+            foreach (var point in tracker[steps])
+            {
+
+                var neighbors = GetNeighborsOfSpacePoint(point);
+                foreach (SpacePoint neighbor in neighbors)
+                {
+                    bool neighborVisited = new Helper().SpacePointArrayContainsPoint(visitedPoints.ToArray(), neighbor);
+                    if (!neighborVisited)
+                    {
+                        visitedPoints.Add(neighbor);
+                        tracker[steps + 1].Add(neighbor);
+                    }
+                }
+            }
+            steps++;
+        }
+
+        List<SpacePoint> points = new List<SpacePoint>();
+        for (int i = min; i <= max; i++)
+        {
+            points.AddRange(tracker[i]);
+        }
+        return points.ToArray(); 
+    }
+
+    public int distanceBetweenPoints(SpacePoint origin, SpacePoint destination)
+    {
+        // TODO: seems broken for large distances
+        if (origin.Equals(destination))
+        {
+            return 0;
+        }
+        var queue = new Queue<SpacePoint>();
+        queue.Enqueue(origin);
+        var helper = new Helper();
+        int count = 0;
+        List<SpacePoint> visitedPoints = new List<SpacePoint>();
+
+        while (queue.Count != 0)
+        {
+            var point = queue.Dequeue();
+            visitedPoints.Add(point);
+            var neighbors = GetNeighborsOfSpacePoint(point);
+            foreach (SpacePoint neighbor in neighbors)
+            {
+                if (neighbor.Equals(destination))
+                {
+                    //we found our point!
+                    neighbor.prev = point;
+                    var temp = neighbor;
+                    int dist = 0;
+                    while (temp.prev != null)
+                    {
+                        temp = temp.prev;
+                        dist += 1;
+                    }
+                    return dist;
+                }
+                bool neighborVisited = helper.SpacePointArrayContainsPoint(visitedPoints.ToArray(), neighbor);
+                if (!neighborVisited)
+                {
+                    visitedPoints.Add(neighbor);
+                    neighbor.prev = point;
+                    queue.Enqueue(neighbor);
+                }
+            }
+            count++;
+            if (count > 1000)
+            {
+                break;
+            }
+
+        }
+        return -1;
+    }
+
     public Tile_[,] getRepresentation()
     {
         return this.mapRepresentation;
@@ -56,11 +249,17 @@ public class Map
 
     public Tile_ getTileAt(HexCoordinates coords)
     {
-        (int, int) arrayIndexes = coordsToArrayIndexes(coords);
-        return mapRepresentation[arrayIndexes.Item1, arrayIndexes.Item2];
+        if (coordsAreInBounds(coords))
+        {
+            (int, int) arrayIndexes = coordsToArrayIndexes(coords);
+            return mapRepresentation[arrayIndexes.Item1, arrayIndexes.Item2];
+        } else
+        {
+            return null;
+        }
     }
 
-    public T[] GetAllTilesOfType<T>() where T : Tile_
+    public T[] GetTilesOfType<T>() where T : Tile_
     {
         List<T> validTiles = new List<T>();
         foreach (Tile_ tile in mapRepresentation)
@@ -164,21 +363,6 @@ public class Map
             this.changeDelegate.RepresentationChanged();
         }
         
-    }
-
-    public SpacePoint[] getAllSpacePointsInDistance(SpacePoint origin, int distance)
-    {
-        SpacePoint[] allPointsOnMap = getAllAvailableSpacePoints();
-        List<SpacePoint> result = new List<SpacePoint>();
-
-        foreach (SpacePoint point in allPointsOnMap)
-        {
-            if (point.DistanceTo(origin) == distance)
-            {
-                result.Add(point);
-            }
-        }
-        return result.ToArray();
     }
 
     public HexCoordinates[] getAllHexCoordinates(bool onlyValidTiles = false)

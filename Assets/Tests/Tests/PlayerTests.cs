@@ -8,11 +8,16 @@ namespace Tests
 {
     public class PlayerTests
     {
+
+        Player GetGenericPlayer()
+        {
+            return new Player(Color.black, new SFElement());
+        }
         // A Test behaves as an ordinary method
         [Test]
         public void BuildSpacePortNegative()
         {
-            var player = new Player(Color.black);
+            var player = GetGenericPlayer();
             player.AddCard(new FuelCard());
 
             var token = new SpacePortToken();
@@ -31,7 +36,7 @@ namespace Tests
         [Test]
         public void BuildSpacePortPositive()
         {
-            var player = new Player(Color.black);
+            var player = GetGenericPlayer();
             player.AddCard(new FuelCard());
             player.AddCard(new CarbonCard());
             player.AddCard(new CarbonCard());
@@ -59,7 +64,7 @@ namespace Tests
         [Test]
         public void BuildTradeShipNegative()
         {
-            var player = new Player(Color.black);
+            var player = GetGenericPlayer();
             player.AddCard(new FuelCard());
 
             var token = new TradeBaseToken();
@@ -79,7 +84,7 @@ namespace Tests
         [Test]
         public void BuildTradeShipPositive()
         {
-            var player = new Player(Color.black);
+            var player = GetGenericPlayer();
             player.AddCard(new OreCard());
             player.AddCard(new FuelCard());
             player.AddCard(new GoodsCard());
@@ -105,7 +110,7 @@ namespace Tests
         [Test]
         public void BuildColonyShipNegative()
         {
-            var player = new Player(Color.black);
+            var player = GetGenericPlayer();
             player.AddCard(new FuelCard());
 
             var token = new ColonyBaseToken();
@@ -125,7 +130,7 @@ namespace Tests
         [Test]
         public void BuildColonyShipPositive()
         {
-            var player = new Player(Color.black);
+            var player = GetGenericPlayer();
             player.AddCard(new OreCard());
             player.AddCard(new FuelCard());
             player.AddCard(new CarbonCard());
@@ -146,6 +151,27 @@ namespace Tests
             {
                 Assert.True(false);
             }
+        }
+
+        [Test]
+        public void TestGetVPFromFameMedals2()
+        {
+            var player = GetGenericPlayer();
+            player.AddFameMedal();
+            player.RemoveFameMedal();
+
+            Assert.True(player.GetVictoryPointsFromFameMedals() == 0);
+        }
+
+        [Test]
+        public void TestGetVPFromFameMedals3()
+        {
+            var player = GetGenericPlayer();
+            player.AddFameMedal();
+            player.RemoveFameMedal();
+            player.RemoveFameMedal();
+
+            Assert.True(player.GetVictoryPointsFromFameMedals() == 0);
         }
 
 

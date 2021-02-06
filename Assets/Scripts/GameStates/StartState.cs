@@ -8,11 +8,13 @@ public class StartState : GameState
     public StartState(GameController controller) : base(controller)
     {
         this.controller = controller;
+        controller.HUD.GetComponent<HUDScript>().SetStateText("StartState");
     }
 
     public override void OnNextButtonClicked()
     {
         Debug.Log("jo1");
+        controller.SetState(new FlyShipsState(controller));
     }
 
     public override void OnSpacePointClicked(SpacePoint point, GameObject spacePointObject)
@@ -44,5 +46,10 @@ public class StartState : GameState
     {
         controller.player.BuildUpgrade(token);
         controller.app.Notify(SFNotification.player_data_changed, controller); //TODO: should be done in model class
+    }
+
+    public override void OnSettleButtonPressed()
+    {
+        throw new System.NotImplementedException();
     }
 }

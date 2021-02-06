@@ -12,8 +12,9 @@ public class Player
     TradingRules rules;
     AbstractFriendshipCard[] friendShipCards;
     int FriendShipChips;
+    SFElement notifier;
 
-    public Player(Color color)
+    public Player(Color color, SFElement notifier)
     {
         this.color = color;
         fameMedalPieces = 0;
@@ -23,16 +24,24 @@ public class Player
         tokens = new List<Token> {};
         friendShipCards = new AbstractFriendshipCard[] {};
         FriendShipChips = 0;
+        this.notifier = notifier;
+    }
+
+    void DataChanged()
+    {
+        notifier.app.Notify(SFNotification.player_data_changed, notifier);
     }
 
     public void AddCard(Card card)
     {
         hand.AddCard(card);
+        DataChanged();
     }
 
     public void AddToken(Token token)
     {
         tokens.Add(token);
+        DataChanged();
     }
 
     public bool CanBuildToken(Token token)
@@ -43,17 +52,18 @@ public class Player
     public void BuildToken(Token token, SpacePoint position = null)
     {
         hand.PayCost(token.cost);
-        AddToken(token);
         if (position != null)
         {
             token.position = position;
         }
+        AddToken(token);
     }
 
     public void BuildUpgrade(Token token)
     {
         ship.Add(token);
         hand.PayCost(token.cost);
+        DataChanged();
     }
 
     public int GetVictoryPoints()
@@ -87,14 +97,25 @@ public class Player
         return 2 * FriendShipChips;
     }
 
+    public void RemoveFameMedal()
+    {
+        if (fameMedalPieces > 0)
+        {
+            fameMedalPieces -= 1;
+        }
+        DataChanged();
+    }
+
     public void AddFameMedal()
     {
         fameMedalPieces += 1;
+        DataChanged();
     }
 
     public void AddFriendShipChip()
     {
         FriendShipChips += 1;
+        DataChanged();
     }
 }
 

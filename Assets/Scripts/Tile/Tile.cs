@@ -7,5 +7,7 @@ public abstract class Tile_
     }
 
     public abstract Color? GetColor();
+
+    public abstract bool blocksTraffic();
 }
 

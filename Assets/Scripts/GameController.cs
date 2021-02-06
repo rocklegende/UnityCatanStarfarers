@@ -25,6 +25,13 @@ public class GameController : SFController
                 state.OnBuildUpgradeOptionClicked((Token)p_data[0]);
                 break;
 
+            case SFNotification.next_button_clicked:
+                state.OnNextButtonClicked();
+                break;
+
+            case SFNotification.settle_button_clicked:
+                state.OnSettleButtonPressed();
+                break;
 
             case SFNotification.dice_thrown:
                 //PayoutPlayers((DiceThrow)p_data[0]);
@@ -48,20 +55,22 @@ public class GameController : SFController
 
         state = new StartState(this);
 
-        player = new Player(Color.blue);
+        player = new Player(Color.blue, this);
+        HUD.GetComponent<HUDScript>().SetPlayer(player);
+        HUD.GetComponent<HUDScript>().isReceivingNotifications = true;
 
         for (int i = 0; i < 5; i++)
         {
-            player.hand.AddCard(new GoodsCard());
-            player.hand.AddCard(new FuelCard());
-            player.hand.AddCard(new CarbonCard());
-            player.hand.AddCard(new FoodCard());
-            player.hand.AddCard(new OreCard());
+            player.AddCard(new GoodsCard());
+            player.AddCard(new FuelCard());
+            player.AddCard(new CarbonCard());
+            player.AddCard(new FoodCard());
+            player.AddCard(new OreCard());
         }
 
         Token spacePort = new ColonyBaseToken();
         spacePort.attachedToken = new SpacePortToken();
-        spacePort.SetPosition(new SpacePoint(new HexCoordinates(5,5), 1));
+        spacePort.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 1));
         player.BuildToken(spacePort);
 
         MapGenerator generator = new MapGenerator();
@@ -69,12 +78,14 @@ public class GameController : SFController
 
         Map.GetComponent<MapScript>().SetMap(mapModel);
         Map.GetComponent<MapScript>().SetPlayers(new Player[] { player });
-        HUD.GetComponent<HUDScript>().SetPlayer(player);
+        Map.GetComponent<MapScript>().isReceivingNotifications = true;
+        
 
 
 
-        player.hand.AddCard(new CarbonCard());
-        app.Notify(SFNotification.player_data_changed, this);
+
+        //player.hand.AddCard(new CarbonCard());
+        //app.Notify(SFNotification.player_data_changed, this);
 
     }
 
