@@ -4,18 +4,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
-public class BuildDropDown : MonoBehaviour
+public class BuildDropDown : SFController
 {
 
     BuildDropDownOption[] options;
     GameObject[] buttons;
     public GameObject dropDownBtnPrefab;
     public bool isOpen = false;
+    public GameObject dropDown;
+    public Player player;
 
     // Use this for initialization
     void Start()
     {
-        gameObject.SetActive(false);
+        dropDown.SetActive(false);
     }
 
     public void SetOptions(BuildDropDownOption[] opts)
@@ -33,14 +35,14 @@ public class BuildDropDown : MonoBehaviour
     public void show()
     {
         isOpen = true;
-        gameObject.SetActive(isOpen);
+        dropDown.SetActive(isOpen);
     }
 
     public void hide()
     {
 
         isOpen = false;
-        gameObject.SetActive(isOpen);
+        dropDown.SetActive(isOpen);
     }
 
     public void toggle()
@@ -78,6 +80,14 @@ public class BuildDropDown : MonoBehaviour
         this.buttons[index].GetComponent<Button>().interactable = isInteractable;
     }
 
+    void UpdateOptionsInteractibality()
+    {
+        foreach (var option in options)
+        {
+            SetOptionInteractable(option, player.CanBuildToken(option.token));
+        }
+    }
+
     GameObject DrawOption(BuildDropDownOption option, Vector3 position)
     {
         Sprite sprite = new Helper().CreateSpriteFromImageName(option.imageName);
@@ -89,10 +99,22 @@ public class BuildDropDown : MonoBehaviour
         Cost cost = new Cost(new Resource[] { new FoodResource(), new FoodResource(), new GoodsResource() }); 
         btn.GetComponentInChildren<CostRenderer>().SetCost(option.token.cost);
 
-        btn.transform.parent = this.transform;
+        btn.transform.parent = dropDown.transform;
 
         return btn;
 
     }
 
+    public override void OnNotification(string p_event_path, UnityEngine.Object p_target, params object[] p_data)
+    {
+        if (player != null)
+        {
+            switch (p_event_path)
+            {
+                case SFNotification.player_data_changed:
+                    UpdateOptionsInteractibality();
+                    break;
+            }
+        }
+    }
 }

@@ -22,6 +22,13 @@ public class BoundingBox
 public class Helper
 {
 
+    public List<T> CreateCopyOfList<T>(List<T> listToCopy)
+    {
+        var newList = new List<T>();
+        newList.AddRange(listToCopy);
+        return newList;
+    }
+
     public bool SpacePointArrayContainsPoint(SpacePoint[] arr, SpacePoint point)
     {
         foreach (var p in arr)

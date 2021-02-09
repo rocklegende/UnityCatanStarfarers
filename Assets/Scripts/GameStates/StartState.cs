@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,7 +10,10 @@ public class StartState : GameState
     {
         this.controller = controller;
         controller.HUD.GetComponent<HUDScript>().SetStateText("StartState");
+        controller.HUD.GetComponent<HUDScript>().ShowSettleButton(false);
     }
+
+
 
     public override void OnNextButtonClicked()
     {
@@ -20,6 +24,11 @@ public class StartState : GameState
     public override void OnSpacePointClicked(SpacePoint point, GameObject spacePointObject)
     {
         Debug.Log("jo2");
+    }
+
+    public override void OnShipDiceThrown(ShipDiceThrow shipDiceThrow)
+    {
+        throw new NotImplementedException();
     }
 
     public override void OnTokenClicked(Token tokenModel, GameObject tokenGameObject)

@@ -3,40 +3,66 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-public abstract class SpacePointFilter
-{
-    public abstract bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players);
-    public Token[] GetAllTokenOfPlayers(Player[] players)
-    {
-        List<Token> tokens = new List<Token>();
-        foreach (Player player in players)
-        {
-            foreach (Token token in player.tokens)
-            {
-                tokens.Add(token);
-            }
-        }
-        return tokens.ToArray();
-    }
-}
-
 public class Map
 {
 
     private Tile_[,] mapRepresentation;
     private int offset;
     private MapScript changeDelegate;
+    public TileGroup[] tileGroups;
 
-    public Map(Tile_[,] mapRepresentation, MapScript changeDelegate = null)
+    public Map(Tile_[,] mapRepresentation, MapScript changeDelegate = null, TileGroup[] tileGroups = null)
     {
         this.mapRepresentation = mapRepresentation;
         this.offset = getOffset();
         this.changeDelegate = changeDelegate;
+        this.tileGroups = tileGroups;
+    }
+
+    void DataChanged()
+    {
+        var notifier = new SFElement();
+        notifier.app.Notify(SFNotification.map_data_changed, notifier); 
     }
 
     bool TilesAreBorders(Tile_ tile1, Tile_ tile2)
     {
         return tile1 is BorderTile && tile2 is BorderTile;
+    }
+
+    public Token[] TokenAtPoint(SpacePoint point, Player[] players)
+    {
+        List<Token> tokenList = new List<Token>();
+        foreach(var tok in new Helper().GetAllTokenOfPlayers(players))
+        {
+            if (tok.position.Equals(point))
+            {
+                tokenList.Add(tok);
+            }
+        }
+
+        return tokenList.ToArray();
+    }
+
+    public bool TokenCanSettle(Token tok, Player[] players)
+    {
+        if (tok is Settable)
+        {
+            var t = (Settable)tok;
+            if (t.CanSettle(getTilesAtPoint(tok.position)))
+            {
+                // TODO: kinda ugly
+                var tokensAtPoint = TokenAtPoint(tok.position, players);
+                if (tokensAtPoint[0] == t)
+                {
+                    if (tokensAtPoint.Length == 1)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public SpacePoint[] GetNeighborsOfSpacePoint(SpacePoint point)
@@ -408,6 +434,50 @@ public class Map
 
 
         return validCoords.ToArray();
+    }
+
+    public void OnTokenDataChanged(Token token)
+    {
+        var newPositionOfToken = token.position;
+        var tilesAtPoint = getTilesAtPoint(newPositionOfToken);
+
+        foreach (var tile in tilesAtPoint)
+        {
+            if (tile is ResourceTile)
+            {
+                var t = (ResourceTile)tile;
+                var tileGroup = FindTileGroupContainingTile(t);
+                if (tileGroup != null)
+                {
+                    if (tileGroup is ResourceTileGroup)
+                    {
+                        var resourceTileGroup = (ResourceTileGroup)tileGroup;
+                        resourceTileGroup.RevealDiceChips();
+                        DataChanged();
+                    }
+                }
+            }
+        }
+
+    }
+
+    public TileGroup FindTileGroupContainingTile(Tile_ tile)
+    {
+        if (tileGroups != null)
+        {
+            foreach(var group in tileGroups)
+            {
+                foreach (var t in group.GetTiles())
+                {
+                    if (t == tile)
+                    {
+                        return group;
+                    }
+                    
+                }
+            }
+        }
+        return null;
     }
 
 

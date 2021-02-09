@@ -17,7 +17,6 @@ public class SpacePortToken : Token
         newToken.cost = cost;
         newToken.id = id;
         newToken.color = color;
-        newToken.isSettled = isSettled;
         newToken.attachedToken = attachedToken;
         newToken.isTokenAttachable = isTokenAttachable;
         return newToken;
@@ -30,7 +29,7 @@ public class SpacePortToken : Token
 
 }
 
-public class ColonyBaseToken : Token
+public class ColonyBaseToken : Token, Settable
 {
     public ColonyBaseToken() : base("colonybase_token", true, new Cost(new Resource[] { new FuelResource(), new OreResource(), new CarbonResource(), new FoodResource() }))
     {
@@ -41,6 +40,19 @@ public class ColonyBaseToken : Token
         return 1;
     }
 
+    public bool CanSettle(Tile_[] tiles)
+    {
+        int count = 0;
+        foreach (var tile in tiles)
+        {
+            if (tile is ResourceTile)
+            {
+                count += 1;
+            }
+        }
+        return count == 2;
+    }
+
     public override Token makeCopy()
     {
         ColonyBaseToken newToken = new ColonyBaseToken();
@@ -48,7 +60,6 @@ public class ColonyBaseToken : Token
         newToken.cost = cost;
         newToken.id = id;
         newToken.color = color;
-        newToken.isSettled = isSettled;
         newToken.attachedToken = attachedToken;
         newToken.isTokenAttachable = isTokenAttachable;
         return newToken;
@@ -78,7 +89,6 @@ public class TradeBaseToken : Token
         newToken.cost = cost;
         newToken.id = id;
         newToken.color = color;
-        newToken.isSettled = isSettled;
         newToken.attachedToken = attachedToken;
         newToken.isTokenAttachable = isTokenAttachable;
         return newToken; ;
@@ -108,7 +118,6 @@ public class ShipToken : Token
         newToken.cost = cost;
         newToken.id = id;
         newToken.color = color;
-        newToken.isSettled = isSettled;
         newToken.attachedToken = attachedToken;
         newToken.isTokenAttachable = isTokenAttachable;
         return newToken;

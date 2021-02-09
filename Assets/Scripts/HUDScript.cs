@@ -14,6 +14,7 @@ public class HUDScript : SFController
     public Text boosterText;
     public Text cannonsText;
     public Text freightPodsText;
+    public Text vpText;
 
     public GameObject buildShipsDropDownRef;
     public GameObject upgradesDropDownRef;
@@ -27,18 +28,24 @@ public class HUDScript : SFController
     public bool isReceivingNotifications = false;
 
     public Text stateText;
+    public GameObject settleButton;
 
 
 
     // Start is called before the first frame update
     void Start()
     {
-        // TODO: optimal, just pass a Hand to the HUDScript and the HUD will render it
-        //DrawHand();
+        CreateBuildDropDowns();
+    }
 
+    // Update is called once per frame
+    void Update()
+    {
+    }
+
+    void CreateBuildDropDowns()
+    {
         List<BuildDropDownOption> options = new List<BuildDropDownOption>();
-
-        GameObject.FindObjectOfType<Button>();
 
         Token colonyWithShip = new ColonyBaseToken();
         colonyWithShip.attachToken(new ShipToken());
@@ -68,19 +75,6 @@ public class HUDScript : SFController
             new BuildDropDownOption("freightpod", new FreightPodUpgradeToken(), BuildUpgradeBtnPressed)
         };
         upgradesDropDownRef.GetComponent<BuildDropDown>().SetOptions(upgradeOptions);
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {   if (buildDropDownOptions != null && player != null)
-        {
-            foreach(BuildDropDownOption option in buildDropDownOptions)
-            {
-                bool interactable = player.CanBuildToken(option.token);
-                buildShipsDropDownRef.GetComponent<BuildDropDown>().SetOptionInteractable(option, interactable);
-            }
-        }
     }
 
     public void SetStateText(string text)
@@ -91,7 +85,14 @@ public class HUDScript : SFController
     public void SetPlayer (Player player)
     {
         this.player = player;
-        
+        buildShipsDropDownRef.GetComponent<BuildDropDown>().player = player;
+        upgradesDropDownRef.GetComponent<BuildDropDown>().player = player;
+
+    }
+
+    public void ShowSettleButton(bool show)
+    {
+        settleButton.SetActive(show);
     }
 
     void OnPlayerDataChanged()
@@ -103,6 +104,7 @@ public class HUDScript : SFController
     {
         DrawResourceStacks();
         DrawUpgrades();
+        DrawVP();
     }
 
     void DrawResourceStacks()
@@ -120,6 +122,11 @@ public class HUDScript : SFController
         boosterText.text = player.ship.Boosters.ToString();
         cannonsText.text = player.ship.Cannons.ToString();
         freightPodsText.text = player.ship.FreightPods.ToString();
+    }
+
+    void DrawVP()
+    {
+        vpText.text = player.GetVictoryPoints().ToString();
     }
 
     void BuildTokenBtnPressed(Token token)
@@ -144,23 +151,6 @@ public class HUDScript : SFController
         app.Notify(SFNotification.settle_button_clicked, this);
     }
 
-    //public void BuildTradeShipBtnPressed()
-    //{
-    //    app.Notify(SFNotification.HUD_build_token_btn_clicked, this);
-    //    CloseAllDropDowns();
-    //}
-
-    //public void BuildColonyShipBtnPressed()
-    //{
-    //    app.Notify(SFNotification.HUD_build_colonyship_button_clicked, this);
-    //    CloseAllDropDowns();
-    //}
-
-    //public void BuildSpaceportBtnPressed()
-    //{
-    //    app.Notify(SFNotification.HUD_build_spaceport_button_clicked, this);
-    //    CloseAllDropDowns();
-    //}
 
     public void BuildShipsToggleBtnPressed()
     {

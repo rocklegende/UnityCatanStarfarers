@@ -29,7 +29,7 @@ public class Player
 
     void DataChanged()
     {
-        notifier.app.Notify(SFNotification.player_data_changed, notifier);
+        notifier.app.Notify(SFNotification.player_data_changed, notifier, new object[] { this });
     }
 
     public void AddCard(Card card)

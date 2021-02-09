@@ -17,6 +17,7 @@ public abstract class GameState
     public abstract void OnBuildShipOptionClicked(Token token);
     public abstract void OnBuildUpgradeOptionClicked(Token token);
     public abstract void OnSettleButtonPressed();
+    public abstract void OnShipDiceThrown(ShipDiceThrow shipDiceThrow);
 
 
 }

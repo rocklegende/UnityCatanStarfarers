@@ -30,3 +30,20 @@ public class TileGroup
     }
 
 }
+
+public class ResourceTileGroup : TileGroup
+{
+    ResourceTile[] tiles;
+    public ResourceTileGroup(ResourceTile[] tiles, int rightShifts = 0) : base(tiles, rightShifts)
+    {
+        this.tiles = tiles;
+    }
+
+    public void RevealDiceChips()
+    {
+        foreach( var tile in tiles)
+        {
+            tile.GetDiceChip().isFaceUp = true;
+        }
+    }
+}

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ public class SelectPositionForShipState : GameState
         this.controller = controller;
         this.token = token;
         controller.HUD.GetComponent<HUDScript>().SetStateText("SelectPositionForShipState");
+        controller.HUD.GetComponent<HUDScript>().ShowSettleButton(false);
         Init();
     }
 
@@ -37,6 +39,11 @@ public class SelectPositionForShipState : GameState
         
     }
 
+    public override void OnShipDiceThrown(ShipDiceThrow shipDiceThrow)
+    {
+        throw new NotImplementedException();
+    }
+
     public override void OnNextButtonClicked()
     {
         Debug.Log("jo1");
@@ -46,13 +53,8 @@ public class SelectPositionForShipState : GameState
     public override void OnSpacePointClicked(SpacePoint point, GameObject spacePointObject)
     {
         controller.Map.GetComponent<MapScript>().RemoveAllSpacePointButtons();
-
-        // TODO: check if it can be build
         controller.player.BuildToken(token, point);
         controller.SetState(new StartState(controller));
-
-        // TODO: notification should be send from player model, it should notify others that it changed
-        //controller.app.Notify(SFNotification.player_data_changed, controller);
     }
 
     public override void OnTokenClicked(Token tokenModel, GameObject tokenGameObject)
@@ -60,7 +62,7 @@ public class SelectPositionForShipState : GameState
         if (tokenModel is ColonyBaseToken)
         {
             tokenModel.attachToken(new SpacePortToken());
-            controller.app.Notify(SFNotification.token_data_changed, controller); //TODO: send notification from inside the token
+            //controller.app.Notify(SFNotification.token_data_changed, controller); //TODO: send notification from inside the token
             controller.SetState(new StartState(controller));
         }
     }

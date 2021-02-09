@@ -38,6 +38,13 @@ public class GameController : SFController
                 PayoutPlayers(new DiceThrow(2, 1));
                 break;
 
+            case SFNotification.token_data_changed:
+                if (mapModel != null)
+                {
+                    mapModel.OnTokenDataChanged((Token) p_data[0]);
+                }
+                break;
+
         }
     }
 
@@ -53,7 +60,7 @@ public class GameController : SFController
     {
 
 
-        state = new StartState(this);
+        state = new FlyShipsState(this);
 
         player = new Player(Color.blue, this);
         HUD.GetComponent<HUDScript>().SetPlayer(player);
@@ -72,6 +79,14 @@ public class GameController : SFController
         spacePort.attachedToken = new SpacePortToken();
         spacePort.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 1));
         player.BuildToken(spacePort);
+
+        Token colonyShip = new ColonyBaseToken();
+        colonyShip.attachedToken = new ShipToken();
+        colonyShip.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 0));
+        player.BuildToken(colonyShip);
+
+
+
 
         MapGenerator generator = new MapGenerator();
         mapModel = generator.GenerateRandomMap();
@@ -120,8 +135,8 @@ public class GameController : SFController
             } 
         }
 
-        //TODO: player model should send this notification
-        app.Notify(SFNotification.player_data_changed, this);
+        ////TODO: player model should send this notification
+        //app.Notify(SFNotification.player_data_changed, this);
     }
 
 

@@ -13,7 +13,70 @@ namespace Tests
         {
             return new Player(Color.black, new SFElement());
         }
-        // A Test behaves as an ordinary method
+
+        void AddCashToPlayer(Player player, int amount = 5)
+        {
+            for (int i = 0; i < amount; i++)
+            {
+                player.AddCard(new GoodsCard());
+                player.AddCard(new FuelCard());
+                player.AddCard(new CarbonCard());
+                player.AddCard(new FoodCard());
+                player.AddCard(new OreCard());
+            }
+        }
+
+        int VpFromTokens(Token[] tokens)
+        {
+            var player = GetGenericPlayer();
+            foreach(var tok in tokens)
+            {
+                player.tokens.Add(tok);
+            }
+            return player.GetVictoryPointsFromTokens();
+        }
+
+        [Test]
+        public void GetVictoryPointsTestSettledColony()
+        {
+            int vp = VpFromTokens(new Token[] { new ColonyBaseToken() });
+            Assert.AreEqual(1, vp);
+        }
+
+        [Test]
+        public void GetVictoryPointsTestUnsettledColony()
+        {
+            var token = new ColonyBaseToken();
+            token.attachToken(new ShipToken());
+            int vp = VpFromTokens(new Token[] { token });
+            Assert.AreEqual(0, vp);
+        }
+
+        [Test]
+        public void GetVictoryPointsTestSettleTradeShip()
+        {
+            int vp = VpFromTokens(new Token[] { new TradeBaseToken() });
+            Assert.AreEqual(1, vp);
+        }
+
+        [Test]
+        public void GetVictoryPointsTestUnsettledTradeShip()
+        {
+            var token = new TradeBaseToken();
+            token.attachToken(new ShipToken());
+            int vp = VpFromTokens(new Token[] { token });
+            Assert.AreEqual(0, vp);
+        }
+
+        [Test]
+        public void GetVictoryPointsTestColonyWithSpacePort()
+        {
+            var token = new ColonyBaseToken();
+            token.attachToken(new SpacePortToken());
+            int vp = VpFromTokens(new Token[] { token });
+            Assert.AreEqual(2, vp);
+        }
+
         [Test]
         public void BuildSpacePortNegative()
         {

@@ -1,7 +1,12 @@
 ﻿using UnityEngine;
 using System;
 
-public abstract class Token
+public interface Settable
+{
+    bool CanSettle(Tile_[] tiles);
+}
+
+public abstract class Token 
 {
     //color
     //image
@@ -10,7 +15,6 @@ public abstract class Token
     public Cost cost;
     public string id;
     protected Color color;
-    public bool isSettled = true; //TODO: should be false initially
     public Token attachedToken = null;
     protected bool isTokenAttachable;
     int stepsLeft = 5;
@@ -29,7 +33,8 @@ public abstract class Token
     public void DataChanged()
     {
         SFElement notifier = new SFElement();
-        notifier.app.Notify(SFNotification.player_data_changed, notifier);
+        notifier.app.Notify(SFNotification.player_data_changed, notifier, new object[] { this });
+        notifier.app.Notify(SFNotification.token_data_changed, notifier, new object[] { this });
     }
 
     public int GetStepsLeft()
@@ -40,7 +45,6 @@ public abstract class Token
     public void settle()
     {
         attachedToken = null;
-        isSettled = true;
         DataChanged();
     }
 
@@ -67,9 +71,16 @@ public abstract class Token
 
     public int GetVictoryPoints()
     {
-        if (isSettled)
+        if (IsSettled())
         {
-            return BaseVictoryPoints();
+            int sum = 0;
+            sum += BaseVictoryPoints();
+
+            if (attachedToken != null)
+            {
+                sum += attachedToken.BaseVictoryPoints();
+            }
+            return sum;
         } else
         {
             return 0;
@@ -78,7 +89,7 @@ public abstract class Token
 
     public int GetResourceProductionMultiplier()
     {
-        if (isSettled)
+        if (IsSettled())
         {
             return ResourceProduce();
         } else
@@ -93,10 +104,15 @@ public abstract class Token
 
     public abstract int ResourceProduce();
 
-    //public bool IsSettled()
-    //{
-    //    return !(this is ShipToken) && (attachedToken == null);
-    //}
+    public bool IsSettled()
+    {
+        if (attachedToken != null)
+        {
+            var hasShipOnTop = attachedToken is ShipToken;
+            return !hasShipOnTop;
+        }
+        return true;
+    }
 
     public void attachToken(Token token)
     {

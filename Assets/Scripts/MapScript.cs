@@ -9,105 +9,6 @@ public class Constants {
     public const float paddingDown = 1.0f;
 }
 
-public abstract class TokenFilter
-{
-    public abstract bool fullfillsFilter(Token token);
-    
-}
-
-public class IsSettledColonyFilter : TokenFilter
-{
-    public override bool fullfillsFilter(Token token)
-    {
-        if (token is ColonyBaseToken)
-        {
-            ColonyBaseToken cb = (ColonyBaseToken)token;
-            return cb.isSettled;
-        }
-        return false;
-    }
-}
-
-public class TradeshipSpacePointFilter : SpacePointFilter
-{
-    public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
-    {
-        Tile_[] tiles = map.getTilesAtPoint(point);
-        var t = map.GetTilesOfType<ResourceTile>(tiles);
-        return t.Length == 2;
-    }
-}
-
-public class IsSpacePointFreeFilter : SpacePointFilter
-{
-    public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
-    {
-        foreach(Token token in GetAllTokenOfPlayers(players))
-        {
-            if (token.position.Equals(point))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-}
-
-public class IsValidSpacePointFilter : SpacePointFilter
-{
-    public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
-    {
-        var tiles = map.getTilesAtPoint(point);
-        ResourceTile[] resourceTiles = map.GetTilesOfType<ResourceTile>(tiles);
-        if (resourceTiles.Length == 3)
-        {
-            return false;
-        } else
-        {
-            return true;
-        }
-
-    }
-}
-
-public class IsNeighborOwnSpacePortFilter : SpacePointFilter
-{
-    public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
-    {
-        SpacePoint[] neighborPoints = map.GetNeighborsOfSpacePoint(point); //all neighbors
-        foreach (SpacePoint neighbor in neighborPoints)
-        {
-            foreach (Token token in GetAllTokenOfPlayers(players))
-            {
-                if (token.position.Equals(neighbor))
-                {
-                    if (token.attachedToken is SpacePortToken)
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-}
-
-public class IsStepsAwayFilter : SpacePointFilter
-{
-    SpacePoint origin;
-    int steps;
-    public IsStepsAwayFilter(SpacePoint origin, int steps)
-    {
-        this.origin = origin;
-        this.steps = steps;
-    }
-    public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
-    {
-        return new Helper().SpacePointArrayContainsPoint(map.GetSpacePointsInsideRange(origin, steps), point);
-    }
-}
-
-
 public class MapScript : SFController
 {
 
@@ -252,19 +153,6 @@ public class MapScript : SFController
             obj.GetComponent<HexScript>().SetTile(this.map.getRepresentation()[indexes.Item1, indexes.Item2]);
         }
     }
-
-    //public void OnSpacePointClicked(GameObject spacePointObject, SpacePoint point)
-    //{
-    //    //actualTokenInScene.GetComponent<Space.TokenScript>().MoveTo(point);
-    //    //Object.Destroy(spacePointObject);
-    //    //CreateButtonAtSpacePoint(map.getAllSpacePointsInDistance(point, 2)[0]);
-
-    //    //FlipDiceChipAtHex(new HexCoordinates(0, 0));
-    //    RemoveAllSpacePointButtons();
-
-    //    selectedTokenRenderer.GetComponent<Space.TokenScript>().MoveTo(point);
-
-    //}
 
     void CenterCamera()
     {
@@ -432,16 +320,6 @@ public class MapScript : SFController
         CreateButtonsAtSpacePoints(points);
     }
 
-    void ShowSpacePointsForColonyship()
-    {
-        ShowAllAvailableSpacePoints();
-    }
-
-    void ShowSpacePointsForSpaceport()
-    {
-        ShowAllAvailableSpacePoints();
-    }
-
     public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)
     {
         if (isReceivingNotifications)
@@ -450,6 +328,10 @@ public class MapScript : SFController
             {
                 case SFNotification.player_data_changed:
                     RedrawTokens();
+                    break;
+
+                case SFNotification.map_data_changed:
+                    RedrawMap();
                     break;
             }
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,29 +7,39 @@ public class FlyShipsState : GameState
 {
     GameController controller;
     Token selectedToken;
+    HUDScript hudScript;
+    MapScript mapScript;
     public FlyShipsState(GameController controller) : base(controller)
     {
         this.controller = controller;
+        hudScript = controller.HUD.GetComponent<HUDScript>();
+        mapScript = controller.Map.GetComponent<MapScript>();
         Init();
     }
 
     public void Init()
     {
-        controller.HUD.GetComponent<HUDScript>().SetStateText("FlyShipsState");
+        hudScript.SetStateText("FlyShipsState");
+        hudScript.ShowSettleButton(false);
     }
 
     public override void OnNextButtonClicked()
     {
-        Debug.Log("jo1");
         // TODO: pass turn to next player
+        controller.SetState(new StartState(controller));
     }
 
     public override void OnSpacePointClicked(SpacePoint point, GameObject spacePointObject)
     {
-        controller.Map.GetComponent<MapScript>().RemoveAllSpacePointButtons();
-        selectedToken.FlyTo(point, controller.Map.GetComponent<MapScript>().map);
-        //selectedToken.resetFlyability();
-        controller.SetState(new FlyShipsState(controller));
+        mapScript.RemoveAllSpacePointButtons();
+        selectedToken.FlyTo(point, mapScript.map);
+        if (mapScript.map.TokenCanSettle(selectedToken, new Player[] { controller.player }))
+        {
+            hudScript.ShowSettleButton(true);
+        } else
+        {
+            hudScript.ShowSettleButton(false);
+        }
     }
 
     public override void OnTokenClicked(Token tokenModel, GameObject tokenGameObject)
@@ -43,6 +54,11 @@ public class FlyShipsState : GameState
                 };
             controller.Map.GetComponent<MapScript>().ShowSpacePointsFulfillingFilters(filters);
         }
+    }
+
+    public override void OnShipDiceThrown(ShipDiceThrow shipDiceThrow)
+    {
+        throw new NotImplementedException();
     }
 
     public override void OnBuildShipOptionClicked(Token token)
@@ -65,6 +81,8 @@ public class FlyShipsState : GameState
         if (selectedToken != null)
         {
             selectedToken.settle();
+            hudScript.ShowSettleButton(false);
+            selectedToken = null;
         }
     }
 }
