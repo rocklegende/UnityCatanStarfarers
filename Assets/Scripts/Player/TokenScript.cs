@@ -49,18 +49,22 @@ namespace Space
         public void Draw()
         {
             // draw token plus attached token if needed
-            GameObject prefab = TokenToPrefab(tokenModel);
-            tokenInstance = Instantiate(prefab, tokenModel.position.ToUnityPosition(), Quaternion.identity);
-            tokenInstance.transform.position = new Vector3(tokenModel.position.ToUnityPosition().x, tokenModel.position.ToUnityPosition().y, Constants.TOKEN_LAYER);
-            tokenInstance.transform.parent = this.transform;
-
-            if (tokenModel.attachedToken != null)
+            Vector3 position = tokenModel.GetUnityPosition();
+            if (position != null)
             {
-                SpacePoint position = tokenModel.position; //set at same position
-                GameObject prefabAttached = TokenToPrefab(tokenModel.attachedToken);
-                GameObject tokenInstanceAttached = Instantiate(prefabAttached, position.ToUnityPosition(), Quaternion.identity);
-                tokenInstanceAttached.transform.position = new Vector3(position.ToUnityPosition().x, position.ToUnityPosition().y, Constants.TOKEN_LAYER - 1);
-                tokenInstanceAttached.transform.parent = tokenInstance.transform;
+                GameObject prefab = TokenToPrefab(tokenModel);
+                tokenInstance = Instantiate(prefab, position, Quaternion.identity);
+                tokenInstance.transform.position = new Vector3(position.x, position.y, Constants.TOKEN_LAYER);
+                tokenInstance.transform.parent = this.transform;
+
+                if (tokenModel.attachedToken != null)
+                {
+                     //set at same position
+                    GameObject prefabAttached = TokenToPrefab(tokenModel.attachedToken);
+                    GameObject tokenInstanceAttached = Instantiate(prefabAttached, position, Quaternion.identity);
+                    tokenInstanceAttached.transform.position = new Vector3(position.x, position.y, Constants.TOKEN_LAYER - 1);
+                    tokenInstanceAttached.transform.parent = tokenInstance.transform;
+                }
             }
         }
 
@@ -77,7 +81,6 @@ namespace Space
 
         public void OnClick()
         {
-            //app.Notify
             app.Notify(SFNotification.token_was_selected, gameObject, new object[] { tokenModel, tokenInstance });
         }
 
@@ -94,7 +97,6 @@ namespace Space
 
         public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)
         {
-            Debug.Log("TokenScript is doing Nothing");
             switch(p_event_path)
             {
                 case SFNotification.token_data_changed:

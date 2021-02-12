@@ -12,4 +12,5 @@ public class SFNotification
     public const string settle_button_clicked = "settle.button.clicked";
     public const string ship_dice_thrown = "ship.dice.thrown";
     public const string map_data_changed = "map.data.changed";
+    public const string tile_group_data_changed = "tile.group.data.changed";
 }

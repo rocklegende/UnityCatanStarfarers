@@ -80,7 +80,7 @@ public class FlyShipsState : GameState
     {
         if (selectedToken != null)
         {
-            selectedToken.settle();
+            mapScript.SettleToken(selectedToken);
             hudScript.ShowSettleButton(false);
             selectedToken = null;
         }

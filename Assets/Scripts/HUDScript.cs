@@ -87,7 +87,6 @@ public class HUDScript : SFController
         this.player = player;
         buildShipsDropDownRef.GetComponent<BuildDropDown>().player = player;
         upgradesDropDownRef.GetComponent<BuildDropDown>().player = player;
-
     }
 
     public void ShowSettleButton(bool show)

@@ -114,21 +114,6 @@ public class MapScript : SFController
         return null;
     }
 
-    public void AssignDiceChipToHex(DiceChip dc, GameObject hexGameObject)
-    {
-        hexGameObject.GetComponent<HexScript>().SetDiceChip(dc);
-    }
-
-    public void FlipDiceChipAtHex(HexCoordinates coordinates)
-    {
-        // Option 1:
-        // go through every hexagonObject, retrieve the HexScript and look if the hex coordinates match, then perform action
-
-        GameObject hex = FindHexGameobjectAt(coordinates);
-        HexScript script = hex.GetComponent<HexScript>();
-        script.FlipDiceChip();
-    }
-
     public void RepresentationChanged()
     {
 
@@ -152,6 +137,18 @@ public class MapScript : SFController
             (int, int) indexes = obj.GetComponent<HexScript>().mapArrayIndexes;
             obj.GetComponent<HexScript>().SetTile(this.map.getRepresentation()[indexes.Item1, indexes.Item2]);
         }
+    }
+
+    public GameObject FindHexGameObjectWithTile(Tile_ tile)
+    {
+        foreach (var gameObject in hexagonGameObjects)
+        {
+            if (gameObject.GetComponent<HexScript>().tile == tile)
+            {
+                return gameObject;
+            }
+        }
+        return null;
     }
 
     void CenterCamera()
@@ -308,6 +305,16 @@ public class MapScript : SFController
         }
 
         return allTokens.ToArray();
+    }
+
+    public void SettleToken(Token token)
+    {
+        token.settle();
+        var tileGroup = map.FindTileGroupAtPoint(token.position);
+        if (tileGroup != null)
+        {
+            tileGroup.HandleTokenSettled(token);
+        }
     }
 
     public void ShowSpacePointsFulfillingFilters(SpacePointFilter[] filters)

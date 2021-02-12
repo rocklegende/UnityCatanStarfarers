@@ -2,9 +2,14 @@
 using UnityEngine;
 
 
-public class OrzelTradeStation : AbstractTradeStation
+public class OrzelTradeStation : TradeStation
 {
-    public OrzelTradeStation() : base(new AbstractFriendshipCard[] { }, "Orzel")
+    public OrzelTradeStation()
+        : base(
+            new AbstractFriendshipCard[] { },
+            "Orzel",
+            new Tile_[]{ new OrzelTradeStationTile(), new OrzelTradeStationTile(), new OrzelTradeStationTile() }
+            )
     {
     }
 

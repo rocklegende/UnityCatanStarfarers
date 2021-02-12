@@ -24,6 +24,7 @@ public class MapGenerator
     List<TileGroup> randomSpawnTileGroup;
     List<TileGroup> tileGroupsCopy;
     Map map;
+    private bool isRandom = false;
 
     public MapGenerator()
     {
@@ -62,7 +63,7 @@ public class MapGenerator
         randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new GoodsResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
         randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new GoodsResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
         randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new GoodsResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
-        randomSpawnTileGroup.Add(new TileGroup(new Tile_[] { new OrzelTradeStationTile(orz, 2), new OrzelTradeStationTile(orz, 3), new OrzelTradeStationTile(orz, 1) }));
+        randomSpawnTileGroup.Add(new OrzelTradeStation());
         randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new GoodsResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
         randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
         randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new GoodsResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
@@ -101,19 +102,25 @@ public class MapGenerator
 
     void PopulateBasePoints()
     {
-        map.SetTileGroupAtSpacePoint(new TileGroup(new Tile_[] { new FuelResourceTile(), new GoodsResourceTile(), new OreResourceTile() }), basePoints[0]);
-        map.SetTileGroupAtSpacePoint(new TileGroup(new Tile_[] { new OreResourceTile(), new CarbonResourceTile(), new FoodResourceTile() }), basePoints[1]);
-        map.SetTileGroupAtSpacePoint(new TileGroup(new Tile_[] { new OreResourceTile(), new FuelResourceTile(), new GoodsResourceTile() }), basePoints[2]);
-        map.SetTileGroupAtSpacePoint(new TileGroup(new Tile_[] { new FoodResourceTile(), new FuelResourceTile(), new CarbonResourceTile() }), basePoints[3]);
+        map.SetTileGroupAtSpacePoint(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(), new GoodsResourceTile(), new OreResourceTile() }), basePoints[0]);
+        map.SetTileGroupAtSpacePoint(new ResourceTileGroup(new ResourceTile[] { new OreResourceTile(), new CarbonResourceTile(), new FoodResourceTile() }), basePoints[1]);
+        map.SetTileGroupAtSpacePoint(new ResourceTileGroup(new ResourceTile[] { new OreResourceTile(), new FuelResourceTile(), new GoodsResourceTile() }), basePoints[2]);
+        map.SetTileGroupAtSpacePoint(new ResourceTileGroup(new ResourceTile[] { new FoodResourceTile(), new FuelResourceTile(), new CarbonResourceTile() }), basePoints[3]);
     }
 
     void PopulateRandomSpawnPoints()
     {
-        RotateRandomSpawnTileGroups();
+        if (isRandom)
+        {
+            RotateRandomSpawnTileGroups();
+        }
 
         foreach (SpacePoint point in randomSpawnPoints)
         {
-            randomSpawnTileGroup.Shuffle();
+            if (isRandom)
+            {
+                randomSpawnTileGroup.Shuffle();
+            }
             TileGroup tg = randomSpawnTileGroup[0];
             randomSpawnTileGroup.RemoveAt(0);
 

@@ -443,7 +443,7 @@ namespace Tests
         public void TestSetTileGroupAtSpacePointPositiveTest1()
         {
             Map map = CreateSampleMap4x4();
-            TileGroup tg = new TileGroup(new Tile_[] { new OreResourceTile(), new FoodResourceTile(), new GoodsResourceTile() });
+            TileGroup tg = new ResourceTileGroup(new ResourceTile[] { new OreResourceTile(), new FoodResourceTile(), new GoodsResourceTile() });
             SpacePoint point = new SpacePoint(new HexCoordinates(1, 1), 1);
             map.SetTileGroupAtSpacePoint(tg, point);
             Assert.True(map.getTileAt(new HexCoordinates(1, 1)) is OreResourceTile);
@@ -455,7 +455,7 @@ namespace Tests
         public void TestSetTileGroupAtSpacePointPositiveTest2()
         {
             Map map = CreateSampleMap4x4();
-            TileGroup tg = new TileGroup(new Tile_[] { new OreResourceTile(), new FoodResourceTile(), new GoodsResourceTile() });
+            TileGroup tg = new ResourceTileGroup(new ResourceTile[] { new OreResourceTile(), new FoodResourceTile(), new GoodsResourceTile() });
             SpacePoint point = new SpacePoint(new HexCoordinates(0, 1), 0);
             map.SetTileGroupAtSpacePoint(tg, point);
             Assert.True(map.getTileAt(new HexCoordinates(0, 1)) is OreResourceTile);
@@ -467,7 +467,7 @@ namespace Tests
         public void TestSetTileGroupAtSpacePointNegativeTest()
         {
             Map map = CreateSampleMap4x4();
-            TileGroup tg = new TileGroup(new Tile_[] { new OreResourceTile(), new FoodResourceTile(), new GoodsResourceTile() });
+            TileGroup tg = new ResourceTileGroup(new ResourceTile[] { new OreResourceTile(), new FoodResourceTile(), new GoodsResourceTile() });
             SpacePoint point = new SpacePoint(new HexCoordinates(1, 1), 0);
             try
             {

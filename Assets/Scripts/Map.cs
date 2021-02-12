@@ -436,6 +436,19 @@ public class Map
         return validCoords.ToArray();
     }
 
+    public TileGroup FindTileGroupAtPoint(SpacePoint point)
+    {
+        foreach(var tile in getTilesAtPoint(point))
+        {
+            var tileGroup = FindTileGroupContainingTile(tile);
+            if (tileGroup != null)
+            {
+                return tileGroup;
+            }
+        }
+        return null;
+    }
+
     public void OnTokenDataChanged(Token token)
     {
         var newPositionOfToken = token.position;
@@ -443,20 +456,29 @@ public class Map
 
         foreach (var tile in tilesAtPoint)
         {
-            if (tile is ResourceTile)
+            var tileGroup = FindTileGroupContainingTile(tile);
+            if (tileGroup != null)
             {
-                var t = (ResourceTile)tile;
-                var tileGroup = FindTileGroupContainingTile(t);
-                if (tileGroup != null)
-                {
-                    if (tileGroup is ResourceTileGroup)
-                    {
-                        var resourceTileGroup = (ResourceTileGroup)tileGroup;
-                        resourceTileGroup.RevealDiceChips();
-                        DataChanged();
-                    }
-                }
+                tileGroup.OnTokenEnteredArea(token);
+                break;
             }
+                
+            //if (tileGroup != null)
+            //{
+            //    if (tileGroup is ResourceTileGroup)
+            //    {
+            //        var resourceTileGroup = (ResourceTileGroup)tileGroup;
+            //        resourceTileGroup.RevealDiceChips();
+            //        DataChanged();
+            //    }
+
+            //    if (tileGroup is TradeStation)
+            //    {
+            //        var tradeStation = (TradeStation)tileGroup;
+            //        tradeStation.OnSettle(token);
+            //        DataChanged();
+            //    }
+            //}
         }
 
     }

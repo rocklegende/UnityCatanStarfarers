@@ -12,12 +12,14 @@ public abstract class Token
     //image
 
     public SpacePoint position = null;
+    public Vector3? unityPosition = null;
+    public bool useOwnPositioningSystem = true;
     public Cost cost;
     public string id;
     protected Color color;
     public Token attachedToken = null;
     protected bool isTokenAttachable;
-    int stepsLeft = 5;
+    int stepsLeft = 20;
 
 
 
@@ -42,9 +44,22 @@ public abstract class Token
         return stepsLeft;
     }
 
+    public Vector3 GetUnityPosition()
+    {
+        if (useOwnPositioningSystem)
+        {
+            return position.ToUnityPosition();
+        } else
+        {
+            return (Vector3)unityPosition;
+        }
+    }
+
+    public abstract void OnSettle();
+
     public void settle()
     {
-        attachedToken = null;
+        OnSettle();
         DataChanged();
     }
 
@@ -136,6 +151,12 @@ public abstract class Token
     public void SetPosition(SpacePoint pos)
     {
         this.position = pos;
+        DataChanged();
+    }
+
+    public void SetUnityPosition(Vector3 pos)
+    {
+        this.unityPosition = pos;
         DataChanged();
     }
 

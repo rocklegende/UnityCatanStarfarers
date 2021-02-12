@@ -3,12 +3,15 @@ using UnityEngine;
 
 public abstract class TradeStationTile : Tile_
 {
-    public AbstractTradeStation assignedTradeStation;
-    public int numDockingPorts;
-    public TradeStationTile(AbstractTradeStation assignedTradeStation, int numDockingPorts)
-    {
-        this.assignedTradeStation = assignedTradeStation;
-        this.numDockingPorts = numDockingPorts;
+    //public AbstractTradeStation assignedTradeStation;
+    //public int numDockingPorts;
+    //public TradeStationTile(AbstractTradeStation assignedTradeStation, int numDockingPorts)
+    //{
+    //    this.assignedTradeStation = assignedTradeStation;
+    //    this.numDockingPorts = numDockingPorts;
+    //}
+
+    public TradeStationTile() {
     }
 
     public override bool blocksTraffic()

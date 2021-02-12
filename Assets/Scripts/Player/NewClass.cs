@@ -5,6 +5,11 @@ public class SpacePortToken : Token
     {
     }
 
+    public override void OnSettle()
+    {
+        //
+    }
+
     public override int BaseVictoryPoints()
     {
         return 1;
@@ -65,13 +70,18 @@ public class ColonyBaseToken : Token, Settable
         return newToken;
     }
 
+    public override void OnSettle()
+    {
+        attachedToken = null;
+    }
+
     public override int ResourceProduce()
     {
         return 1;
     }
 }
 
-public class TradeBaseToken : Token
+public class TradeBaseToken : Token, Settable
 {
     public TradeBaseToken() : base("tradebase_token", true, new Cost(new Resource[] { new OreResource(), new FuelResource(), new GoodsResource(), new GoodsResource() }))
     {
@@ -80,6 +90,19 @@ public class TradeBaseToken : Token
     public override int BaseVictoryPoints()
     {
         return 1;
+    }
+
+    public bool CanSettle(Tile_[] tiles)
+    {
+        int count = 0;
+        foreach (var tile in tiles)
+        {
+            if (tile is TradeStationTile)
+            {
+                count += 1;
+            }
+        }
+        return count == 3;
     }
 
     public override Token makeCopy()
@@ -92,6 +115,11 @@ public class TradeBaseToken : Token
         newToken.attachedToken = attachedToken;
         newToken.isTokenAttachable = isTokenAttachable;
         return newToken; ;
+    }
+
+    public override void OnSettle()
+    {
+        attachedToken = null;
     }
 
     public override int ResourceProduce()
@@ -123,6 +151,11 @@ public class ShipToken : Token
         return newToken;
     }
 
+    public override void OnSettle()
+    {
+        throw new NotImplementedException();
+    }
+
     public override int ResourceProduce()
     {
         return 0;
@@ -142,6 +175,11 @@ public class BoosterUpgradeToken : Token
     }
 
     public override Token makeCopy()
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void OnSettle()
     {
         throw new NotImplementedException();
     }
@@ -169,6 +207,11 @@ public class CannonUpgradeToken : Token
         throw new NotImplementedException();
     }
 
+    public override void OnSettle()
+    {
+        throw new NotImplementedException();
+    }
+
     public override int ResourceProduce()
     {
         return 0;
@@ -188,6 +231,11 @@ public class FreightPodUpgradeToken : Token
     }
 
     public override Token makeCopy()
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void OnSettle()
     {
         throw new NotImplementedException();
     }

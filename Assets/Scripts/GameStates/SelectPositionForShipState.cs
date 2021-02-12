@@ -46,7 +46,6 @@ public class SelectPositionForShipState : GameState
 
     public override void OnNextButtonClicked()
     {
-        Debug.Log("jo1");
         controller.SetState(new FlyShipsState(controller));
     }
 
@@ -59,6 +58,7 @@ public class SelectPositionForShipState : GameState
 
     public override void OnTokenClicked(Token tokenModel, GameObject tokenGameObject)
     {
+
         if (tokenModel is ColonyBaseToken)
         {
             tokenModel.attachToken(new SpacePortToken());

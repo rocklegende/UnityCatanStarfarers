@@ -14,8 +14,8 @@ namespace Tests
         public void TileGroupSuccessfulCreationWith3Tiles()
         {
             // Use the Assert class to test conditions
-            Tile_[] tiles = { new FoodResourceTile(), new FoodResourceTile(), new FoodResourceTile() };
-            TileGroup group = new TileGroup(tiles);
+            ResourceTile[] tiles = { new FoodResourceTile(), new FoodResourceTile(), new FoodResourceTile() };
+            TileGroup group = new ResourceTileGroup(tiles);
 
         }
 
@@ -24,8 +24,8 @@ namespace Tests
         {
             try
             {
-                Tile_[] tiles = { new FoodResourceTile(), new FoodResourceTile() };
-                TileGroup group = new TileGroup(tiles);
+                ResourceTile[] tiles = { new FoodResourceTile(), new FoodResourceTile() };
+                TileGroup group = new ResourceTileGroup(tiles);
                 Assert.True(false); // Fail this test if we come to this point
             }
             catch (ArgumentException e)
@@ -42,7 +42,7 @@ namespace Tests
             var goodsTile = new GoodsResourceTile();
             var oreTile = new OreResourceTile();
 
-            var tg = new TileGroup(new Tile_[] { foodTile, goodsTile, oreTile });
+            var tg = new ResourceTileGroup(new ResourceTile[] { foodTile, goodsTile, oreTile });
             tg.ShiftTiles(0);
             Assert.True(tg.GetTiles()[0] == foodTile && tg.GetTiles()[1] == goodsTile && tg.GetTiles()[2] == oreTile);
 
@@ -55,7 +55,7 @@ namespace Tests
             var goodsTile = new GoodsResourceTile();
             var oreTile = new OreResourceTile();
 
-            var tg = new TileGroup(new Tile_[] { foodTile, goodsTile, oreTile });
+            var tg = new ResourceTileGroup(new ResourceTile[] { foodTile, goodsTile, oreTile });
 
             tg.ShiftTiles(3);
             Assert.True(tg.GetTiles()[0] == foodTile && tg.GetTiles()[1] == goodsTile && tg.GetTiles()[2] == oreTile);
@@ -69,7 +69,7 @@ namespace Tests
             var goodsTile = new GoodsResourceTile();
             var oreTile = new OreResourceTile();
 
-            var tg = new TileGroup(new Tile_[] { foodTile, goodsTile, oreTile });
+            var tg = new ResourceTileGroup(new ResourceTile[] { foodTile, goodsTile, oreTile });
             tg.ShiftTiles(1);
             Assert.True(tg.GetTiles()[0] == oreTile && tg.GetTiles()[1] == foodTile && tg.GetTiles()[2] == goodsTile);
 
@@ -82,7 +82,7 @@ namespace Tests
             var goodsTile = new GoodsResourceTile();
             var oreTile = new OreResourceTile();
 
-            var tg = new TileGroup(new Tile_[] { foodTile, goodsTile, oreTile });
+            var tg = new ResourceTileGroup(new ResourceTile[] { foodTile, goodsTile, oreTile });
             tg.ShiftTiles(2);
             Assert.True(tg.GetTiles()[0] == goodsTile && tg.GetTiles()[1] == oreTile && tg.GetTiles()[2] == foodTile);
 
@@ -93,8 +93,8 @@ namespace Tests
         {
             try
             {
-                Tile_[] tiles = { new FoodResourceTile(), new FoodResourceTile(), new FoodResourceTile(), new FoodResourceTile() };
-                TileGroup group = new TileGroup(tiles);
+                ResourceTile[] tiles = { new FoodResourceTile(), new FoodResourceTile(), new FoodResourceTile(), new FoodResourceTile() };
+                TileGroup group = new ResourceTileGroup(tiles);
                 Assert.True(false); // Fail this test if we come to this point
             }
             catch (ArgumentException e)
