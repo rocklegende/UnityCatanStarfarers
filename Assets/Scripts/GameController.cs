@@ -168,42 +168,6 @@ public class GameController : SFController
     {
         var state = new TwoTradeShipAndOneSpacePort(this);
         state.Setup();
-
-        //state = new FlyShipsState(this);
-
-        //player = new Player(Color.blue, this);
-        //HUD.GetComponent<HUDScript>().SetPlayer(player);
-        //HUD.GetComponent<HUDScript>().isReceivingNotifications = true;
-
-        //for (int i = 0; i < 5; i++)
-        //{
-        //    player.AddCard(new GoodsCard());
-        //    player.AddCard(new FuelCard());
-        //    player.AddCard(new CarbonCard());
-        //    player.AddCard(new FoodCard());
-        //    player.AddCard(new OreCard());
-        //}
-
-        //Token spacePort = new ColonyBaseToken();
-        //spacePort.attachedToken = new SpacePortToken();
-        //spacePort.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 1));
-        //player.BuildToken(spacePort);
-
-        //Token colonyShip = new ColonyBaseToken();
-        //colonyShip.attachedToken = new ShipToken();
-        //colonyShip.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 0));
-        //player.BuildToken(colonyShip);
-
-
-
-
-        //MapGenerator generator = new MapGenerator();
-        //mapModel = generator.GenerateRandomMap();
-
-        //Map.GetComponent<MapScript>().SetMap(mapModel);
-        //Map.GetComponent<MapScript>().SetPlayers(new Player[] { player });
-        //Map.GetComponent<MapScript>().isReceivingNotifications = true;
-
     }
 
     public void SetState(GameState state)

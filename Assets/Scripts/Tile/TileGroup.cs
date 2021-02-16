@@ -72,5 +72,7 @@ public class ResourceTileGroup : TileGroup
         {
             tile.GetDiceChip().isFaceUp = true;
         }
+        var notifier = new SFElement();
+        notifier.app.Notify(SFNotification.tile_group_data_changed, notifier);
     }
 }

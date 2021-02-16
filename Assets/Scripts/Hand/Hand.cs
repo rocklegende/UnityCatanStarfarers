@@ -14,6 +14,11 @@ public class Hand
         //TODO: notify that hand changed
     }
 
+    public int Count()
+    {
+        return cards.Count;
+    }
+
     public Hand()
     {
     }

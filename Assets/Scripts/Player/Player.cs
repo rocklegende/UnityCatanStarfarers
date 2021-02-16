@@ -10,7 +10,7 @@ public class Player
     public SpaceShip ship;
     public Hand hand;
     TradingRules rules;
-    AbstractFriendshipCard[] friendShipCards;
+    List<AbstractFriendshipCard> friendShipCards;
     int FriendShipChips;
     SFElement notifier;
 
@@ -22,7 +22,7 @@ public class Player
         hand = new Hand();
         rules = new TradingRules();
         tokens = new List<Token> {};
-        friendShipCards = new AbstractFriendshipCard[] {};
+        friendShipCards = new List<AbstractFriendshipCard>();
         FriendShipChips = 0;
         this.notifier = notifier;
     }
@@ -31,6 +31,8 @@ public class Player
     {
         notifier.app.Notify(SFNotification.player_data_changed, notifier, new object[] { this });
     }
+
+    //public void ChangeTradingRatio
 
     public void AddCard(Card card)
     {
@@ -117,12 +119,122 @@ public class Player
         FriendShipChips += 1;
         DataChanged();
     }
+
+    public void AddFriendShipCard(AbstractFriendshipCard card)
+    {
+        friendShipCards.Add(card);
+        DataChanged();
+    }
+
+    public void ChangeFoodTradingRatio(int newRatio)
+    {
+        if (newRatio < 2 || newRatio > 3)
+        {
+            throw new ArgumentException("");
+        }
+        rules.foodTradingRatio = newRatio;       
+    }
+
+    public void ChangeGoodsTradingRatio(int newRatio)
+    {
+        if (newRatio < 1 || newRatio > 2)
+        {
+            throw new ArgumentException("");
+        }
+        rules.goodsTradingRatio = newRatio;
+    }
+
+    public void ChangeFuelTradingRatio(int newRatio)
+    {
+        if (newRatio < 2 || newRatio > 3)
+        {
+            throw new ArgumentException("");
+        }
+        rules.fuelTradingRatio = newRatio;
+    }
+
+    public void ChangeCarbonTradingRatio(int newRatio)
+    {
+        if (newRatio < 2 || newRatio > 3)
+        {
+            throw new ArgumentException("");
+        }
+        rules.carbonTradingRatio = newRatio;
+    }
+
+    public void ChangeOreTradingRatio(int newRatio)
+    {
+        if (newRatio < 2 || newRatio > 3)
+        {
+            throw new ArgumentException("");
+        }
+        rules.oreTradingRatio = newRatio;
+    }
+
+    public int GetFoodTradingRatio()
+    {
+        return rules.foodTradingRatio;
+    }
+
+    public int GetGoodsTradingRatio()
+    {
+        return rules.goodsTradingRatio;
+    }
+    public int GetFuelTradingRatio()
+    {
+        return rules.fuelTradingRatio;
+    }
+    public int GetOreTradingRatio()
+    {
+        return rules.oreTradingRatio;
+    }
+    public int GetCarbonTradingRatio()
+    {
+        return rules.carbonTradingRatio;
+    }
 }
 
 public class TradingRules {
 
-    //TODO
+    public int foodTradingRatio = 3;
+    public int goodsTradingRatio = 2;
+    public int oreTradingRatio = 3;
+    public int fuelTradingRatio = 3;
+    public int carbonTradingRatio = 3;
 
+    public int productionBonusFood = 0;
+    public int productionBonusFuel = 0;
+    public int productionBonusGoods = 0;
+    public int productionBonusOre = 0;
+    public int productionBonusCarbon = 0;
+
+    public void IncreaseProductionBonusGoods()
+    {
+        if (productionBonusGoods == 0)
+        {
+            productionBonusGoods += 1;
+        }
+    }
+
+    public void IncreaseProductionBonusFood()
+    {
+
+    }
+
+    public void IncreaseProductionBonusOre()
+    {
+
+    }
+
+    public void IncreaseProductionBonusCarbon()
+    {
+
+    }
+
+    public void IncreaseProductionBonusFuel()
+    {
+
+    }
 }
 
 

@@ -340,6 +340,10 @@ public class MapScript : SFController
                 case SFNotification.map_data_changed:
                     RedrawMap();
                     break;
+
+                case SFNotification.tile_group_data_changed:
+                    RedrawMap();
+                    break;
             }
         }
         

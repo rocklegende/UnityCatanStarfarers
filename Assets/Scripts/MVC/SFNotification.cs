@@ -13,4 +13,5 @@ public class SFNotification
     public const string ship_dice_thrown = "ship.dice.thrown";
     public const string map_data_changed = "map.data.changed";
     public const string tile_group_data_changed = "tile.group.data.changed";
+    public const string open_friendship_card_selection = "open.friendship.card.selection";
 }

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HUDScript : SFController
+
+
+public class HUDScript : SFController, FriendShipCardSelectorDelegate
 {
     public Player player;
     public Text oreCardStackText;
@@ -30,11 +32,15 @@ public class HUDScript : SFController
     public Text stateText;
     public GameObject settleButton;
 
+    public GameObject friendShipCardSelection;
+
 
 
     // Start is called before the first frame update
     void Start()
     {
+        friendShipCardSelection.SetActive(false);
+        friendShipCardSelection.GetComponent<FriendShipCardSelector>().delegate_ = this;
         CreateBuildDropDowns();
     }
 
@@ -150,6 +156,18 @@ public class HUDScript : SFController
         app.Notify(SFNotification.settle_button_clicked, this);
     }
 
+    public void ShowFriendshipCardSelection(TradeStation tradeStation, AbstractFriendshipCard[] cards)
+    {
+        friendShipCardSelection.GetComponent<FriendShipCardSelector>().SetCards(cards);
+        friendShipCardSelection.GetComponent<FriendShipCardSelector>().SetTradeStation(tradeStation);
+        friendShipCardSelection.SetActive(true);
+    }
+
+    public void CloseFriendshipCardSelection()
+    {
+        friendShipCardSelection.SetActive(false);
+    }
+
 
     public void BuildShipsToggleBtnPressed()
     {
@@ -211,7 +229,20 @@ public class HUDScript : SFController
                 case SFNotification.player_data_changed:
                     OnPlayerDataChanged();
                     break;
+
+                case SFNotification.open_friendship_card_selection:
+                    var tradeStation = (TradeStation)p_data[0];
+                    var cards = (AbstractFriendshipCard[])p_data[1];
+                    ShowFriendshipCardSelection(tradeStation, cards);
+                    break;
             }
         }
+    }
+
+    public void didSelectFriendshipCard(TradeStation station, AbstractFriendshipCard card)
+    {
+        CloseFriendshipCardSelection();
+        station.RemoveCard(card);
+        card.ActivateEffect(player);
     }
 }

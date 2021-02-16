@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 public abstract class TradeStation : TileGroup
 {
@@ -7,8 +9,6 @@ public abstract class TradeStation : TileGroup
     public AbstractFriendshipCard[] tradingCards;
     public List<Token> dockedSpaceships = new List<Token>();
     int capacity = 5;
-
-    // TODO: add renderer script just for rendering trade stations (these scripts handle how to render 3 hex tiles)
 
     public TradeStation(AbstractFriendshipCard[] tradingCards, string name, Tile_[] tiles)
         : base(tiles)
@@ -34,10 +34,20 @@ public abstract class TradeStation : TileGroup
         // do nothing
     }
 
+    public void RemoveCard(AbstractFriendshipCard card)
+    {
+        Debug.Log("");
+        tradingCards = tradingCards.Where(i => i != card).ToArray();
+        Debug.Log("");
+
+    }
+
     public override void OnTokenSettled(Token token)
     {
         dockedSpaceships.Add(token);
-        //TODO: give token a new position inside the trade station
+
+        var notifier = new SFElement();
+        notifier.app.Notify(SFNotification.open_friendship_card_selection, notifier, new object[] { this, tradingCards });
 
         // remove card from trading cards and give to owner of token
         //pass card to player
