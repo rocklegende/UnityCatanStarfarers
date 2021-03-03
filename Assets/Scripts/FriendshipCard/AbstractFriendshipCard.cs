@@ -11,6 +11,7 @@ public abstract class AbstractFriendshipCard
     public abstract string GetText();
     public abstract string GetTradeStationName();
     public abstract Sprite GetEffectSprite();
+    public abstract Sprite GetBackgroundSprite();
     public abstract void ActivateEffect(Player targetPlayer);
 
 }

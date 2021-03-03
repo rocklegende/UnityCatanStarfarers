@@ -20,6 +20,7 @@ public abstract class Token
     public Token attachedToken = null;
     protected bool isTokenAttachable;
     int stepsLeft = 20;
+    public Player owner;
 
 
 

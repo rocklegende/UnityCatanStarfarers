@@ -68,6 +68,8 @@ public class FriendShipCardSelector : MonoBehaviour
             cardObject.transform.localPosition = position;
             cardObject.transform.parent = cardContainer.transform;
             cardObject.GetComponent<CardScript>().SetText(friendShipCard.GetText());
+            cardObject.GetComponent<CardScript>().SetBackground(friendShipCard.GetBackgroundSprite());
+            // TODO: cardObject.GetComponent<CardScript>().SetBenefitImage
 
             position += new Vector3(distanceBetweenCards, 0);
             gameObjects.Add(cardObject);

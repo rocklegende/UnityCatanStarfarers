@@ -6,7 +6,13 @@ public class OrzelTradeStation : TradeStation
 {
     public OrzelTradeStation()
         : base(
-            new AbstractFriendshipCard[] { new OrzelFriendshipCardFood(), new OrzelFriendshipCardFood() },
+            new AbstractFriendshipCard[] {
+                new OrzelFriendshipCardFood(),
+                new OrzelFriendshipCardGoods(),
+                new OrzelFriendshipCardFuel(),
+                new OrzelFriendshipCardCarbon(),
+                new OrzelFriendshipCardOre()
+            },
             "Orzel",
             new Tile_[]{ new OrzelTradeStationTile(), new OrzelTradeStationTile(), new OrzelTradeStationTile() }
             )

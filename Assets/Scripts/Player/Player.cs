@@ -13,6 +13,11 @@ public class Player
     List<AbstractFriendshipCard> friendShipCards;
     int FriendShipChips;
     SFElement notifier;
+    int foodProduceBonus;
+    int goodsProduceBonus;
+    int oreProduceBonus;
+    int carbonProduceBonus;
+    int fuelProduceBonus;
 
     public Player(Color color, SFElement notifier)
     {
@@ -32,7 +37,33 @@ public class Player
         notifier.app.Notify(SFNotification.player_data_changed, notifier, new object[] { this });
     }
 
-    //public void ChangeTradingRatio
+    public int GetBonusForResource(Resource resource)
+    {
+        if (resource is CarbonResource)
+        {
+            return carbonProduceBonus;
+        }
+        else if (resource is FuelResource)
+        {
+            return fuelProduceBonus;
+        }
+        else if (resource is FoodResource)
+        {
+            return foodProduceBonus;
+        }
+        else if (resource is GoodsResource)
+        {
+            return goodsProduceBonus;
+        }
+        else if (resource is OreResource)
+        {
+            return oreProduceBonus;
+        }
+        else
+        {
+            throw new ArgumentException("No resource of that type available in the game.");
+        }
+    }
 
     public void AddCard(Card card)
     {
@@ -43,6 +74,7 @@ public class Player
     public void AddToken(Token token)
     {
         tokens.Add(token);
+        token.owner = this;
         DataChanged();
     }
 
@@ -65,6 +97,12 @@ public class Player
     {
         ship.Add(token);
         hand.PayCost(token.cost);
+        DataChanged();
+    }
+
+    public void AddSpaceshipTokenWithoutCost(Token token)
+    {
+        ship.Add(token);
         DataChanged();
     }
 
@@ -191,6 +229,51 @@ public class Player
     public int GetCarbonTradingRatio()
     {
         return rules.carbonTradingRatio;
+    }
+
+    public void IncreaseFoodBonus(int n)
+    {
+        int newValue = foodProduceBonus + n;
+        if (newValue < 2 && newValue >= 0)
+        {
+            foodProduceBonus += n;
+        }
+    }
+
+    public void IncreaseGoodsBonus(int n)
+    {
+        int newValue = goodsProduceBonus + n;
+        if (newValue < 2 && newValue >= 0)
+        {
+            goodsProduceBonus += n;
+        }
+    }
+
+    public void IncreaseOreBonus(int n)
+    {
+        int newValue = oreProduceBonus + n;
+        if (newValue < 2 && newValue >= 0)
+        {
+            oreProduceBonus += n;
+        }
+    }
+
+    public void IncreaseCarbonBonus(int n)
+    {
+        int newValue = carbonProduceBonus + n;
+        if (newValue < 2 && newValue >= 0)
+        {
+            carbonProduceBonus += n;
+        }
+    }
+
+    public void IncreaseFuelBonus(int n)
+    {
+        int newValue = fuelProduceBonus + n;
+        if (newValue < 2 && newValue >= 0)
+        {
+            fuelProduceBonus += n;
+        }
     }
 }
 

@@ -41,6 +41,21 @@ public class Helper
         return false;
     }
 
+    public Player GetOwnerOfToken(Player[] players, Token token)
+    {
+        foreach (Player player in players)
+        {
+            foreach (Token tok in player.tokens)
+            {
+                if (tok == token)
+                {
+                    return player;
+                }
+            }
+        }
+        return null;
+    }
+
     public Token[] GetAllTokenOfPlayers(Player[] players)
     {
         List<Token> tokens = new List<Token>();
@@ -52,6 +67,37 @@ public class Helper
             }
         }
         return tokens.ToArray();
+    }
+
+    public Hand GetHandWithResources(int food = 0, int goods = 0, int fuel = 0, int ore = 0, int carbon = 0)
+    {
+        var hand = new Hand();
+        for (int i = 0; i < food; i++)
+        {
+            hand.AddCard(new FoodCard());
+        }
+
+        for (int i = 0; i < goods; i++)
+        {
+            hand.AddCard(new GoodsCard());
+        }
+
+        for (int i = 0; i < ore; i++)
+        {
+            hand.AddCard(new OreCard());
+        }
+
+        for (int i = 0; i < fuel; i++)
+        {
+            hand.AddCard(new FuelCard());
+        }
+
+        for (int i = 0; i < carbon; i++)
+        {
+            hand.AddCard(new CarbonCard());
+        }
+        return hand;
+
     }
 
     public ResourceCard CreateResourceCardFromResource(Resource resource)

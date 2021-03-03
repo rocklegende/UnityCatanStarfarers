@@ -23,6 +23,11 @@ public class Hand
     {
     }
 
+    public void AddHand(Hand hand)
+    {
+        cards.AddRange(hand.cards);
+    }
+
     public int NumberCardsOfType<T>() where T : ResourceCard {
 
         int sum = 0;

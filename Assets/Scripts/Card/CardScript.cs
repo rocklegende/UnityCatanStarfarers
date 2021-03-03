@@ -8,6 +8,8 @@ public class CardScript : MonoBehaviour
     // Start is called before the first frame update
     public Text cardText;
     public GameObject disablePanel;
+    public Image benefitImage;
+    public Image backgroundImage;
 
 
     void Start()
@@ -24,6 +26,16 @@ public class CardScript : MonoBehaviour
     public void SetText(string text)
     {
         cardText.text = text;
+    }
+
+    public void SetBackground(Sprite sprite)
+    {
+        backgroundImage.sprite = sprite;
+    }
+
+    public void SetBenefitImage(Sprite sprite)
+    {
+        benefitImage.sprite = sprite;
     }
 
     public void Enable()

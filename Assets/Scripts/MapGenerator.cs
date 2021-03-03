@@ -64,9 +64,9 @@ public class MapGenerator
         randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new GoodsResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
         randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new GoodsResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
         randomSpawnTileGroup.Add(new OrzelTradeStation());
-        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new GoodsResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
-        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
-        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new GoodsResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
+        randomSpawnTileGroup.Add(new KhornemTradeStation());
+        randomSpawnTileGroup.Add(new RahnaTradeStation());
+        randomSpawnTileGroup.Add(new AxxaTradeStation());
         randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
         randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
         randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
