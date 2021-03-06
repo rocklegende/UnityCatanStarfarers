@@ -10,6 +10,40 @@ public abstract class DebugStartState
         this.controller = controller;
     }
 
+    public Player[] GetGenericPlayers()
+    {
+        return new Player[] { new Player(Color.green, controller), new Player(Color.red, controller) };
+    }
+
+    public void CommonSetup()
+    {
+        controller.players = GetGenericPlayers();
+        controller.mainPlayer = controller.players[0];
+        controller.HUD.GetComponent<HUDScript>().SetPlayers(controller.players);
+        controller.HUD.GetComponent<HUDScript>().isReceivingNotifications = true;
+
+        for (int i = 0; i < 5; i++)
+        {
+            controller.mainPlayer.AddCard(new GoodsCard());
+            controller.mainPlayer.AddCard(new FuelCard());
+            controller.mainPlayer.AddCard(new CarbonCard());
+            controller.mainPlayer.AddCard(new FoodCard());
+            controller.mainPlayer.AddCard(new OreCard());
+        }
+    }
+
+    public void CommonMapSetup()
+    {
+        MapGenerator generator = new MapGenerator();
+        controller.mapModel = generator.GenerateRandomMap();
+
+        controller.Map.GetComponent<MapScript>().SetMap(controller.mapModel);
+        controller.Map.GetComponent<MapScript>().SetPlayers(controller.players);
+        controller.Map.GetComponent<MapScript>().isReceivingNotifications = true;
+
+        controller.payoutHandler = new PayoutHandler(controller.mapModel);
+    }
+
     public abstract void Setup();
 }
 
@@ -25,38 +59,19 @@ public class OneColonyShipAndOneSpacePort : DebugStartState
     {
         controller.state = new FlyShipsState(controller);
 
-        controller.player = new Player(Color.blue, controller);
-        controller.HUD.GetComponent<HUDScript>().SetPlayer(controller.player);
-        controller.HUD.GetComponent<HUDScript>().isReceivingNotifications = true;
-
-        for (int i = 0; i < 5; i++)
-        {
-            controller.player.AddCard(new GoodsCard());
-            controller.player.AddCard(new FuelCard());
-            controller.player.AddCard(new CarbonCard());
-            controller.player.AddCard(new FoodCard());
-            controller.player.AddCard(new OreCard());
-        }
+        CommonSetup();
 
         Token spacePort = new ColonyBaseToken();
         spacePort.attachedToken = new SpacePortToken();
         spacePort.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 1));
-        controller.player.BuildToken(spacePort);
+        controller.mainPlayer.BuildToken(spacePort);
 
         Token colonyShip = new ColonyBaseToken();
         colonyShip.attachedToken = new ShipToken();
         colonyShip.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 0));
-        controller.player.BuildToken(colonyShip);
+        controller.mainPlayer.BuildToken(colonyShip);
 
-
-
-
-        MapGenerator generator = new MapGenerator();
-        controller.mapModel = generator.GenerateRandomMap();
-
-        controller.Map.GetComponent<MapScript>().SetMap(controller.mapModel);
-        controller.Map.GetComponent<MapScript>().SetPlayers(new Player[] { controller.player });
-        controller.Map.GetComponent<MapScript>().isReceivingNotifications = true;
+        CommonMapSetup();
     }
 }
 
@@ -72,41 +87,24 @@ public class TwoTradeShipAndOneSpacePort : DebugStartState
     {
         controller.state = new FlyShipsState(controller);
 
-        controller.player = new Player(Color.blue, controller);
-        controller.HUD.GetComponent<HUDScript>().SetPlayer(controller.player);
-        controller.HUD.GetComponent<HUDScript>().isReceivingNotifications = true;
-
-        for (int i = 0; i < 5; i++)
-        {
-            controller.player.AddCard(new GoodsCard());
-            controller.player.AddCard(new FuelCard());
-            controller.player.AddCard(new CarbonCard());
-            controller.player.AddCard(new FoodCard());
-            controller.player.AddCard(new OreCard());
-        }
+        CommonSetup();
 
         Token spacePort = new ColonyBaseToken();
         spacePort.attachedToken = new SpacePortToken();
         spacePort.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 1));
-        controller.player.BuildToken(spacePort);
+        controller.mainPlayer.BuildToken(spacePort);
 
         Token colonyShip = new TradeBaseToken();
         colonyShip.attachedToken = new ShipToken();
         colonyShip.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 0));
-        controller.player.BuildToken(colonyShip);
+        controller.mainPlayer.BuildToken(colonyShip);
 
         Token colonyShip2 = new TradeBaseToken();
         colonyShip2.attachedToken = new ShipToken();
         colonyShip2.SetPosition(new SpacePoint(new HexCoordinates(5, 5).W(), 0));
-        controller.player.BuildToken(colonyShip2);
+        controller.mainPlayer.BuildToken(colonyShip2);
 
-
-        MapGenerator generator = new MapGenerator();
-        controller.mapModel = generator.GenerateRandomMap();
-
-        controller.Map.GetComponent<MapScript>().SetMap(controller.mapModel);
-        controller.Map.GetComponent<MapScript>().SetPlayers(new Player[] { controller.player });
-        controller.Map.GetComponent<MapScript>().isReceivingNotifications = true;
+        CommonMapSetup();
     }
 }
 
@@ -122,40 +120,81 @@ public class OneTradeOneColonyShipAndOneSpacePort : DebugStartState
     {
         controller.state = new FlyShipsState(controller);
 
-        controller.player = new Player(Color.blue, controller);
-        controller.HUD.GetComponent<HUDScript>().SetPlayer(controller.player);
-        controller.HUD.GetComponent<HUDScript>().isReceivingNotifications = true;
-
-        for (int i = 0; i < 5; i++)
-        {
-            controller.player.AddCard(new GoodsCard());
-            controller.player.AddCard(new FuelCard());
-            controller.player.AddCard(new CarbonCard());
-            controller.player.AddCard(new FoodCard());
-            controller.player.AddCard(new OreCard());
-        }
+        CommonSetup();
 
         Token spacePort = new ColonyBaseToken();
         spacePort.attachedToken = new SpacePortToken();
         spacePort.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 1));
-        controller.player.BuildToken(spacePort);
+        controller.mainPlayer.BuildToken(spacePort);
 
         Token colonyShip = new TradeBaseToken();
         colonyShip.attachedToken = new ShipToken();
         colonyShip.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 0));
-        controller.player.BuildToken(colonyShip);
+        controller.mainPlayer.BuildToken(colonyShip);
 
         Token colonyShip2 = new ColonyBaseToken();
         colonyShip2.attachedToken = new ShipToken();
         colonyShip2.SetPosition(new SpacePoint(new HexCoordinates(5, 5).W(), 0));
-        controller.player.BuildToken(colonyShip2);
+        controller.mainPlayer.BuildToken(colonyShip2);
 
 
-        MapGenerator generator = new MapGenerator();
-        controller.mapModel = generator.GenerateRandomMap();
+        CommonMapSetup();
+    }
+}
 
-        controller.Map.GetComponent<MapScript>().SetMap(controller.mapModel);
-        controller.Map.GetComponent<MapScript>().SetPlayers(new Player[] { controller.player });
-        controller.Map.GetComponent<MapScript>().isReceivingNotifications = true;
+public class TwoPlayersWithShips : DebugStartState
+{
+    GameController controller;
+    public TwoPlayersWithShips(GameController controller) : base(controller)
+    {
+        this.controller = controller;
+    }
+
+    void BuildShipsForMainPlayer(Player player)
+    {
+        Token spacePort = new ColonyBaseToken();
+        spacePort.attachedToken = new SpacePortToken();
+        spacePort.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 1));
+        player.BuildTokenWithoutCost(spacePort);
+
+        Token colonyShip = new TradeBaseToken();
+        colonyShip.attachedToken = new ShipToken();
+        colonyShip.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 0));
+        player.BuildTokenWithoutCost(colonyShip);
+
+        Token colonyShip2 = new ColonyBaseToken();
+        colonyShip2.attachedToken = new ShipToken();
+        colonyShip2.SetPosition(new SpacePoint(new HexCoordinates(5, 5).W(), 0));
+        player.BuildTokenWithoutCost(colonyShip2);
+    }
+
+    void BuildShipsForSecondPlayer(Player player)
+    {
+        Token spacePort = new ColonyBaseToken();
+        spacePort.attachedToken = new SpacePortToken();
+        spacePort.SetPosition(new SpacePoint(new HexCoordinates(7, 4), 0));
+        player.BuildTokenWithoutCost(spacePort);
+
+        Token colonyShip = new TradeBaseToken();
+        colonyShip.attachedToken = new ShipToken();
+        colonyShip.SetPosition(new SpacePoint(new HexCoordinates(7, 4), 1));
+        player.BuildTokenWithoutCost(colonyShip);
+
+        Token colonyShip2 = new ColonyBaseToken();
+        colonyShip2.attachedToken = new ShipToken();
+        colonyShip2.SetPosition(new SpacePoint(new HexCoordinates(7, 4).E(), 1));
+        player.BuildTokenWithoutCost(colonyShip2);
+    }
+
+    public override void Setup()
+    {
+        controller.state = new FlyShipsState(controller);
+
+        CommonSetup();
+
+        BuildShipsForMainPlayer(controller.players[0]);
+        BuildShipsForSecondPlayer(controller.players[1]);       
+
+        CommonMapSetup();
     }
 }

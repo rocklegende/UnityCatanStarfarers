@@ -90,6 +90,17 @@ public class Player
         {
             token.position = position;
         }
+        token.SetColor(color);
+        AddToken(token);
+    }
+
+    public void BuildTokenWithoutCost(Token token, SpacePoint position = null)
+    {
+        if (position != null)
+        {
+            token.position = position;
+        }
+        token.SetColor(color);
         AddToken(token);
     }
 
@@ -100,7 +111,7 @@ public class Player
         DataChanged();
     }
 
-    public void AddSpaceshipTokenWithoutCost(Token token)
+    public void BuildUpgradeWithoutCost(Token token)
     {
         ship.Add(token);
         DataChanged();

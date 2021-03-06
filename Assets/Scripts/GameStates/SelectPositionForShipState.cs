@@ -52,34 +52,32 @@ public class SelectPositionForShipState : GameState
     public override void OnSpacePointClicked(SpacePoint point, GameObject spacePointObject)
     {
         controller.Map.GetComponent<MapScript>().RemoveAllSpacePointButtons();
-        controller.player.BuildToken(token, point);
+        controller.mainPlayer.BuildToken(token, point);
         controller.SetState(new StartState(controller));
     }
 
     public override void OnTokenClicked(Token tokenModel, GameObject tokenGameObject)
     {
-
         if (tokenModel is ColonyBaseToken)
         {
             tokenModel.attachToken(new SpacePortToken());
-            //controller.app.Notify(SFNotification.token_data_changed, controller); //TODO: send notification from inside the token
             controller.SetState(new StartState(controller));
         }
     }
 
     public override void OnBuildShipOptionClicked(Token token)
     {
-        Debug.Log("jo");
+        throw new System.NotImplementedException();
     }
 
     public override void OnBackButtonClicked()
     {
-        Debug.Log("pressed back");
+        throw new System.NotImplementedException();
     }
 
     public override void OnBuildUpgradeOptionClicked(Token token)
     {
-        Debug.Log("sd");
+        throw new System.NotImplementedException();
     }
 
     public override void OnSettleButtonPressed()

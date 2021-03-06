@@ -52,20 +52,27 @@ namespace Space
             Vector3 position = tokenModel.GetUnityPosition();
             if (position != null)
             {
-                GameObject prefab = TokenToPrefab(tokenModel);
-                tokenInstance = Instantiate(prefab, position, Quaternion.identity);
+                tokenInstance = CreateToken(tokenModel, position);
                 tokenInstance.transform.position = new Vector3(position.x, position.y, Constants.TOKEN_LAYER);
                 tokenInstance.transform.parent = this.transform;
 
                 if (tokenModel.attachedToken != null)
                 {
-                     //set at same position
-                    GameObject prefabAttached = TokenToPrefab(tokenModel.attachedToken);
-                    GameObject tokenInstanceAttached = Instantiate(prefabAttached, position, Quaternion.identity);
+                    GameObject tokenInstanceAttached = CreateToken(tokenModel.attachedToken, position);
                     tokenInstanceAttached.transform.position = new Vector3(position.x, position.y, Constants.TOKEN_LAYER - 1);
                     tokenInstanceAttached.transform.parent = tokenInstance.transform;
                 }
             }
+        }
+
+        GameObject CreateToken(Token model, Vector3 position)
+        {
+            GameObject prefab = TokenToPrefab(model);
+            var instance = Instantiate(prefab, position, Quaternion.identity);
+            MeshRenderer mr = instance.GetComponentInChildren<MeshRenderer>();
+            var color = model.GetColor();
+            mr.material.color = model.GetColor();
+            return instance;
         }
 
         public void Redraw()

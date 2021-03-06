@@ -147,6 +147,16 @@ public abstract class Token
     public void SetColor(Color color)
     {
         this.color = color;
+        if (attachedToken != null)
+        {
+            attachedToken.SetColor(color);
+        }
+        DataChanged();
+    }
+
+    public Color GetColor()
+    {
+        return this.color;
     }
 
     public void SetPosition(SpacePoint pos)

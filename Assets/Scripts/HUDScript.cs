@@ -33,6 +33,8 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     public GameObject settleButton;
 
     public GameObject friendShipCardSelection;
+    public GameObject smallPlayerViewPrefab;
+    public GameObject otherPlayerContainer;
 
 
 
@@ -88,11 +90,27 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         stateText.text = text;
     }
 
-    public void SetPlayer (Player player)
+    public void SetMainPlayer (Player player)
     {
         this.player = player;
         buildShipsDropDownRef.GetComponent<BuildDropDown>().player = player;
         upgradesDropDownRef.GetComponent<BuildDropDown>().player = player;
+        OnPlayerDataChanged();
+    }
+
+    /**
+     * Player at first position is the main player
+     */
+    public void SetPlayers (Player[] players)
+    {
+        SetMainPlayer(players[0]);
+        for (int i = 1; i < players.Length; i++)
+        {
+            GameObject smallPlayerView = Instantiate(smallPlayerViewPrefab, transform, false);
+            smallPlayerView.GetComponent<SmallPlayerInfoView>().SetPlayer(players[i]);
+            smallPlayerView.transform.parent = otherPlayerContainer.transform;
+        }
+
     }
 
     public void ShowSettleButton(bool show)
