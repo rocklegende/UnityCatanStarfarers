@@ -22,7 +22,7 @@ public abstract class DebugStartState
         controller.HUD.GetComponent<HUDScript>().SetPlayers(controller.players);
         controller.HUD.GetComponent<HUDScript>().isReceivingNotifications = true;
 
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 10; i++)
         {
             controller.mainPlayer.AddCard(new GoodsCard());
             controller.mainPlayer.AddCard(new FuelCard());

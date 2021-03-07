@@ -37,15 +37,10 @@ public class FlyShipsState : GameState
 
     public override void OnSpacePointClicked(SpacePoint point, GameObject spacePointObject)
     {
-        mapScript.RemoveAllSpacePointButtons();
+        //TODO: dont remove and create buttons, very cost inefficient, instead create
+        //all possible spacepoints and just hide and show them
+        mapScript.RemoveAllSpacePointButtons(); 
         selectedToken.FlyTo(point, mapScript.map);
-        if (mapScript.map.TokenCanSettle(selectedToken, controller.players))
-        {
-            hudScript.ShowSettleButton(true);
-        } else
-        {
-            hudScript.ShowSettleButton(false);
-        }
     }
 
     public override void OnTokenClicked(Token tokenModel, GameObject tokenGameObject)
@@ -96,6 +91,18 @@ public class FlyShipsState : GameState
             mapScript.SettleToken(selectedToken);
             hudScript.ShowSettleButton(false);
             selectedToken = null;
+        }
+    }
+
+    public override void OnTokenCanSettle(bool canSettle, Token token)
+    {
+        if (canSettle)
+        {
+            hudScript.ShowSettleButton(true);
+        }
+        else
+        {
+            hudScript.ShowSettleButton(false);
         }
     }
 }

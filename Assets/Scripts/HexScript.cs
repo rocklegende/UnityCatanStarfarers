@@ -90,13 +90,15 @@ public class HexScript : MonoBehaviour
             SpriteRenderer sr = this.gameObject.GetComponentInChildren<SpriteRenderer>();
             if (rt.diceChip != null)
             {
-                Sprite sprite = rt.diceChip.GetSprite();
+                string textureName = rt.diceChip.isFaceUp ? rt.diceChip.GetTextureName() : rt.chipGroup.GetTextureName();
+
+                Texture2D texture = Resources.Load(textureName) as Texture2D;
+                Sprite sprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.0f, 0.0f));
                 sr.sprite = sprite;
             }
         }
 
         MeshRenderer mr = this.gameObject.GetComponentInChildren<MeshRenderer>();
-        //mr.material.color = Color.yellow;
         mr.material.color = (Color)tile.GetColor();
     }
     
@@ -104,6 +106,5 @@ public class HexScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
     }
 }

@@ -10,12 +10,13 @@ namespace Tests
     public class MapTests
     {
         private Helper helper = new Helper();
+        private CircleChipGroup circle = new CircleChipGroup(new List<DiceChip>());
 
         private Map CreateSampleMap3x3()
         {
             Tile_[,] mapRepresentation = {
                 { new BorderTile(), new BorderTile(), new BorderTile() },
-                { new BorderTile(), new FoodResourceTile(), new BorderTile() },
+                { new BorderTile(), new FoodResourceTile(circle), new BorderTile() },
                 { new BorderTile(), new BorderTile(), new BorderTile() },
             };
 
@@ -25,9 +26,9 @@ namespace Tests
         private Map CreateSampleMap4x3()
         {
             Tile_[,] mapRepresentation = {
-                { new BorderTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
-                { new BorderTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
-                { new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile() },
+                { new BorderTile(), new FoodResourceTile(circle), new FoodResourceTile(circle), new BorderTile() },
+                { new BorderTile(), new FoodResourceTile(circle), new FoodResourceTile(circle), new BorderTile() },
+                { new FoodResourceTile(circle), new FoodResourceTile(circle), new BorderTile(), new BorderTile() },
             };
 
             return new Map(mapRepresentation);
@@ -36,9 +37,9 @@ namespace Tests
         private Map CreateSampleMapWithObstacles()
         {
             Tile_[,] mapRepresentation = {
-                { new BorderTile(), new EmptyTile(), new FoodResourceTile(), new BorderTile() },
-                { new BorderTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
-                { new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile() },
+                { new BorderTile(), new EmptyTile(), new FoodResourceTile(circle), new BorderTile() },
+                { new BorderTile(), new FoodResourceTile(circle), new FoodResourceTile(circle), new BorderTile() },
+                { new FoodResourceTile(circle), new FoodResourceTile(circle), new BorderTile(), new BorderTile() },
             };
 
             return new Map(mapRepresentation);
@@ -48,9 +49,9 @@ namespace Tests
         {
             Tile_[,] mapRepresentation = {
                 { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile()  },
-                { new BorderTile(), new EmptyTile(), new FoodResourceTile(), new EmptyTile(),  new BorderTile() },
-                { new BorderTile(), new EmptyTile(), new FoodResourceTile(), new EmptyTile(), new BorderTile() },
-                { new FoodResourceTile(), new EmptyTile(), new EmptyTile(), new EmptyTile(), new BorderTile() },
+                { new BorderTile(), new EmptyTile(), new FoodResourceTile(circle), new EmptyTile(),  new BorderTile() },
+                { new BorderTile(), new EmptyTile(), new FoodResourceTile(circle), new EmptyTile(), new BorderTile() },
+                { new FoodResourceTile(circle), new EmptyTile(), new EmptyTile(), new EmptyTile(), new BorderTile() },
             };
 
             return new Map(mapRepresentation);
@@ -60,8 +61,8 @@ namespace Tests
         {
             Tile_[,] mapRepresentation = {
                 { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile()  },
-                { new BorderTile(), new BorderTile(), new FoodResourceTile(), new EmptyTile(),  new BorderTile() },
-                { new BorderTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile() },
+                { new BorderTile(), new BorderTile(), new FoodResourceTile(circle), new EmptyTile(),  new BorderTile() },
+                { new BorderTile(), new FoodResourceTile(circle), new FoodResourceTile(circle), new BorderTile(), new BorderTile() },
                 { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile() },
             };
 
@@ -71,9 +72,9 @@ namespace Tests
         private Map CreateSampleMap4x4()
         {
             Tile_[,] mapRepresentation = {
-                { new BorderTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
-                { new BorderTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
-                { new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile() },
+                { new BorderTile(), new FoodResourceTile(circle), new FoodResourceTile(circle), new BorderTile() },
+                { new BorderTile(), new FoodResourceTile(circle), new FoodResourceTile(circle), new BorderTile() },
+                { new FoodResourceTile(circle), new FoodResourceTile(circle), new BorderTile(), new BorderTile() },
                 { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile() },
             };
 
@@ -83,9 +84,9 @@ namespace Tests
         private Map CreateSampleMap4x5()
         {
             Tile_[,] mapRepresentation = {
-                { new BorderTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
-                { new BorderTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile() },
-                { new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile() },
+                { new BorderTile(), new FoodResourceTile(circle), new FoodResourceTile(circle), new BorderTile() },
+                { new BorderTile(), new FoodResourceTile(circle), new FoodResourceTile(circle), new BorderTile() },
+                { new FoodResourceTile(circle), new FoodResourceTile(circle), new BorderTile(), new BorderTile() },
                 { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile() },
                 { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile() },
             };
@@ -96,9 +97,9 @@ namespace Tests
         private Map CreateSampleMap5x6()
         {
             Tile_[,] mapRepresentation = {
-                { new BorderTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile() },
-                { new BorderTile(), new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile() },
-                { new FoodResourceTile(), new FoodResourceTile(), new BorderTile(), new BorderTile(), new BorderTile(), },
+                { new BorderTile(), new FoodResourceTile(circle), new FoodResourceTile(circle), new BorderTile(), new BorderTile() },
+                { new BorderTile(), new FoodResourceTile(circle), new FoodResourceTile(circle), new BorderTile(), new BorderTile() },
+                { new FoodResourceTile(circle), new FoodResourceTile(circle), new BorderTile(), new BorderTile(), new BorderTile(), },
                 { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile() },
                 { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile() },
                 { new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile(), new BorderTile()},
@@ -443,7 +444,7 @@ namespace Tests
         public void TestSetTileGroupAtSpacePointPositiveTest1()
         {
             Map map = CreateSampleMap4x4();
-            TileGroup tg = new ResourceTileGroup(new ResourceTile[] { new OreResourceTile(), new FoodResourceTile(), new GoodsResourceTile() });
+            TileGroup tg = new ResourceTileGroup(new ResourceTile[] { new OreResourceTile(circle), new FoodResourceTile(circle), new GoodsResourceTile(circle) });
             SpacePoint point = new SpacePoint(new HexCoordinates(1, 1), 1);
             map.SetTileGroupAtSpacePoint(tg, point);
             Assert.True(map.getTileAt(new HexCoordinates(1, 1)) is OreResourceTile);
@@ -455,7 +456,7 @@ namespace Tests
         public void TestSetTileGroupAtSpacePointPositiveTest2()
         {
             Map map = CreateSampleMap4x4();
-            TileGroup tg = new ResourceTileGroup(new ResourceTile[] { new OreResourceTile(), new FoodResourceTile(), new GoodsResourceTile() });
+            TileGroup tg = new ResourceTileGroup(new ResourceTile[] { new OreResourceTile(circle), new FoodResourceTile(circle), new GoodsResourceTile(circle) });
             SpacePoint point = new SpacePoint(new HexCoordinates(0, 1), 0);
             map.SetTileGroupAtSpacePoint(tg, point);
             Assert.True(map.getTileAt(new HexCoordinates(0, 1)) is OreResourceTile);
@@ -467,7 +468,7 @@ namespace Tests
         public void TestSetTileGroupAtSpacePointNegativeTest()
         {
             Map map = CreateSampleMap4x4();
-            TileGroup tg = new ResourceTileGroup(new ResourceTile[] { new OreResourceTile(), new FoodResourceTile(), new GoodsResourceTile() });
+            TileGroup tg = new ResourceTileGroup(new ResourceTile[] { new OreResourceTile(circle), new FoodResourceTile(circle), new GoodsResourceTile(circle) });
             SpacePoint point = new SpacePoint(new HexCoordinates(1, 1), 0);
             try
             {

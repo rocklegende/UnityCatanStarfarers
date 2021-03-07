@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class FuelResourceTile : ResourceTile
 {
-    public FuelResourceTile() : base(new FuelResource())
+    public FuelResourceTile(ChipGroup group) : base(new FuelResource(), group)
     {
     }
 

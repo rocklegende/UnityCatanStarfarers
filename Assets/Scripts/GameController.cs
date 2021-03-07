@@ -85,6 +85,10 @@ public class GameController : SFController
                 }
                 break;
 
+            case SFNotification.token_can_settle:
+                state.OnTokenCanSettle((bool)p_data[0], (Token)p_data[1]);
+                break;
+
         }
     }
 

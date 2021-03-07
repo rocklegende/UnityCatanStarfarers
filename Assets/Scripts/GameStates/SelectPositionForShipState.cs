@@ -84,4 +84,9 @@ public class SelectPositionForShipState : GameState
     {
         throw new System.NotImplementedException();
     }
+
+    public override void OnTokenCanSettle(bool canSettle, Token token)
+    {
+        throw new NotImplementedException();
+    }
 }

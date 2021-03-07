@@ -9,12 +9,14 @@ namespace Tests
 {
     public class TileGroupTests
     {
+
+        public CircleChipGroup circle = new CircleChipGroup(new List<DiceChip>());
         // A Test behaves as an ordinary method
         [Test]
         public void TileGroupSuccessfulCreationWith3Tiles()
         {
             // Use the Assert class to test conditions
-            ResourceTile[] tiles = { new FoodResourceTile(), new FoodResourceTile(), new FoodResourceTile() };
+            ResourceTile[] tiles = { new FoodResourceTile(circle), new FoodResourceTile(circle), new FoodResourceTile(circle) };
             TileGroup group = new ResourceTileGroup(tiles);
 
         }
@@ -24,7 +26,7 @@ namespace Tests
         {
             try
             {
-                ResourceTile[] tiles = { new FoodResourceTile(), new FoodResourceTile() };
+                ResourceTile[] tiles = { new FoodResourceTile(circle), new FoodResourceTile(circle) };
                 TileGroup group = new ResourceTileGroup(tiles);
                 Assert.True(false); // Fail this test if we come to this point
             }
@@ -32,15 +34,15 @@ namespace Tests
             {
                 Assert.True(true);
             }
-         
+
         }
 
         [Test]
         public void ShiftTilesBy0()
         {
-            var foodTile = new FoodResourceTile();
-            var goodsTile = new GoodsResourceTile();
-            var oreTile = new OreResourceTile();
+            var foodTile = new FoodResourceTile(circle);
+            var goodsTile = new GoodsResourceTile(circle);
+            var oreTile = new OreResourceTile(circle);
 
             var tg = new ResourceTileGroup(new ResourceTile[] { foodTile, goodsTile, oreTile });
             tg.ShiftTiles(0);
@@ -51,9 +53,9 @@ namespace Tests
         [Test]
         public void ShiftTilesBy3()
         {
-            var foodTile = new FoodResourceTile();
-            var goodsTile = new GoodsResourceTile();
-            var oreTile = new OreResourceTile();
+            var foodTile = new FoodResourceTile(circle);
+            var goodsTile = new GoodsResourceTile(circle);
+            var oreTile = new OreResourceTile(circle);
 
             var tg = new ResourceTileGroup(new ResourceTile[] { foodTile, goodsTile, oreTile });
 
@@ -65,9 +67,9 @@ namespace Tests
         [Test]
         public void ShiftTilesBy1()
         {
-            var foodTile = new FoodResourceTile();
-            var goodsTile = new GoodsResourceTile();
-            var oreTile = new OreResourceTile();
+            var foodTile = new FoodResourceTile(circle);
+            var goodsTile = new GoodsResourceTile(circle);
+            var oreTile = new OreResourceTile(circle);
 
             var tg = new ResourceTileGroup(new ResourceTile[] { foodTile, goodsTile, oreTile });
             tg.ShiftTiles(1);
@@ -78,9 +80,9 @@ namespace Tests
         [Test]
         public void ShiftTilesBy2()
         {
-            var foodTile = new FoodResourceTile();
-            var goodsTile = new GoodsResourceTile();
-            var oreTile = new OreResourceTile();
+            var foodTile = new FoodResourceTile(circle);
+            var goodsTile = new GoodsResourceTile(circle);
+            var oreTile = new OreResourceTile(circle);
 
             var tg = new ResourceTileGroup(new ResourceTile[] { foodTile, goodsTile, oreTile });
             tg.ShiftTiles(2);
@@ -93,7 +95,7 @@ namespace Tests
         {
             try
             {
-                ResourceTile[] tiles = { new FoodResourceTile(), new FoodResourceTile(), new FoodResourceTile(), new FoodResourceTile() };
+                ResourceTile[] tiles = { new FoodResourceTile(circle), new FoodResourceTile(circle), new FoodResourceTile(circle), new FoodResourceTile(circle) };
                 TileGroup group = new ResourceTileGroup(tiles);
                 Assert.True(false); // Fail this test if we come to this point
             }
@@ -101,11 +103,177 @@ namespace Tests
             {
                 Assert.True(true);
             }
-
-
-
         }
 
+        ResourceTileGroup CreateResourceTileGroup(SpacePoint center)
+        {
+            var rtg = new ResourceTileGroup(new ResourceTile[] { new FoodResourceTile(circle), new FoodResourceTile(circle), new FoodResourceTile(circle) });
+            rtg.SetCenter(center);
+            return rtg;
+        }
+
+        [Test]
+        public void RequestSettleResourceTileGroupToken_NOT_OnSettleSpot()
+        {
+            var center = new SpacePoint(new HexCoordinates(4, 4), 0);
+            var rtg = CreateResourceTileGroup(center);
+
+            Token token = new ColonyBaseToken();
+            token.position = center;
+            try
+            {
+                rtg.RequestSettleOfToken(token);
+                Assert.True(false);
+            } catch (NotOnSettleSpotException e)
+            {
+                Assert.True(true);
+            }
+        }
+
+        Tuple<ResourceTileGroup, Token> CreateColonyTokenAndTileGroup(SpacePoint tokenPos, SpacePoint tileGroupCenter)
+        {
+            var rtg = new ResourceTileGroup(new ResourceTile[] { new FoodResourceTile(circle), new FoodResourceTile(circle), new FoodResourceTile(circle) });
+            rtg.SetCenter(tileGroupCenter);
+            Token token = new ColonyBaseToken();
+            token.position = tokenPos;
+
+            return new Tuple<ResourceTileGroup, Token>(rtg, token);
+        }
+
+        Tuple<ResourceTileGroup, Token> CreateTradeTokenAndTileGroup(SpacePoint tokenPos, SpacePoint tileGroupCenter)
+        {
+            var rtg = new ResourceTileGroup(new ResourceTile[] { new FoodResourceTile(circle), new FoodResourceTile(circle), new FoodResourceTile(circle) });
+            rtg.SetCenter(tileGroupCenter);
+            Token token = new TradeBaseToken();
+            token.position = tokenPos;
+
+            return new Tuple<ResourceTileGroup, Token>(rtg, token);
+        }
+
+        Tuple<TradeStation, Token> CreateColonyTokenAndTradeStation(SpacePoint tokenPos, SpacePoint tileGroupCenter)
+        {
+            var tradeStation = new OrzelTradeStation();
+            tradeStation.SetCenter(tileGroupCenter);
+            Token token = new ColonyBaseToken();
+            token.position = tokenPos;
+
+            return new Tuple<TradeStation, Token>(tradeStation, token);
+        }
+
+        Tuple<TradeStation, Token> CreateTradeTokenAndTradeStation(SpacePoint tokenPos, SpacePoint tileGroupCenter)
+        {
+            var tradeStation = new OrzelTradeStation();
+            tradeStation.SetCenter(tileGroupCenter);
+            Token token = new TradeBaseToken();
+            token.position = tokenPos;
+
+            return new Tuple<TradeStation, Token>(tradeStation, token);
+        }
+
+        [Test]
+        public void RequestSettleResourceTileGroupToken_IS_OnSettleSpot()
+        {
+            var center = new SpacePoint(new HexCoordinates(4, 4), 0);
+            var tokenPos = new SpacePoint(new HexCoordinates(4, 4), 1);
+            var tuple = CreateColonyTokenAndTileGroup(tokenPos, center);
+
+            tuple.Item1.RequestSettleOfToken(tuple.Item2);
+            Assert.True(true);
+        }
+
+        [Test]
+        public void RequestSettleResourceTileGroupToken_IS_OnSettleSpot_IS_TradeShip()
+        {
+            var center = new SpacePoint(new HexCoordinates(4, 4), 0);
+            var tokenPos = new SpacePoint(new HexCoordinates(4, 4), 1);
+            var tuple = CreateTradeTokenAndTileGroup(tokenPos, center);
+
+            try
+            {
+                tuple.Item1.RequestSettleOfToken(tuple.Item2);
+                Assert.True(false);
+            } catch (WrongTokenTypeException e)
+            {
+                Assert.True(true);
+            }
+        }
+
+        [Test]
+        public void RequestSettleResourceTileGroupToken_IS_OnSettleSpot_IS_ColonyShip()
+        {
+            var center = new SpacePoint(new HexCoordinates(4, 4), 0);
+            var tokenPos = new SpacePoint(new HexCoordinates(4, 4), 1);
+            var tuple = CreateColonyTokenAndTileGroup(tokenPos, center);
+
+            try
+            {
+                tuple.Item1.RequestSettleOfToken(tuple.Item2);
+                Assert.True(true);
+            }
+            catch (WrongTokenTypeException e)
+            {
+                Assert.True(false);
+            }
+        }
+
+        [Test]
+        public void RequestSettleTradeStationToken_NOT_OnSettleSpot()
+        {
+            var center = new SpacePoint(new HexCoordinates(4, 4), 0);
+            var tokenPos = new SpacePoint(new HexCoordinates(4, 4), 1);
+            var tuple = CreateTradeTokenAndTradeStation(tokenPos, center);
+
+            try
+            {
+                tuple.Item1.RequestSettleOfToken(tuple.Item2);
+                Assert.True(false);
+            }
+            catch (NotOnSettleSpotException e)
+            {
+                Assert.True(true);
+            }
+        }
+
+        [Test]
+        public void RequestSettleTradeStationToken_Is_OnSettleSpot_NOT_tradeship()
+        {
+            var center = new SpacePoint(new HexCoordinates(4, 4), 0);
+            var tokenPos = new SpacePoint(new HexCoordinates(4, 4), 0);
+            var tuple = CreateColonyTokenAndTradeStation(tokenPos, center);
+
+            try
+            {
+                tuple.Item1.RequestSettleOfToken(tuple.Item2);
+                Assert.True(false);
+            }
+            catch (WrongTokenTypeException e)
+            {
+                Assert.True(true);
+            }
+        }
+
+        [Test]
+        public void RequestSettleTradeStation_Is_OnSettleSpot_IS_tradeship_NO_spaceleft()
+        {
+            var center = new SpacePoint(new HexCoordinates(4, 4), 0);
+            var tokenPos = new SpacePoint(new HexCoordinates(4, 4), 0);
+            var tuple = CreateTradeTokenAndTradeStation(tokenPos, center);
+
+            try
+            {
+                var capacity = tuple.Item1.GetCapacity();
+                for (int i = 0; i < capacity; i++)
+                {
+                    tuple.Item1.dockedSpaceships.Add(new ColonyBaseToken());
+                }
+                tuple.Item1.RequestSettleOfToken(tuple.Item2);
+                Assert.True(false);
+            }
+            catch (TradeStationIsFullException e)
+            {
+                Assert.True(true);
+            }
+        }
 
     }
 }

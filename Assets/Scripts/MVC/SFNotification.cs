@@ -14,4 +14,5 @@ public class SFNotification
     public const string map_data_changed = "map.data.changed";
     public const string tile_group_data_changed = "tile.group.data.changed";
     public const string open_friendship_card_selection = "open.friendship.card.selection";
+    public const string token_can_settle = "token.can.settle";
 }

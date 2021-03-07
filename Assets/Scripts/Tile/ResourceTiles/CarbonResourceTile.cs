@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class CarbonResourceTile : ResourceTile
 {
-    public CarbonResourceTile() : base(new CarbonResource())
+    public CarbonResourceTile(ChipGroup group) : base(new CarbonResource(), group)
     {
     }
 

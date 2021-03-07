@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class FoodResourceTile : ResourceTile
 {
-    public FoodResourceTile() : base(new FoodResource())
+    public FoodResourceTile(ChipGroup group) : base(new FoodResource(), group)
     {
     }
 

@@ -43,6 +43,11 @@ public class CastShipDiceState : GameState
         throw new NotImplementedException();
     }
 
+    public override void OnTokenCanSettle(bool canSettle, Token token)
+    {
+        throw new NotImplementedException();
+    }
+
     public override void OnTokenClicked(Token tokenModel, GameObject tokenGameObject)
     {
         throw new NotImplementedException();

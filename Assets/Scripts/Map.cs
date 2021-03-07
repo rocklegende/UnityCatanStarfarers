@@ -30,6 +30,12 @@ public class Map
         return tile1 is BorderTile && tile2 is BorderTile;
     }
 
+    bool GetPointsTokenCanFlyTo(Token token, int steps)
+    {
+        throw new NotImplementedException("This functionality is not implemented yet");
+        //TODO: return all the points this token can fly to
+    }
+
     public Token[] TokenAtPoint(SpacePoint point, Player[] players)
     {
         List<Token> tokenList = new List<Token>();
@@ -42,27 +48,6 @@ public class Map
         }
 
         return tokenList.ToArray();
-    }
-
-    public bool TokenCanSettle(Token tok, Player[] players)
-    {
-        if (tok is Settable)
-        {
-            var t = (Settable)tok;
-            if (t.CanSettle(getTilesAtPoint(tok.position)))
-            {
-                // TODO: kinda ugly
-                var tokensAtPoint = TokenAtPoint(tok.position, players);
-                if (tokensAtPoint[0] == t)
-                {
-                    if (tokensAtPoint.Length == 1)
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     public SpacePoint[] GetNeighborsOfSpacePoint(SpacePoint point)
@@ -457,30 +442,34 @@ public class Map
         foreach (var tile in tilesAtPoint)
         {
             var tileGroup = FindTileGroupContainingTile(tile);
+            var canSettle = false;
+            var foundTileGroup = false;
             if (tileGroup != null)
             {
                 tileGroup.OnTokenEnteredArea(token);
+                foundTileGroup = true;
+                try
+                {
+                    canSettle = tileGroup.RequestSettleOfToken(token);
+                } catch (Exception e)
+                {
+                    Debug.Log("Token cannot settle: " + e.GetType());
+                }
+            }
+
+            NotifyThatTokenCanSettle(token, canSettle);
+
+            if (foundTileGroup)
+            {
                 break;
             }
-                
-            //if (tileGroup != null)
-            //{
-            //    if (tileGroup is ResourceTileGroup)
-            //    {
-            //        var resourceTileGroup = (ResourceTileGroup)tileGroup;
-            //        resourceTileGroup.RevealDiceChips();
-            //        DataChanged();
-            //    }
-
-            //    if (tileGroup is TradeStation)
-            //    {
-            //        var tradeStation = (TradeStation)tileGroup;
-            //        tradeStation.OnSettle(token);
-            //        DataChanged();
-            //    }
-            //}
         }
+    }
 
+    void NotifyThatTokenCanSettle(Token token, bool canSettle)
+    {
+        var notifier = new SFElement();
+        notifier.app.Notify(SFNotification.token_can_settle, notifier, new object[] { canSettle, token });
     }
 
     public TileGroup FindTileGroupContainingTile(Tile_ tile)

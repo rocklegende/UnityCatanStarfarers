@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class DiceChip6 : DiceChip
 {
-    public DiceChip6(ChipGroup chipGroup) : base(new int[] { 6 }, chipGroup) { }
+    public DiceChip6() : base(new int[] { 6 }) { }
 
     public override string GetTextureName()
     {

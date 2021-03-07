@@ -61,7 +61,7 @@ public class PirateToken : DiceChip
     bool isBeaten = false;
     PirateTokenBeatCondition condition;
 
-    public PirateToken(PirateTokenBeatCondition condition, ChipGroup chipGroup) : base(new int[] { 0, 0 }, chipGroup)
+    public PirateToken(PirateTokenBeatCondition condition) : base(new int[] { 0, 0 })
     {
         this.condition = condition;
     }
@@ -74,6 +74,11 @@ public class PirateToken : DiceChip
 
             //app.Notify("Beaten", this)
         }
+    }
+
+    public bool SpaceshipCanBeatIt(SpaceShip spaceShip)
+    {
+        return condition.SpaceShipFullfillsCondition(spaceShip);
     }
 
     public override string GetTextureName()

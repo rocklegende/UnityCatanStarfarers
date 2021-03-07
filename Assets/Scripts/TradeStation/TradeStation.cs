@@ -49,7 +49,18 @@ public abstract class TradeStation : TileGroup
 
     public override void OnTokenEnteredArea(Token token)
     {
-        // do nothing
+        Debug.Log("Token entered trade station area, do nothing at this point");
+    }
+
+    public override void SetCenter(SpacePoint center)
+    {
+        this.center = center;
+        settlePoints = new SpacePoint[] { center };
+    }
+
+    public bool IsFull()
+    {
+        return dockedSpaceships.Count >= capacity;
     }
 
     public void RemoveCard(AbstractFriendshipCard card)
@@ -64,11 +75,6 @@ public abstract class TradeStation : TileGroup
 
         var notifier = new SFElement();
         notifier.app.Notify(SFNotification.open_friendship_card_selection, notifier, new object[] { this, tradingCards });
-
-        // remove card from trading cards and give to owner of token
-        //pass card to player
-
-        //TODO: inform that tradestation data changed
     }
 
     private void AssignOwnerOfMedal()
@@ -101,10 +107,27 @@ public abstract class TradeStation : TileGroup
             {
                 medal.owner = highestPlayer;
             }
-        }
-        Debug.Log("Jo");
+        }        
+    }
 
-        
+    public override bool RequestSettleOfToken(Token token)
+    {
+        if (!(token is TradeBaseToken))
+        {
+            throw new WrongTokenTypeException();
+        }
+
+        if (!SpacePointOnAtleastOneSettlePoint(token.position))
+        {
+            throw new NotOnSettleSpotException();
+        }
+
+        if (IsFull())
+        {
+            throw new TradeStationIsFullException();
+        }
+
+        return true;
     }
 
 

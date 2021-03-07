@@ -16,3 +16,72 @@ public class NotEnoughResourcesException : Exception
     {
     }
 }
+
+public class NotOnSettleSpotException : Exception
+{
+    public NotOnSettleSpotException()
+    {
+    }
+
+    public NotOnSettleSpotException(string message)
+        : base(message)
+    {
+    }
+
+    public NotOnSettleSpotException(string message, Exception inner)
+        : base(message, inner)
+    {
+    }
+}
+
+public class CannotBeatPirateTokenException : Exception
+{
+    public CannotBeatPirateTokenException()
+    {
+    }
+
+    public CannotBeatPirateTokenException(string message)
+        : base(message)
+    {
+    }
+
+    public CannotBeatPirateTokenException(string message, Exception inner)
+        : base(message, inner)
+    {
+    }
+}
+
+public class WrongTokenTypeException : Exception
+{
+    public WrongTokenTypeException()
+    {
+    }
+
+    public WrongTokenTypeException(string message)
+        : base(message)
+    {
+    }
+
+    public WrongTokenTypeException(string message, Exception inner)
+        : base(message, inner)
+    {
+    }
+}
+
+public class TradeStationIsFullException : Exception
+{
+    public TradeStationIsFullException()
+    {
+    }
+
+    public TradeStationIsFullException(string message)
+        : base(message)
+    {
+    }
+
+    public TradeStationIsFullException(string message, Exception inner)
+        : base(message, inner)
+    {
+    }
+}
+

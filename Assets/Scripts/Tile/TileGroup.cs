@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 public abstract class TileGroup
 {
-    private Tile_[] tiles;
+    protected Tile_[] tiles;
+    protected SpacePoint[] settlePoints;
+    protected SpacePoint center;
     public TileGroup(Tile_[] tiles, int rightShifts = 0)
     {
         // shifts: shifts the tiles x times
@@ -42,18 +45,40 @@ public abstract class TileGroup
         DataChanged();
     }
 
+    protected bool SpacePointOnAtleastOneSettlePoint(SpacePoint point)
+    {
+        foreach (var settlePoint in settlePoints)
+        {
+            if (settlePoint.Equals(point))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public abstract void SetCenter(SpacePoint center);
+
     public abstract void OnTokenEnteredArea(Token token);
 
     public abstract void OnTokenSettled(Token token);
 
+    public abstract bool RequestSettleOfToken(Token token);
+
+
 }
 
 public class ResourceTileGroup : TileGroup
-{
-    ResourceTile[] tiles;
-    public ResourceTileGroup(ResourceTile[] tiles, int rightShifts = 0) : base(tiles, rightShifts)
+{    
+    public ResourceTileGroup( ResourceTile[] tiles, int rightShifts = 0) : base(tiles, rightShifts)
     {
         this.tiles = tiles;
+    }
+
+    public override void SetCenter(SpacePoint center)
+    {
+        this.center = center;
+        settlePoints = center.GetNeighbors();
     }
 
     public override void OnTokenEnteredArea(Token token)
@@ -66,11 +91,73 @@ public class ResourceTileGroup : TileGroup
         //throw new NotImplementedException();
     }
 
+    PirateToken[] GetPirateTokens()
+    {
+        var pirateTokens = new List<PirateToken>();
+        foreach(var tile in tiles)
+        {
+            var rt = (ResourceTile)tile;
+            var diceChip = rt.GetDiceChip();
+            if (diceChip is PirateToken)
+            {
+                pirateTokens.Add((PirateToken)diceChip);
+            }
+        }
+        return pirateTokens.ToArray();
+    }
+
+    public bool ShipCanBeatPirateTokens(SpaceShip ship, PirateToken[] pirateTokens)
+    {
+        foreach(var pirateToken in pirateTokens)
+        {
+            if (!pirateToken.SpaceshipCanBeatIt(ship))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public override bool RequestSettleOfToken(Token token)
+    {
+        if (!(token is ColonyBaseToken))
+        {
+            throw new WrongTokenTypeException("Token is not of Type ColonyBaseToken, therefore docking is denied");
+        }
+
+        if (!SpacePointOnAtleastOneSettlePoint(token.position))
+        {
+            throw new NotOnSettleSpotException();
+        }
+
+        if (GetPirateTokens().Length > 0)
+        {
+            if (!ShipCanBeatPirateTokens(token.owner.ship, GetPirateTokens()))
+            {
+                throw new CannotBeatPirateTokenException();
+            }
+        }
+
+        //TODO:  deny if position of token is occupied by other token, should be prevented to even go there, maybe its not necessary
+
+        return true;
+    }
+
     public void RevealDiceChips()
     {
         foreach( var tile in tiles)
         {
-            tile.GetDiceChip().isFaceUp = true;
+            if (tile is ResourceTile)
+            {
+                var rt = (ResourceTile)tile;
+                var diceChip = rt.GetDiceChip();
+                if (diceChip != null)
+                {
+                    diceChip.isFaceUp = true;
+                }
+                
+            }
+            
         }
         var notifier = new SFElement();
         notifier.app.Notify(SFNotification.tile_group_data_changed, notifier);

@@ -6,28 +6,21 @@ using UnityEngine;
 
 public class MapGenerator
 {
-
-    // TODO: generate map from .txt file
-    /*
-     * E = EmptyTile
-     * B = BorderTile
-     * 
-     * BBBBBBB
-     * BEEEEEB
-     * BEEEEEB
-     * BBBBBBB
-     * 
-     * 
-     */
     SpacePoint[] basePoints;
     SpacePoint[] randomSpawnPoints;
     List<TileGroup> randomSpawnTileGroup;
-    List<TileGroup> tileGroupsCopy;
+    List<TileGroup> spaceTileGroupsCopy;
+    List<TileGroup> baseTileGroupsCopy;
     Map map;
+    CircleChipGroup circleGroup;
+    TriangleChipGroup triangleGroup;
+    SquareChipGroup squareGroup;
     private bool isRandom = false;
 
     public MapGenerator()
     {
+
+        CreateChipGroups();
         Helper helper = new Helper();
         basePoints = helper.SpacePointArrayFromShortRep(new string[]
         {
@@ -56,28 +49,48 @@ public class MapGenerator
             "7,10,1"
         });
 
-        var orz = new OrzelTradeStation();
-
         randomSpawnTileGroup = new List<TileGroup>();
-        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new GoodsResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
-        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new GoodsResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
-        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new GoodsResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
-        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new GoodsResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
+        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new GoodsResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
+        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new GoodsResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
+        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new GoodsResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
+        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new GoodsResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
         randomSpawnTileGroup.Add(new OrzelTradeStation());
         randomSpawnTileGroup.Add(new KhornemTradeStation());
         randomSpawnTileGroup.Add(new RahnaTradeStation());
+        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
+        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
+        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
+        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
         randomSpawnTileGroup.Add(new AxxaTradeStation());
-        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
-        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
-        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
-        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
-        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
-        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
-        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
-        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
-        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new CarbonResourceTile(), new GoodsResourceTile(), new OreResourceTile() }));
+        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
+        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
+        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
+        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
+        randomSpawnTileGroup.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
 
-        tileGroupsCopy = new Helper().CreateCopyOfList<TileGroup>(randomSpawnTileGroup);
+        spaceTileGroupsCopy = new Helper().CreateCopyOfList(randomSpawnTileGroup);
+    }
+
+    void CreateChipGroups()
+    {
+        circleGroup = new CircleChipGroup(GetBasicDiceChips());
+        squareGroup = new SquareChipGroup(GetBasicDiceChips());
+        triangleGroup = new TriangleChipGroup(GetBasicDiceChips());
+    }
+
+    List<DiceChip> GetBasicDiceChips()
+    {
+        var list = new List<DiceChip>();
+
+        for (int i = 0; i < 30; i++)
+        {
+            list.Add(new DiceChip3());
+        }
+
+        list.Add(new PirateToken(new FreightPodsBeatCondition(4)));
+        list.Add(new PirateToken(new FreightPodsBeatCondition(3)));
+
+        return list;
     }
 
     public Map GenerateRandomMap() {
@@ -87,7 +100,8 @@ public class MapGenerator
         PopulateBasePoints();
         PopulateRandomSpawnPoints();
         AssignDiceChips();
-        map.tileGroups = tileGroupsCopy.ToArray();
+        spaceTileGroupsCopy.AddRange(baseTileGroupsCopy);
+        map.tileGroups = spaceTileGroupsCopy.ToArray();
 
         return map;
     }
@@ -99,13 +113,29 @@ public class MapGenerator
         }
     }
 
+    List<TileGroup> GetTileGroupsBasePoints()
+    {
+        var groups = new List<TileGroup> {
+            new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }),
+            new ResourceTileGroup(new ResourceTile[] { new OreResourceTile(circleGroup), new CarbonResourceTile(squareGroup), new FoodResourceTile(triangleGroup) }),
+            new ResourceTileGroup(new ResourceTile[] { new OreResourceTile(circleGroup), new FuelResourceTile(squareGroup), new GoodsResourceTile(triangleGroup) }),
+            new ResourceTileGroup(new ResourceTile[] { new FoodResourceTile(circleGroup), new FuelResourceTile(squareGroup), new CarbonResourceTile(triangleGroup) })
+        };
+
+        return groups;
+    }
+
 
     void PopulateBasePoints()
     {
-        map.SetTileGroupAtSpacePoint(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(), new GoodsResourceTile(), new OreResourceTile() }), basePoints[0]);
-        map.SetTileGroupAtSpacePoint(new ResourceTileGroup(new ResourceTile[] { new OreResourceTile(), new CarbonResourceTile(), new FoodResourceTile() }), basePoints[1]);
-        map.SetTileGroupAtSpacePoint(new ResourceTileGroup(new ResourceTile[] { new OreResourceTile(), new FuelResourceTile(), new GoodsResourceTile() }), basePoints[2]);
-        map.SetTileGroupAtSpacePoint(new ResourceTileGroup(new ResourceTile[] { new FoodResourceTile(), new FuelResourceTile(), new CarbonResourceTile() }), basePoints[3]);
+        var groups = GetTileGroupsBasePoints();
+        baseTileGroupsCopy = new Helper().CreateCopyOfList(groups);
+
+        for (int i = 0; i < groups.Count; i++)
+        {
+            groups[i].SetCenter(basePoints[i]);
+            map.SetTileGroupAtSpacePoint(groups[i], basePoints[i]);
+        }
     }
 
     void PopulateRandomSpawnPoints()
@@ -122,6 +152,7 @@ public class MapGenerator
                 randomSpawnTileGroup.Shuffle();
             }
             TileGroup tg = randomSpawnTileGroup[0];
+            tg.SetCenter(point);
             randomSpawnTileGroup.RemoveAt(0);
 
             map.SetTileGroupAtSpacePoint(tg, point);
@@ -130,18 +161,36 @@ public class MapGenerator
 
     void AssignDiceChips()
     {
-        foreach(ResourceTile resourceTile in map.GetTilesOfType<ResourceTile>())
+        foreach (ResourceTile resourceTile in map.GetTilesOfType<ResourceTile>())
         {
-            CircleChipGroup group = new CircleChipGroup();
-            DiceChip dc = new DiceChip3(group);
-            //dc.Flip();
-            resourceTile.SetDiceChip(dc);
+            try
+            {
+                var chip = resourceTile.chipGroup.RetrieveChip();
+                resourceTile.SetDiceChip(chip);
+            }
+            catch (ArgumentException e)
+            {
+                Debug.Log("Something went wrong while assigning dicechips to the resource tiles: " + e.Message);
+            }
+            
         }
     }
 
-
-
     Tile_[,] RawMap() {
+
+        // TODO: generate map from .txt file
+        /*
+         * E = EmptyTile
+         * B = BorderTile
+         * 
+         * BBBBBBB
+         * BEEEEEB
+         * BEEEEEB
+         * BBBBBBB
+         * 
+         * 
+         */
+
         int height = 13;
         int width = 17;
 
