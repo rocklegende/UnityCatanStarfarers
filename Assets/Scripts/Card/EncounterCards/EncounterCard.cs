@@ -9,6 +9,8 @@ public abstract class EncounterCard
     }
 
     public abstract void Execute();
+
+    public abstract DialogOption[] GetDialogOptions();
 }
 
 public class EncounterCardOption
@@ -43,6 +45,16 @@ public class GiveResourcesEncounterCard : EncounterCard
     {
         throw new NotImplementedException();
     }
+
+    public override DialogOption[] GetDialogOptions()
+    {
+        return new DialogOption[]
+        {
+            new DialogOption("first", "1", 1),
+            new DialogOption("first", "2", 2),
+            new DialogOption("first", "3", 3),
+        };
+    }
 }
 
 public class YesOrNoEncounterCard : EncounterCard
@@ -56,6 +68,14 @@ public class YesOrNoEncounterCard : EncounterCard
     public override void Execute()
     {
         throw new NotImplementedException();
+    }
+
+    public override DialogOption[] GetDialogOptions()
+    {
+        return new DialogOption[] {
+            new DialogOption("yesOption", "Yes", true),
+            new DialogOption("noOption", "No", false),
+        };
     }
 }
 

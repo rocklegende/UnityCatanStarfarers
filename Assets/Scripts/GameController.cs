@@ -19,8 +19,8 @@ public class GameController : SFController
     // Start is called before the first frame update
     void Start()
     {
-        var state = new TwoPlayersWithShips(this);
-        state.Setup();
+        DebugStartState debugState = new TestShipDiceState(this);
+        debugState.Setup();
     }
 
     public void SetState(GameState state)

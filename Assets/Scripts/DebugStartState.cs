@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class DebugStartState
 {
-    GameController controller;
+    protected GameController controller;
     public DebugStartState(GameController controller)
     {
         this.controller = controller;
@@ -49,10 +49,8 @@ public abstract class DebugStartState
 
 public class OneColonyShipAndOneSpacePort : DebugStartState
 {
-    GameController controller;
     public OneColonyShipAndOneSpacePort(GameController controller) : base(controller)
     {
-        this.controller = controller;
     }
 
     public override void Setup()
@@ -77,10 +75,8 @@ public class OneColonyShipAndOneSpacePort : DebugStartState
 
 public class TwoTradeShipAndOneSpacePort : DebugStartState
 {
-    GameController controller;
     public TwoTradeShipAndOneSpacePort(GameController controller) : base(controller)
     {
-        this.controller = controller;
     }
 
     public override void Setup()
@@ -110,10 +106,8 @@ public class TwoTradeShipAndOneSpacePort : DebugStartState
 
 public class OneTradeOneColonyShipAndOneSpacePort : DebugStartState
 {
-    GameController controller;
     public OneTradeOneColonyShipAndOneSpacePort(GameController controller) : base(controller)
     {
-        this.controller = controller;
     }
 
     public override void Setup()
@@ -144,10 +138,8 @@ public class OneTradeOneColonyShipAndOneSpacePort : DebugStartState
 
 public class TwoPlayersWithShips : DebugStartState
 {
-    GameController controller;
     public TwoPlayersWithShips(GameController controller) : base(controller)
     {
-        this.controller = controller;
     }
 
     void BuildShipsForMainPlayer(Player player)
@@ -195,6 +187,20 @@ public class TwoPlayersWithShips : DebugStartState
         BuildShipsForMainPlayer(controller.players[0]);
         BuildShipsForSecondPlayer(controller.players[1]);       
 
+        CommonMapSetup();
+    }
+}
+
+public class TestShipDiceState : DebugStartState
+{
+    public TestShipDiceState(GameController controller) : base(controller)
+    {
+    }
+    public override void Setup()
+    {
+        controller.state = new CastShipDiceState(controller);
+
+        CommonSetup();
         CommonMapSetup();
     }
 }
