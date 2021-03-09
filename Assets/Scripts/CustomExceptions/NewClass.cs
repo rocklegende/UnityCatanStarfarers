@@ -85,3 +85,22 @@ public class TradeStationIsFullException : Exception
     }
 }
 
+public class EmptyCardStackException : Exception
+{
+    public EmptyCardStackException()
+    {
+    }
+
+    public EmptyCardStackException(string message)
+        : base(message)
+    {
+    }
+
+    public EmptyCardStackException(string message, Exception inner)
+        : base(message, inner)
+    {
+    }
+}
+
+
+

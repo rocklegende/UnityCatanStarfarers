@@ -36,6 +36,8 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     public GameObject smallPlayerViewPrefab;
     public GameObject otherPlayerContainer;
 
+    public GameObject shipDiceThrowRenderer;
+
 
 
     // Start is called before the first frame update
@@ -43,6 +45,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     {
         friendShipCardSelection.SetActive(false);
         friendShipCardSelection.GetComponent<FriendShipCardSelector>().delegate_ = this;
+        shipDiceThrowRenderer.SetActive(false);
         CreateBuildDropDowns();
     }
 
@@ -111,6 +114,17 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
             smallPlayerView.transform.parent = otherPlayerContainer.transform;
         }
 
+    }
+
+    public void ShowShipDiceThrowPanel(System.Action<ShipDiceThrow> callback)
+    {
+        shipDiceThrowRenderer.SetActive(true);
+        shipDiceThrowRenderer.GetComponent<ShipDiceThrowRenderer>().callback = callback;
+    }
+
+    public void CloseShipDiceThrowPanel()
+    {
+        shipDiceThrowRenderer.SetActive(false);
     }
 
     public void ShowSettleButton(bool show)

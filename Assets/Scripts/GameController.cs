@@ -14,6 +14,8 @@ public class GameController : SFController
     public int currentPlayerAtTurn = 0;
     public PayoutHandler payoutHandler;
 
+    public EncounterCardHandler encounterCardHandler;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,6 +26,7 @@ public class GameController : SFController
     public void SetState(GameState state)
     {
         this.state = state;
+        //TODO: this.state.Setup();
     }
 
     void AddPayoutToPlayer(Hand payout, Player player)

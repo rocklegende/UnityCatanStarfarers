@@ -16,7 +16,7 @@ public class ShipDiceThrow
         this.value2 = value2;
     }
 
-    public bool TriggersActivityCard()
+    public bool TriggersEncounterCard()
     {
         return value1 == 0 || value2 == 0;
     }
@@ -38,6 +38,5 @@ public class ShipDiceThrower
     {
         values.Shuffle();
         return new ShipDiceThrow(values[0], values[1]);
-
     }
 }

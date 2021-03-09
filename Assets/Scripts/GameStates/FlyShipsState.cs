@@ -5,15 +5,9 @@ using UnityEngine;
 
 public class FlyShipsState : GameState
 {
-    GameController controller;
     Token selectedToken;
-    HUDScript hudScript;
-    MapScript mapScript;
     public FlyShipsState(GameController controller) : base(controller)
     {
-        this.controller = controller;
-        hudScript = controller.HUD.GetComponent<HUDScript>();
-        mapScript = controller.Map.GetComponent<MapScript>();
         Init();
     }
 
@@ -37,8 +31,8 @@ public class FlyShipsState : GameState
 
     public override void OnSpacePointClicked(SpacePoint point, GameObject spacePointObject)
     {
-        //TODO: dont remove and create buttons, very cost inefficient, instead create
-        //all possible spacepoints and just hide and show them
+        //TODO: dont remove and create buttons, very cost inefficient and slow, instead create
+        //all possible spacepoints and just hide and show the one we need right now
         mapScript.RemoveAllSpacePointButtons(); 
         selectedToken.FlyTo(point, mapScript.map);
     }
@@ -104,5 +98,10 @@ public class FlyShipsState : GameState
         {
             hudScript.ShowSettleButton(false);
         }
+    }
+
+    public override void Setup()
+    {
+        throw new NotImplementedException();
     }
 }

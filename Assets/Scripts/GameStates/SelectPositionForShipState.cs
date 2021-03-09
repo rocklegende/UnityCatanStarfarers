@@ -5,14 +5,12 @@ using UnityEngine;
 
 public class SelectPositionForShipState : GameState
 {
-    GameController controller;
     Token token;
     public SelectPositionForShipState(GameController controller, Token token) : base(controller)
     {
-        this.controller = controller;
         this.token = token;
-        controller.HUD.GetComponent<HUDScript>().SetStateText("SelectPositionForShipState");
-        controller.HUD.GetComponent<HUDScript>().ShowSettleButton(false);
+        hudScript.SetStateText("SelectPositionForShipState");
+        hudScript.ShowSettleButton(false);
         Init();
     }
 
@@ -86,6 +84,11 @@ public class SelectPositionForShipState : GameState
     }
 
     public override void OnTokenCanSettle(bool canSettle, Token token)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void Setup()
     {
         throw new NotImplementedException();
     }

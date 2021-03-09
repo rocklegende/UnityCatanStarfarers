@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,6 +9,7 @@ public class ShipDiceThrowRenderer : SFView
 
     public Text firstDiceText;
     public Text secondDiceText;
+    public Action<ShipDiceThrow> callback { get; set; }
     // Start is called before the first frame update
     void Start()
     {
@@ -28,11 +30,11 @@ public class ShipDiceThrowRenderer : SFView
 
     public void OnBtnClick()
     {
-
         var diceThrower = new ShipDiceThrower();
         var dt = diceThrower.CastDice();
         DrawDiceThrow(dt);
+        callback(dt);
 
-        app.Notify(SFNotification.ship_dice_thrown, this, new object[] { dt });
+        //app.Notify(SFNotification.ship_dice_thrown, this, new object[] { dt });
     }
 }

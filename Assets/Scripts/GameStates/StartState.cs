@@ -5,25 +5,22 @@ using UnityEngine;
 
 public class StartState : GameState
 {
-    GameController controller;
     public StartState(GameController controller) : base(controller)
     {
-        this.controller = controller;
-        controller.HUD.GetComponent<HUDScript>().SetStateText("StartState");
-        controller.HUD.GetComponent<HUDScript>().ShowSettleButton(false);
+        hudScript.SetStateText("StartState");
+        hudScript.ShowSettleButton(false);
     }
 
 
 
     public override void OnNextButtonClicked()
     {
-        Debug.Log("jo1");
-        controller.SetState(new FlyShipsState(controller));
+        controller.SetState(new CastShipDiceState(controller));
     }
 
     public override void OnSpacePointClicked(SpacePoint point, GameObject spacePointObject)
     {
-        Debug.Log("jo2");
+        Debug.Log("nothing happening here");
     }
 
     public override void OnShipDiceThrown(ShipDiceThrow shipDiceThrow)
@@ -63,6 +60,11 @@ public class StartState : GameState
     }
 
     public override void OnTokenCanSettle(bool canSettle, Token token)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void Setup()
     {
         throw new NotImplementedException();
     }
