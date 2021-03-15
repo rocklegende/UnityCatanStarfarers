@@ -37,6 +37,33 @@ public class Player
         notifier.app.Notify(SFNotification.player_data_changed, notifier, new object[] { this });
     }
 
+    public void AddRangeToFlyableTokens(int range)
+    {
+        if (range < 0)
+        {
+            throw new ArgumentException("range cant be negative");
+        } else
+        {
+            foreach(var flyToken in GetFlyableTokens())
+            {
+                flyToken.addSteps(range);
+            }
+        }
+    }
+
+    Token[] GetFlyableTokens()
+    {
+        var list = new List<Token>();
+        foreach (var token in tokens)
+        {
+            if (token.IsFlyable())
+            {
+                list.Add(token);
+            }
+        }
+        return list.ToArray();
+    }
+
     public int GetBonusForResource(Resource resource)
     {
         if (resource is CarbonResource)

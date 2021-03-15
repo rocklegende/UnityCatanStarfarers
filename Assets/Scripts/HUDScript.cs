@@ -38,6 +38,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     public GameObject otherPlayerContainer;
 
     public GameObject shipDiceThrowRenderer;
+    public GameObject normalDiceThrowRenderer;
     public GameObject resourcePicker;
     public GameObject decisionDialog;
     public GameObject fightPanel;
@@ -56,6 +57,17 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     // Update is called once per frame
     void Update()
     {
+    }
+
+    public void OpenNormalDiceThrowRenderer(System.Action<DiceThrow> callback)
+    {
+        normalDiceThrowRenderer.GetComponent<DiceThrowRenderer>().callback = callback;
+        normalDiceThrowRenderer.SetActive(true);
+    }
+
+    public void CloseNormalDiceThrowRenderer()
+    {
+        normalDiceThrowRenderer.SetActive(false);
     }
 
     public void OpenResourcePicker(System.Action<Hand> callback)

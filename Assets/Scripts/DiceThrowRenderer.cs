@@ -8,6 +8,7 @@ public class DiceThrowRenderer : SFView
 
     public Text firstDiceText;
     public Text secondDiceText;
+    public System.Action<DiceThrow> callback;
     // Start is called before the first frame update
     void Start()
     {
@@ -31,15 +32,15 @@ public class DiceThrowRenderer : SFView
         Cast();
     }
 
-    public DiceThrow Cast(bool notify = false)
+    public DiceThrow Cast()
     {
         var diceThrower = new DiceThrower();
         var dt = diceThrower.throwDice();
         DrawDiceThrow(dt);
         
-        if (notify)
+        if (this.callback != null)
         {
-            app.Notify(SFNotification.dice_thrown, this, new object[] { dt });
+            callback(dt);
         }
         return dt;
     }

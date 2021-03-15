@@ -19,7 +19,7 @@ public abstract class Token
     protected Color color;
     public Token attachedToken = null;
     protected bool isTokenAttachable;
-    int stepsLeft = 20;
+    int stepsLeft = 0;
     public Player owner;
 
 
@@ -78,6 +78,15 @@ public abstract class Token
     public void addSteps(int steps)
     {
         stepsLeft += steps;
+    }
+
+    public bool IsFlyable()
+    {
+        if (attachedToken == null)
+        {
+            return false;
+        }
+        return attachedToken is ShipToken;
     }
 
     public bool CanFly()

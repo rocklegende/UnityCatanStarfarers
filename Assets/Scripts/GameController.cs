@@ -19,7 +19,7 @@ public class GameController : SFController
     // Start is called before the first frame update
     void Start()
     {
-        DebugStartState debugState = new TestShipDiceState(this);
+        DebugStartState debugState = new TestNormalDiceDebugState(this);
         debugState.Setup();
     }
 
@@ -37,7 +37,7 @@ public class GameController : SFController
         }
     }
 
-    void PayoutPlayers(DiceThrow dt)
+    public void PayoutPlayers(DiceThrow dt)
     {
         foreach (var player in players)
         {
@@ -74,11 +74,6 @@ public class GameController : SFController
 
             case SFNotification.settle_button_clicked:
                 state.OnSettleButtonPressed();
-                break;
-
-            case SFNotification.dice_thrown:
-                //PayoutPlayers((DiceThrow)p_data[0]);
-                PayoutPlayers(new DiceThrow(2, 1));
                 break;
 
             case SFNotification.token_data_changed:

@@ -1,28 +1,20 @@
 ﻿using System;
 using UnityEngine;
 
-public class CastShipDiceState : GameState
+public class CastNormalDiceState : GameState
 {
-    public CastShipDiceState(GameController controller) : base(controller)
+    public CastNormalDiceState(GameController controller) : base(controller)
     {
-        hudScript.ShowShipDiceThrowPanel(ShipValueThrown);
-        hudScript.SetStateText("CastShipDiceState");
+        hudScript.OpenNormalDiceThrowRenderer(DiceValueThrown);
+        hudScript.SetStateText("CastNormalDiceState");
     }
 
-    public void ShipValueThrown(ShipDiceThrow shipDiceThrow)
+    public void DiceValueThrown(DiceThrow diceThrow)
     {
-        Debug.Log("Total ship dice value is: " + shipDiceThrow.GetValue() + "trigger encounter card" + shipDiceThrow.TriggersEncounterCard());
-
-        if (shipDiceThrow.TriggersEncounterCard())
-        {
-            controller.encounterCardHandler.GetComponent<EncounterCardHandler>().PlayNextCard();
-        } else
-        {
-            hudScript.player.AddRangeToFlyableTokens(shipDiceThrow.GetValue());
-            controller.SetState(new FlyShipsState(controller));
-        }
-
-        hudScript.CloseShipDiceThrowPanel();
+        Debug.Log("Total dice value is: " + diceThrow.GetValue());
+        controller.PayoutPlayers(diceThrow);
+        hudScript.CloseNormalDiceThrowRenderer();
+        controller.SetState(new StartState(controller));
     }
 
     public override void OnBackButtonClicked()
@@ -42,7 +34,7 @@ public class CastShipDiceState : GameState
 
     public override void OnNextButtonClicked()
     {
-        controller.SetState(new FlyShipsState(controller));
+        controller.SetState(new StartState(controller));
     }
 
     public override void OnSettleButtonPressed()

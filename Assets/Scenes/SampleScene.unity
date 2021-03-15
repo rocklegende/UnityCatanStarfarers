@@ -414,7 +414,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &136169747
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3656,6 +3656,7 @@ MonoBehaviour:
     type: 3}
   otherPlayerContainer: {fileID: 291171498}
   shipDiceThrowRenderer: {fileID: 850775857}
+  normalDiceThrowRenderer: {fileID: 1857296694}
   resourcePicker: {fileID: 887349510}
   decisionDialog: {fileID: 118723116}
   fightPanel: {fileID: 136169746}
@@ -5900,7 +5901,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1857296695
 RectTransform:
   m_ObjectHideFlags: 0

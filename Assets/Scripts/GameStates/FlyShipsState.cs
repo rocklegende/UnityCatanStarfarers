@@ -26,7 +26,7 @@ public class FlyShipsState : GameState
             controller.currentPlayerAtTurn = 0;
         }
 
-        controller.SetState(new StartState(controller));
+        controller.SetState(new CastNormalDiceState(controller));
     }
 
     public override void OnSpacePointClicked(SpacePoint point, GameObject spacePointObject)

@@ -15,6 +15,42 @@ public abstract class DebugStartState
         return new Player[] { new Player(Color.green, controller), new Player(Color.red, controller) };
     }
 
+    public void BuildShipsForMainPlayer(Player player)
+    {
+        Token spacePort = new ColonyBaseToken();
+        spacePort.attachedToken = new SpacePortToken();
+        spacePort.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 1));
+        player.BuildTokenWithoutCost(spacePort);
+
+        Token colonyShip = new TradeBaseToken();
+        colonyShip.attachedToken = new ShipToken();
+        colonyShip.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 0));
+        player.BuildTokenWithoutCost(colonyShip);
+
+        Token colonyShip2 = new ColonyBaseToken();
+        colonyShip2.attachedToken = new ShipToken();
+        colonyShip2.SetPosition(new SpacePoint(new HexCoordinates(5, 5).W(), 0));
+        player.BuildTokenWithoutCost(colonyShip2);
+    }
+
+    public void BuildShipsForSecondPlayer(Player player)
+    {
+        Token spacePort = new ColonyBaseToken();
+        spacePort.attachedToken = new SpacePortToken();
+        spacePort.SetPosition(new SpacePoint(new HexCoordinates(7, 4), 0));
+        player.BuildTokenWithoutCost(spacePort);
+
+        Token colonyShip = new TradeBaseToken();
+        colonyShip.attachedToken = new ShipToken();
+        colonyShip.SetPosition(new SpacePoint(new HexCoordinates(7, 4), 1));
+        player.BuildTokenWithoutCost(colonyShip);
+
+        Token colonyShip2 = new ColonyBaseToken();
+        colonyShip2.attachedToken = new ShipToken();
+        colonyShip2.SetPosition(new SpacePoint(new HexCoordinates(7, 4).E(), 1));
+        player.BuildTokenWithoutCost(colonyShip2);
+    }
+
     public void CommonSetup()
     {
         controller.players = GetGenericPlayers();
@@ -142,42 +178,6 @@ public class TwoPlayersWithShips : DebugStartState
     {
     }
 
-    void BuildShipsForMainPlayer(Player player)
-    {
-        Token spacePort = new ColonyBaseToken();
-        spacePort.attachedToken = new SpacePortToken();
-        spacePort.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 1));
-        player.BuildTokenWithoutCost(spacePort);
-
-        Token colonyShip = new TradeBaseToken();
-        colonyShip.attachedToken = new ShipToken();
-        colonyShip.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 0));
-        player.BuildTokenWithoutCost(colonyShip);
-
-        Token colonyShip2 = new ColonyBaseToken();
-        colonyShip2.attachedToken = new ShipToken();
-        colonyShip2.SetPosition(new SpacePoint(new HexCoordinates(5, 5).W(), 0));
-        player.BuildTokenWithoutCost(colonyShip2);
-    }
-
-    void BuildShipsForSecondPlayer(Player player)
-    {
-        Token spacePort = new ColonyBaseToken();
-        spacePort.attachedToken = new SpacePortToken();
-        spacePort.SetPosition(new SpacePoint(new HexCoordinates(7, 4), 0));
-        player.BuildTokenWithoutCost(spacePort);
-
-        Token colonyShip = new TradeBaseToken();
-        colonyShip.attachedToken = new ShipToken();
-        colonyShip.SetPosition(new SpacePoint(new HexCoordinates(7, 4), 1));
-        player.BuildTokenWithoutCost(colonyShip);
-
-        Token colonyShip2 = new ColonyBaseToken();
-        colonyShip2.attachedToken = new ShipToken();
-        colonyShip2.SetPosition(new SpacePoint(new HexCoordinates(7, 4).E(), 1));
-        player.BuildTokenWithoutCost(colonyShip2);
-    }
-
     public override void Setup()
     {
         controller.state = new FlyShipsState(controller);
@@ -201,6 +201,24 @@ public class TestShipDiceState : DebugStartState
         controller.state = new CastShipDiceState(controller);
 
         CommonSetup();
+        BuildShipsForMainPlayer(controller.players[0]);
+
+        controller.mainPlayer.AddFameMedal();
+        CommonMapSetup();
+    }
+}
+
+public class TestNormalDiceDebugState : DebugStartState
+{
+    public TestNormalDiceDebugState(GameController controller) : base(controller)
+    {
+    }
+    public override void Setup()
+    {
+        controller.state = new CastNormalDiceState(controller);
+
+        CommonSetup();
+        BuildShipsForMainPlayer(controller.players[0]);
 
         controller.mainPlayer.AddFameMedal();
         CommonMapSetup();
