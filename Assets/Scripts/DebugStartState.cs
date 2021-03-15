@@ -201,6 +201,8 @@ public class TestShipDiceState : DebugStartState
         controller.state = new CastShipDiceState(controller);
 
         CommonSetup();
+
+        controller.mainPlayer.AddFameMedal();
         CommonMapSetup();
     }
 }

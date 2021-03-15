@@ -7,11 +7,11 @@ public class Hand
 {
 
     public List<Card> cards = new List<Card>();
+    protected Action callback;
 
     public void AddCard(Card card)
     {
         cards.Add(card);
-        //TODO: notify that hand changed
     }
 
     public int Count()
@@ -19,8 +19,25 @@ public class Hand
         return cards.Count;
     }
 
-    public Hand()
+    public Hand(Action callback = null)
     {
+        this.callback = callback;
+    }
+
+    void Changed()
+    {
+        if (this.callback != null)
+        {
+            callback();
+        }
+    }
+
+    public void SubtractHand(Hand h)
+    {
+        foreach(var card in h.cards)
+        {
+            RemoveCardOfType(card.GetType());
+        }
     }
 
     public void AddHand(Hand hand)
@@ -116,7 +133,6 @@ public class Hand
 
     public void PayCost(Cost cost)
     {
-
         if (!CanPayCost(cost))
         {
             throw new NotEnoughResourcesException();
@@ -131,6 +147,31 @@ public class Hand
             }
         }
     }
+
+    public void RemoveCardOfType(Type type)
+    {
+        var cardFound = FindCardOfType(type);
+        if (cardFound != null)
+        {
+            cards.Remove(cardFound);
+        } else
+        {
+            throw new ArgumentException("No card of this type left in the hand.");
+        }
+    }
+
+    public Card FindCardOfType(System.Type type)
+    {
+        foreach (Card c in cards)
+        {
+            if (c.GetType() == type)
+            {
+                return c;
+            }
+        }
+
+        return null;
+    } 
 
     public Dictionary<string, int> GetGroupedResources()
     {

@@ -5,23 +5,52 @@ using UnityEngine;
 public class EncounterCardHandler : MonoBehaviour
 {
 
-    public YesOrNoActionTreeNode currentDecisionNode;
+    public DecisionTreeNode currentDecisionNode;
     public GameObject decisionDialog; //TODO: move this reference to hud script in future
     public EncounterCardStack encounterCardStack;
+    public GameObject HUD;
 
     // Start is called before the first frame update
     void Start()
     {
         decisionDialog.SetActive(false);
+        var hudScript = HUD.GetComponent<HUDScript>();
 
-        var youCanLeaveOption = new YesOrNoActionTreeNode("You can leave", null, null, null);
-        var youHaveToFightOption = new YesOrNoActionTreeNode("You have to fight", null, null, null);
-        var root = new YesOrNoActionTreeNode("Somebody needs help", null, youHaveToFightOption, youCanLeaveOption);
-        var decisionTree = new YesOrNoActionTree(root);
-        EncounterCard encounter = new YesOrNoEncounterCard("Example encounter card", decisionTree);
-        GiveResourcesEncounterCard giveResources = new GiveResourcesEncounterCard("Jo give me all your resources bitch", null);
+        var oneResourceGiven = new DecisionTreeNode(null, 1, new LoseOneFameMedalAction(hudScript))
+        {
+            text = "You lost one fame medal you cheap fuck"
+        };
+        var twoResourcesGiven = new DecisionTreeNode(null, 2, new WinOneFameMedalAction(hudScript))
+        {
+            text = "You gave me two resources, thank you, you win one fame medal"
+        };
 
-        encounterCardStack = new EncounterCardStack(new List<EncounterCard> { encounter, giveResources });
+
+        var dontGiveResourcesOption = new DecisionTreeNode(null, false, null)
+        {
+            text = "OK, you can fly away"
+        };
+
+        var giveResourcesAction = new GiveupResourcesEncounterAction(hudScript);
+
+        var yesGiveResourcesOption = new DecisionTreeNode(new DecisionTreeNode[] { oneResourceGiven, twoResourcesGiven }, true, giveResourcesAction)
+        {
+            text = "OK, give me some resources"
+        };
+
+        //var action = new YesOrNoEncounterAction(hudScript);
+        var action = new FightEncounterAction(hudScript);
+
+        var giveResourceCard = new DecisionTreeNode(new DecisionTreeNode[] { dontGiveResourcesOption, yesGiveResourcesOption }, null, action)
+        {
+            text = "You see a starfarer that needs help with resources, do you help?"
+        };
+
+        var decisionTree = new DecisionTree(giveResourceCard);
+
+        var encounter = new EncounterCard(decisionTree);
+
+        encounterCardStack = new EncounterCardStack(new List<EncounterCard> { encounter });
     }
 
     /// <summary>
@@ -45,53 +74,68 @@ public class EncounterCardHandler : MonoBehaviour
         var decisionDialogScript = decisionDialog.GetComponent<DecisionDialog>();
         decisionDialogScript.SetCallback(OnUserChoseOption);
         decisionDialog.SetActive(true);
-        if (card is YesOrNoEncounterCard)
-        {
-            var yesOrNoCard = (YesOrNoEncounterCard)card;
-            currentDecisionNode = yesOrNoCard.tree.root;
-            decisionDialogScript.SetOptions(yesOrNoCard.GetDialogOptions());
-            OpenDialogForDecisionNode(currentDecisionNode);
-        }
-
-        if (card is GiveResourcesEncounterCard)
-        {
-            var giveResourcesCard = (GiveResourcesEncounterCard)card;
-            decisionDialogScript.SetOptions(giveResourcesCard.GetDialogOptions());
-        }         
+        currentDecisionNode = card.decisionTree.root;
+        OpenDialogForDecisionNode(currentDecisionNode);      
     }
 
-    void OpenDialogForDecisionNode(YesOrNoActionTreeNode currentNode)
+    void OpenDialogForDecisionNode(DecisionTreeNode currentNode)
     {
+        var decisionDialogScript = decisionDialog.GetComponent<DecisionDialog>();
         decisionDialog.SetActive(true); //open the dialog
-        decisionDialog.GetComponent<DecisionDialog>().SetText(currentNode.text);
+        decisionDialogScript.RemoveButtons(); //present no options initially
+        decisionDialogScript.SetText(currentNode.text);
+
+        if (currentDecisionNode.action != null)
+        {
+            currentDecisionNode.action.SetCallback(ValueChosen);
+            currentDecisionNode.action.Execute();
+        }
+        else
+        {
+            decisionDialogScript.PresentDoneButton(EncounterCardDone);
+        }
+    }
+
+    void ValueChosen(EncounterActionValue value)
+    {
+        decisionDialog.SetActive(false); //close it
+
+        if (currentDecisionNode.HasNext())
+        {
+            foreach (var node in currentDecisionNode.GetNext())
+            {
+                var bla = value.value.Equals(node.decisionValue);
+                if (node.GetsTriggeredByValue(value.value))
+                {
+                    currentDecisionNode = node;
+                    OpenDialogForDecisionNode(currentDecisionNode);
+                    break;
+                }
+            }
+        }
     }
 
     void OnUserChoseOption(DialogOption option)
     {
         decisionDialog.SetActive(false); //close it
-        if (option.value is bool)
-        {
-            var response = (bool)option.value;
-            if (response)
-            {
-                currentDecisionNode = currentDecisionNode.yes;
-            }
 
-            if (!response)
-            {
-                currentDecisionNode = currentDecisionNode.no;
-            }
-            if (currentDecisionNode != null)
-            {
-                OpenDialogForDecisionNode(currentDecisionNode);
-            }
-        }
-
-        if (option.value is int)
+        if (currentDecisionNode.HasNext())
         {
-            Debug.Log("Chose integer value: " + (int)option.value);
-        }
-        
+            foreach (var node in currentDecisionNode.GetNext())
+            {
+                if (node.GetsTriggeredByValue(option.value))
+                {
+                    currentDecisionNode = node;
+                    OpenDialogForDecisionNode(currentDecisionNode);
+                    break;
+                }
+            }
+        } 
+    }
+
+    void EncounterCardDone()
+    {
+        decisionDialog.SetActive(false);
     }
 
     // Update is called once per frame

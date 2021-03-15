@@ -28,12 +28,22 @@ public class ShipDiceThrowRenderer : SFView
         secondDiceText.text = dt.value2.ToString();
     }
 
-    public void OnBtnClick()
+    public ShipDiceThrow Cast()
     {
         var diceThrower = new ShipDiceThrower();
         var dt = diceThrower.CastDice();
         DrawDiceThrow(dt);
-        callback(dt);
+        if (this.callback != null)
+        {
+            callback(dt);
+        }
+        
+        return dt;
+    }
+
+    public void OnBtnClick()
+    {
+        Cast();
 
         //app.Notify(SFNotification.ship_dice_thrown, this, new object[] { dt });
     }

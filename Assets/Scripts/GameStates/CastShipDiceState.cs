@@ -41,11 +41,6 @@ public class CastShipDiceState : GameState
         throw new NotImplementedException();
     }
 
-    public override void OnShipDiceThrown(ShipDiceThrow shipDiceThrow)
-    {
-        throw new NotImplementedException();
-    }
-
     public override void OnSpacePointClicked(SpacePoint point, GameObject spacePointObject)
     {
         throw new NotImplementedException();

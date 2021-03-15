@@ -2,15 +2,13 @@
 using System.Collections.Generic;
 
 
-public abstract class EncounterCard
+public class EncounterCard
 {
-    public EncounterCard()
+    public DecisionTree decisionTree;
+    public EncounterCard(DecisionTree decisionTree)
     {
+        this.decisionTree = decisionTree;
     }
-
-    public abstract void Execute();
-
-    public abstract DialogOption[] GetDialogOptions();
 }
 
 public class EncounterCardOption
@@ -26,82 +24,75 @@ public class EncounterCardOption
     }
 }
 
-public abstract class EncounterCardAction
+public class EncounterActionValue
 {
-    public abstract void ExecuteAction(Player player);
-}
+    public object value;
 
-public class GiveResourcesEncounterCard : EncounterCard
-{
-    protected string text;
-    protected EncounterCardOption[] options;
-    public GiveResourcesEncounterCard(string text, EncounterCardOption[] options)
+    public EncounterActionValue(object value)
     {
-        this.text = text;
-        this.options = options;
-    }
-
-    public override void Execute()
-    {
-        throw new NotImplementedException();
-    }
-
-    public override DialogOption[] GetDialogOptions()
-    {
-        return new DialogOption[]
-        {
-            new DialogOption("first", "1", 1),
-            new DialogOption("first", "2", 2),
-            new DialogOption("first", "3", 3),
-        };
+        this.value = value;
     }
 }
 
-public class YesOrNoEncounterCard : EncounterCard
+
+
+public class DecisionTree
 {
-    public YesOrNoActionTree tree;
-    public YesOrNoEncounterCard(string text, YesOrNoActionTree tree)
-    {
-        this.tree = tree;
-    }
+    public DecisionTreeNode root;
 
-    public override void Execute()
-    {
-        throw new NotImplementedException();
-    }
-
-    public override DialogOption[] GetDialogOptions()
-    {
-        return new DialogOption[] {
-            new DialogOption("yesOption", "Yes", true),
-            new DialogOption("noOption", "No", false),
-        };
-    }
-}
-
-public class YesOrNoActionTree
-{
-    public YesOrNoActionTreeNode root;
-
-    public YesOrNoActionTree(YesOrNoActionTreeNode root)
+    public DecisionTree(DecisionTreeNode root)
     {
         this.root = root;
     }
 }
 
-public class YesOrNoActionTreeNode
+public class DecisionTreeNode
 {
-    public string text;
-    public EncounterCardAction action;
-    public YesOrNoActionTreeNode yes;
-    public YesOrNoActionTreeNode no;
+    public readonly DecisionTreeNode[] nextNodes;
+    public readonly object decisionValue;
+    public readonly EncounterCardAction action;
+    public string buttonText { get; set; }
+    public string text { get; set; }
 
-    public YesOrNoActionTreeNode(string text, EncounterCardAction action, YesOrNoActionTreeNode yesNode, YesOrNoActionTreeNode noNode)
+    public DecisionTreeNode(DecisionTreeNode[] nextNodes, object decisionValue, EncounterCardAction action)
     {
-        this.text = text;
+        this.nextNodes = nextNodes;
+        this.decisionValue = decisionValue;
         this.action = action;
-        this.yes = yesNode;
-        this.no = noNode;
+    }
+
+    public bool HasNext()
+    {
+        if (nextNodes == null)
+        {
+            return false;
+        }
+        return nextNodes.Length > 0;
+    }
+
+    public DecisionTreeNode[] GetNext()
+    {
+        return nextNodes;
+    }
+
+    public bool GetsTriggeredByValue(object value)
+    {
+        return decisionValue.Equals(value);
+    }
+
+    public DialogOption[] GetDialogOptions()
+    {
+        if (GetNext() == null)
+        {
+            return new DialogOption[] { };
+        }
+        var options = new List<DialogOption>();
+        foreach (var nextNode in nextNodes)
+        {
+            options.Add(new DialogOption("jo", nextNode.buttonText, nextNode.decisionValue));
+        }
+
+        return options.ToArray();
     }
 }
 
@@ -127,19 +118,163 @@ public class EncounterCardStack
     }
 }
 
-public class CannonFightEncounterAction : EncounterCardAction
+//public class CannonFightEncounterAction : EncounterCardAction
+//{
+//    public Player origin;
+//    public Player opponent;
+//    Action<int> callback; 
+//    public CannonFightEncounterAction(Player origin, Player opponent)
+//    {
+//        this.origin = origin;
+//        this.opponent = opponent;
+//    }
+
+//    public override void ExecuteAction()
+//    {
+//        throw new NotImplementedException();
+//        hud.OpenResourcePicker(ResourcesPicked);
+//    }
+
+//    void ResourcesPicked(Hand hand)
+//    {
+//        ResultFound(hand.Count());
+//        hud.CloseResourcePicker();
+//    }
+//}
+
+public abstract class EncounterCardAction
 {
-    public Player origin;
-    public Player opponent;
-    public CannonFightEncounterAction(Player origin, Player opponent)
+    public Action<EncounterActionValue> callback;
+    public HUDScript hud;
+
+    public EncounterCardAction(HUDScript hud)
     {
-        this.origin = origin;
-        this.opponent = opponent;
+        this.hud = hud;
     }
 
-    public override void ExecuteAction(Player player)
+    public abstract void Execute();
+
+    public void SetCallback(Action<EncounterActionValue> callback)
     {
-        throw new NotImplementedException();
+        this.callback = callback;
+    }
+
+    protected void ResultFound(object value)
+    {
+        callback(new EncounterActionValue(value));
+    }
+}
+
+public class GiveupResourcesEncounterAction : EncounterCardAction
+{
+    public GiveupResourcesEncounterAction(HUDScript hud) : base(hud)
+    {
+        
+    }
+
+    public override void Execute()
+    {
+        hud.OpenResourcePicker(ResourcesPicked);
+    }
+
+    void ResourcesPicked(Hand hand)
+    {
+        hud.player.SubtractHand(hand);
+        ResultFound(hand.Count());
+        hud.CloseResourcePicker();
+    }
+}
+
+public class LoseOneFameMedalAction : EncounterCardAction
+{
+    public LoseOneFameMedalAction(HUDScript hud) : base(hud)
+    {
+
+    }
+
+    public override void Execute()
+    {
+        hud.player.RemoveFameMedal();
+        var decisionDialogScript = hud.decisionDialog.GetComponent<DecisionDialog>();
+        decisionDialogScript.SetCallback(DialogOptionChosen);
+        decisionDialogScript.SetOptions(new DialogOption[] {
+            new DialogOption("ok", "Ok", true)
+        }) ;
+    }
+
+    void DialogOptionChosen(DialogOption option)
+    {
+        ResultFound(option.value);
+    }
+
+}
+
+public class WinOneFameMedalAction : EncounterCardAction
+{
+    public WinOneFameMedalAction(HUDScript hud) : base(hud)
+    {
+
+    }
+
+    public override void Execute()
+    {
+        hud.player.AddFameMedal();
+        var decisionDialogScript = hud.decisionDialog.GetComponent<DecisionDialog>();
+        decisionDialogScript.SetCallback(DialogOptionChosen);
+        decisionDialogScript.SetOptions(new DialogOption[] {
+            new DialogOption("ok", "Ok", true)
+        });
+    }
+
+    void DialogOptionChosen(DialogOption option)
+    {
+        ResultFound(option.value);
+    }
+
+}
+
+public class YesOrNoEncounterAction : EncounterCardAction
+{
+    public YesOrNoEncounterAction(HUDScript hud) : base(hud)
+    {
+
+    }
+
+    public override void Execute()
+    {
+        var decisionDialogScript = hud.decisionDialog.GetComponent<DecisionDialog>();
+        decisionDialogScript.SetCallback(DialogOptionChosen);
+        decisionDialogScript.SetOptions(new DialogOption[] {
+            new DialogOption("yes", "Yes", true),
+            new DialogOption("no", "No", false),
+        });
+    }
+
+    void DialogOptionChosen(DialogOption option)
+    {
+        ResultFound(option.value);
+    }
+}
+
+public class FightEncounterAction : EncounterCardAction
+{
+    public FightEncounterAction(HUDScript hud) : base(hud)
+    {
+
+    }
+
+    public override void Execute()
+    {
+        hud.fightPanel.SetActive(true);
+        var fightPanelScript = hud.fightPanel.GetComponent<FightPanelScript>();
+        fightPanelScript.SetFightIsDoneCallback(FightIsDone);
+        fightPanelScript.PlayFight(hud.player, hud.player, FightCategory.CANNON);
+    }
+
+    void FightIsDone(bool result)
+    {
+        hud.fightPanel.SetActive(false);
+        ResultFound(result);
     }
 }
 

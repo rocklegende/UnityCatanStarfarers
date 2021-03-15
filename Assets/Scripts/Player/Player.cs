@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player
 {
-    Color color;
+    public Color color;
     public List<Token> tokens;
     int fameMedalPieces;
     public SpaceShip ship;
@@ -24,7 +24,7 @@ public class Player
         this.color = color;
         fameMedalPieces = 0;
         ship = new SpaceShip();
-        hand = new Hand();
+        hand = new Hand(DataChanged);
         rules = new TradingRules();
         tokens = new List<Token> {};
         friendShipCards = new List<AbstractFriendshipCard>();
@@ -65,9 +65,20 @@ public class Player
         }
     }
 
+    public int GetFameMedalPieces()
+    {
+        return fameMedalPieces;
+    }
+
     public void AddCard(Card card)
     {
         hand.AddCard(card);
+        DataChanged();
+    }
+
+    public void SubtractHand(Hand h)
+    {
+        hand.SubtractHand(h);
         DataChanged();
     }
 

@@ -37,11 +37,6 @@ public class SelectPositionForShipState : GameState
         
     }
 
-    public override void OnShipDiceThrown(ShipDiceThrow shipDiceThrow)
-    {
-        throw new NotImplementedException();
-    }
-
     public override void OnNextButtonClicked()
     {
         controller.SetState(new FlyShipsState(controller));

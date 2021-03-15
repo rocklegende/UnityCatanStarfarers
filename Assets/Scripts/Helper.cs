@@ -22,6 +22,18 @@ public class BoundingBox
 public class Helper
 {
 
+    public ResourceCard[] GetAllResourceCardTypes()
+    {
+        return new ResourceCard[]
+        {
+            new OreCard(),
+            new FuelCard(),
+            new FoodCard(),
+            new CarbonCard(),
+            new GoodsCard()
+        };
+    }
+
     public List<T> CreateCopyOfList<T>(List<T> listToCopy)
     {
         var newList = new List<T>();

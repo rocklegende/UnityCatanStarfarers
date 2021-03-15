@@ -23,11 +23,6 @@ public class StartState : GameState
         Debug.Log("nothing happening here");
     }
 
-    public override void OnShipDiceThrown(ShipDiceThrow shipDiceThrow)
-    {
-        throw new NotImplementedException();
-    }
-
     public override void OnTokenClicked(Token tokenModel, GameObject tokenGameObject)
     {
         Debug.Log("nothing happening here");

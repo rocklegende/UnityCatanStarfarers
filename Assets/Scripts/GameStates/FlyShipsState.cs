@@ -58,11 +58,6 @@ public class FlyShipsState : GameState
         
     }
 
-    public override void OnShipDiceThrown(ShipDiceThrow shipDiceThrow)
-    {
-        throw new NotImplementedException();
-    }
-
     public override void OnBuildShipOptionClicked(Token token)
     {
         Debug.Log("not reacting");

@@ -17,6 +17,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     public Text cannonsText;
     public Text freightPodsText;
     public Text vpText;
+    public Text fameMedalPiecesText;
 
     public GameObject buildShipsDropDownRef;
     public GameObject upgradesDropDownRef;
@@ -37,6 +38,9 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     public GameObject otherPlayerContainer;
 
     public GameObject shipDiceThrowRenderer;
+    public GameObject resourcePicker;
+    public GameObject decisionDialog;
+    public GameObject fightPanel;
 
 
 
@@ -52,6 +56,17 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     // Update is called once per frame
     void Update()
     {
+    }
+
+    public void OpenResourcePicker(System.Action<Hand> callback)
+    {
+        resourcePicker.SetActive(true);
+        resourcePicker.GetComponent<ResourcePicker>().SetCallback(callback);
+    }
+
+    public void CloseResourcePicker()
+    {
+        resourcePicker.SetActive(false);
     }
 
     void CreateBuildDropDowns()
@@ -142,6 +157,12 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         DrawResourceStacks();
         DrawUpgrades();
         DrawVP();
+        DrawFameMedalPieces();
+    }
+
+    void DrawFameMedalPieces()
+    {
+        fameMedalPiecesText.text = player.GetFameMedalPieces().ToString();
     }
 
     void DrawResourceStacks()

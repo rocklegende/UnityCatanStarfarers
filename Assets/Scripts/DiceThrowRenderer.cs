@@ -28,11 +28,19 @@ public class DiceThrowRenderer : SFView
 
     public void OnBtnClick()
     {
+        Cast();
+    }
 
+    public DiceThrow Cast(bool notify = false)
+    {
         var diceThrower = new DiceThrower();
         var dt = diceThrower.throwDice();
         DrawDiceThrow(dt);
-
-        app.Notify(SFNotification.dice_thrown, this, new object[] { dt });
+        
+        if (notify)
+        {
+            app.Notify(SFNotification.dice_thrown, this, new object[] { dt });
+        }
+        return dt;
     }
 }

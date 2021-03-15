@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
@@ -42,10 +43,85 @@ namespace Tests
             Hand hand = new Hand();
             hand.AddCard(new FuelCard());
             hand.AddCard(new FuelCard());
-
-            
-
             Assert.True(hand.CanPayCost(new Cost(new Resource[] { })));
+        }
+
+        [Test]
+        public void RemoveCardTest1()
+        {
+
+            // Use the Assert class to test conditions
+            Hand hand = new Hand();
+            hand.AddCard(new FuelCard());
+            hand.AddCard(new FuelCard());
+
+            hand.RemoveCardOfType(new FuelCard().GetType());
+            Assert.True(hand.Count() == 1);
+        }
+
+        [Test]
+        public void RemoveCardTest2()
+        {
+            // Use the Assert class to test conditions
+            Hand hand = new Hand();
+            hand.AddCard(new FuelCard());
+            hand.AddCard(new FuelCard());
+
+            try
+            {
+                hand.RemoveCardOfType(new FoodCard().GetType());
+                Assert.True(false);
+            } catch (ArgumentException e)
+            {
+                Assert.True(true);
+            }
+        }
+
+        [Test]
+        public void SubtractHandTest1()
+        {
+            // Use the Assert class to test conditions
+            Hand hand = new Hand();
+            hand.AddCard(new FuelCard());
+            hand.AddCard(new FuelCard());
+
+            Hand subtract = new Hand();
+            subtract.AddCard(new FoodCard());
+            subtract.AddCard(new FoodCard());
+
+            try
+            {
+                hand.SubtractHand(subtract);
+                Assert.True(false);
+            }
+            catch (ArgumentException e)
+            {
+                Assert.True(true);
+            }
+        }
+
+        [Test]
+        public void SubtractHandTest2()
+        {
+            // Use the Assert class to test conditions
+            Hand hand = new Hand();
+            hand.AddCard(new FuelCard());
+            hand.AddCard(new FuelCard());
+
+            Hand subtract = new Hand();
+            subtract.AddCard(new FuelCard());
+            subtract.AddCard(new FuelCard());
+
+            try
+            {
+                hand.SubtractHand(subtract);
+                Assert.True(true);
+                Assert.AreEqual(0, hand.Count());
+            }
+            catch (ArgumentException e)
+            {
+                Assert.True(false);
+            }
         }
 
         [Test]
