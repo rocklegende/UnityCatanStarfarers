@@ -40,6 +40,11 @@ public class Hand
         }
     }
 
+    public void RemoveAllCards()
+    {
+        cards = new List<Card>();
+    }
+
     public void AddHand(Hand hand)
     {
         cards.AddRange(hand.cards);

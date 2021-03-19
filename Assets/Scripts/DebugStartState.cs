@@ -224,3 +224,27 @@ public class TestNormalDiceDebugState : DebugStartState
         CommonMapSetup();
     }
 }
+
+public class BeatPirateTokenDebugState : DebugStartState
+{
+    public BeatPirateTokenDebugState(GameController controller) : base(controller)
+    {
+    }
+    public override void Setup()
+    {
+        controller.state = new FlyShipsState(controller);
+
+        CommonSetup();
+        BuildShipsForMainPlayer(controller.players[0]);
+
+        for (int i = 0; i < 5; i++)
+        {
+            controller.players[0].ship.Add(new BoosterUpgradeToken());
+            controller.players[0].ship.Add(new FreightPodUpgradeToken());
+            controller.players[0].ship.Add(new CannonUpgradeToken());
+        }
+
+        controller.mainPlayer.AddFameMedal();
+        CommonMapSetup();
+    }
+}

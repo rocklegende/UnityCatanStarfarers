@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
+
 public abstract class TileGroup
 {
     protected Tile_[] tiles;
@@ -73,12 +75,19 @@ public class ResourceTileGroup : TileGroup
     public ResourceTileGroup( ResourceTile[] tiles, int rightShifts = 0) : base(tiles, rightShifts)
     {
         this.tiles = tiles;
+        //TODO: register as observer in Tiles,then notify app if something changed inside the tiles
     }
 
     public override void SetCenter(SpacePoint center)
     {
         this.center = center;
         settlePoints = center.GetNeighbors();
+    }
+
+    void Changed()
+    {
+        var notifier = new SFElement();
+        notifier.app.Notify(SFNotification.tile_group_data_changed, notifier);
     }
 
     public override void OnTokenEnteredArea(Token token)
@@ -88,16 +97,42 @@ public class ResourceTileGroup : TileGroup
 
     public override void OnTokenSettled(Token token)
     {
-        //throw new NotImplementedException();
+        RemovePirateTokenAt(ResourceTilesWithPirateToken(), token.owner);
+        Changed(); // TODO: change should be notified from inside ResourceTile class, then delegated to the ResourceTileGroup
+        
+    }
+
+    void RemovePirateTokenAt(ResourceTile[] targetTiles, Player awardReceivingPlayer)
+    {
+        foreach (var tileWithPirateToken in targetTiles)
+        {
+            tileWithPirateToken.AssignNewDiceChipFromGroup();
+            tileWithPirateToken.SetDiceChipFaceUp();
+            awardReceivingPlayer.AddPirateTokenBeatenAward();
+        }
+    }
+
+    ResourceTile[] ResourceTilesWithPirateToken()
+    {
+        var list = new List<ResourceTile>();
+        foreach (var tile in tiles)
+        {
+            var rt = (ResourceTile)tile;
+            var diceChip = rt.GetDiceChip();
+            if (diceChip is PirateToken)
+            {
+                list.Add(rt);
+            }
+        }
+        return list.ToArray();
     }
 
     PirateToken[] GetPirateTokens()
     {
         var pirateTokens = new List<PirateToken>();
-        foreach(var tile in tiles)
+        foreach(var tile in ResourceTilesWithPirateToken())
         {
-            var rt = (ResourceTile)tile;
-            var diceChip = rt.GetDiceChip();
+            var diceChip = tile.GetDiceChip();
             if (diceChip is PirateToken)
             {
                 pirateTokens.Add((PirateToken)diceChip);

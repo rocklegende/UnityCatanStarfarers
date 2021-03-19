@@ -7,7 +7,7 @@ public abstract class ResourceTile : Tile_
     public ChipGroup chipGroup;
 
     public readonly Resource resource;
-    
+
     public ResourceTile(Resource resource, ChipGroup group)
     {
         this.resource = resource;
@@ -37,6 +37,41 @@ public abstract class ResourceTile : Tile_
     public override bool blocksTraffic()
     {
         return true;
+    }
+
+    public void AssignNewDiceChipFromGroup() {
+        //TODO: the following is the correct code -> var chip = chipGroup.RetrieveChip(); 
+        var chip = new DiceChip2_11();
+        SetDiceChip(chip);
+    }
+
+    public void FlipDiceChip()
+    {
+        if (diceChip != null)
+        {
+            diceChip.Flip();
+        }
+    }
+    /// <summary>
+    /// Set dice chip to the side where the dice value is visible.
+    /// </summary>
+    public void SetDiceChipFaceUp()
+    {
+        if (diceChip != null)
+        {
+            diceChip.SetFaceUp();
+        }
+    }
+
+    /// <summary>
+    /// Set dice chip to the side where the dice group symbol is visible.
+    /// </summary>
+    public void SetDiceChipFaceDown()
+    {
+        if (diceChip != null)
+        {
+            diceChip.SetFaceDown();
+        }
     }
 
 

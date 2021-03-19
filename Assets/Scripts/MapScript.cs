@@ -16,11 +16,11 @@ public class MapScript : SFController
     public GameObject hexPrefab;
     public GameObject tokenPrefab;
     public GameObject tokenRendererPrefab;
+    public GameObject TileGroupRenderer;
     
     public Camera cam;
     public Player[] players;
     public bool isReceivingNotifications = false;
-    GameObject selectedTokenRenderer;
     public Map map;
     List<GameObject> currentlyShownSpacePointButtons = new List<GameObject>();
     GameObject[] hexagonGameObjects;
@@ -42,6 +42,7 @@ public class MapScript : SFController
     {
         this.map = map;
         hexagonGameObjects = CreateMap(map);
+        TileGroupRenderer.GetComponent<TileGroupRenderer>().Initialize(map);
         CenterCamera();
     }
 
@@ -51,7 +52,7 @@ public class MapScript : SFController
         {
             foreach (GameObject go in currentlyDisplayedPlayerTokens)
             {
-                GameObject.Destroy(go);
+                Destroy(go);
             }
         }
         

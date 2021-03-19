@@ -1,4 +1,26 @@
 ﻿using System;
+
+public class TradeOutput
+{
+    int numCards;
+    int tradingRatio;
+    public TradeOutput(int numCards, int tradingRatio)
+    {
+        this.numCards = numCards;
+        this.tradingRatio = tradingRatio;
+    }
+
+    public int GetCardsLeftAfterTrade()
+    {
+        return numCards % tradingRatio;
+    }
+
+    public int GetTradedCards()
+    {
+        return numCards / tradingRatio;
+    }
+}
+
 public class TradingCalculator
 {
     Player player;
@@ -7,44 +29,86 @@ public class TradingCalculator
         this.player = player;
     }
 
-    public bool IsOutputPossible(Hand inputHand, Hand outputHand)
+    bool IsTradeAllowed(Hand inputHand, Hand outputHand)
     {
+        if (outputHand.Count() == 0)
+        {
+            return false; //no trade should be allowed where the output is zero
+        }
+
+        return true;
+    }
+
+    public bool PlayerTradeIsPossible(Hand inputHand, Hand outputHand)
+    {
+        if (!IsTradeAllowed(inputHand, outputHand))
+        {
+            return false; 
+        }
+
+        return true;
+    }
+
+    public bool BankTradeIsPossible(Hand inputHand, Hand outputHand)
+    {
+        if (!IsTradeAllowed(inputHand, outputHand))
+        {
+            return false;
+        }
+
+        var tradeOutputs = new TradeOutput[]
+        {
+            GetTradeOutputFromCarbon(inputHand),
+            GetTradeOutputFromGoods(inputHand),
+            GetTradeOutputFromFood(inputHand),
+            GetTradeOutputFromFuel(inputHand),
+            GetTradeOutputFromOre(inputHand)
+        };
+
         int numTradedCards = 0;
-        numTradedCards += GetTradeOutputFromCarbon(inputHand);
-        numTradedCards += GetTradeOutputFromGoods(inputHand);
-        numTradedCards += GetTradeOutputFromFood(inputHand);
-        numTradedCards += GetTradeOutputFromFuel(inputHand);
-        numTradedCards += GetTradeOutputFromOre(inputHand);
+        int cardsLeftAfterTrade = 0;
+
+        foreach(var output in tradeOutputs)
+        {
+            numTradedCards += output.GetTradedCards();
+            cardsLeftAfterTrade += output.GetCardsLeftAfterTrade();
+        }
+
+        if (cardsLeftAfterTrade > 0)
+        {
+            return false;
+        }
+
         return numTradedCards == outputHand.Count();
     }
 
-    public int GetTradeOutputFromFood(Hand inputHand)
+    public TradeOutput GetTradeOutputFromFood(Hand inputHand)
     {
         int numFoodCards = inputHand.NumberCardsOfType<FoodCard>();
-        return numFoodCards / player.GetFoodTradingRatio();
+        return new TradeOutput(numFoodCards, player.GetFoodTradingRatio());
     }
 
-    public int GetTradeOutputFromGoods(Hand inputHand)
+    public TradeOutput GetTradeOutputFromGoods(Hand inputHand)
     {
         int numGoodsCards = inputHand.NumberCardsOfType<GoodsCard>();
-        return numGoodsCards / player.GetGoodsTradingRatio();
+        return new TradeOutput(numGoodsCards, player.GetGoodsTradingRatio());
     }
 
-    public int GetTradeOutputFromOre(Hand inputHand)
+    public TradeOutput GetTradeOutputFromOre(Hand inputHand)
     {
         int numOreCards = inputHand.NumberCardsOfType<OreCard>();
-        return numOreCards / player.GetOreTradingRatio();
+        return new TradeOutput(numOreCards, player.GetOreTradingRatio());
     }
 
-    public int GetTradeOutputFromFuel(Hand inputHand)
+    public TradeOutput GetTradeOutputFromFuel(Hand inputHand)
     {
         int numFuelCards = inputHand.NumberCardsOfType<FuelCard>();
-        return numFuelCards / player.GetFuelTradingRatio();
+        return new TradeOutput(numFuelCards, player.GetFuelTradingRatio());
     }
 
-    public int GetTradeOutputFromCarbon(Hand inputHand)
+    public TradeOutput GetTradeOutputFromCarbon(Hand inputHand)
     {
         int numCarbonCards = inputHand.NumberCardsOfType<CarbonCard>();
-        return numCarbonCards / player.GetCarbonTradingRatio();
+        return new TradeOutput(numCarbonCards, player.GetCarbonTradingRatio());
     }
 }

@@ -19,7 +19,6 @@ public class FlyShipsState : GameState
 
     public override void OnNextButtonClicked()
     {
-        // TODO: pass turn to next player
         controller.currentPlayerAtTurn += 1;
         if (controller.currentPlayerAtTurn == controller.players.Length)
         {

@@ -18,6 +18,7 @@ public class Player
     int oreProduceBonus;
     int carbonProduceBonus;
     int fuelProduceBonus;
+    int pirateTokenBeatenAwards = 0;
 
     public Player(Color color, SFElement notifier)
     {
@@ -103,6 +104,12 @@ public class Player
         DataChanged();
     }
 
+    public void AddHand(Hand h)
+    {
+        hand.AddHand(h);
+        DataChanged(); //TODO maybe let hand decide when it changed and react on that
+    }
+
     public void SubtractHand(Hand h)
     {
         hand.SubtractHand(h);
@@ -162,8 +169,14 @@ public class Player
         sum += GetVictoryPointsFromTokens();
         sum += GetVictoryPointsFromFameMedals();
         sum += GetVictoryPointsFromFriendships();
+        sum += GetVictoryPointsFromPirateTokensBeaten();
 
         return sum;
+    }
+
+    public int GetVictoryPointsFromPirateTokensBeaten()
+    {
+        return pirateTokenBeatenAwards;
     }
 
     public int GetVictoryPointsFromTokens()
@@ -192,6 +205,22 @@ public class Player
         {
             fameMedalPieces -= 1;
         }
+        DataChanged();
+    }
+
+    public void AddPirateTokenBeatenAward()
+    {
+        pirateTokenBeatenAwards += 1;
+        DataChanged();
+    }
+
+    public void AddFameMedals(int amount)
+    {
+        if (amount < 0)
+        {
+            throw new ArgumentException("Negative values not allowed");
+        }
+        fameMedalPieces += amount;
         DataChanged();
     }
 

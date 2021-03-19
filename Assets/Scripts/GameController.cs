@@ -19,7 +19,7 @@ public class GameController : SFController
     // Start is called before the first frame update
     void Start()
     {
-        DebugStartState debugState = new TestNormalDiceDebugState(this);
+        DebugStartState debugState = new BeatPirateTokenDebugState(this);
         debugState.Setup();
     }
 

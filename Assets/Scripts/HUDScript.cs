@@ -42,6 +42,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     public GameObject resourcePicker;
     public GameObject decisionDialog;
     public GameObject fightPanel;
+    public GameObject tradePanel;
 
 
 
@@ -125,6 +126,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         this.player = player;
         buildShipsDropDownRef.GetComponent<BuildDropDown>().player = player;
         upgradesDropDownRef.GetComponent<BuildDropDown>().player = player;
+        tradePanel.GetComponent<TradePanelScript>().Init(player);
         OnPlayerDataChanged();
     }
 
@@ -257,7 +259,13 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
 
     public void MakeTradeBtnPressed()
     {
-
+        if (tradePanel.activeInHierarchy)
+        {
+            tradePanel.SetActive(false);
+        } else
+        {
+            tradePanel.SetActive(true);
+        }
     }
 
     public void AddOre()

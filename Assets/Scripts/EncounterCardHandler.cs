@@ -71,8 +71,7 @@ public class EncounterCardHandler : MonoBehaviour
 
     void PlayEncounterCard(EncounterCard card)
     {
-        var decisionDialogScript = decisionDialog.GetComponent<DecisionDialog>();
-        decisionDialogScript.SetCallback(OnUserChoseOption);
+        //var decisionDialogScript = decisionDialog.GetComponent<DecisionDialog>();
         decisionDialog.SetActive(true);
         currentDecisionNode = card.decisionTree.root;
         OpenDialogForDecisionNode(currentDecisionNode);      
@@ -115,23 +114,23 @@ public class EncounterCardHandler : MonoBehaviour
         }
     }
 
-    void OnUserChoseOption(DialogOption option)
-    {
-        decisionDialog.SetActive(false); //close it
+    //void OnUserChoseOption(DialogOption option)
+    //{
+    //    decisionDialog.SetActive(false); //close it
 
-        if (currentDecisionNode.HasNext())
-        {
-            foreach (var node in currentDecisionNode.GetNext())
-            {
-                if (node.GetsTriggeredByValue(option.value))
-                {
-                    currentDecisionNode = node;
-                    OpenDialogForDecisionNode(currentDecisionNode);
-                    break;
-                }
-            }
-        } 
-    }
+    //    if (currentDecisionNode.HasNext())
+    //    {
+    //        foreach (var node in currentDecisionNode.GetNext())
+    //        {
+    //            if (node.GetsTriggeredByValue(option.value))
+    //            {
+    //                currentDecisionNode = node;
+    //                OpenDialogForDecisionNode(currentDecisionNode);
+    //                break;
+    //            }
+    //        }
+    //    } 
+    //}
 
     void EncounterCardDone()
     {

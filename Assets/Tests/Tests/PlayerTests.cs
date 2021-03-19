@@ -37,6 +37,15 @@ namespace Tests
         }
 
         [Test]
+        public void GetVictoryPointsFromBeatenPirateTokens()
+        {
+            var player = GetGenericPlayer();
+            player.AddPirateTokenBeatenAward();
+            player.AddPirateTokenBeatenAward();
+            Assert.AreEqual(2, player.GetVictoryPoints());
+        }
+
+        [Test]
         public void GetVictoryPointsTestSettledColony()
         {
             int vp = VpFromTokens(new Token[] { new ColonyBaseToken() });

@@ -11,10 +11,16 @@ public class SingleResourceCardStack : MonoBehaviour
     public Button RemoveButton;
     public Image cardImage;
     public Text label;
+    int limit = 1000;
     public Hand hand = new Hand();
 
     public SingleResourceCardStack()
     {
+    }
+
+    public void SetLimit(int limit)
+    {
+        this.limit = limit;
     }
 
     public void SetCardType(ResourceCard cardType)
@@ -33,9 +39,15 @@ public class SingleResourceCardStack : MonoBehaviour
         cardImage.sprite = new Helper().CreateSpriteFromImageName(imageName);
     }
 
+    public void Reset()
+    {
+        hand.RemoveAllCards();
+        Redraw();
+    }
+
     public void Add()
     {
-        if (this.cardType != null)
+        if (this.cardType != null && hand.Count() + 1 <= limit)
         {
             hand.AddCard(this.cardType);
         }

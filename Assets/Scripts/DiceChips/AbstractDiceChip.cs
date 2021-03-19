@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class DiceChip
 {
     int[] values;
-    public bool isFaceUp = false;
+    public bool isFaceUp = false; //faceup = we can see the dice value, facedown = we see the group symbol
 
     public DiceChip(int[] values)
     {
@@ -34,6 +34,16 @@ public abstract class DiceChip
         {
             isFaceUp = true;
         }
+    }
+
+    public void SetFaceUp()
+    {
+        isFaceUp = true;
+    }
+
+    public void SetFaceDown()
+    {
+        isFaceUp = false;
     }
     
 

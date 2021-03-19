@@ -18,6 +18,14 @@ public class TileGroupRenderer : SFController
         
     }
 
+    public void Initialize(Map map)
+    {
+        // register itself as observer of mapModel
+        // mapModel.registerObserver(this)
+        this.map = map;
+        DrawTileGroups();
+    }
+
     GameObject[] CreateTradeStationDocks(int numDocks, Transform transform)
     {
         List<GameObject> buttons = new List<GameObject>();
@@ -70,13 +78,13 @@ public class TileGroupRenderer : SFController
     // Update is called once per frame
     void Update()
     {
-        var mapScript = mapObject.GetComponent<MapScript>();
-        map = mapScript.map;
-        if (map.tileGroups != null && !alreadyDrawn)
-        {
-            DrawTileGroups();
-            alreadyDrawn = true;
-        }
+        //var mapScript = mapObject.GetComponent<MapScript>();
+        //map = mapScript.map;
+        //if (map.tileGroups != null && !alreadyDrawn)
+        //{
+        //    DrawTileGroups();
+        //    alreadyDrawn = true;
+        //}
     }
 
     public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)
@@ -84,8 +92,17 @@ public class TileGroupRenderer : SFController
         switch(p_event_path)
         {
             case SFNotification.tile_group_data_changed:
-                DestroyAllDockButtons();
-                DrawTileGroups();
+                if (map != null)
+                {
+                    if (map.tileGroups != null)
+                    {
+                        //TODO: this is failing because we do some stuff to the tilegroups in the map creation which triggers the notification
+                        // but we don't have the map created yet. Better way is to let the mapscript activate this class and register it as an
+                        // observer of the mapModel
+                        DestroyAllDockButtons();
+                        DrawTileGroups();
+                    }
+                }
                 break;
         }
     }
