@@ -45,7 +45,7 @@ public class SelectPositionForShipState : GameState
     public override void OnSpacePointClicked(SpacePoint point, GameObject spacePointObject)
     {
         controller.Map.GetComponent<MapScript>().RemoveAllSpacePointButtons();
-        controller.mainPlayer.BuildToken(token, point);
+        controller.mainPlayer.BuildToken2(token.GetType(), point, new ShipToken().GetType());
         controller.SetState(new StartState(controller));
     }
 

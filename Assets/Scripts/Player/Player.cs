@@ -1,11 +1,78 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+
+public class TokenStorage {
+
+    List<Token> availableTokens;
+    int numSpaceShips = 4;
+    int numSpacePorts = 3;
+    int numTrade = 4;
+    int numColony = 6;
+
+    public TokenStorage()
+    {
+        availableTokens = new List<Token>();
+        for (int i = 0; i < numSpaceShips; i++)
+        {
+            availableTokens.Add(new ShipToken());
+        }
+
+        for (int i = 0; i < numSpacePorts; i++)
+        {
+            availableTokens.Add(new SpacePortToken());
+        }
+
+        for (int i = 0; i < numColony; i++)
+        {
+            availableTokens.Add(new ColonyBaseToken());
+        }
+
+        for (int i = 0; i < numTrade; i++)
+        {
+            availableTokens.Add(new TradeBaseToken());
+        }
+    }
+
+    public Token RetrieveTokenOfType(Type type)
+    {
+        var tokens = availableTokens.Where(tok => tok.GetType() == type).ToArray();
+        if (tokens.Length == 0)
+        {
+            throw new ArgumentException("Could not find token of that type");
+        }
+        var retrieved = tokens[0];
+        availableTokens.Remove(retrieved);
+        return retrieved;
+    }
+
+    public Token[] GetTokensOfType(Type type)
+    {
+        var tokens = availableTokens.Where(tok => tok.GetType() == type).ToArray();
+        return tokens;
+    }
+
+    public void AddToken(Token token)
+    {
+        if (token.attachedToken != null)
+        {
+            // add tokens seperately if there is an attached token
+            availableTokens.Add(token.attachedToken);
+            token.detachToken();
+            availableTokens.Add(token);
+        } else
+        {
+            availableTokens.Add(token);
+        }
+    }
+}
 
 public class Player
 {
     public Color color;
-    public List<Token> tokens;
+    public List<Token> tokens; // tokens on gameboard
+    public TokenStorage tokenStorage;
     int fameMedalPieces;
     public SpaceShip ship;
     public Hand hand;
@@ -30,6 +97,7 @@ public class Player
         hand = new Hand(DataChanged);
         rules = new TradingRules();
         tokens = new List<Token> {};
+        tokenStorage = new TokenStorage();
         friendShipCards = new List<AbstractFriendshipCard>();
         FriendShipChips = 0;
         this.notifier = notifier;
@@ -127,28 +195,53 @@ public class Player
 
     public bool CanBuildToken(Token token)
     {
+        //token.CanBeBuild()
         return hand.CanPayCost(token.cost);
     }
 
+    /// <summary>
+    /// DEPRECATED METHOD, PLEASE USE BuildToken2
+    /// </summary>
+    /// <param name="token"></param>
+    /// <param name="position"></param>
     public void BuildToken(Token token, SpacePoint position = null)
     {
-        hand.PayCost(token.cost);
+        // deprecated
+        var tokenFromStorage = tokenStorage.RetrieveTokenOfType(token.GetType());
+        hand.PayCost(tokenFromStorage.cost);
         if (position != null)
         {
-            token.position = position;
+            tokenFromStorage.position = position;
         }
-        token.SetColor(color);
-        AddToken(token);
+        tokenFromStorage.SetColor(color);
+        AddToken(tokenFromStorage);
     }
 
-    public void BuildTokenWithoutCost(Token token, SpacePoint position = null)
+    public Token BuildToken2(Type baseType, SpacePoint position, Type attachedType = null, bool isFree = false)
     {
+        var baseTokenFromStorage = tokenStorage.RetrieveTokenOfType(baseType);
+        if (!isFree)
+        {
+            hand.PayCost(baseTokenFromStorage.cost);
+        }
         if (position != null)
         {
-            token.position = position;
+            baseTokenFromStorage.position = position;
         }
-        token.SetColor(color);
-        AddToken(token);
+        if (attachedType != null)
+        {
+            var attachedTokenFromStorage = tokenStorage.RetrieveTokenOfType(attachedType);
+            baseTokenFromStorage.attachToken(attachedTokenFromStorage);
+        }
+
+        baseTokenFromStorage.SetColor(color);
+        AddToken(baseTokenFromStorage);
+        return baseTokenFromStorage;
+    }
+
+    public void BuildTokenWithoutCost(Type baseType, SpacePoint position, Type attachedType = null)
+    {
+        BuildToken2(baseType, position, attachedType, true);
     }
 
     public void BuildUpgrade(Token token)

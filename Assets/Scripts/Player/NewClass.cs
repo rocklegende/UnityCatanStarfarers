@@ -34,15 +34,59 @@ public class SpacePortToken : Token
 
 }
 
-public class ColonyBaseToken : Token, Settable
+public abstract class BuildCondition
 {
+    public abstract bool TokenCanBeBuildByPlayer(Token token, Player player, Map map, Player[] players);
+}
+
+public class TradeAndColonyBuildCondition : BuildCondition
+{
+    public override bool TokenCanBeBuildByPlayer(Token token, Player player, Map map, Player[] players)
+    {
+        if (player.tokenStorage.GetTokensOfType(token.GetType()).Length == 0)
+        {
+            return false;
+        }
+
+        if (player.tokenStorage.GetTokensOfType(new ShipToken().GetType()).Length == 0)
+        {
+            return false;
+        }
+
+        var filters = new SpacePointFilter[] {
+                new IsValidSpacePointFilter(),
+                new IsSpacePointFreeFilter(),
+                new IsNeighborOwnSpacePortFilter()
+            };
+
+        if (map.IsNotNull())
+        {
+            if (map.GetSpacePointsFullfillingFilters(filters, players).Length == 0)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+
+public class ColonyBaseToken : Token, Settable, BuildableToken
+{
+    BuildCondition buildCondition;
     public ColonyBaseToken() : base("colonybase_token", true, new Cost(new Resource[] { new FuelResource(), new OreResource(), new CarbonResource(), new FoodResource() }))
     {
+        buildCondition = new TradeAndColonyBuildCondition();
     }
 
     public override int BaseVictoryPoints()
     {
         return 1;
+    }
+
+    public bool CanBeBuildByPlayer(Player player, Map map, Player[] players)
+    {
+        return buildCondition.TokenCanBeBuildByPlayer(this, player, map, players);
     }
 
     public bool CanSettle(Tile_[] tiles)
@@ -72,7 +116,11 @@ public class ColonyBaseToken : Token, Settable
 
     public override void OnSettle()
     {
-        attachedToken = null;
+        if (attachedToken != null)
+        {
+            owner.tokenStorage.AddToken(attachedToken);
+            attachedToken = null;
+        }
     }
 
     public override int ResourceProduce()
@@ -81,15 +129,22 @@ public class ColonyBaseToken : Token, Settable
     }
 }
 
-public class TradeBaseToken : Token, Settable
+public class TradeBaseToken : Token, Settable, BuildableToken
 {
+    BuildCondition buildCondition;
     public TradeBaseToken() : base("tradebase_token", true, new Cost(new Resource[] { new OreResource(), new FuelResource(), new GoodsResource(), new GoodsResource() }))
     {
+        buildCondition = new TradeAndColonyBuildCondition();
     }
 
     public override int BaseVictoryPoints()
     {
         return 1;
+    }
+
+    public bool CanBeBuildByPlayer(Player player, Map map, Player[] players)
+    {
+        return buildCondition.TokenCanBeBuildByPlayer(this, player, map, players);
     }
 
     public bool CanSettle(Tile_[] tiles)
@@ -119,7 +174,11 @@ public class TradeBaseToken : Token, Settable
 
     public override void OnSettle()
     {
-        attachedToken = null;
+        if (attachedToken != null)
+        {
+            owner.tokenStorage.AddToken(attachedToken);
+            attachedToken = null;
+        }
     }
 
     public override int ResourceProduce()

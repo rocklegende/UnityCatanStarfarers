@@ -512,6 +512,15 @@ public class Map
         return validPoints.ToArray();
     }
 
+    public SpacePoint[] GetSpacePointsFullfillingFilters(SpacePointFilter[] filters, Player[] players)
+    {
+        SpacePoint[] points = getAllAvailableSpacePoints();
+        foreach (var filter in filters)
+        {
+            points = applyFilter(points, filter, players);
+        }
+        return points;
+    }
 
     public SpacePoint[] getAllAvailableSpacePoints()
     {

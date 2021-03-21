@@ -31,4 +31,14 @@ public static class Shuffler
         list.RemoveAt(index);
         return r;
     }
+
+    public static bool IsNull(this object obj)
+    {
+        return obj == null;
+    }
+
+    public static bool IsNotNull(this object obj)
+    {
+        return obj != null;
+    }
 }

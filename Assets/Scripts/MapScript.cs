@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Constants {
+public class Constants
+{
     public const float HEX_RADIUS = 1.0f;
     public const int TOKEN_LAYER = -2;
     public const float paddingRight = 1.0f;
@@ -17,7 +18,7 @@ public class MapScript : SFController
     public GameObject tokenPrefab;
     public GameObject tokenRendererPrefab;
     public GameObject TileGroupRenderer;
-    
+
     public Camera cam;
     public Player[] players;
     public bool isReceivingNotifications = false;
@@ -28,7 +29,7 @@ public class MapScript : SFController
 
     void Start()
     {
-        
+
 
     }
 
@@ -55,7 +56,7 @@ public class MapScript : SFController
                 Destroy(go);
             }
         }
-        
+
         currentlyDisplayedPlayerTokens = DisplayPlayerTokens();
     }
 
@@ -63,7 +64,7 @@ public class MapScript : SFController
     {
         List<GameObject> tokens = new List<GameObject>();
         var allTokens = new Helper().GetAllTokenOfPlayers(players);
-        foreach(Token token in allTokens)
+        foreach (Token token in allTokens)
         {
             var go = DisplayToken(token);
             tokens.Add(go);
@@ -72,11 +73,12 @@ public class MapScript : SFController
         return tokens.ToArray();
     }
 
-    
 
-    public GameObject DisplayToken(Token token) {
+
+    public GameObject DisplayToken(Token token)
+    {
         GameObject prefab = tokenRendererPrefab;
-        GameObject tokenInstance = Instantiate(prefab, new Vector3(0,0,0), Quaternion.identity);
+        GameObject tokenInstance = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity);
         tokenInstance.GetComponent<Space.TokenScript>().tokenGameObject = tokenInstance;
         tokenInstance.GetComponent<Space.TokenScript>().tokenModel = token;
         tokenInstance.GetComponent<Space.TokenScript>().Draw();
@@ -85,7 +87,7 @@ public class MapScript : SFController
         return tokenInstance;
     }
 
-    
+
 
     public void ShowAllAvailableSpacePoints()
     {
@@ -238,7 +240,7 @@ public class MapScript : SFController
 
     void DrawCircleAtSpacePoints(SpacePoint[] points)
     {
-        foreach( SpacePoint point in points)
+        foreach (SpacePoint point in points)
         {
             DrawCircleAtSpacePoint(point);
         }
@@ -258,13 +260,13 @@ public class MapScript : SFController
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void HighlightTokensFullfillingFilters(TokenFilter[] filters)
     {
         Token[] tokens = GetTokensFullfillingFilters(filters);
-        foreach(Token tok in tokens)
+        foreach (Token tok in tokens)
         {
             DrawCircleAtSpacePoint(tok.position);
         }
@@ -299,7 +301,7 @@ public class MapScript : SFController
         List<Token> allTokens = new List<Token>();
         foreach (Player player in players)
         {
-            foreach(Token token in player.tokens)
+            foreach (Token token in player.tokens)
             {
                 allTokens.Add(token);
             }
@@ -320,11 +322,7 @@ public class MapScript : SFController
 
     public void ShowSpacePointsFulfillingFilters(SpacePointFilter[] filters)
     {
-        SpacePoint[] points = map.getAllAvailableSpacePoints();
-        foreach(var filter in filters)
-        {
-            points = map.applyFilter(points, filter, players);
-        }
+        SpacePoint[] points = map.GetSpacePointsFullfillingFilters(filters, players);
         CreateButtonsAtSpacePoints(points);
     }
 
@@ -347,6 +345,6 @@ public class MapScript : SFController
                     break;
             }
         }
-        
+
     }
 }

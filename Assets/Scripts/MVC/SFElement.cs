@@ -5,4 +5,5 @@ using UnityEngine;
 public class SFElement : MonoBehaviour
 {
     public SFApplication app { get { return GameObject.FindObjectOfType<SFApplication>(); } }
+    public Player[] playersShared;
 }

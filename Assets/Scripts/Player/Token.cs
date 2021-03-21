@@ -6,11 +6,13 @@ public interface Settable
     bool CanSettle(Tile_[] tiles);
 }
 
+public interface BuildableToken
+{
+    bool CanBeBuildByPlayer(Player player, Map map, Player[] players);
+}
+
 public abstract class Token 
 {
-    //color
-    //image
-
     public SpacePoint position = null;
     public Vector3? unityPosition = null;
     public bool useOwnPositioningSystem = true;
@@ -21,8 +23,6 @@ public abstract class Token
     protected bool isTokenAttachable;
     int stepsLeft = 20; //TODO: should be 0 in real scenario
     public Player owner;
-
-
 
     public Token(string id, bool isTokenAttachable, Cost cost)
     {

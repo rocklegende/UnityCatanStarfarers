@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class HUDScript : SFController, FriendShipCardSelectorDelegate
 {
     public Player player;
+    public Player[] players;
     public Text oreCardStackText;
     public Text carbonCardStackText;
     public Text foodCardStackText;
@@ -18,6 +19,11 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     public Text freightPodsText;
     public Text vpText;
     public Text fameMedalPiecesText;
+
+    public Text ShipsLeft;
+    public Text ColoniesLeft;
+    public Text TradeLeft;
+    public Text PortLeft;
 
     public GameObject buildShipsDropDownRef;
     public GameObject upgradesDropDownRef;
@@ -43,6 +49,8 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     public GameObject decisionDialog;
     public GameObject fightPanel;
     public GameObject tradePanel;
+
+    public GameObject MapObject;
 
 
 
@@ -86,14 +94,11 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
 
     void CreateBuildDropDowns()
     {
+        //TODO: refactor the building process
         List<BuildDropDownOption> options = new List<BuildDropDownOption>();
 
         Token colonyWithShip = new ColonyBaseToken();
-        colonyWithShip.attachToken(new ShipToken());
-
         Token tradeWithShip = new TradeBaseToken();
-        tradeWithShip.attachToken(new ShipToken());
-
         Token spacePortToken = new SpacePortToken();
         var spacePortOption = new BuildDropDownOption("build_space_port_btn", spacePortToken, BuildTokenBtnPressed);
         var buildTradeOption = new BuildDropDownOption("build_trade_ship_btn", tradeWithShip, BuildTokenBtnPressed);
@@ -137,6 +142,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
      */
     public void SetPlayers (Player[] players)
     {
+        this.players = players;
         SetMainPlayer(players[0]);
         for (int i = 1; i < players.Length; i++)
         {
@@ -174,6 +180,8 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         DrawUpgrades();
         DrawVP();
         DrawFameMedalPieces();
+        DrawTokenLeft();
+        DrawDropDowns();
     }
 
     void DrawFameMedalPieces()
@@ -201,6 +209,45 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     void DrawVP()
     {
         vpText.text = player.GetVictoryPoints().ToString();
+    }
+
+    void DrawTokenLeft()
+    {
+        ShipsLeft.text = "Ships: " + player.tokenStorage.GetTokensOfType(new ShipToken().GetType()).Length.ToString();
+        PortLeft.text = "Ports: " + player.tokenStorage.GetTokensOfType(new SpacePortToken().GetType()).Length.ToString();
+        ColoniesLeft.text = "Cols: " + player.tokenStorage.GetTokensOfType(new ColonyBaseToken().GetType()).Length.ToString();
+        TradeLeft.text = "Trade: " + player.tokenStorage.GetTokensOfType(new TradeBaseToken().GetType()).Length.ToString();
+    }
+
+    void DrawDropDowns()
+    {
+        DrawBuildShipDropdown();
+        DrawBuildUpgradeDropdown();
+    }
+
+    void DrawBuildShipDropdown()
+    {
+        if (players.IsNotNull()) {
+            var script = buildShipsDropDownRef.GetComponent<BuildDropDown>();
+            foreach (var option in script.GetOptions())
+            {
+                if (option.token is BuildableToken)
+                {
+                    var buildTok = (BuildableToken)option.token;
+                    var map = MapObject.GetComponent<MapScript>().map;
+                    script.SetOptionInteractable(option, buildTok.CanBeBuildByPlayer(player, map, players));
+                }
+                else
+                {
+                    script.SetOptionInteractable(option, player.CanBuildToken(option.token));
+                }
+            }
+        }
+    }
+
+    void DrawBuildUpgradeDropdown()
+    {
+
     }
 
     void BuildTokenBtnPressed(Token token)
@@ -240,7 +287,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
 
     public void BuildShipsToggleBtnPressed()
     {
-        
+        DrawDropDowns();
         upgradesDropDownRef.GetComponent<BuildDropDown>().hide(); //close other dropdown if open
         buildShipsDropDownRef.GetComponent<BuildDropDown>().toggle();
 
@@ -248,13 +295,14 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
 
     public void CloseAllDropDowns()
     {
-
+        
         buildShipsDropDownRef.GetComponent<BuildDropDown>().hide();
         upgradesDropDownRef.GetComponent<BuildDropDown>().hide();
     }
 
     public void BuildUpgradeToggleBtnPressed()
     {
+        DrawDropDowns();
         buildShipsDropDownRef.GetComponent<BuildDropDown>().hide(); //close other dropdown if open
         upgradesDropDownRef.GetComponent<BuildDropDown>().toggle();
     }

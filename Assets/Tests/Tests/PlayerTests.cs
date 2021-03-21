@@ -234,12 +234,11 @@ namespace Tests
             player.AddCard(new CarbonCard());
             player.AddCard(new FoodCard());
 
-            var token = new ColonyBaseToken();
             var position = new SpacePoint(new HexCoordinates(0, 0), 1);
 
             try
             {
-                player.BuildToken(token, position);
+                var token = player.BuildToken2(new ColonyBaseToken().GetType(), position);
                 Assert.True(position.Equals(token.position));
             }
             catch (NotEnoughResourcesException e)
@@ -268,6 +267,33 @@ namespace Tests
 
             Assert.True(player.GetVictoryPointsFromFameMedals() == 0);
         }
+
+        [Test]
+        public void TokenStorageTest1()
+        {
+            var storage = new TokenStorage();
+            var spacePortCount = storage.GetTokensOfType(new SpacePortToken().GetType()).Length;
+            Assert.AreEqual(3, spacePortCount);
+        }
+
+        [Test]
+        public void TokenStorageTestAddingAndRetrieving()
+        {
+            var storage = new TokenStorage();
+            var spacePortCount = storage.GetTokensOfType(new SpacePortToken().GetType()).Length;
+            Assert.AreEqual(3, spacePortCount);
+
+            storage.AddToken(new SpacePortToken());
+            spacePortCount = storage.GetTokensOfType(new SpacePortToken().GetType()).Length;
+            Assert.AreEqual(4, spacePortCount);
+
+            var spacePort = storage.RetrieveTokenOfType(new SpacePortToken().GetType());
+            Assert.True(spacePort is SpacePortToken);
+            spacePortCount = storage.GetTokensOfType(new SpacePortToken().GetType()).Length;
+            Assert.AreEqual(3, spacePortCount);
+        }
+
+
 
 
 

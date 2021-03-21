@@ -26,6 +26,11 @@ public class BuildDropDown : SFController
         DrawOptions();
     }
 
+    public BuildDropDownOption[] GetOptions()
+    {
+        return options;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -80,13 +85,20 @@ public class BuildDropDown : SFController
         this.buttons[index].GetComponent<Button>().interactable = isInteractable;
     }
 
-    void UpdateOptionsInteractibality()
-    {
-        foreach (var option in options)
-        {
-            SetOptionInteractable(option, player.CanBuildToken(option.token));
-        }
-    }
+    //void UpdateOptionsInteractibality()
+    //{
+    //    foreach (var option in options)
+    //    {
+    //        if (option.token is BuildableToken)
+    //        {
+    //            var buildTok = (BuildableToken)option.token;
+    //            SetOptionInteractable(option, buildTok.CanBeBuild());
+    //        } else
+    //        {
+    //            SetOptionInteractable(option, player.CanBuildToken(option.token));
+    //        }
+    //    }
+    //}
 
     GameObject DrawOption(BuildDropDownOption option, Vector3 position)
     {
@@ -107,14 +119,14 @@ public class BuildDropDown : SFController
 
     public override void OnNotification(string p_event_path, UnityEngine.Object p_target, params object[] p_data)
     {
-        if (player != null)
-        {
-            switch (p_event_path)
-            {
-                case SFNotification.player_data_changed:
-                    UpdateOptionsInteractibality();
-                    break;
-            }
-        }
+        //if (player != null)
+        //{
+        //    switch (p_event_path)
+        //    {
+        //        case SFNotification.player_data_changed:
+        //            UpdateOptionsInteractibality();
+        //            break;
+        //    }
+        //}
     }
 }

@@ -17,38 +17,16 @@ public abstract class DebugStartState
 
     public void BuildShipsForMainPlayer(Player player)
     {
-        Token spacePort = new ColonyBaseToken();
-        spacePort.attachedToken = new SpacePortToken();
-        spacePort.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 1));
-        player.BuildTokenWithoutCost(spacePort);
-
-        Token colonyShip = new TradeBaseToken();
-        colonyShip.attachedToken = new ShipToken();
-        colonyShip.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 0));
-        player.BuildTokenWithoutCost(colonyShip);
-
-        Token colonyShip2 = new ColonyBaseToken();
-        colonyShip2.attachedToken = new ShipToken();
-        colonyShip2.SetPosition(new SpacePoint(new HexCoordinates(5, 5).W(), 0));
-        player.BuildTokenWithoutCost(colonyShip2);
+        player.BuildTokenWithoutCost(new ColonyBaseToken().GetType(), new SpacePoint(new HexCoordinates(5, 5), 1), new SpacePortToken().GetType());
+        player.BuildTokenWithoutCost(new TradeBaseToken().GetType(), new SpacePoint(new HexCoordinates(5, 5), 0), new ShipToken().GetType());
+        player.BuildTokenWithoutCost(new ColonyBaseToken().GetType(), new SpacePoint(new HexCoordinates(5, 5).W(), 0), new ShipToken().GetType());
     }
 
     public void BuildShipsForSecondPlayer(Player player)
     {
-        Token spacePort = new ColonyBaseToken();
-        spacePort.attachedToken = new SpacePortToken();
-        spacePort.SetPosition(new SpacePoint(new HexCoordinates(7, 4), 0));
-        player.BuildTokenWithoutCost(spacePort);
-
-        Token colonyShip = new TradeBaseToken();
-        colonyShip.attachedToken = new ShipToken();
-        colonyShip.SetPosition(new SpacePoint(new HexCoordinates(7, 4), 1));
-        player.BuildTokenWithoutCost(colonyShip);
-
-        Token colonyShip2 = new ColonyBaseToken();
-        colonyShip2.attachedToken = new ShipToken();
-        colonyShip2.SetPosition(new SpacePoint(new HexCoordinates(7, 4).E(), 1));
-        player.BuildTokenWithoutCost(colonyShip2);
+        player.BuildTokenWithoutCost(new ColonyBaseToken().GetType(), new SpacePoint(new HexCoordinates(7, 4), 0), new SpacePortToken().GetType());
+        player.BuildTokenWithoutCost(new TradeBaseToken().GetType(), new SpacePoint(new HexCoordinates(7, 4), 1), new ShipToken().GetType());
+        player.BuildTokenWithoutCost(new ColonyBaseToken().GetType(), new SpacePoint(new HexCoordinates(7, 4).E(), 1), new ShipToken().GetType());       
     }
 
     public void CommonSetup()
@@ -95,15 +73,17 @@ public class ShipBuildingOneColonyShipAndOneSpacePort : DebugStartState
 
         CommonSetup();
 
-        Token spacePort = new ColonyBaseToken();
-        spacePort.attachedToken = new SpacePortToken();
-        spacePort.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 1));
-        controller.mainPlayer.BuildToken(spacePort);
+        controller.mainPlayer.BuildToken2(
+            new ColonyBaseToken().GetType(),
+            new SpacePoint(new HexCoordinates(5, 5), 1),
+            new SpacePortToken().GetType()
+        );
 
-        Token colonyShip = new ColonyBaseToken();
-        colonyShip.attachedToken = new ShipToken();
-        colonyShip.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 0));
-        controller.mainPlayer.BuildToken(colonyShip);
+        controller.mainPlayer.BuildToken2(
+            new ColonyBaseToken().GetType(),
+            new SpacePoint(new HexCoordinates(5, 5), 0),
+            new ShipToken().GetType()
+        );
 
         CommonMapSetup();
     }

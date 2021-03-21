@@ -31,11 +31,9 @@ public class StartState : GameState
     public override void OnBuildShipOptionClicked(Token token)
     {
         // TODO: very ugly here, in the dropdown an actual token instance is present for each option
-        // and this token instance is used for every creation of a token, which means that we use the same
-        // instance for all, quick fix is here to simply create a copy of that token and use that
-
-        Token copiedToken = token.makeCopy();
-        controller.SetState(new SelectPositionForShipState(controller, copiedToken));
+        // and this token instance is used to just know what the token costs etc, building the token however creates a new instance
+        // of that token
+        controller.SetState(new SelectPositionForShipState(controller, token));
     }
 
     public override void OnBackButtonClicked()
