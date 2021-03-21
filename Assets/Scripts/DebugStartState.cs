@@ -83,15 +83,15 @@ public abstract class DebugStartState
     public abstract void Setup();
 }
 
-public class OneColonyShipAndOneSpacePort : DebugStartState
+public class ShipBuildingOneColonyShipAndOneSpacePort : DebugStartState
 {
-    public OneColonyShipAndOneSpacePort(GameController controller) : base(controller)
+    public ShipBuildingOneColonyShipAndOneSpacePort(GameController controller) : base(controller)
     {
     }
 
     public override void Setup()
     {
-        controller.state = new FlyShipsState(controller);
+        controller.state = new StartState(controller);
 
         CommonSetup();
 

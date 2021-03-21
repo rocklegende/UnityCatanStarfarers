@@ -30,10 +30,7 @@ public abstract class ChipGroup {
         {
             throw new ArgumentException("No diceChips left in this group");
         }
-        diceChips.Shuffle();
-        var diceChip = diceChips[0];
-        diceChips.RemoveAt(0);
-        return diceChip;
+        return diceChips.ShuffleAndPop();
     }
 
     public Sprite GetSprite()

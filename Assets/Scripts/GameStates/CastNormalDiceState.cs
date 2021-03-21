@@ -12,7 +12,9 @@ public class CastNormalDiceState : GameState
     public void DiceValueThrown(DiceThrow diceThrow)
     {
         Debug.Log("Total dice value is: " + diceThrow.GetValue());
-        controller.PayoutPlayers(diceThrow);
+
+        controller.PayoutPlayers(new DiceThrow(1, 2));
+        //controller.PayoutPlayers(diceThrow);
         hudScript.CloseNormalDiceThrowRenderer();
         controller.SetState(new StartState(controller));
     }

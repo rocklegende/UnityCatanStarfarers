@@ -19,6 +19,8 @@ public class Player
     int carbonProduceBonus;
     int fuelProduceBonus;
     int pirateTokenBeatenAwards = 0;
+    int twoCardsBonusThreshold = 8;
+    int oneCardBonusThreshold = 12;
 
     public Player(Color color, SFElement notifier)
     {
@@ -206,6 +208,24 @@ public class Player
             fameMedalPieces -= 1;
         }
         DataChanged();
+    }
+
+    /// <summary>
+    /// Returns the number of cards this player receives upon a new turn.
+    /// </summary>
+    /// <returns></returns>
+    public int LowPointsBonus()
+    {
+        var vp = GetVictoryPoints();
+        if (vp < twoCardsBonusThreshold)
+        {
+            return 2;
+        } else if (vp >= twoCardsBonusThreshold && vp < oneCardBonusThreshold){
+            return 1;
+        } else
+        {
+            return 0;
+        }
     }
 
     public void AddPirateTokenBeatenAward()

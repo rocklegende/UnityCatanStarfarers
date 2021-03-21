@@ -17,14 +17,11 @@ public class FlyShipsState : GameState
         hudScript.ShowSettleButton(false);
     }
 
+    
+
     public override void OnNextButtonClicked()
     {
-        controller.currentPlayerAtTurn += 1;
-        if (controller.currentPlayerAtTurn == controller.players.Length)
-        {
-            controller.currentPlayerAtTurn = 0;
-        }
-
+        controller.PassTurnToNextPlayer();
         controller.SetState(new CastNormalDiceState(controller));
     }
 

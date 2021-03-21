@@ -14,26 +14,48 @@ public class GameController : SFController
     public int currentPlayerAtTurn = 0;
     public PayoutHandler payoutHandler;
 
+
     public EncounterCardHandler encounterCardHandler;
+    public DrawPileHandler drawPileHandler;
 
     // Start is called before the first frame update
     void Start()
     {
-        DebugStartState debugState = new BeatPirateTokenDebugState(this);
+        DebugStartState debugState = new ShipBuildingOneColonyShipAndOneSpacePort(this);
+        //DebugStartState debugState = new BeatPirateTokenDebugState(this);
         debugState.Setup();
+    }
+
+    public void PassTurnToNextPlayer()
+    {
+        currentPlayerAtTurn += 1;
+        if (currentPlayerAtTurn == players.Length)
+        {
+            currentPlayerAtTurn = 0;
+        }
+        PayoutLowPointsBonus(players[currentPlayerAtTurn]);
+    }
+
+    public void PayoutLowPointsBonus(Player player)
+    {
+        var cards = drawPileHandler.availablePiles.DrawCardsFromHiddenDrawPile(2);
+        foreach (var c in cards)
+        {
+            player.AddCard(c);
+        }
     }
 
     public void SetState(GameState state)
     {
         this.state = state;
-        //TODO: this.state.Setup();
     }
 
     void AddPayoutToPlayer(Hand payout, Player player)
     {
         foreach (var card in payout.cards)
         {
-            player.AddCard(card);
+            var c = drawPileHandler.availablePiles.DrawCardsOfOpenDrawPile(1, card.GetType());
+            player.AddCard(c[0]);
         }
     }
 

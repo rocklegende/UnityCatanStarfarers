@@ -274,11 +274,13 @@ public class Helper
         }
         return hexes.ToArray();
     }
-
+    /// <summary>
+    /// returns HexCoordinates at given SpacePoint in clock-wise manner (can return 1,2 or 3 pairs of coordinates)
+    /// </summary>
+    /// <param name="point"></param>
+    /// <returns></returns>
     public HexCoordinates[] getCoordinatesOfHexesAtPoint(SpacePoint point)
     {
-        // returns HexCoordinates at given SpacePoint in clock-wise manner (can return 1,2 or 3 pairs of coordinates)
-
         int q = point.coordinates.q;
         int r = point.coordinates.r;
         if (point.vertexNumber == 0)

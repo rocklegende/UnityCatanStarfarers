@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class Hand
+public class Hand : Subject
 {
 
     public List<Card> cards = new List<Card>();
@@ -38,16 +38,19 @@ public class Hand
         {
             RemoveCardOfType(card.GetType());
         }
+        Notify();
     }
 
     public void RemoveAllCards()
     {
         cards = new List<Card>();
+        Notify();
     }
 
     public void AddHand(Hand hand)
     {
         cards.AddRange(hand.cards);
+        Notify();
     }
 
     public int NumberCardsOfType<T>() where T : ResourceCard {
@@ -57,6 +60,21 @@ public class Hand
         foreach (ResourceCard card in resourceCards)
         {
             if (card is T)
+            {
+                sum += 1;
+            }
+        }
+
+        return sum;
+    }
+
+    public int NumberCardsOfType(Type type)
+    {
+        int sum = 0;
+        List<ResourceCard> resourceCards = GetAllResourceCards(cards);
+        foreach (ResourceCard card in resourceCards)
+        {
+            if (card.GetType() == type)
             {
                 sum += 1;
             }
@@ -151,6 +169,7 @@ public class Hand
                 cards.Remove(bla);
             }
         }
+        Notify();
     }
 
     public void RemoveCardOfType(Type type)
@@ -163,6 +182,7 @@ public class Hand
         {
             throw new ArgumentException("No card of this type left in the hand.");
         }
+        Notify();
     }
 
     public Card FindCardOfType(System.Type type)

@@ -436,34 +436,39 @@ public class Map
 
     public void OnTokenDataChanged(Token token)
     {
-        var newPositionOfToken = token.position;
-        var tilesAtPoint = getTilesAtPoint(newPositionOfToken);
-
-        foreach (var tile in tilesAtPoint)
+        if (token.position != null)
         {
-            var tileGroup = FindTileGroupContainingTile(tile);
-            var canSettle = false;
-            var foundTileGroup = false;
-            if (tileGroup != null)
+            var newPositionOfToken = token.position;
+            var tilesAtPoint = getTilesAtPoint(newPositionOfToken);
+
+            foreach (var tile in tilesAtPoint)
             {
-                tileGroup.OnTokenEnteredArea(token);
-                foundTileGroup = true;
-                try
+                var tileGroup = FindTileGroupContainingTile(tile);
+                var canSettle = false;
+                var foundTileGroup = false;
+                if (tileGroup != null)
                 {
-                    canSettle = tileGroup.RequestSettleOfToken(token);
-                } catch (Exception e)
+                    tileGroup.OnTokenEnteredArea(token);
+                    foundTileGroup = true;
+                    try
+                    {
+                        canSettle = tileGroup.RequestSettleOfToken(token);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.Log("Token cannot settle: " + e.GetType());
+                    }
+                }
+
+                NotifyThatTokenCanSettle(token, canSettle);
+
+                if (foundTileGroup)
                 {
-                    Debug.Log("Token cannot settle: " + e.GetType());
+                    break;
                 }
             }
-
-            NotifyThatTokenCanSettle(token, canSettle);
-
-            if (foundTileGroup)
-            {
-                break;
-            }
         }
+        
     }
 
     void NotifyThatTokenCanSettle(Token token, bool canSettle)

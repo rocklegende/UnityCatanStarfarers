@@ -17,6 +17,14 @@ public static class Shuffler
         }
     }
 
+    public static T ShuffleAndPop<T>(this IList<T> list)
+    {
+        list.Shuffle();
+        var first = list[0];
+        list.RemoveAt(0);
+        return first;
+    }
+
     public static T PopAt<T>(this List<T> list, int index)
     {
         T r = list[index];

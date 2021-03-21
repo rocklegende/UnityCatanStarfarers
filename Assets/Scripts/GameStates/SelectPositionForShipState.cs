@@ -80,7 +80,7 @@ public class SelectPositionForShipState : GameState
 
     public override void OnTokenCanSettle(bool canSettle, Token token)
     {
-        throw new NotImplementedException();
+        Debug.Log("received that token can settle, dow nothing");
     }
 
     public override void Setup()

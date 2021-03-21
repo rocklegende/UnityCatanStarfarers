@@ -7,6 +7,8 @@ public class PayoutHandler
         this.mapModel = mapModel;
     }
 
+
+
     Hand GetBasicPayoutForPlayer(Player player, DiceThrow dt) {
         Hand payout = new Hand();
         foreach (Token token in player.tokens)

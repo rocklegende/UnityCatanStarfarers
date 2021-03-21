@@ -96,7 +96,7 @@ public class DecisionTreeNode
     }
 }
 
-public class EncounterCardStack
+public class  EncounterCardStack
 {
     List<EncounterCard> cards;
     public EncounterCardStack(List<EncounterCard> cards)

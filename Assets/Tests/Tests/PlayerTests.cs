@@ -226,6 +226,29 @@ namespace Tests
         }
 
         [Test]
+        public void BuildColonyAtPosition()
+        {
+            var player = GetGenericPlayer();
+            player.AddCard(new OreCard());
+            player.AddCard(new FuelCard());
+            player.AddCard(new CarbonCard());
+            player.AddCard(new FoodCard());
+
+            var token = new ColonyBaseToken();
+            var position = new SpacePoint(new HexCoordinates(0, 0), 1);
+
+            try
+            {
+                player.BuildToken(token, position);
+                Assert.True(position.Equals(token.position));
+            }
+            catch (NotEnoughResourcesException e)
+            {
+                Assert.True(false);
+            }
+        }
+
+        [Test]
         public void TestGetVPFromFameMedals2()
         {
             var player = GetGenericPlayer();

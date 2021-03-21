@@ -7,7 +7,7 @@ public class StartState : GameState
 {
     public StartState(GameController controller) : base(controller)
     {
-        hudScript.SetStateText("StartState");
+        hudScript.SetStateText("StartState Player " + controller.currentPlayerAtTurn);
         hudScript.ShowSettleButton(false);
     }
 
@@ -46,7 +46,6 @@ public class StartState : GameState
     public override void OnBuildUpgradeOptionClicked(Token token)
     {
         controller.mainPlayer.BuildUpgrade(token);
-        controller.app.Notify(SFNotification.player_data_changed, controller); //TODO: should be done in model class
     }
 
     public override void OnSettleButtonPressed()
