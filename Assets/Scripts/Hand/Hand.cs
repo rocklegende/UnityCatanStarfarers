@@ -7,7 +7,6 @@ public class Hand : Subject
 {
 
     public List<Card> cards = new List<Card>();
-    protected Action callback;
 
     public void AddCard(Card card)
     {
@@ -19,17 +18,9 @@ public class Hand : Subject
         return cards.Count;
     }
 
-    public Hand(Action callback = null)
+    public Hand()
     {
-        this.callback = callback;
-    }
-
-    void Changed()
-    {
-        if (this.callback != null)
-        {
-            callback();
-        }
+        
     }
 
     public void SubtractHand(Hand h)
@@ -187,15 +178,7 @@ public class Hand : Subject
 
     public Card FindCardOfType(System.Type type)
     {
-        foreach (Card c in cards)
-        {
-            if (c.GetType() == type)
-            {
-                return c;
-            }
-        }
-
-        return null;
+        return cards.Find(card => card.GetType() == type);
     } 
 
     public Dictionary<string, int> GetGroupedResources()
@@ -216,9 +199,7 @@ public class Hand : Subject
                     resourcesCount[rc.resource.Name] += 1;
                 }
             }
-            
         }
-
         return resourcesCount;
     }
 

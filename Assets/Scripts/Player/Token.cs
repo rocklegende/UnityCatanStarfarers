@@ -40,6 +40,11 @@ public abstract class Token
         notifier.app.Notify(SFNotification.token_data_changed, notifier, new object[] { this });
     }
 
+    public bool PlayerHasTokenInStorageAndCanPay(Player player)
+    {
+        return player.tokenStorage.GetTokensOfType(GetType()).Length > 0 && player.hand.CanPayCost(cost);
+    }
+
     public int GetStepsLeft()
     {
         return stepsLeft;
@@ -56,7 +61,7 @@ public abstract class Token
         }
     }
 
-    public abstract void OnSettle();
+    protected abstract void OnSettle();
 
     public void settle()
     {

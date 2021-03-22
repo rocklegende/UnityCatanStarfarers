@@ -33,7 +33,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     public GameObject fuelCardStack;
     public GameObject goodsCardStack;
     public GameObject foodCardStack;
-    public BuildDropDownOption[] buildDropDownOptions;
+    public List<BuildDropDownOption> buildDropDownOptions;
     public bool isReceivingNotifications = false;
 
     public Text stateText;
@@ -96,26 +96,18 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     {
         //TODO: refactor the building process
         List<BuildDropDownOption> options = new List<BuildDropDownOption>();
+        var spacePortOption = new BuildDropDownOption("build_space_port_btn", new SpacePortToken(), BuildTokenBtnPressed);
+        var buildTradeOption = new BuildDropDownOption("build_trade_ship_btn", new TradeBaseToken(), BuildTokenBtnPressed);
+        var buildColonyOption = new BuildDropDownOption("build_colony_ship_btn", new ColonyBaseToken(), BuildTokenBtnPressed);
 
-        Token colonyWithShip = new ColonyBaseToken();
-        Token tradeWithShip = new TradeBaseToken();
-        Token spacePortToken = new SpacePortToken();
-        var spacePortOption = new BuildDropDownOption("build_space_port_btn", spacePortToken, BuildTokenBtnPressed);
-        var buildTradeOption = new BuildDropDownOption("build_trade_ship_btn", tradeWithShip, BuildTokenBtnPressed);
-        var buildColonyOption = new BuildDropDownOption("build_colony_ship_btn", colonyWithShip, BuildTokenBtnPressed);
-
-        var buildShipsOptions = new BuildDropDownOption[] {
+        var buildShipsOptions = new List<BuildDropDownOption> {
             buildColonyOption,
             buildTradeOption,
             spacePortOption
         };
-        options.Add(buildColonyOption);
-        options.Add(buildTradeOption);
-        options.Add(spacePortOption);
-        buildDropDownOptions = options.ToArray();
         buildShipsDropDownRef.GetComponent<BuildDropDown>().SetOptions(buildShipsOptions);
 
-        var upgradeOptions = new BuildDropDownOption[] {
+        var upgradeOptions = new List<BuildDropDownOption> {
             new BuildDropDownOption("booster", new BoosterUpgradeToken(), BuildUpgradeBtnPressed),
             new BuildDropDownOption("cannon", new CannonUpgradeToken(), BuildUpgradeBtnPressed),
             new BuildDropDownOption("freightpod", new FreightPodUpgradeToken(), BuildUpgradeBtnPressed)
@@ -131,8 +123,6 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     public void SetMainPlayer (Player player)
     {
         this.player = player;
-        buildShipsDropDownRef.GetComponent<BuildDropDown>().player = player;
-        upgradesDropDownRef.GetComponent<BuildDropDown>().player = player;
         tradePanel.GetComponent<TradePanelScript>().Init(player);
         OnPlayerDataChanged();
     }
@@ -221,33 +211,32 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
 
     void DrawDropDowns()
     {
-        DrawBuildShipDropdown();
-        DrawBuildUpgradeDropdown();
+        DrawInteractibilityOfDropDownOptions();
     }
 
-    void DrawBuildShipDropdown()
+    void DrawInteractibilityOfDropDownOptions()
     {
-        if (players.IsNotNull()) {
-            var script = buildShipsDropDownRef.GetComponent<BuildDropDown>();
-            foreach (var option in script.GetOptions())
+        if (players.IsNotNull())
+        {
+            var allDropDowns = new List<BuildDropDown> {
+                upgradesDropDownRef.GetComponent<BuildDropDown>(),
+                buildShipsDropDownRef.GetComponent<BuildDropDown>()
+            };
+
+            foreach (var dropdown in allDropDowns)
             {
-                if (option.token is BuildableToken)
+                foreach (var option in dropdown.GetOptions())
                 {
-                    var buildTok = (BuildableToken)option.token;
-                    var map = MapObject.GetComponent<MapScript>().map;
-                    script.SetOptionInteractable(option, buildTok.CanBeBuildByPlayer(player, map, players));
-                }
-                else
-                {
-                    script.SetOptionInteractable(option, player.CanBuildToken(option.token));
+                    if (option.token is BuildableToken)
+                    {
+                        var buildTok = (BuildableToken)option.token;
+                        var map = MapObject.GetComponent<MapScript>().map;
+                        dropdown.SetOptionInteractable(option, buildTok.CanBeBuildByPlayer(player, map, players));
+                    }
                 }
             }
+
         }
-    }
-
-    void DrawBuildUpgradeDropdown()
-    {
-
     }
 
     void BuildTokenBtnPressed(Token token)
@@ -287,7 +276,6 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
 
     public void BuildShipsToggleBtnPressed()
     {
-        DrawDropDowns();
         upgradesDropDownRef.GetComponent<BuildDropDown>().hide(); //close other dropdown if open
         buildShipsDropDownRef.GetComponent<BuildDropDown>().toggle();
 
@@ -302,7 +290,6 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
 
     public void BuildUpgradeToggleBtnPressed()
     {
-        DrawDropDowns();
         buildShipsDropDownRef.GetComponent<BuildDropDown>().hide(); //close other dropdown if open
         upgradesDropDownRef.GetComponent<BuildDropDown>().toggle();
     }

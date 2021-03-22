@@ -7,12 +7,11 @@ using UnityEngine.UI;
 public class BuildDropDown : SFController
 {
 
-    BuildDropDownOption[] options;
+    List<BuildDropDownOption> options;
     GameObject[] buttons;
     public GameObject dropDownBtnPrefab;
     public bool isOpen = false;
     public GameObject dropDown;
-    public Player player;
 
     // Use this for initialization
     void Start()
@@ -20,13 +19,13 @@ public class BuildDropDown : SFController
         dropDown.SetActive(false);
     }
 
-    public void SetOptions(BuildDropDownOption[] opts)
+    public void SetOptions(List<BuildDropDownOption> opts)
     {
         options = opts;
         DrawOptions();
     }
 
-    public BuildDropDownOption[] GetOptions()
+    public List<BuildDropDownOption> GetOptions()
     {
         return options;
     }
@@ -81,24 +80,11 @@ public class BuildDropDown : SFController
 
     public void SetOptionInteractable(BuildDropDownOption option, bool isInteractable)
     {
-        int index = Array.FindIndex<BuildDropDownOption>(options, opt => opt.imageName == option.imageName);
+        int index = options.FindIndex(opt => opt.imageName == option.imageName); //TODO: finding based on image name looks weird and could easily not work if changes are made
         this.buttons[index].GetComponent<Button>().interactable = isInteractable;
     }
 
-    //void UpdateOptionsInteractibality()
-    //{
-    //    foreach (var option in options)
-    //    {
-    //        if (option.token is BuildableToken)
-    //        {
-    //            var buildTok = (BuildableToken)option.token;
-    //            SetOptionInteractable(option, buildTok.CanBeBuild());
-    //        } else
-    //        {
-    //            SetOptionInteractable(option, player.CanBuildToken(option.token));
-    //        }
-    //    }
-    //}
+    
 
     GameObject DrawOption(BuildDropDownOption option, Vector3 position)
     {
@@ -119,14 +105,6 @@ public class BuildDropDown : SFController
 
     public override void OnNotification(string p_event_path, UnityEngine.Object p_target, params object[] p_data)
     {
-        //if (player != null)
-        //{
-        //    switch (p_event_path)
-        //    {
-        //        case SFNotification.player_data_changed:
-        //            UpdateOptionsInteractibality();
-        //            break;
-        //    }
-        //}
+        
     }
 }

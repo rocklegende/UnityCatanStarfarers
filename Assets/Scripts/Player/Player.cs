@@ -94,7 +94,7 @@ public class Player
         this.color = color;
         fameMedalPieces = 0;
         ship = new SpaceShip();
-        hand = new Hand(DataChanged);
+        hand = new Hand();
         rules = new TradingRules();
         tokens = new List<Token> {};
         tokenStorage = new TokenStorage();

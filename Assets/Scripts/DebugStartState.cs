@@ -26,7 +26,17 @@ public abstract class DebugStartState
     {
         player.BuildTokenWithoutCost(new ColonyBaseToken().GetType(), new SpacePoint(new HexCoordinates(7, 4), 0), new SpacePortToken().GetType());
         player.BuildTokenWithoutCost(new TradeBaseToken().GetType(), new SpacePoint(new HexCoordinates(7, 4), 1), new ShipToken().GetType());
-        player.BuildTokenWithoutCost(new ColonyBaseToken().GetType(), new SpacePoint(new HexCoordinates(7, 4).E(), 1), new ShipToken().GetType());       
+        player.BuildTokenWithoutCost(new ColonyBaseToken().GetType(), new SpacePoint(new HexCoordinates(7, 4).E(), 1), new ShipToken().GetType());
+    }
+
+    public void SetUpgradesForMainPlayer(int amount)
+    {
+        for (int i = 0; i < amount; i++)
+        {
+            controller.players[0].ship.Add(new BoosterUpgradeToken());
+            controller.players[0].ship.Add(new FreightPodUpgradeToken());
+            controller.players[0].ship.Add(new CannonUpgradeToken());
+        }
     }
 
     public void CommonSetup()
@@ -36,7 +46,7 @@ public abstract class DebugStartState
         controller.HUD.GetComponent<HUDScript>().SetPlayers(controller.players);
         controller.HUD.GetComponent<HUDScript>().isReceivingNotifications = true;
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 3; i++)
         {
             controller.mainPlayer.AddCard(new GoodsCard());
             controller.mainPlayer.AddCard(new FuelCard());
@@ -72,6 +82,7 @@ public class ShipBuildingOneColonyShipAndOneSpacePort : DebugStartState
         controller.state = new StartState(controller);
 
         CommonSetup();
+        SetUpgradesForMainPlayer(5);
 
         controller.mainPlayer.BuildToken2(
             new ColonyBaseToken().GetType(),
@@ -216,14 +227,7 @@ public class BeatPirateTokenDebugState : DebugStartState
 
         CommonSetup();
         BuildShipsForMainPlayer(controller.players[0]);
-
-        for (int i = 0; i < 5; i++)
-        {
-            controller.players[0].ship.Add(new BoosterUpgradeToken());
-            controller.players[0].ship.Add(new FreightPodUpgradeToken());
-            controller.players[0].ship.Add(new CannonUpgradeToken());
-        }
-
+        SetUpgradesForMainPlayer(5);        
         controller.mainPlayer.AddFameMedal();
         CommonMapSetup();
     }

@@ -1,11 +1,11 @@
 ﻿using System;
-public class SpacePortToken : Token
+public class SpacePortToken : Token, BuildableToken
 {
     public SpacePortToken(): base("spaceport_token", false, new Cost(new Resource[] { new CarbonResource(), new CarbonResource(), new CarbonResource(), new FoodResource(), new FoodResource() }))
     {
     }
 
-    public override void OnSettle()
+    protected override void OnSettle()
     {
         //
     }
@@ -32,6 +32,29 @@ public class SpacePortToken : Token
         return 1;
     }
 
+    
+
+    public bool CanBeBuildByPlayer(Player player, Map map, Player[] players)
+    {
+        if (!PlayerHasTokenInStorageAndCanPay(player)) {
+            return false;
+        }
+
+        var filters = new SpacePointFilter[] {
+                new IsValidSpacePointFilter(),
+                new HasSettledColonySpacePointFilter()
+            };
+
+        if (map.IsNotNull())
+        {
+            if (map.GetSpacePointsFullfillingFilters(filters, players).Length == 0)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
 
 public abstract class BuildCondition
@@ -43,7 +66,7 @@ public class TradeAndColonyBuildCondition : BuildCondition
 {
     public override bool TokenCanBeBuildByPlayer(Token token, Player player, Map map, Player[] players)
     {
-        if (player.tokenStorage.GetTokensOfType(token.GetType()).Length == 0)
+        if (!token.PlayerHasTokenInStorageAndCanPay(player))
         {
             return false;
         }
@@ -114,7 +137,7 @@ public class ColonyBaseToken : Token, Settable, BuildableToken
         return newToken;
     }
 
-    public override void OnSettle()
+    protected override void OnSettle()
     {
         if (attachedToken != null)
         {
@@ -172,7 +195,7 @@ public class TradeBaseToken : Token, Settable, BuildableToken
         return newToken; ;
     }
 
-    public override void OnSettle()
+    protected override void OnSettle()
     {
         if (attachedToken != null)
         {
@@ -210,7 +233,7 @@ public class ShipToken : Token
         return newToken;
     }
 
-    public override void OnSettle()
+    protected override void OnSettle()
     {
         throw new NotImplementedException();
     }
@@ -221,7 +244,7 @@ public class ShipToken : Token
     }
 }
 
-public class BoosterUpgradeToken : Token
+public class BoosterUpgradeToken : Token, BuildableToken
 {
     public BoosterUpgradeToken() : base("booster_upgrade", false, new Cost(new Resource[] { new FuelResource(), new FuelResource() }))
     {
@@ -238,7 +261,7 @@ public class BoosterUpgradeToken : Token
         throw new NotImplementedException();
     }
 
-    public override void OnSettle()
+    protected override void OnSettle()
     {
         throw new NotImplementedException();
     }
@@ -247,9 +270,24 @@ public class BoosterUpgradeToken : Token
     {
         return 0;
     }
+
+    public bool CanBeBuildByPlayer(Player player, Map map, Player[] players)
+    {
+        if (!player.hand.CanPayCost(cost))
+        {
+            return false;
+        }
+
+        if (player.ship.IsBoostersFull())
+        {
+            return false;
+        }
+
+        return true;
+    }
 }
 
-public class CannonUpgradeToken : Token
+public class CannonUpgradeToken : Token, BuildableToken
 {
     public CannonUpgradeToken() : base("cannon_upgrade", false, new Cost(new Resource[] { new CarbonResource(), new CarbonResource() }))
     {
@@ -266,7 +304,7 @@ public class CannonUpgradeToken : Token
         throw new NotImplementedException();
     }
 
-    public override void OnSettle()
+    protected override void OnSettle()
     {
         throw new NotImplementedException();
     }
@@ -275,9 +313,24 @@ public class CannonUpgradeToken : Token
     {
         return 0;
     }
+
+    public bool CanBeBuildByPlayer(Player player, Map map, Player[] players)
+    {
+        if (!player.hand.CanPayCost(cost))
+        {
+            return false;
+        }
+
+        if (player.ship.IsCannonsFull())
+        {
+            return false;
+        }
+
+        return true;
+    }
 }
 
-public class FreightPodUpgradeToken : Token
+public class FreightPodUpgradeToken : Token, BuildableToken
 {
     public FreightPodUpgradeToken() : base("freight_pod_upgrade", false, new Cost(new Resource[] { new OreResource(), new OreResource() }))
     {
@@ -294,7 +347,7 @@ public class FreightPodUpgradeToken : Token
         throw new NotImplementedException();
     }
 
-    public override void OnSettle()
+    protected override void OnSettle()
     {
         throw new NotImplementedException();
     }
@@ -302,6 +355,21 @@ public class FreightPodUpgradeToken : Token
     public override int ResourceProduce()
     {
         return 0;
+    }
+
+    public bool CanBeBuildByPlayer(Player player, Map map, Player[] players)
+    {
+        if (!player.hand.CanPayCost(cost))
+        {
+            return false;
+        }
+
+        if (player.ship.IsFreightPodsFull())
+        {
+            return false;
+        }
+
+        return true;
     }
 }
 
