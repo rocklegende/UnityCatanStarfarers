@@ -8,4 +8,6 @@ public static class GameConstants
     {
         return (Font)Resources.GetBuiltinResource(typeof(Font), "Arial.ttf");
     }
+
+    public static bool ShowTextAboveSpacePointButtons = true;
 }

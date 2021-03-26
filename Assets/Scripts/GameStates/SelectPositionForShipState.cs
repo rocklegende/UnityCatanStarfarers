@@ -18,6 +18,7 @@ public class SelectPositionForShipState : GameState
     {
         if (token is TradeBaseToken || token is ColonyBaseToken)
         {
+            //TODO: let Token decide which points to show
             var filters = new SpacePointFilter[] {
                 new IsValidSpacePointFilter(),
                 new IsSpacePointFreeFilter(),
@@ -51,6 +52,7 @@ public class SelectPositionForShipState : GameState
 
     public override void OnTokenClicked(Token tokenModel, GameObject tokenGameObject)
     {
+
         if (tokenModel is ColonyBaseToken)
         {
             tokenModel.attachToken(new SpacePortToken());

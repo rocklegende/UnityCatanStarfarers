@@ -101,7 +101,7 @@ public abstract class Subject {
 
 public class AvailablePiles : Subject
 {
-    int cardsOfEachTypeInHiddenPile = 10;
+    int cardsOfEachTypeInHiddenPile = 8;
     int cardsOfEachTypeInOpenPile = 10;
     List<SingleResourceDrawPileStack> openDrawPiles;
     public MultipleResourcesDrawPileStack hiddenDrawPile;

@@ -11,18 +11,23 @@ public class CastShipDiceState : GameState
 
     public void ShipValueThrown(ShipDiceThrow shipDiceThrow)
     {
-        Debug.Log("Total ship dice value is: " + shipDiceThrow.GetValue() + "trigger encounter card" + shipDiceThrow.TriggersEncounterCard());
+        Debug.Log("Total ship dice value is: " + shipDiceThrow.GetRawValue() + "trigger encounter card" + shipDiceThrow.TriggersEncounterCard());
 
+        controller.mainPlayer.AddRangeToFlyableTokens(shipDiceThrow.GetFlyValue());
         if (shipDiceThrow.TriggersEncounterCard())
         {
             controller.encounterCardHandler.GetComponent<EncounterCardHandler>().PlayNextCard();
         } else
         {
-            hudScript.player.AddRangeToFlyableTokens(shipDiceThrow.GetValue());
             controller.SetState(new FlyShipsState(controller));
         }
 
         hudScript.CloseShipDiceThrowPanel();
+    }
+
+    void EncounterCardFinished()
+    {
+
     }
 
     public override void OnBackButtonClicked()

@@ -55,7 +55,7 @@ public abstract class TradeStation : TileGroup
     public override void SetCenter(SpacePoint center)
     {
         this.center = center;
-        settlePoints = new SpacePoint[] { center };
+        settlePoints = new List<SpacePoint>() { center };
     }
 
     public bool IsFull()
@@ -71,7 +71,7 @@ public abstract class TradeStation : TileGroup
     public override void OnTokenSettled(Token token)
     {
         dockedSpaceships.Add(token);
-        AssignOwnerOfMedal();
+        // TODO: AssignOwnerOfMedal();
 
         var notifier = new SFElement();
         notifier.app.Notify(SFNotification.open_friendship_card_selection, notifier, new object[] { this, tradingCards });
@@ -80,6 +80,8 @@ public abstract class TradeStation : TileGroup
     private void AssignOwnerOfMedal()
     {
         // get the player with the highest spaceships docked and the number of spaceships he has
+
+        //TODO: this is NOT working yet
         var spaceShipCount = new Dictionary<Player, int>();
         foreach (var spaceShip in dockedSpaceships)
         {
@@ -110,21 +112,36 @@ public abstract class TradeStation : TileGroup
         }        
     }
 
-    public override bool RequestSettleOfToken(Token token)
+    public override bool RequestSettleOfToken(Token token, SpacePoint futurePositionOfToken = null)
     {
         if (!(token is TradeBaseToken))
         {
             throw new WrongTokenTypeException();
         }
 
-        if (!SpacePointOnAtleastOneSettlePoint(token.position))
+        if (futurePositionOfToken != null)
         {
-            throw new NotOnSettleSpotException();
+            if (!SpacePointOnAtleastOneSettlePoint(futurePositionOfToken))
+            {
+                throw new NotOnSettleSpotException();
+            }
+        }
+        else
+        {
+            if (!SpacePointOnAtleastOneSettlePoint(token.position))
+            {
+                throw new NotOnSettleSpotException();
+            }
         }
 
         if (IsFull())
         {
             throw new TradeStationIsFullException();
+        }
+
+        if (token.owner.ship.FreightPods <= dockedSpaceships.Count)
+        {
+            throw new NotEnoughFreightPodsToDockException("Owner of token has " + token.owner.ship.FreightPods + " but " + dockedSpaceships.Count + " ships ar already docked");
         }
 
         return true;

@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class TileGroup
 {
     protected Tile_[] tiles;
-    protected SpacePoint[] settlePoints;
+    protected List<SpacePoint> settlePoints;
     protected SpacePoint center;
     public TileGroup(Tile_[] tiles, int rightShifts = 0)
     {
@@ -21,6 +21,11 @@ public abstract class TileGroup
     public Tile_[] GetTiles()
     {
         return this.tiles;
+    }
+
+    public SpacePoint GetCenter()
+    {
+        return center;
     }
 
     void DataChanged()
@@ -59,23 +64,30 @@ public abstract class TileGroup
         return false;
     }
 
+    public List<SpacePoint> GetSettlePoints()
+    {
+        return settlePoints;
+    }
+
     public abstract void SetCenter(SpacePoint center);
 
     public abstract void OnTokenEnteredArea(Token token);
 
     public abstract void OnTokenSettled(Token token);
 
-    public abstract bool RequestSettleOfToken(Token token);
+    public abstract bool RequestSettleOfToken(Token token, SpacePoint futurePositionOfToken = null);
 
 
 }
 
 public class ResourceTileGroup : TileGroup
-{    
+{
+
+    bool isRevealed = false;
     public ResourceTileGroup( ResourceTile[] tiles, int rightShifts = 0) : base(tiles, rightShifts)
     {
         this.tiles = tiles;
-        //TODO: register as observer in Tiles,then notify app if something changed inside the tiles
+        //TODO: register as observer in Tiles, then notify app if something changed inside the tiles
     }
 
     public override void SetCenter(SpacePoint center)
@@ -141,6 +153,11 @@ public class ResourceTileGroup : TileGroup
         return pirateTokens.ToArray();
     }
 
+    public bool IsRevealed()
+    {
+        return isRevealed;
+    }
+
     public bool ShipCanBeatPirateTokens(SpaceShip ship, PirateToken[] pirateTokens)
     {
         foreach(var pirateToken in pirateTokens)
@@ -153,17 +170,33 @@ public class ResourceTileGroup : TileGroup
         return true;
     }
 
-    public override bool RequestSettleOfToken(Token token)
+    public override bool RequestSettleOfToken(Token token, SpacePoint futurePositionOfToken = null)
     {
         if (!(token is ColonyBaseToken))
         {
             throw new WrongTokenTypeException("Token is not of Type ColonyBaseToken, therefore docking is denied");
         }
 
-        if (!SpacePointOnAtleastOneSettlePoint(token.position))
+        if (futurePositionOfToken != null)
         {
-            throw new NotOnSettleSpotException();
+            if (SpacePointOnAtleastOneSettlePoint(futurePositionOfToken))
+            {
+                if (!isRevealed)
+                {
+                    throw new NotOnSettleSpotException();
+                }
+            } else
+            {
+                throw new NotOnSettleSpotException();
+            }
+        } else
+        {
+            if (!SpacePointOnAtleastOneSettlePoint(token.position))
+            {
+                throw new NotOnSettleSpotException();
+            }
         }
+        
 
         if (GetPirateTokens().Length > 0)
         {
@@ -180,6 +213,7 @@ public class ResourceTileGroup : TileGroup
 
     public void RevealDiceChips()
     {
+        isRevealed = true;
         foreach( var tile in tiles)
         {
             if (tile is ResourceTile)
@@ -194,7 +228,8 @@ public class ResourceTileGroup : TileGroup
             }
             
         }
-        var notifier = new SFElement();
-        notifier.app.Notify(SFNotification.tile_group_data_changed, notifier);
+        Changed();
     }
+
+    
 }

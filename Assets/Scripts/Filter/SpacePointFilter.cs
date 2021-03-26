@@ -106,3 +106,45 @@ public class IsStepsAwayFilter : SpacePointFilter
         return new Helper().SpacePointArrayContainsPoint(map.GetSpacePointsInsideRange(origin, steps), point);
     }
 }
+
+public class IsExactlyStepsAwayAndCannotSettleOnPointCounter : SpacePointFilter
+{
+    Token token;
+    int exact_steps;
+    public IsExactlyStepsAwayAndCannotSettleOnPointCounter(Token token, int exact_steps)
+    {
+        this.token = token;
+        this.exact_steps = exact_steps;
+    }
+    public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
+    {
+        var isExactlyStepsAway = new Helper().SpacePointArrayContainsPoint(map.GetSpacePointsInsideRange(token.position, exact_steps, exact_steps), point);
+        if (!isExactlyStepsAway)
+        {
+            return true;
+        }
+
+        var tileGroup = map.FindTileGroupAtPoint(point);
+        if (tileGroup != null)
+        {
+            var isOnSettleSpot = tileGroup.GetSettlePoints().Contains(point);
+            if (!isOnSettleSpot)
+            {
+                return true;
+            }
+        } else
+        {
+            return true;
+        }
+        
+
+
+        var tokenCanSettle = map.TokenCanSettle(token, point);
+        if (tokenCanSettle)
+        {
+            return true;
+        }
+
+        return false;
+    }
+}

@@ -102,5 +102,24 @@ public class EmptyCardStackException : Exception
     }
 }
 
+public class NotEnoughFreightPodsToDockException : Exception
+{
+    public NotEnoughFreightPodsToDockException()
+    {
+    }
+
+    public NotEnoughFreightPodsToDockException(string message)
+        : base(message)
+    {
+    }
+
+    public NotEnoughFreightPodsToDockException(string message, Exception inner)
+        : base(message, inner)
+    {
+    }
+}
+
+
+
 
 

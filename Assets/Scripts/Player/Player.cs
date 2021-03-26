@@ -86,14 +86,14 @@ public class Player
     int carbonProduceBonus;
     int fuelProduceBonus;
     int pirateTokenBeatenAwards = 0;
-    int twoCardsBonusThreshold = 8;
-    int oneCardBonusThreshold = 12;
+    int twoCardsBonusThreshold = 7;
+    int oneCardBonusThreshold = 9;
 
     public Player(Color color, SFElement notifier)
     {
         this.color = color;
         fameMedalPieces = 0;
-        ship = new SpaceShip();
+        ship = new SpaceShip(DataChanged);
         hand = new Hand();
         rules = new TradingRules();
         tokens = new List<Token> {};
@@ -193,12 +193,6 @@ public class Player
         DataChanged();
     }
 
-    public bool CanBuildToken(Token token)
-    {
-        //token.CanBeBuild()
-        return hand.CanPayCost(token.cost);
-    }
-
     /// <summary>
     /// DEPRECATED METHOD, PLEASE USE BuildToken2
     /// </summary>
@@ -239,22 +233,24 @@ public class Player
         return baseTokenFromStorage;
     }
 
-    public void BuildTokenWithoutCost(Type baseType, SpacePoint position, Type attachedType = null)
+    public Token BuildTokenWithoutCost(Type baseType, SpacePoint position, Type attachedType = null)
     {
-        BuildToken2(baseType, position, attachedType, true);
+        return BuildToken2(baseType, position, attachedType, true);
     }
 
-    public void BuildUpgrade(Token token)
+    public void BuildUpgrade(Token token, bool isForFree = false)
     {
         ship.Add(token);
-        hand.PayCost(token.cost);
+        if (!isForFree)
+        {
+            hand.PayCost(token.cost);
+        }
         DataChanged();
     }
 
     public void BuildUpgradeWithoutCost(Token token)
     {
-        ship.Add(token);
-        DataChanged();
+        BuildUpgrade(token, true);
     }
 
     public int GetVictoryPoints()
@@ -310,10 +306,10 @@ public class Player
     public int LowPointsBonus()
     {
         var vp = GetVictoryPoints();
-        if (vp < twoCardsBonusThreshold)
+        if (vp <= twoCardsBonusThreshold)
         {
             return 2;
-        } else if (vp >= twoCardsBonusThreshold && vp < oneCardBonusThreshold){
+        } else if (vp > twoCardsBonusThreshold && vp <= oneCardBonusThreshold){
             return 1;
         } else
         {

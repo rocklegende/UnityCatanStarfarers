@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 using UnityEngine;
 
 public class Map
@@ -9,9 +10,9 @@ public class Map
     private Tile_[,] mapRepresentation;
     private int offset;
     private MapScript changeDelegate;
-    public TileGroup[] tileGroups;
+    public List<TileGroup> tileGroups;
 
-    public Map(Tile_[,] mapRepresentation, MapScript changeDelegate = null, TileGroup[] tileGroups = null)
+    public Map(Tile_[,] mapRepresentation, MapScript changeDelegate = null, List<TileGroup> tileGroups = null)
     {
         this.mapRepresentation = mapRepresentation;
         this.offset = getOffset();
@@ -23,6 +24,30 @@ public class Map
     {
         var notifier = new SFElement();
         notifier.app.Notify(SFNotification.map_data_changed, notifier); 
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="token"></param>
+    /// <param name="futurePositionOfToken">
+    /// Use this if the token will be at that point on the next move. So you can see if it actually can settle there.</param>
+    /// <returns></returns>
+    public bool TokenCanSettle(Token token, SpacePoint futurePositionOfToken = null)
+    {
+
+        foreach (var group in tileGroups)
+        {
+            try
+            {
+                group.RequestSettleOfToken(token, futurePositionOfToken);
+                return true;
+            } catch
+            {
+                //
+            }
+        }
+        return false;
     }
 
     bool TilesAreBorders(Tile_ tile1, Tile_ tile2)
@@ -48,6 +73,17 @@ public class Map
         }
 
         return tokenList.ToArray();
+    }
+
+    public List<TradeStation> GetTradeStations()
+    {
+        var groups = tileGroups.Where(group => group is TradeStation);
+        var tradeStations = new List<TradeStation>();
+        foreach(var group in groups)
+        {
+            tradeStations.Add((TradeStation)group);
+        }
+        return tradeStations;
     }
 
     public SpacePoint[] GetNeighborsOfSpacePoint(SpacePoint point)
@@ -140,8 +176,15 @@ public class Map
         return GetSpacePointsInsideRange(origin, distance, distance);
     }
 
+    /// <summary>
+    /// Returns every point that is inside the given min max range (min and max values are included) from given SpacePoint
+    /// </summary>
+    /// <param name="origin"></param>
+    /// <param name="max"></param>
+    /// <param name="min"></param>
+    /// <returns></returns>
     public SpacePoint[] GetSpacePointsInsideRange(SpacePoint origin, int max, int min = 0)
-        //returns every point that is <= 'range' away from given SpacePoint
+
     {
         if (min < 0 || max < 0 || min > max)
         {
@@ -187,6 +230,13 @@ public class Map
         return points.ToArray(); 
     }
 
+    /// <summary>
+    /// Returns the real distance between SpacePoints, including going around obstacles. <br/>
+    /// Uses BFS.
+    /// </summary>
+    /// <param name="origin"></param>
+    /// <param name="destination"></param>
+    /// <returns></returns>
     public int distanceBetweenPoints(SpacePoint origin, SpacePoint destination)
     {
         // TODO: seems broken for large distances

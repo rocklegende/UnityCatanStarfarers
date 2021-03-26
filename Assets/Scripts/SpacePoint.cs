@@ -46,18 +46,18 @@ public class SpacePoint
         Logger.log("(CityPosition) q:" + this.coordinates.q + ", r:" + this.coordinates.r + "vertex: " + vertexNumber);
     }
 
-    public SpacePoint[] GetNeighbors()
+    public List<SpacePoint> GetNeighbors()
     {
         if (vertexNumber == 0)
         {
-            return new SpacePoint[] {
+            return new List<SpacePoint>() {
                 new SpacePoint(new HexCoordinates(coordinates.q + 1, coordinates.r), 1 ),
                 new SpacePoint(new HexCoordinates(coordinates.q + 1, coordinates.r - 1), 1 ),
                 new SpacePoint(new HexCoordinates(coordinates.q, coordinates.r), 1 )
             };
         } else if (vertexNumber == 1)
         {
-            return new SpacePoint[] {
+            return new List<SpacePoint>() {
                 new SpacePoint(new HexCoordinates(coordinates.q - 1, coordinates.r + 1), 0 ),
                 new SpacePoint(new HexCoordinates(coordinates.q - 1, coordinates.r), 0 ),
                 new SpacePoint(new HexCoordinates(coordinates.q, coordinates.r), 0 )

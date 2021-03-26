@@ -275,5 +275,49 @@ namespace Tests
             }
         }
 
+        public void RequestSettleTradeStationNotEnoughFreightPods()
+        {
+            var center = new SpacePoint(new HexCoordinates(4, 4), 0);
+            var tokenPos = new SpacePoint(new HexCoordinates(4, 4), 0);
+            var tuple = CreateTradeTokenAndTradeStation(tokenPos, center);
+            var tradeStation = tuple.Item1;
+            var token = tuple.Item2;
+
+            var testHelper = new TestHelper();
+            var player = testHelper.CreateGenericPlayer();
+            token.owner = player;
+
+            try
+            {
+                var capacity = tradeStation.GetCapacity();
+                for (int i = 0; i < 2; i++)
+                {
+                    tradeStation.OnTokenSettled(token);
+                }
+                tradeStation.RequestSettleOfToken(token);
+                Assert.True(false);
+            }
+            catch (NotEnoughFreightPodsToDockException e)
+            {
+                Assert.True(true);
+            }
+        }
+
+        [Test]
+        public void TestDockingBehaviourOfTradeStation()
+        {
+            var center = new SpacePoint(new HexCoordinates(4, 4), 0);
+            var tokenPos = new SpacePoint(new HexCoordinates(4, 4), 0);
+            var tuple = CreateTradeTokenAndTradeStation(tokenPos, center);
+            var tradeStation = tuple.Item1;
+            var token = tuple.Item2;
+
+            var spaceShipsBefore = tradeStation.dockedSpaceships.Count;
+            tradeStation.OnTokenSettled(token);
+            var spaceShipsAfter = tradeStation.dockedSpaceships.Count;
+
+            Assert.AreEqual(spaceShipsAfter, spaceShipsBefore + 1);
+        }
+
     }
 }

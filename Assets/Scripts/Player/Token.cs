@@ -31,6 +31,18 @@ public abstract class Token
         this.cost = cost;
     }
 
+    public SpacePointFilter[] GetFlightEndPointsFilters()
+    {
+        var filters = new SpacePointFilter[] {
+            new IsValidSpacePointFilter(),
+            new IsSpacePointFreeFilter(),
+            new IsStepsAwayFilter(position, GetStepsLeft()),
+            new IsExactlyStepsAwayAndCannotSettleOnPointCounter(this, GetStepsLeft())
+        };
+
+        return filters;
+    }
+
     public abstract Token makeCopy();
 
     public void DataChanged()
@@ -85,6 +97,10 @@ public abstract class Token
         stepsLeft += steps;
     }
 
+    /// <summary>
+    /// Returns true if the token has a ShipToken on top.
+    /// </summary>
+    /// <returns></returns>
     public bool IsFlyable()
     {
         if (attachedToken == null)

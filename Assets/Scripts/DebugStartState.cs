@@ -12,7 +12,7 @@ public abstract class DebugStartState
 
     public Player[] GetGenericPlayers()
     {
-        return new Player[] { new Player(Color.green, controller), new Player(Color.red, controller) };
+        return new Player[] { new Player(Color.white, controller), new Player(Color.red, controller) };
     }
 
     public void BuildShipsForMainPlayer(Player player)
@@ -229,6 +229,21 @@ public class BeatPirateTokenDebugState : DebugStartState
         BuildShipsForMainPlayer(controller.players[0]);
         SetUpgradesForMainPlayer(5);        
         controller.mainPlayer.AddFameMedal();
+        CommonMapSetup();
+    }
+}
+
+public class BuildASpacePortDebugState : DebugStartState
+{
+    public BuildASpacePortDebugState(GameController controller) : base(controller)
+    {
+    }
+    public override void Setup()
+    {
+        controller.state = new StartState(controller);
+
+        CommonSetup();
+        controller.mainPlayer.BuildTokenWithoutCost(new ColonyBaseToken().GetType(), new SpacePoint(new HexCoordinates(5, 5), 1));
         CommonMapSetup();
     }
 }

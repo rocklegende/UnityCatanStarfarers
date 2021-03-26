@@ -14,9 +14,14 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     public Text foodCardStackText;
     public Text fuelCardStackText;
     public Text goodsCardStackText;
+
     public Text boosterText;
     public Text cannonsText;
     public Text freightPodsText;
+    public Text boosterBonusText;
+    public Text cannonsBonusText;
+    public Text freightPodsBonusText;
+
     public Text vpText;
     public Text fameMedalPiecesText;
 
@@ -192,8 +197,22 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     void DrawUpgrades()
     {
         boosterText.text = player.ship.Boosters.ToString();
+        if (player.ship.BoostersBonus > 0)
+        {
+            boosterBonusText.text = "+ " + player.ship.BoostersBonus.ToString();
+        }
+
         cannonsText.text = player.ship.Cannons.ToString();
+        if (player.ship.CannonsBonus > 0)
+        {
+            cannonsBonusText.text = "+ " + player.ship.CannonsBonus.ToString();
+        }
+
         freightPodsText.text = player.ship.FreightPods.ToString();
+        if (player.ship.FreightPodsBonus > 0)
+        {
+            freightPodsBonusText.text = "+ " + player.ship.FreightPodsBonus.ToString();
+        }
     }
 
     void DrawVP()

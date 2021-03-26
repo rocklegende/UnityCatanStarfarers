@@ -114,7 +114,7 @@ public class MapGenerator
         SetupBaseColonies();
         SetupSpaceColonies();
         spaceTileGroupsCopy.AddRange(baseTileGroupsCopy);
-        map.tileGroups = spaceTileGroupsCopy.ToArray();
+        map.tileGroups = spaceTileGroupsCopy;
 
         return map;
     }

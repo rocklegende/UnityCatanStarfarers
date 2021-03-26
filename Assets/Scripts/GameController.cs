@@ -14,7 +14,6 @@ public class GameController : SFController
     public int currentPlayerAtTurn = 0;
     public PayoutHandler payoutHandler;
 
-
     public EncounterCardHandler encounterCardHandler;
     public DrawPileHandler drawPileHandler;
 
@@ -23,7 +22,14 @@ public class GameController : SFController
     {
         DebugStartState debugState = new ShipBuildingOneColonyShipAndOneSpacePort(this);
         //DebugStartState debugState = new BeatPirateTokenDebugState(this);
+        //DebugStartState debugState = new BuildASpacePortDebugState(this);
         debugState.Setup();
+    }
+
+    public void On7Rolled()
+    {
+        var strategy = new On7RollStrategy();
+        strategy.Execute(players, currentPlayerAtTurn, drawPileHandler.availablePiles);
     }
 
     public void PassTurnToNextPlayer()
@@ -73,6 +79,7 @@ public class GameController : SFController
         switch (p_event_path)
         {
             case SFNotification.token_was_selected:
+
                 state.OnTokenClicked((Token)p_data[0], (GameObject)p_data[1]);
                 break;
             case SFNotification.spacepoint_selected:

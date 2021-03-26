@@ -480,8 +480,37 @@ namespace Tests
             {
                 Assert.True(true);
             }
-            
-            
+        }
+
+        [Test]
+        public void ColonyBlockadePreventionTest()
+        {
+            MapGenerator generator = new MapGenerator();
+            var mapModel = generator.GenerateRandomMap();
+
+            var player = new TestHelper().CreateGenericPlayer();
+
+            player.BuildTokenWithoutCost(
+                new ColonyBaseToken().GetType(),
+                new SpacePoint(new HexCoordinates(5, 5), 1),
+                new SpacePortToken().GetType()
+            );
+
+            var flyableColony = player.BuildTokenWithoutCost(
+                new ColonyBaseToken().GetType(),
+                new SpacePoint(new HexCoordinates(5, 5), 0),
+                new ShipToken().GetType()
+            );
+
+            var pointShouldNotBeReachable = new SpacePoint(new HexCoordinates(7, 4), 0);
+            Assert.AreEqual(4, mapModel.distanceBetweenPoints(flyableColony.position, pointShouldNotBeReachable));
+
+            var filter = new IsExactlyStepsAwayAndCannotSettleOnPointCounter(flyableColony, 4);
+            //point should not fulfill the filter because the tilegroup is not revealed
+            var tileGroup = (ResourceTileGroup)mapModel.FindTileGroupAtPoint(pointShouldNotBeReachable);
+            //Assert.True(!tileGroup.IsRevealed());
+            Assert.True(!filter.pointFulfillsFilter(pointShouldNotBeReachable, mapModel, new Player[] { player }));
+
         }
 
     }

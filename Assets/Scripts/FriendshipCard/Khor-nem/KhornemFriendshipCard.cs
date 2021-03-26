@@ -23,8 +23,8 @@ public class KhornemOneBoostOneCannon : KhornemFriendshipCard
 {
     public override void ActivateEffect(Player targetPlayer)
     {
-        targetPlayer.BuildUpgradeWithoutCost(new BoosterUpgradeToken());
-        targetPlayer.BuildUpgradeWithoutCost(new CannonUpgradeToken());
+        targetPlayer.ship.AddBonusForUpgrade(ShipUpgrade.BOOSTER, 1);
+        targetPlayer.ship.AddBonusForUpgrade(ShipUpgrade.CANNON, 1);
     }
 
     public override Sprite GetEffectSprite()
@@ -47,8 +47,7 @@ public class KhornemTwoBoost : KhornemFriendshipCard
 {
     public override void ActivateEffect(Player targetPlayer)
     {
-        targetPlayer.BuildUpgradeWithoutCost(new BoosterUpgradeToken());
-        targetPlayer.BuildUpgradeWithoutCost(new BoosterUpgradeToken());
+        targetPlayer.ship.AddBonusForUpgrade(ShipUpgrade.BOOSTER, 2);
     }
 
     public override Sprite GetEffectSprite()
@@ -72,8 +71,7 @@ public class KhornemTwoCannon : KhornemFriendshipCard
 {
     public override void ActivateEffect(Player targetPlayer)
     {
-        targetPlayer.BuildUpgradeWithoutCost(new CannonUpgradeToken());
-        targetPlayer.BuildUpgradeWithoutCost(new CannonUpgradeToken());
+        targetPlayer.ship.AddBonusForUpgrade(ShipUpgrade.CANNON, 2);
     }
 
     public override Sprite GetEffectSprite()

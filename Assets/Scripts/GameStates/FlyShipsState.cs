@@ -6,6 +6,7 @@ using UnityEngine;
 public class FlyShipsState : GameState
 {
     Token selectedToken;
+    FlightStateConsistencyChecker flightStateChecker;
     public FlyShipsState(GameController controller) : base(controller)
     {
         Init();
@@ -15,6 +16,7 @@ public class FlyShipsState : GameState
     {
         hudScript.SetStateText("FlyShipsState");
         hudScript.ShowSettleButton(false);
+        flightStateChecker = new FlightStateConsistencyChecker();
     }
 
     
@@ -31,6 +33,10 @@ public class FlyShipsState : GameState
         //all possible spacepoints and just hide and show the one we need right now
         mapScript.RemoveAllSpacePointButtons(); 
         selectedToken.FlyTo(point, mapScript.map);
+
+        var errors = flightStateChecker.Check(controller.mapModel, controller.players);
+        Debug.Log("");
+
     }
 
     public override void OnTokenClicked(Token tokenModel, GameObject tokenGameObject)
@@ -40,12 +46,13 @@ public class FlyShipsState : GameState
             selectedToken = tokenModel;
             if (selectedToken.CanFly())
             {
-                var filters = new SpacePointFilter[] {
-                    new IsValidSpacePointFilter(),
-                    new IsSpacePointFreeFilter(),
-                    new IsStepsAwayFilter(tokenModel.position, selectedToken.GetStepsLeft())
-                };
-                controller.Map.GetComponent<MapScript>().ShowSpacePointsFulfillingFilters(filters);
+                var filters = selectedToken.GetFlightEndPointsFilters();
+                //var filters = new SpacePointFilter[] {
+                //    new IsValidSpacePointFilter(),
+                //    new IsSpacePointFreeFilter(),
+                //    new IsStepsAwayFilter(tokenModel.position, selectedToken.GetStepsLeft())
+                //};
+                mapScript.ShowSpacePointsFulfillingFilters(filters);
             }
         } else
         {

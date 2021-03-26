@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public enum FightCategory
 {
     CANNON,
-    FREIGHTPODS,
     BOOSTER
 }
 
@@ -57,15 +56,15 @@ public class FightPanelScript : MonoBehaviour
         {
             case FightCategory.CANNON:
                 title.text = "Cannon fight";
-                originPlayerWon = originDiceThrow.GetValue() + origin.ship.Cannons >= opponentDiceThrow.GetValue() + opponent.ship.Cannons;
-                break;
-            case FightCategory.FREIGHTPODS:
-                title.text = "Freightpods fight";
-                originPlayerWon = originDiceThrow.GetValue() + origin.ship.FreightPods >= opponentDiceThrow.GetValue() + opponent.ship.FreightPods;
+                var opponentStrength = opponentDiceThrow.GetRawValue() + opponent.ship.GetStrength(ShipUpgrade.CANNON);
+                var originStrength = originDiceThrow.GetRawValue() + origin.ship.GetStrength(ShipUpgrade.CANNON);
+                originPlayerWon = originStrength >= opponentStrength;
                 break;
             case FightCategory.BOOSTER:
                 title.text = "Booster fight";
-                originPlayerWon = originDiceThrow.GetValue() + origin.ship.Boosters >= opponentDiceThrow.GetValue() + opponent.ship.Boosters;
+                var opponentStrength1 = opponentDiceThrow.GetRawValue() + opponent.ship.GetStrength(ShipUpgrade.BOOSTER);
+                var originStrength1 = originDiceThrow.GetRawValue() + origin.ship.GetStrength(ShipUpgrade.BOOSTER);
+                originPlayerWon = originStrength1 >= opponentStrength1;
                 break;
         }
 
