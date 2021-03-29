@@ -311,12 +311,50 @@ namespace Tests
             var tuple = CreateTradeTokenAndTradeStation(tokenPos, center);
             var tradeStation = tuple.Item1;
             var token = tuple.Item2;
+            var player = new TestHelper().CreateGenericPlayer();
+            token.owner = player;
 
             var spaceShipsBefore = tradeStation.dockedSpaceships.Count;
             tradeStation.OnTokenSettled(token);
             var spaceShipsAfter = tradeStation.dockedSpaceships.Count;
 
             Assert.AreEqual(spaceShipsAfter, spaceShipsBefore + 1);
+        }
+
+        [Test]
+        public void TradeStationHighestPlayer()
+        {
+            var center = new SpacePoint(new HexCoordinates(4, 4), 0);
+            var tokenPos = new SpacePoint(new HexCoordinates(4, 4), 0);
+            var tuple = CreateTradeTokenAndTradeStation(tokenPos, center);
+            var tradeStation = tuple.Item1;
+            var ownToken = tuple.Item2;
+            var player = new TestHelper().CreateGenericPlayer();
+            ownToken.owner = player;
+
+            var opponent = new Player(Color.cyan, new SFElement());
+            var opponentToken = new TradeBaseToken();
+            opponentToken.owner = opponent;
+
+            Assert.True(tradeStation.medal.owner == null);
+
+            tradeStation.OnTokenSettled(ownToken);
+            Assert.True(tradeStation.medal.owner == player); //1:0 
+            Assert.True(player.GetVictoryPointsFromFriendships() == 2); 
+
+            tradeStation.OnTokenSettled(opponentToken);
+            Assert.True(tradeStation.medal.owner == player); //1:1, still the same
+
+            tradeStation.OnTokenSettled(opponentToken);
+            Assert.True(tradeStation.medal.owner == opponent); //1:2, now the owner changes because he has more ships docked
+            Assert.True(player.GetVictoryPointsFromFriendships() == 0);
+            Assert.True(opponent.GetVictoryPointsFromFriendships() == 2);
+
+            tradeStation.OnTokenSettled(ownToken);
+            Assert.True(tradeStation.medal.owner == opponent); // 2:2
+
+            tradeStation.OnTokenSettled(ownToken);
+            Assert.True(tradeStation.medal.owner == player); // 3:2, the owner changes back to player
         }
 
     }

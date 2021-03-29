@@ -39,6 +39,17 @@ public abstract class DebugStartState
         }
     }
 
+    public void GiveResourcesOfAllTypesToPlayer(Player player, int amount)
+    {
+        foreach(var type in new Helper().GetAllResourceCardTypes())
+        {
+            for (int i = 0; i < amount; i++)
+            {
+                player.AddCard(type);
+            }
+        }
+    }
+
     public void CommonSetup()
     {
         controller.players = GetGenericPlayers();
@@ -46,14 +57,7 @@ public abstract class DebugStartState
         controller.HUD.GetComponent<HUDScript>().SetPlayers(controller.players);
         controller.HUD.GetComponent<HUDScript>().isReceivingNotifications = true;
 
-        for (int i = 0; i < 3; i++)
-        {
-            controller.mainPlayer.AddCard(new GoodsCard());
-            controller.mainPlayer.AddCard(new FuelCard());
-            controller.mainPlayer.AddCard(new CarbonCard());
-            controller.mainPlayer.AddCard(new FoodCard());
-            controller.mainPlayer.AddCard(new OreCard());
-        }
+        GiveResourcesOfAllTypesToPlayer(controller.mainPlayer, 5);
     }
 
     public void CommonMapSetup()

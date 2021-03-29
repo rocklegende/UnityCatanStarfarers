@@ -111,6 +111,8 @@ public class Player
         this.notifier = notifier;
     }
 
+
+
     public void ActivateRichHelpPoorBonus()
     {
         hasRichHelpPoorBonus = true;
@@ -418,6 +420,16 @@ public class Player
     public void AddFriendShipChip()
     {
         FriendShipChips += 1;
+        DataChanged();
+    }
+
+    public void RemoveFriendShipChip()
+    {
+        if (FriendShipChips == 0)
+        {
+            throw new ArgumentException("Cant remove friendshipchip. Player has none.");
+        }
+        FriendShipChips -= 1;
         DataChanged();
     }
 

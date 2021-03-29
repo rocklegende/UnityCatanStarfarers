@@ -6,7 +6,7 @@ using UnityEngine;
 public abstract class SpacePointFilter
 {
     public abstract bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players);
-    public Token[] GetAllTokenOfPlayers(Player[] players)
+    public List<Token> GetAllTokenOfPlayers(Player[] players)
     {
         return new Helper().GetAllTokenOfPlayers(players);
     }
@@ -145,6 +145,49 @@ public class IsExactlyStepsAwayAndCannotSettleOnPointCounter : SpacePointFilter
             return true;
         }
 
+        return false;
+    }
+}
+
+public class IsNeighborOfOwnSpacePortOrNotExactlyStepsAway : SpacePointFilter
+{
+    Token token;
+    Player player;
+    int exactSteps;
+    public IsNeighborOfOwnSpacePortOrNotExactlyStepsAway(Token token, Player player, int exactSteps)
+    {
+        this.player = player;
+        this.exactSteps = exactSteps;
+        this.token = token;
+    }
+
+    public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
+    {
+        var isExactlyStepsAway = new Helper().SpacePointArrayContainsPoint(map.GetSpacePointsInsideRange(token.position, exactSteps, exactSteps), point);
+        if (!isExactlyStepsAway)
+        {
+            return true;
+        }
+        var neighbors = map.GetNeighborsOfSpacePoint(point);
+        foreach (var neighbor in neighbors)
+        {
+            var token = map.TokenAtPoint(neighbor, players);
+            if (token != null)
+            {
+                if (token.owner == player)
+                {
+                    if (token.attachedToken != null)
+                    {
+                        if (token.attachedToken is SpacePortToken)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            
+            
+        }
         return false;
     }
 }

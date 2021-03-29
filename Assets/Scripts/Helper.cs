@@ -76,7 +76,7 @@ public class Helper
         return null;
     }
 
-    public Token[] GetAllTokenOfPlayers(Player[] players)
+    public List<Token> GetAllTokenOfPlayers(Player[] players)
     {
         List<Token> tokens = new List<Token>();
         foreach (Player player in players)
@@ -86,7 +86,7 @@ public class Helper
                 tokens.Add(token);
             }
         }
-        return tokens.ToArray();
+        return tokens;
     }
 
     public Hand GetHandWithResources(int food = 0, int goods = 0, int fuel = 0, int ore = 0, int carbon = 0)

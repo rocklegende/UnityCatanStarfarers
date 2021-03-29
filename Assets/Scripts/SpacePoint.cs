@@ -92,6 +92,17 @@ public class SpacePoint
         return this.coordinates.DistanceTo(pos.coordinates) * 2 + (MinMax[0].vertexNumber - MinMax[1].vertexNumber);
     }
 
+    public SpacePoint(int q, int r, int vertexNumber)
+    {
+        this.coordinates = new HexCoordinates(q, r);
+        this.vertexNumber = vertexNumber;
+
+        if (this.vertexNumber < 0 || this.vertexNumber > 1)
+        {
+            throw new ArgumentOutOfRangeException("vertexNumber has to be 0 or 1");
+        }
+    }
+
     public SpacePoint(HexCoordinates coordinates, int vertexNumber)
     {
         this.coordinates = coordinates;

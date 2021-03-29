@@ -511,7 +511,68 @@ namespace Tests
             var tileGroup = (ResourceTileGroup)mapModel.FindTileGroupAtPoint(pointShouldNotBeReachable);
             Assert.True(!tileGroup.IsRevealed());
             Assert.True(!filter.pointFulfillsFilter(pointShouldNotBeReachable, mapModel, new Player[] { player }));
+        }
 
+        Token BlockadeSetup(Player player, Player opponent)
+        {
+            player.BuildTokenWithoutCost(
+                new ColonyBaseToken().GetType(),
+                new SpacePoint(5, 5, 1),
+                new SpacePortToken().GetType()
+            );
+            var flyableColony = player.BuildTokenWithoutCost(
+                new ColonyBaseToken().GetType(),
+                new SpacePoint(5, 5, 0),
+                new ShipToken().GetType()
+            );
+
+            opponent.BuildTokenWithoutCost(
+                new ColonyBaseToken().GetType(),
+                new SpacePoint(7, 4, 0),
+                new SpacePortToken().GetType()
+            );
+
+            return flyableColony;
+        }
+
+        [Test]
+        public void SpacePortBlockadePreventionTest()
+        {
+            MapGenerator generator = new MapGenerator();
+            var mapModel = generator.GenerateRandomMap();
+
+            var player = new TestHelper().CreateGenericPlayer();
+            var opponent = new Player(Color.green, new SFElement());
+
+            var flyableColony = BlockadeSetup(player, opponent);
+            flyableColony.stepsLeft = 3;
+
+            var pointShouldNotBeReachable = new SpacePoint(7, 4, 1);
+            Assert.AreEqual(3, mapModel.distanceBetweenPoints(flyableColony.position, pointShouldNotBeReachable));
+
+            var filter = new IsNeighborOfOwnSpacePortOrNotExactlyStepsAway(flyableColony, player, 3);
+            //point should not fulfill the filter because the point is next to a other spaceport
+            Assert.True(!filter.pointFulfillsFilter(pointShouldNotBeReachable, mapModel, new Player[] { player, opponent }));
+        }
+
+        [Test]
+        public void SpacePortBlockadePreventionTestOwnSpacePort()
+        {
+            MapGenerator generator = new MapGenerator();
+            var mapModel = generator.GenerateRandomMap();
+
+            var player = new TestHelper().CreateGenericPlayer();
+            var opponent = new Player(Color.green, new SFElement());
+
+            var flyableColony = BlockadeSetup(player, opponent);
+            flyableColony.stepsLeft = 2;
+
+            var pointShouldBeReachable = new SpacePoint(4, 5, 0);
+            Assert.AreEqual(2, mapModel.distanceBetweenPoints(flyableColony.position, pointShouldBeReachable));
+
+            var filter = new IsNeighborOfOwnSpacePortOrNotExactlyStepsAway(flyableColony, player, 2);
+            //point should fulfill the filter because the point is next to own spaceport
+            Assert.True(filter.pointFulfillsFilter(pointShouldBeReachable, mapModel, new Player[] { player, opponent }));
         }
 
     }

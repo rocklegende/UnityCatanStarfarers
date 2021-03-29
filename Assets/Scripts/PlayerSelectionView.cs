@@ -87,15 +87,6 @@ public class PlayerSelectionView : MonoBehaviour
     List<Player> GetSelectedPlayers()
     {
         return selectionBoxes.Where(box => box.isSelected).Select(selectedBox => selectedBox.GetPlayer()).ToList();
-
-        //var selectedBoxes = selectionBoxes.Where(box => box.isSelected).Select(selectedBox => selectedBox.GetPlayer()).ToList();
-
-        //var players = new List<Player>();
-        //foreach (var box in selectedBoxes)
-        //{
-        //    players.Add(box.GetPlayer());
-        //}
-        //return players;
     }
 
     // Update is called once per frame

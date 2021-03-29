@@ -75,18 +75,11 @@ public class Map
         //TODO: return all the points this token can fly to
     }
 
-    public Token[] TokenAtPoint(SpacePoint point, Player[] players)
+    public Token TokenAtPoint(SpacePoint point, Player[] players)
     {
-        List<Token> tokenList = new List<Token>();
-        foreach(var tok in new Helper().GetAllTokenOfPlayers(players))
-        {
-            if (tok.position.Equals(point))
-            {
-                tokenList.Add(tok);
-            }
-        }
-
-        return tokenList.ToArray();
+        //TODO: tokens should be stored inside the map model, so we dont have to reference the players all the time
+        var allTokens = new Helper().GetAllTokenOfPlayers(players);
+        return allTokens.Find(tok => tok.position.Equals(point));
     }
 
     public List<TradeStation> GetTradeStations()
@@ -100,6 +93,12 @@ public class Map
         return tradeStations;
     }
 
+    /// <summary>
+    /// Returns all neighbor points of given SpacePoint.<br></br>
+    /// <b>NOTE:</b>Invalid points are excluded here (such as points inside a ResourceTileGroup or points that are out of bounds)
+    /// </summary>
+    /// <param name="point"></param>
+    /// <returns></returns>
     public SpacePoint[] GetNeighborsOfSpacePoint(SpacePoint point)
     {
         var actualValidNeighbors = new List<SpacePoint>();

@@ -20,8 +20,8 @@ public class GameController : SFController
     // Start is called before the first frame update
     void Start()
     {
-        DebugStartState debugState = new PlayerHasRichHelpPoorBonusDebugState(this);
-        //DebugStartState debugState = new ShipBuildingOneColonyShipAndOneSpacePort(this);
+        //DebugStartState debugState = new PlayerHasRichHelpPoorBonusDebugState(this);
+        DebugStartState debugState = new ShipBuildingOneColonyShipAndOneSpacePort(this);
         //DebugStartState debugState = new BeatPirateTokenDebugState(this);
         //DebugStartState debugState = new BuildASpacePortDebugState(this);
         debugState.Setup();

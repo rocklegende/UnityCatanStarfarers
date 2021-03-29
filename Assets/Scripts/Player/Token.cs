@@ -37,7 +37,8 @@ public abstract class Token
             new IsValidSpacePointFilter(),
             new IsSpacePointFreeFilter(),
             new IsStepsAwayFilter(position, GetStepsLeft()),
-            new IsExactlyStepsAwayAndCannotSettleOnPointCounter(this, GetStepsLeft())
+            new IsExactlyStepsAwayAndCannotSettleOnPointCounter(this, GetStepsLeft()),
+            new IsNeighborOfOwnSpacePortOrNotExactlyStepsAway(this, owner, GetStepsLeft())
         };
 
         return filters;

@@ -71,45 +71,55 @@ public abstract class TradeStation : TileGroup
     public override void OnTokenSettled(Token token)
     {
         dockedSpaceships.Add(token);
-        // TODO: AssignOwnerOfMedal();
+        AssignOwnerOfMedal();
 
         var notifier = new SFElement();
         notifier.app.Notify(SFNotification.open_friendship_card_selection, notifier, new object[] { this, tradingCards });
     }
 
-    private void AssignOwnerOfMedal()
+    void SetNewMedalOwner(Player player)
     {
-        // get the player with the highest spaceships docked and the number of spaceships he has
+        medal.owner = player;
+        medal.owner.AddFriendShipChip();
+    }
 
-        //TODO: this is NOT working yet
+    Dictionary<Player, int> GetSpaceShipCountByPlayer()
+    {
         var spaceShipCount = new Dictionary<Player, int>();
         foreach (var spaceShip in dockedSpaceships)
         {
             if (spaceShipCount.ContainsKey(spaceShip.owner))
             {
                 spaceShipCount[spaceShip.owner] += 1;
-            } else
+            }
+            else
             {
                 spaceShipCount[spaceShip.owner] = 1;
             }
         }
+        return spaceShipCount;
+    }
 
-        var ordered = spaceShipCount.OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
-
+    private void AssignOwnerOfMedal()
+    {
+        var spaceShipCount = GetSpaceShipCountByPlayer();
+        var ordered = spaceShipCount.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
         var highestPlayer = ordered.Keys.ElementAt(0);
         var numSpaceShipsHighestPlayer = ordered.Values.ElementAt(0);
 
         if (medal.owner == null)
         {
-            medal.owner = highestPlayer;
-        } else
+            SetNewMedalOwner(highestPlayer);
+        }
+        else
         {
-            var numSpaceShipsOfCurrentOwner = spaceShipCount[medal.owner];
-            if (numSpaceShipsHighestPlayer > numSpaceShipsOfCurrentOwner)
+            var numSpaceShipsOfCurrentMedalOwner = spaceShipCount[medal.owner];
+            if (numSpaceShipsHighestPlayer > numSpaceShipsOfCurrentMedalOwner)
             {
-                medal.owner = highestPlayer;
+                medal.owner.RemoveFriendShipChip(); //remove medal from prev owner
+                SetNewMedalOwner(highestPlayer);
             }
-        }        
+        }
     }
 
     public override bool RequestSettleOfToken(Token token, SpacePoint futurePositionOfToken = null)
