@@ -12,10 +12,14 @@ public class MapGenerator
     List<TileGroup> spaceTileGroupsCopy;
     List<ResourceTileGroup> baseTileGroupsCopy;
     Map map;
+
+    FilledCircleChipGroup filledCircleChipGroup;
     CircleChipGroup circleGroup;
     TriangleChipGroup triangleGroup;
     SquareChipGroup squareGroup;
     private bool isRandom = false;
+
+    private int numEmptyTileGroups = 4;
 
     public MapGenerator()
     {
@@ -49,15 +53,21 @@ public class MapGenerator
             "7,10,1"
         });
 
+
         spaceTileGroups = new List<TileGroup>();
-        spaceTileGroups.Add(new ResourceTileGroup(new ResourceTile[] { new GoodsResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
+
+        for (int i = 0; i < numEmptyTileGroups; i++)
+        {
+            spaceTileGroups.Add(new EmptyTileGroup());
+        }
+
         spaceTileGroups.Add(new ResourceTileGroup(new ResourceTile[] { new GoodsResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
         spaceTileGroups.Add(new ResourceTileGroup(new ResourceTile[] { new GoodsResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
         spaceTileGroups.Add(new ResourceTileGroup(new ResourceTile[] { new GoodsResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
         spaceTileGroups.Add(new OrzelTradeStation());
         spaceTileGroups.Add(new KhornemTradeStation());
-        spaceTileGroups.Add(new RahnaTradeStation());
         spaceTileGroups.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
+        spaceTileGroups.Add(new RahnaTradeStation());
         spaceTileGroups.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
         spaceTileGroups.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
         spaceTileGroups.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
@@ -73,6 +83,26 @@ public class MapGenerator
 
     void CreateChipGroups()
     {
+        //circleGroup = new CircleChipGroup(new List<DiceChip>() {
+        //    new NormalDiceChip(3),
+        //    new NormalDiceChip(4),
+        //    new NormalDiceChip(4),
+        //    new NormalDiceChip(11),
+        //    new NormalDiceChip(12),
+        //});
+        //filledCircleChipGroup = new FilledCircleChipGroup(new List<DiceChip>() {
+        //    new NormalDiceChip(3),
+        //    new NormalDiceChip(4),
+        //    new NormalDiceChip(11),
+        //});
+
+        //squareGroup = new SquareChipGroup(new List<DiceChip>() {
+        //    new NormalDiceChip(2),
+        //    new NormalDiceChip(5),
+        //    new NormalDiceChip(5),
+        //    new NormalDiceChip(6),
+        //    new NormalDiceChip(9),
+        //});
         circleGroup = new CircleChipGroup(GetBasicDiceChips());
         squareGroup = new SquareChipGroup(GetBasicDiceChips());
         triangleGroup = new TriangleChipGroup(GetOnlyPirateToken());
@@ -96,10 +126,14 @@ public class MapGenerator
     {
         var list = new List<DiceChip>();
 
-        for (int i = 0; i < 30; i++)
+
+        for (int i = 2; i < 12; i++)
         {
-            list.Add(new DiceChip3());
-        }
+            for (int j = 0; j < 4; j++)
+            {
+                list.Add(new NormalDiceChip(i));
+            }
+        }        
 
         list.Add(new PirateToken(new FreightPodsBeatCondition(4)));
         list.Add(new PirateToken(new FreightPodsBeatCondition(3)));

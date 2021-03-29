@@ -91,3 +91,20 @@ public class CircleChipGroup : ChipGroup
         return "chip_group_circle";
     }
 }
+
+public class FilledCircleChipGroup : ChipGroup
+{
+    public FilledCircleChipGroup(List<DiceChip> diceChips) : base(diceChips)
+    {
+    }
+
+    public override string GetID()
+    {
+        return "chip_group_circle";
+    }
+
+    public override string GetTextureName()
+    {
+        return "chip_group_circle";
+    }
+}

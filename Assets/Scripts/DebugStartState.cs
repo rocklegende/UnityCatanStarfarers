@@ -247,3 +247,35 @@ public class BuildASpacePortDebugState : DebugStartState
         CommonMapSetup();
     }
 }
+
+public class PlayerHasRichHelpPoorBonusDebugState : DebugStartState
+{
+    public PlayerHasRichHelpPoorBonusDebugState(GameController controller) : base(controller)
+    {
+    }
+    public override void Setup()
+    {
+        controller.state = new StartState(controller);
+
+        controller.players = new Player[] { new Player(Color.green, new SFElement()), new Player(Color.yellow, new SFElement()), new Player(Color.blue, new SFElement()), new Player(Color.red, new SFElement()), };
+        controller.mainPlayer = controller.players[0];
+        controller.HUD.GetComponent<HUDScript>().SetPlayers(controller.players);
+        controller.HUD.GetComponent<HUDScript>().isReceivingNotifications = true;
+
+        foreach (var player in controller.players)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                foreach (var card in new Helper().GetAllResourceCardTypes())
+                {
+                    player.AddCard(card);
+                }
+            }
+        }
+        
+
+        controller.mainPlayer.BuildTokenWithoutCost(new ColonyBaseToken().GetType(), new SpacePoint(new HexCoordinates(5, 5), 1));
+        controller.mainPlayer.AddFriendShipCard(new RahnaRichHelpPoorBonus());
+        CommonMapSetup();
+    }
+}

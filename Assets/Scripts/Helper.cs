@@ -34,6 +34,14 @@ public class Helper
         };
     }
 
+    public void DestroyAllChildGameObjects(GameObject gobj)
+    {
+        for (int i = 0; i < gobj.transform.childCount; i++)
+        {
+            GameObject.Destroy(gobj.transform.GetChild(i));
+        }
+    }
+
     public List<T> CreateCopyOfList<T>(List<T> listToCopy)
     {
         var newList = new List<T>();

@@ -1,16 +1,28 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 public abstract class DiceChip
 {
-    int[] values;
+    List<int> values;
     public bool isFaceUp = false; //faceup = we can see the dice value, facedown = we see the group symbol
 
-    public DiceChip(int[] values)
+    public DiceChip(List<int> values)
     {
         this.values = values;
         this.isFaceUp = false;
+    }
+
+    public List<int> GetValues()
+    {
+        return values;
+    }
+
+    public string GetValuesAsString()
+    {
+        return string.Join("/", values);
     }
 
     public abstract string GetTextureName();

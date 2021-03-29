@@ -40,8 +40,8 @@ public abstract class ResourceTile : Tile_
     }
 
     public void AssignNewDiceChipFromGroup() {
-        //TODO: the following is the correct code -> var chip = chipGroup.RetrieveChip(); 
-        var chip = new DiceChip2_11();
+        //TODO: the following is the correct code -> var chip = chipGroup.RetrieveChip();
+        var chip = NormalChipFactory.Create3_12Chip();
         SetDiceChip(chip);
     }
 

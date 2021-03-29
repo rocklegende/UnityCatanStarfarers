@@ -80,6 +80,34 @@ public abstract class TileGroup
 
 }
 
+public class EmptyTileGroup : TileGroup
+{
+    public EmptyTileGroup() : base(new Tile_[] { new EmptyTile(), new EmptyTile(), new EmptyTile() })
+    {
+        settlePoints = new List<SpacePoint>();
+    }
+
+    public override void OnTokenEnteredArea(Token token)
+    {
+        //
+    }
+
+    public override void OnTokenSettled(Token token)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override bool RequestSettleOfToken(Token token, SpacePoint futurePositionOfToken = null)
+    {
+        return false;
+    }
+
+    public override void SetCenter(SpacePoint center)
+    {
+        this.center = center;
+    }
+}
+
 public class ResourceTileGroup : TileGroup
 {
 

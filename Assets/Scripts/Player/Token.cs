@@ -21,7 +21,7 @@ public abstract class Token
     protected Color color;
     public Token attachedToken = null;
     protected bool isTokenAttachable;
-    int stepsLeft = 20; //TODO: should be 0 in real scenario
+    public int stepsLeft = 20; //TODO: should be 0 in real scenario
     public Player owner;
 
     public Token(string id, bool isTokenAttachable, Cost cost)

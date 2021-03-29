@@ -20,7 +20,8 @@ public class GameController : SFController
     // Start is called before the first frame update
     void Start()
     {
-        DebugStartState debugState = new ShipBuildingOneColonyShipAndOneSpacePort(this);
+        DebugStartState debugState = new PlayerHasRichHelpPoorBonusDebugState(this);
+        //DebugStartState debugState = new ShipBuildingOneColonyShipAndOneSpacePort(this);
         //DebugStartState debugState = new BeatPirateTokenDebugState(this);
         //DebugStartState debugState = new BuildASpacePortDebugState(this);
         debugState.Setup();
@@ -40,6 +41,7 @@ public class GameController : SFController
             currentPlayerAtTurn = 0;
         }
         PayoutLowPointsBonus(players[currentPlayerAtTurn]);
+        players[currentPlayerAtTurn].OnTurnReceived();
     }
 
     public void PayoutLowPointsBonus(Player player)
@@ -70,7 +72,14 @@ public class GameController : SFController
         foreach (var player in players)
         {
             var payout = payoutHandler.GetPayoutForPlayer(player, dt);
-            AddPayoutToPlayer(payout, player);
+
+            if (payout.Count() == 0 && player.receivesBonusOnNoPayout)
+            {
+                //TODO: actionsThatNeedToBeFullfilledBeforeGameContinues.Add(new TakeResourcesAction(1, player));
+            } else
+            {
+                AddPayoutToPlayer(payout, player);
+            }
         }
     }
 

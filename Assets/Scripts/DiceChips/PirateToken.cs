@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 
 
@@ -61,7 +62,7 @@ public class PirateToken : DiceChip
     bool isBeaten = false;
     PirateTokenBeatCondition condition;
 
-    public PirateToken(PirateTokenBeatCondition condition) : base(new int[] { 0, 0 })
+    public PirateToken(PirateTokenBeatCondition condition) : base(new List<int>() {})
     {
         this.condition = condition;
     }
@@ -71,8 +72,6 @@ public class PirateToken : DiceChip
         if (condition.SpaceShipFullfillsCondition(spaceShip))
         {
             isBeaten = true;
-
-            //app.Notify("Beaten", this)
         }
     }
 

@@ -36,18 +36,32 @@ public class Map
     public bool TokenCanSettle(Token token, SpacePoint futurePositionOfToken = null)
     {
 
-        foreach (var group in tileGroups)
+        SpacePoint pointToSearch;
+        if (futurePositionOfToken != null)
         {
-            try
-            {
-                group.RequestSettleOfToken(token, futurePositionOfToken);
-                return true;
-            } catch
-            {
-                //
-            }
+            pointToSearch = futurePositionOfToken;
+        } else
+        {
+            pointToSearch = token.position;
         }
-        return false;
+
+
+        var tileGroup = FindTileGroupAtPoint(pointToSearch);
+        if (tileGroup == null)
+        {
+            return false;
+        }
+
+        try
+        {
+            var success = tileGroup.RequestSettleOfToken(token, futurePositionOfToken);
+            return success;
+        }
+        catch
+        {
+            return false;
+        }
+
     }
 
     bool TilesAreBorders(Tile_ tile1, Tile_ tile2)

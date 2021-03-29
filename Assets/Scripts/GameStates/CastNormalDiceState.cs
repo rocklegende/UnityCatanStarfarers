@@ -13,8 +13,10 @@ public class On7RollStrategy
     public void Execute(Player[] players, int currentPlayerIndex, AvailablePiles availablePiles)
     {
         foreach (var player in players) {
-            if (player.hand.Count() > 7)
+
+            if (player.hand.Count() > player.GetDiscardLimit())
             {
+                //player needs to dump cards
                 //TODO: hudOfThatPlayer.RequestThrowingAwayResources
             }
         }

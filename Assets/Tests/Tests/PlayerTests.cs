@@ -269,6 +269,48 @@ namespace Tests
         }
 
         [Test]
+        public void TestFameMedalBuyCanOnlyBeDoneOnce()
+        {
+            var player = GetGenericPlayer();
+            player.hand.AddCard(new GoodsCard());
+            player.hand.AddCard(new GoodsCard());
+            player.AllowFameMedalBuy();
+            player.BuyFameMedal();
+            try
+            {
+                player.BuyFameMedal();
+                Assert.True(false);
+            } catch (System.ArgumentException e)
+            {
+                Assert.True(true);
+            }
+
+            
+        }
+
+        [Test]
+        public void TestFameMedalBuyResetsWhenTurnReceived()
+        {
+            var player = GetGenericPlayer();
+            player.hand.AddCard(new GoodsCard());
+            player.hand.AddCard(new GoodsCard());
+            player.AllowFameMedalBuy();
+            player.BuyFameMedal();
+            player.OnTurnReceived();
+            try
+            {
+                player.BuyFameMedal();
+                Assert.True(true); //should be possible again
+            }
+            catch (System.ArgumentException e)
+            {
+                Assert.True(false);
+            }
+
+
+        }
+
+        [Test]
         public void TokenStorageTest1()
         {
             var storage = new TokenStorage();

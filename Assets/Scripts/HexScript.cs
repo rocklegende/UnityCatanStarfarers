@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class TradeStationRenderer : SFElement
 {
@@ -67,6 +69,10 @@ public class HexScript : MonoBehaviour
     public (int, int) mapArrayIndexes;
     public HexCoordinates hexCoords;
     public GameObject dockStationPrefab;
+    public GameObject numberText;
+
+    int smallestFontSize;
+    int largestFontSize;
 
     // Start is called before the first frame update
     void Start()
@@ -90,16 +96,54 @@ public class HexScript : MonoBehaviour
             SpriteRenderer sr = this.gameObject.GetComponentInChildren<SpriteRenderer>();
             if (rt.diceChip != null)
             {
-                string textureName = rt.diceChip.isFaceUp ? rt.diceChip.GetTextureName() : rt.chipGroup.GetTextureName();
+                var textMesh = GetComponentInChildren<TextMeshPro>();
+                if (!rt.diceChip.isFaceUp || rt.diceChip is PirateToken)
+                {
+                    textMesh.text = "";
+                    string textureName = rt.diceChip.isFaceUp ? rt.diceChip.GetTextureName() : rt.chipGroup.GetTextureName();
 
-                Texture2D texture = Resources.Load(textureName) as Texture2D;
-                Sprite sprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.0f, 0.0f));
-                sr.sprite = sprite;
+                    Texture2D texture = Resources.Load(textureName) as Texture2D;
+                    Sprite sprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.0f, 0.0f));
+                    sr.sprite = sprite;
+                } else
+                {
+                    sr.sprite = null;
+                    textMesh.text = rt.diceChip.GetValuesAsString();
+                    textMesh.fontSize = (float)GetFontSizeFromDiceValues(rt.diceChip.GetValues());
+                }
+                
             }
         }
 
         MeshRenderer mr = this.gameObject.GetComponentInChildren<MeshRenderer>();
         mr.material.color = (Color)tile.GetColor();
+    }
+
+    int GetFontSizeFromDiceValues(List<int> diceValues)
+    {
+
+        if (diceValues.Contains(2) || diceValues.Contains(12))
+        {
+            return 6;
+        }
+        if (diceValues.Contains(3) || diceValues.Contains(11))
+        {
+            return 7;
+        }
+        if (diceValues.Contains(4) || diceValues.Contains(10))
+        {
+            return 8;
+        }
+        if (diceValues.Contains(5) || diceValues.Contains(9))
+        {
+            return 9;
+        }
+        if (diceValues.Contains(6) || diceValues.Contains(8))
+        {
+            return 10;
+        }
+        return 10;
+
     }
     
 

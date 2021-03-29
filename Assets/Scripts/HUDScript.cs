@@ -55,7 +55,12 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     public GameObject fightPanel;
     public GameObject tradePanel;
 
+    public GameObject DoFameMedalBuyButton;
+    public GameObject RichHelpPoorBonusButton;
+
     public GameObject MapObject;
+
+    public GameObject playerSelectionView;
 
 
 
@@ -68,11 +73,38 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         CloseResourcePicker();
         tradePanel.SetActive(false);
         CreateBuildDropDowns();
+
+        
     }
+
+    
 
     // Update is called once per frame
     void Update()
     {
+    }
+
+    public void OpenPlayerSelection(Player[] players, System.Action<List<Player>> selectedCallback)
+    {
+        playerSelectionView.SetActive(true);
+        playerSelectionView.GetComponent<PlayerSelectionView>().SetSelectablePlayers(players);
+        playerSelectionView.GetComponent<PlayerSelectionView>().selectCallback = selectedCallback;
+    }
+
+    public void OnRichHelpPoorButtonPressed()
+    {
+        var action = new TakeResourceFromOpponent(this, player, RichHelpPoorPlayed, 1, 2);
+         action.StartAction();
+    }
+
+    void RichHelpPoorPlayed()
+    {
+        player.RichHelpPoorMoveMade();
+    }
+
+    public void OnFameMedalTradeButtonClicked()
+    {
+        player.BuyFameMedal();
     }
 
     public void OpenNormalDiceThrowRenderer(System.Action<DiceThrow> callback)
@@ -137,6 +169,9 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
      */
     public void SetPlayers (Player[] players)
     {
+
+        
+
         this.players = players;
         SetMainPlayer(players[0]);
         for (int i = 1; i < players.Length; i++)
@@ -145,6 +180,8 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
             smallPlayerView.GetComponent<SmallPlayerInfoView>().SetPlayer(players[i]);
             smallPlayerView.transform.parent = otherPlayerContainer.transform;
         }
+
+        
 
     }
 
@@ -169,7 +206,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         Draw();
     }
 
-    private void Draw()
+    public void Draw()
     {
         DrawResourceStacks();
         DrawUpgrades();
@@ -177,6 +214,27 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         DrawFameMedalPieces();
         DrawTokenLeft();
         DrawDropDowns();
+        DrawExtraActionButtons();
+    }
+
+    void DrawExtraActionButtons()
+    {
+        if (player.CanBuyFameMedal())
+        {
+            DoFameMedalBuyButton.SetActive(true);
+        } else
+        {
+            DoFameMedalBuyButton.SetActive(false);
+        }
+
+        if (player.hasRichHelpPoorBonus && !player.richHelpPoorBonusMadeThisRound)
+        {
+            RichHelpPoorBonusButton.SetActive(true);
+        }
+        else
+        {
+            RichHelpPoorBonusButton.SetActive(false);
+        }
     }
 
     void DrawFameMedalPieces()
@@ -372,6 +430,6 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     {
         CloseFriendshipCardSelection();
         station.RemoveCard(card);
-        card.ActivateEffect(player);
+        player.AddFriendShipCard(card);
     }
 }

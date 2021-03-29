@@ -12,7 +12,7 @@ namespace Tests
         [Test]
         public void RetrieveChipPositive()
         {
-            CircleChipGroup circleChipGroup = new CircleChipGroup(new List<DiceChip>() { new DiceChip3(), new DiceChip3() });
+            CircleChipGroup circleChipGroup = new CircleChipGroup(new List<DiceChip>() { NormalChipFactory.Create3Chip(), NormalChipFactory.Create3Chip() });
 
             var chip = circleChipGroup.RetrieveChip();
             Assert.True(circleChipGroup.GetChips().Count == 1);

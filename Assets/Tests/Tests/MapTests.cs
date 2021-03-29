@@ -502,13 +502,14 @@ namespace Tests
                 new ShipToken().GetType()
             );
 
+            flyableColony.stepsLeft = 4;
             var pointShouldNotBeReachable = new SpacePoint(new HexCoordinates(7, 4), 0);
             Assert.AreEqual(4, mapModel.distanceBetweenPoints(flyableColony.position, pointShouldNotBeReachable));
 
             var filter = new IsExactlyStepsAwayAndCannotSettleOnPointCounter(flyableColony, 4);
             //point should not fulfill the filter because the tilegroup is not revealed
             var tileGroup = (ResourceTileGroup)mapModel.FindTileGroupAtPoint(pointShouldNotBeReachable);
-            //Assert.True(!tileGroup.IsRevealed());
+            Assert.True(!tileGroup.IsRevealed());
             Assert.True(!filter.pointFulfillsFilter(pointShouldNotBeReachable, mapModel, new Player[] { player }));
 
         }

@@ -6,10 +6,10 @@ using UnityEngine;
 public class TokenStorage {
 
     List<Token> availableTokens;
-    int numSpaceShips = 4;
+    int numSpaceShips = 3;
     int numSpacePorts = 3;
-    int numTrade = 4;
-    int numColony = 6;
+    int numTrade = 7;
+    int numColony = 9;
 
     public TokenStorage()
     {
@@ -73,9 +73,16 @@ public class Player
     public Color color;
     public List<Token> tokens; // tokens on gameboard
     public TokenStorage tokenStorage;
+    public string name = "DefaultPlayerName";
+
+    public bool receivesBonusOnNoPayout = false;
+    public bool fameMedalBuyPossible = false;
+    bool fameMedalBuyMadeThisRound = false;
     int fameMedalPieces;
     public SpaceShip ship;
     public Hand hand;
+    public bool hasRichHelpPoorBonus = false;
+    public bool richHelpPoorBonusMadeThisRound = false;
     TradingRules rules;
     List<AbstractFriendshipCard> friendShipCards;
     int FriendShipChips;
@@ -88,6 +95,7 @@ public class Player
     int pirateTokenBeatenAwards = 0;
     int twoCardsBonusThreshold = 7;
     int oneCardBonusThreshold = 9;
+    int discardLimit = 7;
 
     public Player(Color color, SFElement notifier)
     {
@@ -103,9 +111,77 @@ public class Player
         this.notifier = notifier;
     }
 
+    public void ActivateRichHelpPoorBonus()
+    {
+        hasRichHelpPoorBonus = true;
+        DataChanged();
+    }
+
+    public void RichHelpPoorMoveMade()
+    {
+        richHelpPoorBonusMadeThisRound = true;
+        DataChanged();
+    }
+
+    public void PayToOtherPlayer(Player other, Hand hand)
+    {
+        SubtractHand(hand);
+        other.AddHand(hand);
+    }
+
     void DataChanged()
     {
         notifier.app.Notify(SFNotification.player_data_changed, notifier, new object[] { this });
+    }
+
+    public void OnTurnReceived()
+    {
+        ResetOneTimeActions();
+        DataChanged();
+    }
+
+    void ResetOneTimeActions()
+    {
+        fameMedalBuyMadeThisRound = false;
+        richHelpPoorBonusMadeThisRound = false;
+    }
+
+    public void AllowFameMedalBuy()
+    {
+        fameMedalBuyPossible = true;
+        DataChanged();
+    }
+
+    public bool CanBuyFameMedal()
+    {
+        return !fameMedalBuyMadeThisRound && fameMedalBuyPossible && hand.NumberCardsOfType<GoodsCard>() > 0;
+    }
+
+    public void BuyFameMedal()
+    {
+        if (!CanBuyFameMedal()) {
+            throw new ArgumentException("Fame medal buy is not allowed!");
+        } else
+        {
+            fameMedalBuyMadeThisRound = true;
+            hand.PayCost(new Cost(new Resource[] { new GoodsResource() }));
+            AddFameMedal();
+        }
+    }
+
+    /// <summary>
+    /// Get the maximum amount of cards that player can have before he needs to discard if a 7 is rolled.
+    /// </summary>
+    /// <returns></returns>
+    public int GetDiscardLimit()
+    {
+        return discardLimit;
+    }
+
+    public void SetDiscardLimit(int limit)
+    {
+        discardLimit = limit;
+        DataChanged();
     }
 
     public void AddRangeToFlyableTokens(int range)
@@ -348,6 +424,7 @@ public class Player
     public void AddFriendShipCard(AbstractFriendshipCard card)
     {
         friendShipCards.Add(card);
+        card.ActivateEffect(this);
         DataChanged();
     }
 

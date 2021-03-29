@@ -23,6 +23,23 @@ public class Hand : Subject
         
     }
 
+    public Hand GetRandomHand(int numCards)
+    {
+        if (numCards > Count())
+        {
+            throw new ArgumentException("Not enough cards left for that operation");
+        }
+
+        var returnHand = new Hand();
+        cards.Shuffle();
+        for (int i = 0; i < numCards; i++)
+        {
+            var card = cards[i];
+            returnHand.AddCard(card);
+        }
+        return returnHand;
+    }
+
     public void SubtractHand(Hand h)
     {
         foreach(var card in h.cards)
