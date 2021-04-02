@@ -104,6 +104,38 @@ public class ShipBuildingOneColonyShipAndOneSpacePort : DebugStartState
     }
 }
 
+public class EncounterCardTestingState : DebugStartState
+{
+    public EncounterCardTestingState(GameController controller) : base(controller)
+    {
+    }
+
+    public override void Setup()
+    {
+        controller.state = new StartState(controller);
+
+        CommonSetup();
+        SetUpgradesForMainPlayer(3);
+
+        controller.mainPlayer.BuildToken2(
+            new ColonyBaseToken().GetType(),
+            new SpacePoint(new HexCoordinates(5, 5), 1),
+            new SpacePortToken().GetType()
+        );
+
+        controller.mainPlayer.BuildToken2(
+            new ColonyBaseToken().GetType(),
+            new SpacePoint(new HexCoordinates(5, 5), 0),
+            new ShipToken().GetType()
+        );
+
+        CommonMapSetup();
+
+        var encounterFactory = new EncounterCardFactory(controller.HUD.GetComponent<HUDScript>());
+        controller.encounterCardHandler.PlayEncounterCard(encounterFactory.CreateEncounterCard2());
+    }
+}
+
 public class TwoTradeShipAndOneSpacePort : DebugStartState
 {
     public TwoTradeShipAndOneSpacePort(GameController controller) : base(controller)

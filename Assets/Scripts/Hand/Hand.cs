@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Hand : Subject
 {
@@ -11,6 +12,13 @@ public class Hand : Subject
     public void AddCard(Card card)
     {
         cards.Add(card);
+        Notify();
+    }
+
+    public void RemoveCard(Card card)
+    {
+        cards.Remove(card);
+        Notify();
     }
 
     public int Count()
@@ -21,6 +29,12 @@ public class Hand : Subject
     public Hand()
     {
         
+    }
+
+    public string GetStringRepresentation()
+    {
+        var converted = cards.Select(card => card.GetType().Name).ToArray();
+        return String.Join(", ", converted);
     }
 
     public Hand GetRandomHand(int numCards)

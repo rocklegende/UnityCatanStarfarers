@@ -11,7 +11,12 @@ public interface BuildableToken
     bool CanBeBuildByPlayer(Player player, Map map, Player[] players);
 }
 
-public abstract class Token 
+public abstract class SFModel
+{
+
+}
+
+public abstract class Token : SFModel
 {
     public SpacePoint position = null;
     public Vector3? unityPosition = null;

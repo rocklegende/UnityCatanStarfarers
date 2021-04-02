@@ -20,7 +20,7 @@ public class PlayerSelectionBox : MonoBehaviour
     public System.Action<PlayerSelectionBox> itemSelectedCallback;
     private Player player;
 
-    Color disabledColor = ColorCreator.Create(200, 200, 200, 128);
+    Color unselectedColor = ColorCreator.Create(200, 200, 200, 128);
     Color selectedColor = ColorCreator.Create(256, 256, 256, 256);
 
     public void SetPlayer(Player player)
@@ -53,7 +53,7 @@ public class PlayerSelectionBox : MonoBehaviour
             image.color = selectedColor;
         } else
         {
-            image.color = disabledColor;
+            image.color = unselectedColor;
         }
     }
 

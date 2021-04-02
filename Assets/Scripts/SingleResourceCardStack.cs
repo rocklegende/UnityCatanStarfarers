@@ -12,10 +12,18 @@ public class SingleResourceCardStack : MonoBehaviour
     public Image cardImage;
     public Text label;
     int limit = 1000;
-    public Hand hand = new Hand();
+    public System.Action<ResourceCard> AddCallback;
+    public System.Action<ResourceCard> RemoveCallback;
 
     public SingleResourceCardStack()
     {
+    }
+
+    public void Initiliaze(ResourceCard cardType)
+    {
+        SetCardType(cardType);
+        AddButton.onClick.AddListener(() => Add());
+        RemoveButton.onClick.AddListener(() => Remove());
     }
 
     public void SetLimit(int limit)
@@ -39,33 +47,29 @@ public class SingleResourceCardStack : MonoBehaviour
         cardImage.sprite = new Helper().CreateSpriteFromImageName(imageName);
     }
 
-    public void Reset()
-    {
-        hand.RemoveAllCards();
-        Redraw();
-    }
-
     public void Add()
     {
-        if (this.cardType != null && hand.Count() + 1 <= limit)
-        {
-            hand.AddCard(this.cardType);
-        }
-        Redraw();
+        AddCallback(this.cardType);
+        //if (this.cardType != null && hand.Count() + 1 <= limit)
+        //{
+        //    hand.AddCard(this.cardType);
+        //}
+        //Redraw();
     }
 
     public void Remove()
     {
-        if (hand.Count() > 0)
-        {
-            hand.RemoveCardOfType(this.cardType.GetType());
-        }
-        Redraw();
+        RemoveCallback(this.cardType);
+        //if (hand.Count() > 0)
+        //{
+        //    hand.RemoveCardOfType(this.cardType.GetType());
+        //}
+        //Redraw();
     }
 
-    public void Redraw()
+    public void SetText(string text)
     {
-        label.text = hand.Count().ToString();
+        label.text = text;
     }
 
 

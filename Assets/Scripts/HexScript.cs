@@ -69,7 +69,6 @@ public class HexScript : MonoBehaviour
     public (int, int) mapArrayIndexes;
     public HexCoordinates hexCoords;
     public GameObject dockStationPrefab;
-    public GameObject numberText;
 
     int smallestFontSize;
     int largestFontSize;
@@ -79,6 +78,7 @@ public class HexScript : MonoBehaviour
     {
         SpriteRenderer sr = this.gameObject.GetComponentInChildren<SpriteRenderer>();
         sr.sprite = null;
+        //numberContainer.SetActive(false);
         Draw();
     }
 
@@ -97,20 +97,27 @@ public class HexScript : MonoBehaviour
             if (rt.diceChip != null)
             {
                 var textMesh = GetComponentInChildren<TextMeshPro>();
-                if (!rt.diceChip.isFaceUp || rt.diceChip is PirateToken)
+                if (textMesh.IsNotNull())
                 {
-                    textMesh.text = "";
-                    string textureName = rt.diceChip.isFaceUp ? rt.diceChip.GetTextureName() : rt.chipGroup.GetTextureName();
+                    if (!rt.diceChip.isFaceUp || rt.diceChip is PirateToken)
+                    {
+                        //numberContainer.SetActive(false);
+                        textMesh.text = "";
+                        string textureName = rt.diceChip.isFaceUp ? rt.diceChip.GetTextureName() : rt.chipGroup.GetTextureName();
 
-                    Texture2D texture = Resources.Load(textureName) as Texture2D;
-                    Sprite sprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.0f, 0.0f));
-                    sr.sprite = sprite;
-                } else
-                {
-                    sr.sprite = null;
-                    textMesh.text = rt.diceChip.GetValuesAsString();
-                    textMesh.fontSize = (float)GetFontSizeFromDiceValues(rt.diceChip.GetValues());
+                        Texture2D texture = Resources.Load(textureName) as Texture2D;
+                        Sprite sprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.0f, 0.0f));
+                        sr.sprite = sprite;
+                    }
+                    else
+                    {
+                        //numberContainer.SetActive(true);
+                        sr.sprite = null;
+                        textMesh.text = rt.diceChip.GetValuesAsString();
+                        textMesh.fontSize = (float)GetFontSizeFromDiceValues(rt.diceChip.GetValues());
+                    }
                 }
+                
                 
             }
         }

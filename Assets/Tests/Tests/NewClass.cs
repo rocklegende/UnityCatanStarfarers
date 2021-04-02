@@ -7,26 +7,25 @@ using System.Linq;
 
 namespace Tests
 {
-    public class SevenRollStrategy
+    public class EncounterCardTests
     {
         [Test]
-        public void CheckNextPlayers1()
+        public void EncounterCard1Test()
         {
-            var strat = new On7RollStrategy();
-            var order = strat.NextPlayersToActClockwise(2, 4);
-            var expectedOrder = new List<int>() { 2, 3, 0, 1 };
+            var hudScript = new HUDScript();
+            var factory = new EncounterCardFactory(hudScript);
+            var encounterCard = factory.CreateEncounterCard1();
 
-            Assert.True(order.SequenceEqual(expectedOrder));
-        }
+            //encounterCard.start();
+            //encounterCard.traverser.start();
 
-        [Test]
-        public void CheckNextPlayers2()
-        {
-            var strat = new On7RollStrategy();
-            var order = strat.NextPlayersToActClockwise(0, 4); 
-            var expectedOrder = new List<int>() { 0, 1, 2, 3 };
+            //encounterCard.traverser.InputReceived(2);
+            //Assert.True(encounterCard.traverser.currentNode = )
 
-            Assert.True(order.SequenceEqual(expectedOrder));
+            //rootNode.action.ResultFound(2);
+
+            //decisionTreeTraverser: Klasse die decisionTree abläuft
+            //wenn decisionTreeTraverser es geschafft hat ist das Encounter vorbei
         }
 
     }

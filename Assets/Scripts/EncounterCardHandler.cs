@@ -16,6 +16,10 @@ public class EncounterCardHandler : MonoBehaviour
         decisionDialog.SetActive(false);
         var hudScript = HUD.GetComponent<HUDScript>();
 
+        var noResourcesGiven = new DecisionTreeNode(null, 0, new LoseOneFameMedalAction(hudScript))
+        {
+            text = "You gave me no resources, thank you, you win one fame medal"
+        };
         var oneResourceGiven = new DecisionTreeNode(null, 1, new LoseOneFameMedalAction(hudScript))
         {
             text = "You lost one fame medal you cheap fuck"
@@ -24,6 +28,10 @@ public class EncounterCardHandler : MonoBehaviour
         {
             text = "You gave me two resources, thank you, you win one fame medal"
         };
+        var threeResourcesGiven = new DecisionTreeNode(null, 3, new WinOneFameMedalAction(hudScript))
+        {
+            text = "You gave me three resources, thank you, you win one fame medal"
+        };
 
 
         var dontGiveResourcesOption = new DecisionTreeNode(null, false, null)
@@ -31,15 +39,20 @@ public class EncounterCardHandler : MonoBehaviour
             text = "OK, you can fly away"
         };
 
-        var giveResourcesAction = new GiveupResourcesEncounterAction(hudScript);
+        var giveResourcesAction = new GiveupResourcesEncounterAction(hudScript, 3);
 
-        var yesGiveResourcesOption = new DecisionTreeNode(new DecisionTreeNode[] { oneResourceGiven, twoResourcesGiven }, true, giveResourcesAction)
+        var yesGiveResourcesOption = new DecisionTreeNode(new DecisionTreeNode[] {
+            noResourcesGiven,
+            oneResourceGiven,
+            twoResourcesGiven,
+            threeResourcesGiven
+        }, true, giveResourcesAction)
         {
-            text = "OK, give me some resources"
+            text = "OK, give me up to three resources"
         };
 
         //var action = new YesOrNoEncounterAction(hudScript);
-        var action = new FightEncounterAction(hudScript);
+        var action = new FightEncounterAction(hudScript, FightCategory.CANNON);
 
         var giveResourceCard = new DecisionTreeNode(new DecisionTreeNode[] { dontGiveResourcesOption, yesGiveResourcesOption }, null, action)
         {
@@ -69,7 +82,8 @@ public class EncounterCardHandler : MonoBehaviour
         PlayEncounterCard(card);
     }
 
-    void PlayEncounterCard(EncounterCard card)
+    //TODO: should not be public, just for testing purposes
+    public void PlayEncounterCard(EncounterCard card)
     {
         //var decisionDialogScript = decisionDialog.GetComponent<DecisionDialog>();
         decisionDialog.SetActive(true);

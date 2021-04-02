@@ -61,6 +61,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     public GameObject MapObject;
 
     public GameObject playerSelectionView;
+    public GameObject multiSelectionView;
 
 
 
@@ -70,13 +71,20 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         friendShipCardSelection.SetActive(false);
         friendShipCardSelection.GetComponent<FriendShipCardSelector>().delegate_ = this;
         shipDiceThrowRenderer.SetActive(false);
-        CloseResourcePicker();
         tradePanel.SetActive(false);
+        resourcePicker.SetActive(false);
         CreateBuildDropDowns();
+
+        //Debugging
+        //OpenResourcePicker(ResourcesPicked, 2, 2);
 
         
     }
 
+    void ResourcesPicked(Hand bla)
+    {
+        Debug.Log("you picked resources");
+    }
     
 
     // Update is called once per frame
@@ -107,6 +115,37 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         player.BuyFameMedal();
     }
 
+    //void OpenSelection(List<SFModel> selectableObjects, System.Action<List<SFModel>> selectedTokenCallback)
+    //{
+    //    multiSelectionView.SetActive(true);
+    //    var multiSelectScript = multiSelectionView.GetComponent<MultiSelection>();
+    //    multiSelectScript.SetSelectableObjects(selectableObjects.ToArray());
+    //    multiSelectScript.selectCallback = selectedTokenCallback;
+    //}
+
+    public void CloseSelection()
+    {
+        multiSelectionView.SetActive(false);
+    }
+
+    public void OpenUpgradeSelection(List<Token> selectableUpgrades, System.Action<List<SFModel>> selectedTokenCallback)
+        //TODO: i think the selection should only return which index was selected and not return the value itself, seems like a code smell
+    {
+        multiSelectionView.SetActive(true);
+        var multiSelectScript = multiSelectionView.GetComponent<MultiSelection>();
+        multiSelectScript.SetSelectableObjects(selectableUpgrades.ToArray());
+        multiSelectScript.selectCallback = selectedTokenCallback;
+    }
+
+    public void OpenPlayerSelection(List<Player> selectablePlayers, System.Action<List<SFModel>> selectedPlayerCallback)
+    //TODO: i think the selection should only return which index was selected and not return the value itself, seems like a code smell
+    {
+        multiSelectionView.SetActive(true);
+        var multiSelectScript = multiSelectionView.GetComponent<MultiSelection>();
+        multiSelectScript.SetSelectableObjects(selectablePlayers.ToArray());
+        multiSelectScript.selectCallback = selectedPlayerCallback;
+    }
+
     public void OpenNormalDiceThrowRenderer(System.Action<DiceThrow> callback)
     {
         normalDiceThrowRenderer.GetComponent<DiceThrowRenderer>().callback = callback;
@@ -118,9 +157,17 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         normalDiceThrowRenderer.SetActive(false);
     }
 
-    public void OpenResourcePicker(System.Action<Hand> callback)
+    public void OpenResourcePicker(System.Action<Hand> callback, int cardLimit = -1, int onlySelectableAtValue = -1, bool resetValues = true)
     {
         resourcePicker.SetActive(true);
+
+        if (resetValues)
+        {
+            resourcePicker.GetComponent<ResourcePicker>().Reset();
+        }
+
+        resourcePicker.GetComponent<ResourcePicker>().SetTotalMaximum(cardLimit);
+        resourcePicker.GetComponent<ResourcePicker>().SetOnlySelectableAtValue(onlySelectableAtValue);
         resourcePicker.GetComponent<ResourcePicker>().SetCallback(callback);
     }
 

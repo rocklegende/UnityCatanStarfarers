@@ -68,7 +68,7 @@ public class TokenStorage {
     }
 }
 
-public class Player
+public class Player : SFModel
 {
     public Color color;
     public List<Token> tokens; // tokens on gameboard
