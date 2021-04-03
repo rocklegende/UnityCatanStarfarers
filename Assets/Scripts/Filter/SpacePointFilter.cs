@@ -171,7 +171,7 @@ public class IsNeighborOfOwnSpacePortOrNotExactlyStepsAway : SpacePointFilter
         var neighbors = map.GetNeighborsOfSpacePoint(point);
         foreach (var neighbor in neighbors)
         {
-            var token = map.TokenAtPoint(neighbor, players);
+            var token = map.TokenAtPoint(neighbor);
             if (token != null)
             {
                 if (token.owner == player)

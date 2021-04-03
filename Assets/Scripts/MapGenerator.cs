@@ -3,8 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public abstract class MapGenerator
+{
+    public abstract Map GenerateRandomMap();
+}
 
-public class MapGenerator
+public class DefaultMapGenerator : MapGenerator
 {
     SpacePoint[] basePoints;
     SpacePoint[] randomSpawnPoints;
@@ -21,7 +25,7 @@ public class MapGenerator
 
     private int numEmptyTileGroups = 4;
 
-    public MapGenerator()
+    public DefaultMapGenerator()
     {
 
         CreateChipGroups();
@@ -141,7 +145,7 @@ public class MapGenerator
         return list;
     }
 
-    public Map GenerateRandomMap() {
+    public override Map GenerateRandomMap() {
         Tile_[,] raw = RawMap();
 
         map = new Map(raw);

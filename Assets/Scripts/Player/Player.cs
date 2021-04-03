@@ -289,7 +289,7 @@ public class Player : SFModel
         AddToken(tokenFromStorage);
     }
 
-    public Token BuildToken2(Type baseType, SpacePoint position, Type attachedType = null, bool isFree = false)
+    public Token BuildToken2(Map map, Type baseType, SpacePoint position, Type attachedType = null, bool isFree = false)
     {
         var baseTokenFromStorage = tokenStorage.RetrieveTokenOfType(baseType);
         if (!isFree)
@@ -307,13 +307,14 @@ public class Player : SFModel
         }
 
         baseTokenFromStorage.SetColor(color);
+        map.AddToken(baseTokenFromStorage);
         AddToken(baseTokenFromStorage);
         return baseTokenFromStorage;
     }
 
-    public Token BuildTokenWithoutCost(Type baseType, SpacePoint position, Type attachedType = null)
+    public Token BuildTokenWithoutCost(Map map, Type baseType, SpacePoint position, Type attachedType = null)
     {
-        return BuildToken2(baseType, position, attachedType, true);
+        return BuildToken2(map, baseType, position, attachedType, true);
     }
 
     public void BuildUpgrade(Token token, bool isForFree = false)

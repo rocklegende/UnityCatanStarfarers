@@ -63,8 +63,7 @@ public class MapScript : SFController
     GameObject[] DisplayPlayerTokens()
     {
         List<GameObject> tokens = new List<GameObject>();
-        var allTokens = new Helper().GetAllTokenOfPlayers(players);
-        foreach (Token token in allTokens)
+        foreach (Token token in map.tokensOnMap)
         {
             var go = DisplayToken(token);
             tokens.Add(go);
@@ -117,12 +116,6 @@ public class MapScript : SFController
         return null;
     }
 
-    public void RepresentationChanged()
-    {
-
-        //RedrawMap();
-    }
-
     public void RemoveAllSpacePointButtons()
     {
         foreach (GameObject go in currentlyShownSpacePointButtons)
@@ -135,6 +128,7 @@ public class MapScript : SFController
 
     private void RedrawMap()
     {
+        RedrawTokens();
         foreach (GameObject obj in this.hexagonGameObjects)
         {
             (int, int) indexes = obj.GetComponent<HexScript>().mapArrayIndexes;
@@ -332,17 +326,14 @@ public class MapScript : SFController
         {
             switch (p_event_path)
             {
-                case SFNotification.player_data_changed:
-                    RedrawTokens();
-                    break;
-
                 case SFNotification.map_data_changed:
                     RedrawMap();
                     break;
 
-                case SFNotification.tile_group_data_changed:
-                    RedrawMap();
-                    break;
+                //case SFNotification.tile_group_data_changed:
+                //    RedrawMap(); //TODO: notification that tile group data changed should also be inside the map model, so we
+                //    //only have to listen to the map_data_changed event
+                //    break;
             }
         }
 

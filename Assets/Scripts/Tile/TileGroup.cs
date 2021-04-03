@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class TileGroup
+public abstract class TileGroup : SFModel
 {
     protected Tile_[] tiles;
     protected List<SpacePoint> settlePoints;
@@ -28,11 +28,9 @@ public abstract class TileGroup
         return center;
     }
 
-    void DataChanged()
+    protected void DataChanged()
     {
-        var notifier = new SFElement();
-        //notifier.app.Notify(SFNotification.map_data_changed, notifier);
-        notifier.app.Notify(SFNotification.tile_group_data_changed, notifier);
+        Notify(null);
     }
 
     public void ShiftTiles(int numShifts)
@@ -124,12 +122,6 @@ public class ResourceTileGroup : TileGroup
         settlePoints = center.GetNeighbors();
     }
 
-    void Changed()
-    {
-        var notifier = new SFElement();
-        notifier.app.Notify(SFNotification.tile_group_data_changed, notifier);
-    }
-
     public override void OnTokenEnteredArea(Token token)
     {
         RevealDiceChips();
@@ -138,7 +130,7 @@ public class ResourceTileGroup : TileGroup
     public override void OnTokenSettled(Token token)
     {
         RemovePirateTokenAt(ResourceTilesWithPirateToken(), token.owner);
-        Changed(); // TODO: change should be notified from inside ResourceTile class, then delegated to the ResourceTileGroup
+        DataChanged(); // TODO: change should be notified from inside ResourceTile class, then delegated to the ResourceTileGroup
         
     }
 
@@ -256,7 +248,7 @@ public class ResourceTileGroup : TileGroup
             }
             
         }
-        Changed();
+        DataChanged();
     }
 
     

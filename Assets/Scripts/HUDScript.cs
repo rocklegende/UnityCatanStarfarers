@@ -73,6 +73,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         shipDiceThrowRenderer.SetActive(false);
         tradePanel.SetActive(false);
         resourcePicker.SetActive(false);
+        CloseSelection();
         CreateBuildDropDowns();
 
         //Debugging

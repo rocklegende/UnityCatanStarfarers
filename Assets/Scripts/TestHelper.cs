@@ -14,4 +14,9 @@ public class TestHelper
     {
         return new Player(Color.black, new SFElement());
     }
+
+    public static Map CreateMockMap()
+    {
+        return new Map(new Tile_[,] { });
+    }
 }

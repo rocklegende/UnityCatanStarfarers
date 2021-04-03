@@ -485,18 +485,20 @@ namespace Tests
         [Test]
         public void ColonyBlockadePreventionTest()
         {
-            MapGenerator generator = new MapGenerator();
+            MapGenerator generator = new DefaultMapGenerator();
             var mapModel = generator.GenerateRandomMap();
 
             var player = new TestHelper().CreateGenericPlayer();
 
             player.BuildTokenWithoutCost(
+                mapModel,
                 new ColonyBaseToken().GetType(),
                 new SpacePoint(new HexCoordinates(5, 5), 1),
                 new SpacePortToken().GetType()
             );
 
             var flyableColony = player.BuildTokenWithoutCost(
+                mapModel,
                 new ColonyBaseToken().GetType(),
                 new SpacePoint(new HexCoordinates(5, 5), 0),
                 new ShipToken().GetType()
@@ -513,20 +515,23 @@ namespace Tests
             Assert.True(!filter.pointFulfillsFilter(pointShouldNotBeReachable, mapModel, new Player[] { player }));
         }
 
-        Token BlockadeSetup(Player player, Player opponent)
+        Token BlockadeSetup(Map map, Player player, Player opponent)
         {
             player.BuildTokenWithoutCost(
+                map,
                 new ColonyBaseToken().GetType(),
                 new SpacePoint(5, 5, 1),
                 new SpacePortToken().GetType()
             );
             var flyableColony = player.BuildTokenWithoutCost(
+                map,
                 new ColonyBaseToken().GetType(),
                 new SpacePoint(5, 5, 0),
                 new ShipToken().GetType()
             );
 
             opponent.BuildTokenWithoutCost(
+                map,
                 new ColonyBaseToken().GetType(),
                 new SpacePoint(7, 4, 0),
                 new SpacePortToken().GetType()
@@ -538,13 +543,13 @@ namespace Tests
         [Test]
         public void SpacePortBlockadePreventionTest()
         {
-            MapGenerator generator = new MapGenerator();
+            MapGenerator generator = new DefaultMapGenerator();
             var mapModel = generator.GenerateRandomMap();
 
             var player = new TestHelper().CreateGenericPlayer();
             var opponent = new Player(Color.green, new SFElement());
 
-            var flyableColony = BlockadeSetup(player, opponent);
+            var flyableColony = BlockadeSetup(mapModel, player, opponent);
             flyableColony.stepsLeft = 3;
 
             var pointShouldNotBeReachable = new SpacePoint(7, 4, 1);
@@ -558,13 +563,13 @@ namespace Tests
         [Test]
         public void SpacePortBlockadePreventionTestOwnSpacePort()
         {
-            MapGenerator generator = new MapGenerator();
+            MapGenerator generator = new DefaultMapGenerator();
             var mapModel = generator.GenerateRandomMap();
 
             var player = new TestHelper().CreateGenericPlayer();
             var opponent = new Player(Color.green, new SFElement());
 
-            var flyableColony = BlockadeSetup(player, opponent);
+            var flyableColony = BlockadeSetup(mapModel, player, opponent);
             flyableColony.stepsLeft = 2;
 
             var pointShouldBeReachable = new SpacePoint(4, 5, 0);
@@ -573,6 +578,16 @@ namespace Tests
             var filter = new IsNeighborOfOwnSpacePortOrNotExactlyStepsAway(flyableColony, player, 2);
             //point should fulfill the filter because the point is next to own spaceport
             Assert.True(filter.pointFulfillsFilter(pointShouldBeReachable, mapModel, new Player[] { player, opponent }));
+        }
+
+        [Test]
+        public void GetTradeStationsTest()
+        {
+            MapGenerator generator = new DefaultMapGenerator();
+            Map map = generator.GenerateRandomMap();
+
+            var tradeStation = map.GetTradeStations();
+            Assert.AreEqual(4, tradeStation.Count);
         }
 
     }

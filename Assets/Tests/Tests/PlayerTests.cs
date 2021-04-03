@@ -234,11 +234,13 @@ namespace Tests
             player.AddCard(new CarbonCard());
             player.AddCard(new FoodCard());
 
+            var mockMap = new Map(new Tile_[,] { });
+
             var position = new SpacePoint(new HexCoordinates(0, 0), 1);
 
             try
             {
-                var token = player.BuildToken2(new ColonyBaseToken().GetType(), position);
+                var token = player.BuildToken2(mockMap, new ColonyBaseToken().GetType(), position);
                 Assert.True(position.Equals(token.position));
             }
             catch (NotEnoughResourcesException e)

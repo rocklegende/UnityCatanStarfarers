@@ -12,13 +12,13 @@ public class Hand : Subject
     public void AddCard(Card card)
     {
         cards.Add(card);
-        Notify();
+        Notify(null);
     }
 
     public void RemoveCard(Card card)
     {
         cards.Remove(card);
-        Notify();
+        Notify(null);
     }
 
     public int Count()
@@ -60,19 +60,19 @@ public class Hand : Subject
         {
             RemoveCardOfType(card.GetType());
         }
-        Notify();
+        Notify(null);
     }
 
     public void RemoveAllCards()
     {
         cards = new List<Card>();
-        Notify();
+        Notify(null);
     }
 
     public void AddHand(Hand hand)
     {
         cards.AddRange(hand.cards);
-        Notify();
+        Notify(null);
     }
 
     public int NumberCardsOfType<T>() where T : ResourceCard {
@@ -191,7 +191,7 @@ public class Hand : Subject
                 cards.Remove(bla);
             }
         }
-        Notify();
+        Notify(null);
     }
 
     public void RemoveCardOfType(Type type)
@@ -204,7 +204,7 @@ public class Hand : Subject
         {
             throw new ArgumentException("No card of this type left in the hand.");
         }
-        Notify();
+        Notify(null);
     }
 
     public Card FindCardOfType(System.Type type)

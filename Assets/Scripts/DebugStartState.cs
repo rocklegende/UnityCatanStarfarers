@@ -15,18 +15,18 @@ public abstract class DebugStartState
         return new Player[] { new Player(Color.white, controller), new Player(Color.red, controller) };
     }
 
-    public void BuildShipsForMainPlayer(Player player)
+    public void BuildShipsForMainPlayer(Map map, Player player)
     {
-        player.BuildTokenWithoutCost(new ColonyBaseToken().GetType(), new SpacePoint(new HexCoordinates(5, 5), 1), new SpacePortToken().GetType());
-        player.BuildTokenWithoutCost(new TradeBaseToken().GetType(), new SpacePoint(new HexCoordinates(5, 5), 0), new ShipToken().GetType());
-        player.BuildTokenWithoutCost(new ColonyBaseToken().GetType(), new SpacePoint(new HexCoordinates(5, 5).W(), 0), new ShipToken().GetType());
+        player.BuildTokenWithoutCost(map, new ColonyBaseToken().GetType(), new SpacePoint(new HexCoordinates(5, 5), 1), new SpacePortToken().GetType());
+        player.BuildTokenWithoutCost(map, new TradeBaseToken().GetType(), new SpacePoint(new HexCoordinates(5, 5), 0), new ShipToken().GetType());
+        player.BuildTokenWithoutCost(map, new ColonyBaseToken().GetType(), new SpacePoint(new HexCoordinates(5, 5).W(), 0), new ShipToken().GetType());
     }
 
-    public void BuildShipsForSecondPlayer(Player player)
+    public void BuildShipsForSecondPlayer(Map map, Player player)
     {
-        player.BuildTokenWithoutCost(new ColonyBaseToken().GetType(), new SpacePoint(new HexCoordinates(7, 4), 0), new SpacePortToken().GetType());
-        player.BuildTokenWithoutCost(new TradeBaseToken().GetType(), new SpacePoint(new HexCoordinates(7, 4), 1), new ShipToken().GetType());
-        player.BuildTokenWithoutCost(new ColonyBaseToken().GetType(), new SpacePoint(new HexCoordinates(7, 4).E(), 1), new ShipToken().GetType());
+        player.BuildTokenWithoutCost(map, new ColonyBaseToken().GetType(), new SpacePoint(new HexCoordinates(7, 4), 0), new SpacePortToken().GetType());
+        player.BuildTokenWithoutCost(map, new TradeBaseToken().GetType(), new SpacePoint(new HexCoordinates(7, 4), 1), new ShipToken().GetType());
+        player.BuildTokenWithoutCost(map, new ColonyBaseToken().GetType(), new SpacePoint(new HexCoordinates(7, 4).E(), 1), new ShipToken().GetType());
     }
 
     public void SetUpgradesForMainPlayer(int amount)
@@ -62,7 +62,7 @@ public abstract class DebugStartState
 
     public void CommonMapSetup()
     {
-        MapGenerator generator = new MapGenerator();
+        MapGenerator generator = new DefaultMapGenerator();
         controller.mapModel = generator.GenerateRandomMap();
 
         controller.Map.GetComponent<MapScript>().SetMap(controller.mapModel);
@@ -89,12 +89,14 @@ public class ShipBuildingOneColonyShipAndOneSpacePort : DebugStartState
         SetUpgradesForMainPlayer(5);
 
         controller.mainPlayer.BuildToken2(
+            controller.mapModel,
             new ColonyBaseToken().GetType(),
             new SpacePoint(new HexCoordinates(5, 5), 1),
             new SpacePortToken().GetType()
         );
 
         controller.mainPlayer.BuildToken2(
+            controller.mapModel,
             new ColonyBaseToken().GetType(),
             new SpacePoint(new HexCoordinates(5, 5), 0),
             new ShipToken().GetType()
@@ -117,22 +119,24 @@ public class EncounterCardTestingState : DebugStartState
         CommonSetup();
         SetUpgradesForMainPlayer(3);
 
+        CommonMapSetup();
+
         controller.mainPlayer.BuildToken2(
+            controller.mapModel,
             new ColonyBaseToken().GetType(),
             new SpacePoint(new HexCoordinates(5, 5), 1),
             new SpacePortToken().GetType()
         );
 
         controller.mainPlayer.BuildToken2(
+            controller.mapModel,
             new ColonyBaseToken().GetType(),
             new SpacePoint(new HexCoordinates(5, 5), 0),
             new ShipToken().GetType()
         );
 
-        CommonMapSetup();
-
-        var encounterFactory = new EncounterCardFactory(controller.HUD.GetComponent<HUDScript>());
-        controller.encounterCardHandler.PlayEncounterCard(encounterFactory.CreateEncounterCard2());
+        //var encounterFactory = new EncounterCardFactory(controller.HUD.GetComponent<HUDScript>());
+        //controller.encounterCardHandler.PlayEncounterCard(encounterFactory.CreateEncounterCard2());
     }
 }
 
@@ -211,8 +215,8 @@ public class TwoPlayersWithShips : DebugStartState
 
         CommonSetup();
 
-        BuildShipsForMainPlayer(controller.players[0]);
-        BuildShipsForSecondPlayer(controller.players[1]);       
+        BuildShipsForMainPlayer(controller.mapModel, controller.players[0]);
+        BuildShipsForSecondPlayer(controller.mapModel, controller.players[1]);       
 
         CommonMapSetup();
     }
@@ -228,7 +232,7 @@ public class TestShipDiceState : DebugStartState
         controller.state = new CastShipDiceState(controller);
 
         CommonSetup();
-        BuildShipsForMainPlayer(controller.players[0]);
+        BuildShipsForMainPlayer(controller.mapModel, controller.players[0]);
 
         controller.mainPlayer.AddFameMedal();
         CommonMapSetup();
@@ -245,7 +249,7 @@ public class TestNormalDiceDebugState : DebugStartState
         controller.state = new CastNormalDiceState(controller);
 
         CommonSetup();
-        BuildShipsForMainPlayer(controller.players[0]);
+        BuildShipsForMainPlayer(controller.mapModel, controller.players[0]);
 
         controller.mainPlayer.AddFameMedal();
         CommonMapSetup();
@@ -262,7 +266,7 @@ public class BeatPirateTokenDebugState : DebugStartState
         controller.state = new FlyShipsState(controller);
 
         CommonSetup();
-        BuildShipsForMainPlayer(controller.players[0]);
+        BuildShipsForMainPlayer(controller.mapModel, controller.players[0]);
         SetUpgradesForMainPlayer(5);        
         controller.mainPlayer.AddFameMedal();
         CommonMapSetup();
@@ -279,7 +283,7 @@ public class BuildASpacePortDebugState : DebugStartState
         controller.state = new StartState(controller);
 
         CommonSetup();
-        controller.mainPlayer.BuildTokenWithoutCost(new ColonyBaseToken().GetType(), new SpacePoint(new HexCoordinates(5, 5), 1));
+        controller.mainPlayer.BuildTokenWithoutCost(controller.mapModel, new ColonyBaseToken().GetType(), new SpacePoint(new HexCoordinates(5, 5), 1));
         CommonMapSetup();
     }
 }
@@ -310,7 +314,7 @@ public class PlayerHasRichHelpPoorBonusDebugState : DebugStartState
         }
         
 
-        controller.mainPlayer.BuildTokenWithoutCost(new ColonyBaseToken().GetType(), new SpacePoint(new HexCoordinates(5, 5), 1));
+        controller.mainPlayer.BuildTokenWithoutCost(controller.mapModel, new ColonyBaseToken().GetType(), new SpacePoint(new HexCoordinates(5, 5), 1));
         controller.mainPlayer.AddFriendShipCard(new RahnaRichHelpPoorBonus());
         CommonMapSetup();
     }

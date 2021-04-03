@@ -4,20 +4,28 @@ using System;
 using System.Linq;
 using UnityEngine;
 
-public class Map
+public class Map : Observer
 {
 
     private Tile_[,] mapRepresentation;
     private int offset;
-    private MapScript changeDelegate;
     public List<TileGroup> tileGroups;
+    public List<Token> tokensOnMap;
 
-    public Map(Tile_[,] mapRepresentation, MapScript changeDelegate = null, List<TileGroup> tileGroups = null)
+    public Map(Tile_[,] mapRepresentation, List<TileGroup> tileGroups = null)
     {
         this.mapRepresentation = mapRepresentation;
         this.offset = getOffset();
-        this.changeDelegate = changeDelegate;
         this.tileGroups = tileGroups;
+        this.tokensOnMap = new List<Token>();
+
+        if (this.tileGroups != null)
+        {
+            foreach (var group in this.tileGroups)
+            {
+                group.RegisterObserver(this);
+            }
+        }
     }
 
     void DataChanged()
@@ -25,6 +33,22 @@ public class Map
         var notifier = new SFElement();
         notifier.app.Notify(SFNotification.map_data_changed, notifier); 
     }
+
+    public void AddToken(Token token)
+    {
+        tokensOnMap.Add(token);
+        token.RegisterObserver(this);
+        DataChanged();
+    }
+
+    public void RemoveToken(Token token)
+    {
+        tokensOnMap.Remove(token);
+        token.RemoveObserver(this);
+        DataChanged();
+    }
+
+
 
     /// <summary>
     /// 
@@ -69,33 +93,22 @@ public class Map
         return tile1 is BorderTile && tile2 is BorderTile;
     }
 
-    bool GetPointsTokenCanFlyTo(Token token, int steps)
+    public Token TokenAtPoint(SpacePoint point)
     {
-        throw new NotImplementedException("This functionality is not implemented yet");
-        //TODO: return all the points this token can fly to
-    }
-
-    public Token TokenAtPoint(SpacePoint point, Player[] players)
-    {
-        //TODO: tokens should be stored inside the map model, so we dont have to reference the players all the time
-        var allTokens = new Helper().GetAllTokenOfPlayers(players);
-        return allTokens.Find(tok => tok.position.Equals(point));
+        return tokensOnMap.Find(tok => tok.position.Equals(point));
     }
 
     public List<TradeStation> GetTradeStations()
     {
-        var groups = tileGroups.Where(group => group is TradeStation);
-        var tradeStations = new List<TradeStation>();
-        foreach(var group in groups)
-        {
-            tradeStations.Add((TradeStation)group);
-        }
-        return tradeStations;
+        return tileGroups
+            .Where(group => group is TradeStation)
+            .Select(entry => (TradeStation)entry)
+            .ToList();
     }
 
     /// <summary>
     /// Returns all neighbor points of given SpacePoint.<br></br>
-    /// <b>NOTE:</b>Invalid points are excluded here (such as points inside a ResourceTileGroup or points that are out of bounds)
+    /// <b>NOTE: </b>Unreachable points are excluded
     /// </summary>
     /// <param name="point"></param>
     /// <returns></returns>
@@ -373,22 +386,25 @@ public class Map
         return tiles.ToArray();
     }
 
+    /// <summary>
+    /// Returns True if the coords are inside the bounds of the mapRepresentation array.
+    /// </summary>
+    /// <param name="coords"></param>
+    /// <returns></returns>
     public bool coordsAreInBounds(HexCoordinates coords)
     {
-        /*
-         * Returns True if the coords are inside the bounds of the mapRepresentation array
-         */
-
         var rIsValid = coords.r < height() && coords.r > -1;
         var qIsValid = coords.q + offset > -1 && coords.q + offset < width();
         return rIsValid && qIsValid;
     }
 
+    /// <summary>
+    /// Returns True if the coords are inside the bounds of the mapRepresentation array and is not border or null tile.
+    /// </summary>
+    /// <param name="coords"></param>
+    /// <returns></returns>
     public bool coordsAreValid(HexCoordinates coords)
     {
-        /*
-         * Returns True if the coords are inside the bounds of the mapRepresentation array and is not border or null tile/
-         */
         if (!coordsAreInBounds(coords))
         {
             return false;
@@ -424,19 +440,7 @@ public class Map
             mapRepresentation[indexes.Item1, indexes.Item2] = group.GetTiles()[i];
         }
 
-        RepresentationChanged();
-
-    }
-
-    public void RepresentationChanged()
-    {
-
-        //TODO: use notification system
-        if (changeDelegate != null)
-        {
-            this.changeDelegate.RepresentationChanged();
-        }
-        
+        group.RegisterObserver(this);
     }
 
     public HexCoordinates[] getAllHexCoordinates(bool onlyValidTiles = false)
@@ -585,6 +589,10 @@ public class Map
         return points;
     }
 
+    /// <summary>
+    /// Returns all theoretically possible SpacePoints (also including SpacePoints that are not reachable).
+    /// </summary>
+    /// <returns></returns>
     public SpacePoint[] getAllAvailableSpacePoints()
     {
         List<SpacePoint> positions = new List<SpacePoint>();
@@ -627,5 +635,23 @@ public class Map
         }
 
         return positions.ToArray();
+    }
+
+    public void SubjectDataChanged(object[] data)
+    {
+        if (data != null)
+        {
+            if (data.Length > 0)
+            {
+                if (data[0] is Token)
+                {
+                    OnTokenDataChanged((Token)data[0]);
+                }
+            }
+        } else
+        DataChanged();
+        //delegate changes up the chain, if something changes inside
+        //the tilegroup or tokens than just send a single message that something in the map data changed
+        
     }
 }

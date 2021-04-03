@@ -91,7 +91,7 @@ public class TileGroupRenderer : SFController
     {
         switch(p_event_path)
         {
-            case SFNotification.tile_group_data_changed:
+            case SFNotification.map_data_changed:
                 if (map != null)
                 {
                     if (map.tileGroups != null)

@@ -72,7 +72,7 @@ public class MultipleResourcesDrawPileStack : DrawPileStack
 }
 
 public interface Observer {
-    void SubjectDataChanged();
+    void SubjectDataChanged(object[] data);
 }
 
 public abstract class Subject {
@@ -89,11 +89,11 @@ public abstract class Subject {
         observers.Remove(observer);
     }
 
-    protected void Notify()
+    protected void Notify(object[] data)
     {
         foreach (var observer in observers)
         {
-            observer.SubjectDataChanged();
+            observer.SubjectDataChanged(data);
         }
     }
 
@@ -129,7 +129,7 @@ public class AvailablePiles : Subject
             }
             openDrawPiles.Add(stack);
         }
-        Notify();
+        Notify(null);
     }
 
     public Hand GetOpenResourcesCombinedHand()
@@ -160,7 +160,7 @@ public class AvailablePiles : Subject
     public ResourceCard[] DrawCardsFromHiddenDrawPile(int amount)
     {
         var cards = hiddenDrawPile.DrawCardsFromTop(amount, true);
-        Notify();
+        Notify(null);
         return cards;
     }
 
@@ -170,7 +170,7 @@ public class AvailablePiles : Subject
         if (stack != null)
         {
             var cards = stack.DrawCardsFromTop(amount);
-            Notify();
+            Notify(null);
             return cards;
         } else
         {

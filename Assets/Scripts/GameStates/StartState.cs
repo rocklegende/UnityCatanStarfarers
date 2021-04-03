@@ -53,7 +53,7 @@ public class StartState : GameState
 
     public override void OnTokenCanSettle(bool canSettle, Token token)
     {
-        throw new NotImplementedException();
+        Debug.Log("Do nothing");//throw new NotImplementedException();
     }
 
     public override void Setup()

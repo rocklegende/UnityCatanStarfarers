@@ -13,7 +13,7 @@ public class DrawPileView_ : MonoBehaviour, Observer
     Hand handModelOpenStacks;
 
 
-    public void SubjectDataChanged()
+    public void SubjectDataChanged(object[] data)
     {
         simpleHandRendererObject.GetComponent<SimpleHandRenderer>().hand = model.GetOpenResourcesCombinedHand();
         Draw();
