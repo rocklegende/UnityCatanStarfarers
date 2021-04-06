@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -102,6 +103,31 @@ namespace Tests
             {
                 Assert.True(true);
             }
+
+        }
+
+        [Test]
+        public void TestFlyableTokens()
+        {
+            var player = GetGenericPlayer();
+
+            var spacePortToken = new SpacePortToken();
+
+            var settledColonyToken = new ColonyBaseToken();
+
+            var tradeWithShip = new TradeBaseToken(); // only this one can fly
+            tradeWithShip.attachToken(new ShipToken());
+
+            var tradeWithShipDisabled = new TradeBaseToken();
+            tradeWithShipDisabled.attachToken(new ShipToken());
+            tradeWithShipDisabled.Disable();
+
+            player.AddToken(spacePortToken);
+            player.AddToken(settledColonyToken);
+            player.AddToken(tradeWithShip);
+
+            var expected = new List<Token>() { tradeWithShip };
+            Assert.True(expected.SequenceEqual(player.GetTokensThatCanFly()));
 
         }
 
@@ -291,7 +317,7 @@ namespace Tests
         }
 
         [Test]
-        public void TestFameMedalBuyResetsWhenTurnReceived()
+        public void TestFameMedalBuyResetsOnNewTurn()
         {
             var player = GetGenericPlayer();
             player.hand.AddCard(new GoodsCard());
@@ -310,6 +336,18 @@ namespace Tests
             }
 
 
+        }
+
+        [Test]
+        public void TestTokenDisabilityIsRemovedOnNewTurn()
+        {
+            var token = new ColonyBaseToken();
+            token.Disable();
+
+            var player = GetGenericPlayer();
+            player.AddToken(token);
+            player.OnTurnReceived();
+            Assert.True(!token.IsDisabled());
         }
 
         [Test]

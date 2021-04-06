@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Constants
@@ -8,6 +9,12 @@ public class Constants
     public const int TOKEN_LAYER = -2;
     public const float paddingRight = 1.0f;
     public const float paddingDown = 1.0f;
+}
+
+public enum MapMode
+{
+    NORMAL,
+    SELECT
 }
 
 public class MapScript : SFController
@@ -23,14 +30,19 @@ public class MapScript : SFController
     public Player[] players;
     public bool isReceivingNotifications = false;
     public Map map;
+    private MapMode mode = MapMode.NORMAL;
+    private System.Action<Token> tokenSelectCallback;
     List<GameObject> currentlyShownSpacePointButtons = new List<GameObject>();
     GameObject[] hexagonGameObjects;
     GameObject[] currentlyDisplayedPlayerTokens;
 
+    List<Token> highlightedTokens = new List<Token>();
+    List<GameObject> highlightCircles = new List<GameObject>();
+
     void Start()
     {
 
-
+        
     }
 
     public void SetPlayers(Player[] players)
@@ -227,12 +239,40 @@ public class MapScript : SFController
         line.SetPositions(points);
     }
 
-    public void HighlightToken(Token token)
+    public void OpenTokenSelection(List<Token> selectableToken, System.Action<Token> didSelectTokenCallback)
     {
-        DrawCircleAtSpacePoint(token.position);
+        mode = MapMode.SELECT;
+        HighlightTokens(selectableToken);
+
+        tokenSelectCallback = didSelectTokenCallback;
+        
     }
 
-    void DrawCircleAtSpacePoints(SpacePoint[] points)
+    public void RemoveAllHighlights()
+    {
+        highlightedTokens = new List<Token>();
+        foreach(var obj in highlightCircles)
+        {
+            Destroy(obj);
+        }
+    }
+
+    public void HighlightTokens(List<Token> tokens)
+    {
+        foreach(var tok in tokens)
+        {
+            HighlightToken(tok);
+        }
+    }
+
+    void HighlightToken(Token token)
+    {
+        highlightedTokens.Add(token);
+        var circleHighlight = DrawCircleAtSpacePoint(token.position);
+        highlightCircles.Add(circleHighlight);
+    }
+
+    void DrawCircleAtSpacePoints(List<SpacePoint> points)
     {
         foreach (SpacePoint point in points)
         {
@@ -240,14 +280,16 @@ public class MapScript : SFController
         }
     }
 
-    void DrawCircleAtSpacePoint(SpacePoint point)
+    GameObject DrawCircleAtSpacePoint(SpacePoint point)
     {
-        Vector2 position = point.ToUnityPosition();
-        GameObject spacePointObject = new GameObject("Space Point");
+        Vector3 position = new Vector3(point.ToUnityPosition().x, point.ToUnityPosition().y, -1);
+        GameObject spacePointObject = new GameObject("Space Point Highlight Circle");
         spacePointObject.transform.position = position;
 
         DrawCircleAroundGameObject(spacePointObject, 1.0f, 0.05f);
         spacePointObject.transform.parent = this.gameObject.transform;
+
+        return spacePointObject;
 
     }
 
@@ -259,16 +301,13 @@ public class MapScript : SFController
 
     public void HighlightTokensFullfillingFilters(TokenFilter[] filters)
     {
-        Token[] tokens = GetTokensFullfillingFilters(filters);
-        foreach (Token tok in tokens)
-        {
-            DrawCircleAtSpacePoint(tok.position);
-        }
+        List<Token> tokens = GetTokensFullfillingFilters(filters);
+        HighlightTokens(tokens);
     }
 
-    public Token[] GetTokensFullfillingFilters(TokenFilter[] filters)
+    public List<Token> GetTokensFullfillingFilters(TokenFilter[] filters)
     {
-        Token[] tokens = GetAllTokenOnBoard();
+        var tokens = Helper.CreateCopyOfList(map.tokensOnMap);
         foreach (var filter in filters)
         {
             tokens = FilterToken(tokens, filter);
@@ -277,41 +316,29 @@ public class MapScript : SFController
 
     }
 
-    Token[] FilterToken(Token[] inputToken, TokenFilter filter)
+    List<Token> FilterToken(List<Token> inputTokens, TokenFilter filter)
     {
-        List<Token> valid = new List<Token>();
-        foreach (Token token in inputToken)
-        {
-            if (filter.fullfillsFilter(token))
-            {
-                valid.Add(token);
-            }
-        }
-        return valid.ToArray();
+        return inputTokens.Where(tok => filter.fullfillsFilter(tok)).ToList();
     }
 
-    Token[] GetAllTokenOnBoard()
+    public void HandleClickOfToken(Token token)
     {
-        List<Token> allTokens = new List<Token>();
-        foreach (Player player in players)
+        if (mode == MapMode.SELECT)
         {
-            foreach (Token token in player.tokens)
+            if (highlightedTokens.Contains(token))
             {
-                allTokens.Add(token);
+                Debug.Log("one of the highlightedTokens was selected, returning to normal map mode");
+                this.tokenSelectCallback(token);
+                RemoveAllHighlights();
+                mode = MapMode.NORMAL;
             }
         }
-
-        return allTokens.ToArray();
     }
 
     public void SettleToken(Token token)
     {
-        token.settle();
-        var tileGroup = map.FindTileGroupAtPoint(token.position);
-        if (tileGroup != null)
-        {
-            tileGroup.HandleTokenSettled(token);
-        }
+        map.SettleToken(token);
+        
     }
 
     public void ShowSpacePointsFulfillingFilters(SpacePointFilter[] filters)
@@ -330,10 +357,10 @@ public class MapScript : SFController
                     RedrawMap();
                     break;
 
-                //case SFNotification.tile_group_data_changed:
-                //    RedrawMap(); //TODO: notification that tile group data changed should also be inside the map model, so we
-                //    //only have to listen to the map_data_changed event
-                //    break;
+                case SFNotification.token_was_selected:
+                    HandleClickOfToken((Token)p_data[0]);
+                    break;
+
             }
         }
 

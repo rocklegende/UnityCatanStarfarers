@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,18 +11,10 @@ public class EncounterCard
     {
         this.decisionTree = decisionTree;
     }
-}
 
-public class EncounterCardOption
-{
-    int numResources;
-    EncounterCardAction action;
-    public EncounterCardOption(int numResources, EncounterCardAction action)
+    public static EncounterCard FromRootNode(DecisionTreeNode root)
     {
-        if (numResources < 0)
-        {
-            throw new ArgumentException("Cant initialize EncounterCardOption with negative numResources value");
-        }
+        return new EncounterCard(new DecisionTree(root));
     }
 }
 
@@ -34,8 +27,6 @@ public class EncounterActionValue
         this.value = value;
     }
 }
-
-
 
 public class DecisionTree
 {
@@ -59,7 +50,7 @@ public class DecisionValueActionPair {
 
 public class DecisionTreeNodeCreator
 {
-    public static DecisionTreeNode CreatePickResourcesNode(List<DecisionValueActionPair> pairs, HUDScript hud)
+    public static DecisionTreeNode CreatePickResourcesNode(List<DecisionValueActionPair> pairs, GameController gameController)
     {
         var nextNodesList = new List<DecisionTreeNode>();
         var max = -1;
@@ -73,11 +64,11 @@ public class DecisionTreeNodeCreator
         }
 
 
-        var node = new DecisionTreeNode(nextNodesList.ToArray(), null, new GiveupResourcesEncounterAction(hud, max));
+        var node = new DecisionTreeNode(nextNodesList, null, new GiveupResourcesEncounterAction(gameController, max));
         return node;
     }
 
-    public static DecisionTreeNode Create0to3ResourceNode(HUDScript hud, EncounterCardAction zero, EncounterCardAction one, EncounterCardAction two, EncounterCardAction three)
+    public static DecisionTreeNode Create0to3ResourceNode(GameController gameController, EncounterCardAction zero, EncounterCardAction one, EncounterCardAction two, EncounterCardAction three)
     {
         var pairs = new List<DecisionValueActionPair>()
         {
@@ -86,19 +77,19 @@ public class DecisionTreeNodeCreator
             new DecisionValueActionPair(2, two),
             new DecisionValueActionPair(3, three)
         };
-        return CreatePickResourcesNode(pairs, hud);
+        return CreatePickResourcesNode(pairs, gameController);
     }
 }
 ;
 public class DecisionTreeNode
 {
-    public readonly DecisionTreeNode[] nextNodes;
+    public readonly List<DecisionTreeNode> nextNodes;
     public readonly object decisionValue;
     public readonly EncounterCardAction action;
     public string buttonText { get; set; }
     public string text { get; set; }
 
-    public DecisionTreeNode(DecisionTreeNode[] nextNodes, object decisionValue, EncounterCardAction action)
+    public DecisionTreeNode(List<DecisionTreeNode> nextNodes, object decisionValue, EncounterCardAction action)
     {
         this.nextNodes = nextNodes;
         this.decisionValue = decisionValue;
@@ -111,10 +102,10 @@ public class DecisionTreeNode
         {
             return false;
         }
-        return nextNodes.Length > 0;
+        return nextNodes.Count > 0;
     }
 
-    public DecisionTreeNode[] GetNext()
+    public List<DecisionTreeNode> GetNext()
     {
         return nextNodes;
     }
@@ -163,10 +154,14 @@ public abstract class EncounterCardAction
 {
     public Action<EncounterActionValue> callback;
     public HUDScript hud;
+    public MapScript mapScript;
+    public GameController gameController;
 
-    public EncounterCardAction(HUDScript hud)
+    public EncounterCardAction(GameController gameController)
     {
-        this.hud = hud;
+        this.gameController = gameController;
+        this.mapScript = gameController.Map.GetComponent<MapScript>();
+        this.hud = gameController.HUD.GetComponent<HUDScript>();
     }
 
     public DecisionDialog GetDecisionDialog()
@@ -190,7 +185,8 @@ public abstract class EncounterCardAction
 public class GiveupResourcesEncounterAction : EncounterCardAction
 {
     int limit;
-    public GiveupResourcesEncounterAction(HUDScript hud, int limit) : base(hud)
+    public Hand pickedHand;
+    public GiveupResourcesEncounterAction(GameController gameController, int limit) : base(gameController)
     {
         this.limit = limit;
     }
@@ -205,6 +201,7 @@ public class GiveupResourcesEncounterAction : EncounterCardAction
 
     void ResourcesPicked(Hand hand)
     {
+        pickedHand = hand;
         hud.player.SubtractHand(hand);
         hud.CloseResourcePicker();
         ResultFound(hand.Count());
@@ -215,7 +212,7 @@ public class GiveupResourcesEncounterAction : EncounterCardAction
 public class GetResourceFromBankEncounterAction : EncounterCardAction
 {
     int numResources;
-    public GetResourceFromBankEncounterAction(HUDScript hud, int numResources) : base(hud)
+    public GetResourceFromBankEncounterAction(GameController gameController, int numResources) : base(gameController)
     {
         this.numResources = numResources;
     }
@@ -235,6 +232,38 @@ public class GetResourceFromBankEncounterAction : EncounterCardAction
     }
 }
 
+public class NoCounterGift : EncounterCardAction
+{
+    public NoCounterGift(GameController gameController) : base(gameController)
+    {
+
+    }
+
+
+
+    public override void Execute()
+    {
+        ResultFound(true);
+    }
+}
+
+public class ReturnGift : EncounterCardAction
+{
+    public GiveupResourcesEncounterAction giveupResourcesAction;
+    public ReturnGift(GameController gameController) : base(gameController)
+    {
+
+    }
+
+
+
+    public override void Execute()
+    {
+        gameController.mainPlayer.AddHand(giveupResourcesAction.pickedHand);
+        ResultFound(true);
+    }
+}
+
 public class ReceiveResourcesAndReceiveFameMedalAction : EncounterCardAction
 {
     int fameMedalGain;
@@ -243,11 +272,11 @@ public class ReceiveResourcesAndReceiveFameMedalAction : EncounterCardAction
     DecisionDialog decisionDialog;
 
     public ReceiveResourcesAndReceiveFameMedalAction(
-        HUDScript hud,
+        GameController gameController,
         int fameMedalGain,
         Hand giftedCards = null,
         int cardsSelectableFreely = -1
-        ) : base(hud)
+        ) : base(gameController)
     {
         this.fameMedalGain = fameMedalGain;
         this.giftedCards = giftedCards;
@@ -341,14 +370,49 @@ public class ReceiveResourcesAndReceiveFameMedalAction : EncounterCardAction
     }
 }
 
-//public class ShipCannotFlyAction
+public class ShipCannotFlyAction : EncounterCardAction
+{
+    int fameMedalGain;
+    public ShipCannotFlyAction(GameController gameController, int fameMedalGain = 0) : base(gameController) {
+        this.fameMedalGain = fameMedalGain;
+    }
 
-//public class GetTradeShipForFree
+    public override void Execute()
+    {
+        var flyableTokensOfMainPlayer = gameController.mainPlayer.tokens
+            .Where(tok => tok.HasShipTokenOnTop()).ToList();
+        hud.decisionDialog.SetActive(false);
+        mapScript.OpenTokenSelection(flyableTokensOfMainPlayer, DidSelectToken);
+    }
+
+    public void DidSelectToken(Token token)
+    {
+        Debug.Log("Some token was selected, disabling it for flying");
+        token.Disable();
+        gameController.mainPlayer.AddFameMedals(fameMedalGain);
+        ResultFound(true);
+    }
+}
+
+public class GetTradeShipForFree : EncounterCardAction
+{
+    //TODO: read the exact rules on this card, when is it possible to build this ship?
+    public GetTradeShipForFree(GameController gameController) : base(gameController)
+    {
+
+    }
+
+    public override void Execute()
+    {
+        gameController.mainPlayer.AddGiftedToken(new TradeBaseToken());
+        ResultFound(true);
+    }
+}
 
 public class GetOneUpgradeForFree : EncounterCardAction
 {
     int fameMedalGain;
-    public GetOneUpgradeForFree(HUDScript hud, int fameMedalGain = 0) : base(hud)
+    public GetOneUpgradeForFree(GameController gameController, int fameMedalGain = 0) : base(gameController)
     {
         this.fameMedalGain = fameMedalGain;
     }
@@ -398,7 +462,7 @@ public class GetOneUpgradeForFree : EncounterCardAction
 
 public class EncounterFinishedAction : EncounterCardAction
 {
-    public EncounterFinishedAction(HUDScript hud) : base(hud)
+    public EncounterFinishedAction(GameController gameController) : base(gameController)
     {
 
     }
@@ -421,7 +485,7 @@ public class EncounterFinishedAction : EncounterCardAction
 
 public class LoseOneFameMedalAction : EncounterCardAction
 {
-    public LoseOneFameMedalAction(HUDScript hud) : base(hud)
+    public LoseOneFameMedalAction(GameController gameController) : base(gameController)
     {
 
     }
@@ -446,7 +510,7 @@ public class LoseOneFameMedalAction : EncounterCardAction
 
 public class WinOneFameMedalAction : EncounterCardAction
 {
-    public WinOneFameMedalAction(HUDScript hud) : base(hud)
+    public WinOneFameMedalAction(GameController gameController) : base(gameController)
     {
 
     }
@@ -470,7 +534,7 @@ public class WinOneFameMedalAction : EncounterCardAction
 
 public class YesOrNoEncounterAction : EncounterCardAction
 {
-    public YesOrNoEncounterAction(HUDScript hud) : base(hud)
+    public YesOrNoEncounterAction(GameController gameController) : base(gameController)
     {
 
     }
@@ -494,7 +558,7 @@ public class YesOrNoEncounterAction : EncounterCardAction
 public class FightEncounterAction : EncounterCardAction
 {
     FightCategory category;
-    public FightEncounterAction(HUDScript hud, FightCategory category) : base(hud)
+    public FightEncounterAction(GameController gameController, FightCategory category) : base(gameController)
     {
         this.category = category;
     }

@@ -28,6 +28,7 @@ public abstract class Token : SFModel
     protected bool isTokenAttachable;
     public int stepsLeft = 20; //TODO: should be 0 in real scenario
     public Player owner;
+    protected bool isDisabled = false; //TODO should only be readable from the outside
 
     public Token(string id, bool isTokenAttachable, Cost cost)
     {
@@ -56,6 +57,23 @@ public abstract class Token : SFModel
         SFElement notifier = new SFElement();
         notifier.app.Notify(SFNotification.player_data_changed, notifier, new object[] { this });
         notifier.app.Notify(SFNotification.token_data_changed, notifier, new object[] { this });
+    }
+
+    public bool IsDisabled()
+    {
+        return isDisabled;
+    }
+
+    public void Disable()
+    {
+        isDisabled = true;
+        DataChanged();
+    }
+
+    public void Enable()
+    {
+        isDisabled = false;
+        DataChanged();
     }
 
     public bool PlayerHasTokenInStorageAndCanPay(Player player)
@@ -107,7 +125,7 @@ public abstract class Token : SFModel
     /// Returns true if the token has a ShipToken on top.
     /// </summary>
     /// <returns></returns>
-    public bool IsFlyable()
+    public bool HasShipTokenOnTop()
     {
         if (attachedToken == null)
         {
@@ -116,9 +134,15 @@ public abstract class Token : SFModel
         return attachedToken is ShipToken;
     }
 
+    public void HandleNewTurn()
+    {
+        isDisabled = false;
+        DataChanged();
+    }
+
     public bool CanFly()
     {
-        return stepsLeft > 0;
+        return HasShipTokenOnTop() && stepsLeft > 0 && !isDisabled;
     }
 
     public int GetVictoryPoints()

@@ -42,7 +42,7 @@ public class Helper
         }
     }
 
-    public List<T> CreateCopyOfList<T>(List<T> listToCopy)
+    public static List<T> CreateCopyOfList<T>(List<T> listToCopy)
     {
         var newList = new List<T>();
         newList.AddRange(listToCopy);

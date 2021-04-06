@@ -72,6 +72,7 @@ public class Player : SFModel
 {
     public Color color;
     public List<Token> tokens; // tokens on gameboard
+    public List<Token> giftedTokens = new List<Token>();
     public TokenStorage tokenStorage;
     public string name = "DefaultPlayerName";
 
@@ -139,7 +140,16 @@ public class Player : SFModel
     public void OnTurnReceived()
     {
         ResetOneTimeActions();
+        ResetTokens();
         DataChanged();
+    }
+
+    void ResetTokens()
+    {
+        foreach(var tok in tokens)
+        {
+            tok.HandleNewTurn();
+        }
     }
 
     void ResetOneTimeActions()
@@ -193,24 +203,16 @@ public class Player : SFModel
             throw new ArgumentException("range cant be negative");
         } else
         {
-            foreach(var flyToken in GetFlyableTokens())
+            foreach(var flyToken in tokens.Where(tok => tok.HasShipTokenOnTop()).ToList())
             {
                 flyToken.addSteps(range);
             }
         }
     }
 
-    Token[] GetFlyableTokens()
+    public List<Token> GetTokensThatCanFly()
     {
-        var list = new List<Token>();
-        foreach (var token in tokens)
-        {
-            if (token.IsFlyable())
-            {
-                list.Add(token);
-            }
-        }
-        return list.ToArray();
+        return tokens.Where(tok => tok.CanFly()).ToList();
     }
 
     public int GetBonusForResource(Resource resource)
@@ -271,6 +273,12 @@ public class Player : SFModel
         DataChanged();
     }
 
+    public void AddGiftedToken(Token token)
+    {
+        giftedTokens.Add(token);
+        DataChanged();
+    }
+
     /// <summary>
     /// DEPRECATED METHOD, PLEASE USE BuildToken2
     /// </summary>
@@ -292,7 +300,15 @@ public class Player : SFModel
     public Token BuildToken2(Map map, Type baseType, SpacePoint position, Type attachedType = null, bool isFree = false)
     {
         var baseTokenFromStorage = tokenStorage.RetrieveTokenOfType(baseType);
-        if (!isFree)
+        var giftedToken = giftedTokens.Find(tok => tok.GetType() == baseType);
+        var isGifted = giftedToken != null;
+
+        if (isGifted)
+        {
+            giftedTokens.Remove(giftedToken);
+        }
+
+        if (!isFree && !isGifted)
         {
             hand.PayCost(baseTokenFromStorage.cost);
         }

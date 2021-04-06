@@ -135,8 +135,8 @@ public class EncounterCardTestingState : DebugStartState
             new ShipToken().GetType()
         );
 
-        //var encounterFactory = new EncounterCardFactory(controller.HUD.GetComponent<HUDScript>());
-        //controller.encounterCardHandler.PlayEncounterCard(encounterFactory.CreateEncounterCard2());
+        var encounterFactory = new EncounterCardFactory(controller);
+        controller.encounterCardHandler.PlayEncounterCard(encounterFactory.CreateEncounterCard5());
     }
 }
 

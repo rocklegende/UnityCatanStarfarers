@@ -59,7 +59,7 @@ public class FlightStateConsistencyChecker
         {
             foreach(var token in player.tokens)
             {
-                if (token.IsFlyable())
+                if (token.HasShipTokenOnTop())
                 {
                     // alle tradestations durchgehen
                     // map.getAllTradeStations()

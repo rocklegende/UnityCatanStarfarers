@@ -82,7 +82,7 @@ public class DefaultMapGenerator : MapGenerator
         spaceTileGroups.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
         spaceTileGroups.Add(new ResourceTileGroup(new ResourceTile[] { new FuelResourceTile(circleGroup), new GoodsResourceTile(squareGroup), new OreResourceTile(triangleGroup) }));
 
-        spaceTileGroupsCopy = new Helper().CreateCopyOfList(spaceTileGroups);
+        spaceTileGroupsCopy = Helper.CreateCopyOfList(spaceTileGroups);
     }
 
     void CreateChipGroups()
@@ -180,7 +180,7 @@ public class DefaultMapGenerator : MapGenerator
     void SetupBaseColonies()
     {
         var baseGroups = GetTileGroupsBasePoints();
-        baseTileGroupsCopy = new Helper().CreateCopyOfList(baseGroups);
+        baseTileGroupsCopy = Helper.CreateCopyOfList(baseGroups);
         AssignDiceChips(baseGroups);
 
         for (int i = 0; i < baseGroups.Count; i++)

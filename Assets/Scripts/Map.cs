@@ -48,7 +48,15 @@ public class Map : Observer
         DataChanged();
     }
 
-
+    public void SettleToken(Token token)
+    {
+        token.settle();
+        var tileGroup = FindTileGroupAtPoint(token.position);
+        if (tileGroup != null)
+        {
+            tileGroup.HandleTokenSettled(token);
+        }
+    }
 
     /// <summary>
     /// 

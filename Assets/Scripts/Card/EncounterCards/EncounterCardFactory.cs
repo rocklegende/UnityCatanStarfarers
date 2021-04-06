@@ -6,38 +6,28 @@ using UnityEngine.UI;
 public class EncounterCardFactory
 {
 
-    HUDScript hudScript;
+    GameController gameController;
 
-    public EncounterCardFactory(HUDScript hudScript)
+    public EncounterCardFactory(GameController gameController)
     {
-        this.hudScript = hudScript;
-    }
-
-    public DecisionTreeNode GetEndNode()
-    {
-        return new DecisionTreeNode(null, true, new EncounterFinishedAction(hudScript));
-    }
-
-    public DecisionTreeNode[] GetEndNodes()
-    {
-        return new DecisionTreeNode[] { GetEndNode() };
+        this.gameController = gameController;
     }
 
     public EncounterCard CreateEncounterCard1()
     {
-        var noResourcesGiven = new DecisionTreeNode(GetEndNodes(), 0, new LoseOneFameMedalAction(hudScript))
+        var noResourcesGiven = new DecisionTreeNode(null, 0, new LoseOneFameMedalAction(gameController))
         {
             text = "You gave me no resources, thank you, you win one fame medal"
         };
         var foodGift = new Hand();
         foodGift.AddCard(new FoodCard());
-        var oneResourceGiven = new DecisionTreeNode(null, 1, new ReceiveResourcesAndReceiveFameMedalAction(hudScript, -1, foodGift));
-        var twoResourcesGiven = new DecisionTreeNode(null, 2, new ReceiveResourcesAndReceiveFameMedalAction(hudScript, 1, null, 1));
-        var threeResourcesGiven = new DecisionTreeNode(null, 3, new ReceiveResourcesAndReceiveFameMedalAction(hudScript, 1, null, 2));
+        var oneResourceGiven = new DecisionTreeNode(null, 1, new ReceiveResourcesAndReceiveFameMedalAction(gameController, -1, foodGift));
+        var twoResourcesGiven = new DecisionTreeNode(null, 2, new ReceiveResourcesAndReceiveFameMedalAction(gameController, 1, null, 1));
+        var threeResourcesGiven = new DecisionTreeNode(null, 3, new ReceiveResourcesAndReceiveFameMedalAction(gameController, 1, null, 2));
 
-        var giveResourcesAction = new GiveupResourcesEncounterAction(hudScript, 3);
+        var giveResourcesAction = new GiveupResourcesEncounterAction(gameController, 3);
 
-        var giveResourceCard = new DecisionTreeNode(new DecisionTreeNode[] {
+        var giveResourceCard = new DecisionTreeNode(new List<DecisionTreeNode> {
             noResourcesGiven,
             oneResourceGiven,
             twoResourcesGiven,
@@ -46,11 +36,7 @@ public class EncounterCardFactory
             text = "A starfarers want up to three resources, how much do you give (up to three)?"
         };
 
-        var decisionTree = new DecisionTree(giveResourceCard);
-
-        var encounter = new EncounterCard(decisionTree);
-
-        return encounter;
+        return EncounterCard.FromRootNode(giveResourceCard);
     }
 
     public EncounterCard CreateEncounterCard2()
@@ -86,18 +72,76 @@ public class EncounterCardFactory
 
 
         var giveResourceNode = DecisionTreeNodeCreator.Create0to3ResourceNode(
-            hudScript,
-            new LoseOneFameMedalAction(hudScript),
-            new ReceiveResourcesAndReceiveFameMedalAction(hudScript, 0, null, 1),
-            new ReceiveResourcesAndReceiveFameMedalAction(hudScript, 1, null, 1),
-            new GetOneUpgradeForFree(hudScript, 1)
+            gameController,
+            new LoseOneFameMedalAction(gameController),
+            new ReceiveResourcesAndReceiveFameMedalAction(gameController, 0, null, 1),
+            new ReceiveResourcesAndReceiveFameMedalAction(gameController, 1, null, 1),
+            new GetOneUpgradeForFree(gameController, 1)
         );
 
-        var decisionTree = new DecisionTree(giveResourceNode);
+        return EncounterCard.FromRootNode(giveResourceNode);
+    }
 
-        var encounter = new EncounterCard(decisionTree);
+    public EncounterCard CreateEncounterCard3()
+    {
+        var oneGoodsGift = new Hand();
+        oneGoodsGift.AddCard(new GoodsCard());
+        var noCounterGiftAction = new NoCounterGift(gameController);
 
-        return encounter;
+        var giveResourceNode = DecisionTreeNodeCreator.Create0to3ResourceNode(
+            gameController,
+            new LoseOneFameMedalAction(gameController),
+            noCounterGiftAction,
+            new WinOneFameMedalAction(gameController),
+            new ReceiveResourcesAndReceiveFameMedalAction(gameController, 1, oneGoodsGift) 
+        );
+
+        return EncounterCard.FromRootNode(giveResourceNode);
+    }
+
+    public EncounterCard CreateEncounterCard4()
+    {
+        var oneGoodsGift = new Hand();
+        oneGoodsGift.AddCard(new GoodsCard());
+
+        var returnGiftAction = new ReturnGift(gameController);
+        var giveResourceNode = DecisionTreeNodeCreator.Create0to3ResourceNode(
+            gameController,
+            new ReceiveResourcesAndReceiveFameMedalAction(gameController, 0, oneGoodsGift),
+            new ReceiveResourcesAndReceiveFameMedalAction(gameController, 1, null, 1),
+            new ReceiveResourcesAndReceiveFameMedalAction(gameController, 1, null, 2),
+            returnGiftAction
+        );
+
+        returnGiftAction.giveupResourcesAction = (GiveupResourcesEncounterAction)giveResourceNode.action;
+
+        return EncounterCard.FromRootNode(giveResourceNode);
+    }
+
+    public EncounterCard CreateEncounterCard5()
+    {
+        var giveResourceNode = DecisionTreeNodeCreator.Create0to3ResourceNode(
+            gameController,
+            new ShipCannotFlyAction(gameController, 1),
+            new LoseOneFameMedalAction(gameController),
+            new ReceiveResourcesAndReceiveFameMedalAction(gameController, 1, null, -1),
+            new GetTradeShipForFree(gameController)
+        );
+
+        return EncounterCard.FromRootNode(giveResourceNode);
+    }
+
+    public EncounterCard CreateEncounterCard6()
+    {
+        var giveResourceNode = DecisionTreeNodeCreator.Create0to3ResourceNode(
+            gameController,
+            new ShipCannotFlyAction(gameController, 1),
+            new LoseOneFameMedalAction(gameController),
+            new ReceiveResourcesAndReceiveFameMedalAction(gameController, 1, null, -1),
+            new GetTradeShipForFree(gameController)
+        );
+
+        return EncounterCard.FromRootNode(giveResourceNode);
     }
 
 }

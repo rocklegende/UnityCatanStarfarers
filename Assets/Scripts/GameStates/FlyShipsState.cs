@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,9 +18,15 @@ public class FlyShipsState : GameState
         hudScript.SetStateText("FlyShipsState");
         hudScript.ShowSettleButton(false);
         flightStateChecker = new FlightStateConsistencyChecker();
+        mapScript.OpenTokenSelection(controller.mainPlayer.tokens.Where(tok => tok.CanFly()).ToList(), TokenSelected);
     }
 
-    
+    void TokenSelected(Token token)
+    {
+        selectedToken = token;
+        var filters = selectedToken.GetFlightEndPointsFilters();
+        mapScript.ShowSpacePointsFulfillingFilters(filters);
+    }
 
     public override void OnNextButtonClicked()
     {
@@ -41,23 +48,18 @@ public class FlyShipsState : GameState
 
     public override void OnTokenClicked(Token tokenModel, GameObject tokenGameObject)
     {
-        if (tokenModel.owner == controller.mainPlayer)
-        {
-            selectedToken = tokenModel;
-            if (selectedToken.CanFly())
-            {
-                var filters = selectedToken.GetFlightEndPointsFilters();
-                //var filters = new SpacePointFilter[] {
-                //    new IsValidSpacePointFilter(),
-                //    new IsSpacePointFreeFilter(),
-                //    new IsStepsAwayFilter(tokenModel.position, selectedToken.GetStepsLeft())
-                //};
-                mapScript.ShowSpacePointsFulfillingFilters(filters);
-            }
-        } else
-        {
-            Debug.Log("Clicked token that is not owned by the main player");
-        }
+        //if (tokenModel.owner == controller.mainPlayer)
+        //{
+        //    selectedToken = tokenModel;
+        //    if (selectedToken.CanFly())
+        //    {
+        //        var filters = selectedToken.GetFlightEndPointsFilters();
+        //        mapScript.ShowSpacePointsFulfillingFilters(filters);
+        //    }
+        //} else
+        //{
+        //    Debug.Log("Clicked token that is not owned by the main player");
+        //}
         
     }
 
