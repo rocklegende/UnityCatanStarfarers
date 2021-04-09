@@ -11,6 +11,7 @@ public interface BuildableToken
     bool CanBeBuildByPlayer(Player player, Map map, Player[] players);
 }
 
+
 public abstract class SFModel : Subject
 {
 

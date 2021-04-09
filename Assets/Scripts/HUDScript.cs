@@ -129,22 +129,31 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         multiSelectionView.SetActive(false);
     }
 
-    public void OpenUpgradeSelection(List<Token> selectableUpgrades, System.Action<List<SFModel>> selectedTokenCallback)
-        //TODO: i think the selection should only return which index was selected and not return the value itself, seems like a code smell
+    public void OpenUpgradeSelection(List<Token> selectableUpgrades, System.Action<List<int>> selectedIndexesCallback, int maxSelectable = -1)
+        //TODO: remove Duplication in OpenPlayerSelection and OpenUpgradeSelection methods
     {
         multiSelectionView.SetActive(true);
         var multiSelectScript = multiSelectionView.GetComponent<MultiSelection>();
         multiSelectScript.SetSelectableObjects(selectableUpgrades.ToArray());
-        multiSelectScript.selectCallback = selectedTokenCallback;
+        if (maxSelectable != -1 && maxSelectable > 0)
+        {
+            multiSelectScript.maxSelectable = maxSelectable;
+        }
+
+
+        multiSelectScript.selectCallback = selectedIndexesCallback;
     }
 
-    public void OpenPlayerSelection(List<Player> selectablePlayers, System.Action<List<SFModel>> selectedPlayerCallback)
-    //TODO: i think the selection should only return which index was selected and not return the value itself, seems like a code smell
+    public void OpenPlayerSelection(List<Player> selectablePlayers, System.Action<List<int>> selectedIndexesCallback, int maxSelectable = -1)
     {
         multiSelectionView.SetActive(true);
         var multiSelectScript = multiSelectionView.GetComponent<MultiSelection>();
         multiSelectScript.SetSelectableObjects(selectablePlayers.ToArray());
-        multiSelectScript.selectCallback = selectedPlayerCallback;
+        multiSelectScript.selectCallback = selectedIndexesCallback;
+        if (maxSelectable != -1 && maxSelectable > 0)
+        {
+            multiSelectScript.maxSelectable = maxSelectable;
+        }
     }
 
     public void OpenNormalDiceThrowRenderer(System.Action<DiceThrow> callback)
@@ -362,6 +371,20 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
             }
 
         }
+    }
+
+    public void OpenTradePanel(int numCardsToGive, int numCardsToReceive, System.Action<Hand, Hand> callback)
+    {
+        tradePanel.SetActive(true);
+        var tradePanelScript = tradePanel.GetComponent<TradePanelScript>();
+        tradePanelScript.SetExactInput(numCardsToGive);
+        tradePanelScript.SetExactOutput(numCardsToReceive);
+        tradePanelScript.callback = callback;
+    }
+
+    public void CloseTradePanel()
+    {
+        tradePanel.SetActive(false);
     }
 
     void BuildTokenBtnPressed(Token token)

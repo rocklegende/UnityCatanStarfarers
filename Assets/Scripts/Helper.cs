@@ -20,7 +20,90 @@ public class BoundingBox
 }
 
 public class Helper
-{
+{    
+
+    /// <summary>
+    /// Returns clockwise order of player beginning with the current player at turn.
+    /// Use this if players need to take some action one after another.<br></br>
+    /// <b>NOTE:</b> Zero indexing!
+    /// </summary>
+    /// <returns>List(int)</returns>
+    public static List<int> NextPlayersClockwise(int currentPlayer, int numberOfPlayers)
+    {
+        if (currentPlayer >= numberOfPlayers)
+        {
+            throw new ArgumentException("currentPlayer cant be higher or same than numberOfPlayers");
+        }
+        var list = new List<int>();
+        int current = currentPlayer;
+        for (int i = 0; i < numberOfPlayers; i++)
+        {
+            list.Add(current);
+            current = NextPlayerClockwise(current, numberOfPlayers);
+        }
+        return list;
+    }
+
+    /// <summary>
+    /// Returns index of the next player in clockwise direction.
+    /// </summary>
+    /// <param name="currentPlayer"></param>
+    /// <param name="numberOfPlayers"></param>
+    /// <returns></returns>
+    public static int NextPlayerClockwise(int currentPlayer, int numberOfPlayers)
+    {
+        if (currentPlayer >= numberOfPlayers)
+        {
+            throw new ArgumentException("currentPlayer cant be higher or same than numberOfPlayers");
+        }
+        return NextPlayerClockwiseStepsAway(currentPlayer, numberOfPlayers, 1);
+    }
+
+    public static int NextPlayerClockwiseStepsAway(int currentPlayer, int numberOfPlayers, int steps)
+    {
+        if (currentPlayer >= numberOfPlayers)
+        {
+            throw new ArgumentException("currentPlayer cant be higher or same than numberOfPlayers");
+        }
+        currentPlayer += steps;
+        return currentPlayer % numberOfPlayers;
+    }
+
+    /// <summary>
+    /// Returns index of the previous player in clockwise direction.
+    /// </summary>
+    /// <param name="currentPlayer"></param>
+    /// <param name="numberOfPlayers"></param>
+    /// <returns></returns>
+    public static int PreviousPlayerClockwise(int currentPlayer, int numberOfPlayers)
+    {
+        if (currentPlayer >= numberOfPlayers)
+        {
+            throw new ArgumentException("currentPlayer cant be higher or same than numberOfPlayers");
+        }
+
+        var prevPlayerIndex = PreviousPlayerClockwiseStepsAway(currentPlayer, numberOfPlayers, 1);
+        return prevPlayerIndex;
+    }
+
+    /// <summary>
+    /// Returns index of the previous player in clockwise direction stesp away.
+    /// </summary>
+    /// <param name="currentPlayer"></param>
+    /// <param name="numberOfPlayers"></param>
+    /// <returns></returns>
+    public static int PreviousPlayerClockwiseStepsAway(int currentPlayer, int numberOfPlayers, int steps)
+    {
+        if (currentPlayer >= numberOfPlayers)
+        {
+            throw new ArgumentException("currentPlayer cant be higher or same than numberOfPlayers");
+        }
+
+        var stepsRight = numberOfPlayers - steps % numberOfPlayers;
+
+        var nextPlayerClockwiseIndex = NextPlayerClockwiseStepsAway(currentPlayer, numberOfPlayers, stepsRight);
+        return nextPlayerClockwiseIndex;
+    }
 
     public ResourceCard[] GetAllResourceCardTypes()
     {
@@ -59,21 +142,6 @@ public class Helper
             }
         }
         return false;
-    }
-
-    public Player GetOwnerOfToken(Player[] players, Token token)
-    {
-        foreach (Player player in players)
-        {
-            foreach (Token tok in player.tokens)
-            {
-                if (tok == token)
-                {
-                    return player;
-                }
-            }
-        }
-        return null;
     }
 
     public List<Token> GetAllTokenOfPlayers(Player[] players)

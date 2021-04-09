@@ -26,9 +26,59 @@ public class Hand : Subject
         return cards.Count;
     }
 
+    public Hand SimpleClone()
+    {
+        var clone = new Hand();
+        clone.cards = Helper.CreateCopyOfList(cards);
+        return clone;
+    }
+
+    public bool IsEqualTo(Hand other)
+    {
+        foreach(var cardType in new Helper().GetAllResourceCardTypes())
+        {
+            if (NumberCardsOfType(cardType.GetType()) != other.NumberCardsOfType(cardType.GetType()))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public Hand()
     {
         
+    }
+
+    public static Hand FromResources(int food = 0, int goods = 0, int fuel = 0, int ore = 0, int carbon = 0)
+    {
+        var hand = new Hand();
+        for (int i = 0; i < food; i++)
+        {
+            hand.AddCard(new FoodCard());
+        }
+
+        for (int i = 0; i < goods; i++)
+        {
+            hand.AddCard(new GoodsCard());
+        }
+
+        for (int i = 0; i < ore; i++)
+        {
+            hand.AddCard(new OreCard());
+        }
+
+        for (int i = 0; i < fuel; i++)
+        {
+            hand.AddCard(new FuelCard());
+        }
+
+        for (int i = 0; i < carbon; i++)
+        {
+            hand.AddCard(new CarbonCard());
+        }
+        return hand;
+
     }
 
     public string GetStringRepresentation()

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum ShipUpgrade
@@ -27,6 +28,46 @@ public class SpaceShip
     public SpaceShip(Action changedCallback)
     {
         this.changedCallback = changedCallback;
+    }
+
+    public  List<Token> GetRemovableTokens()
+    {
+        var list = new List<Token>();
+        if (Cannons > 0)
+        {
+            list.Add(new CannonUpgradeToken());
+        }
+
+        if (Boosters > 0)
+        {
+            list.Add(new BoosterUpgradeToken());
+        }
+
+        if (FreightPods > 0)
+        {
+            list.Add(new FreightPodUpgradeToken());
+        }
+        return list;
+    }
+
+    public List<Token> GetUpgradesThatAreNotFull()
+    {
+        var list = new List<Token>();
+        if (!IsCannonsFull())
+        {
+            list.Add(new CannonUpgradeToken());
+        }
+
+        if (!IsBoostersFull())
+        {
+            list.Add(new BoosterUpgradeToken());
+        }
+
+        if (!IsFreightPodsFull())
+        {
+            list.Add(new FreightPodUpgradeToken());
+        }
+        return list;
     }
 
     public void Add(Token token)
@@ -113,6 +154,34 @@ public class SpaceShip
 
     public void Remove(Token token)
     {
-        //TODO
+        if (token is BoosterUpgradeToken)
+        {
+            Boosters -= 1;
+            if (Boosters < 0)
+            {
+                Boosters = 0;
+            }
+        }
+        else if (token is CannonUpgradeToken)
+        {
+            Cannons -= 1;
+            if (Cannons < 0)
+            {
+                Cannons = 0;
+            }
+        }
+        else if (token is FreightPodUpgradeToken)
+        {
+            FreightPods -= 1;
+            if (FreightPods < 0)
+            {
+                FreightPods = 0;
+            }
+        }
+        else
+        {
+
+        }
+        changedCallback();
     }
 }

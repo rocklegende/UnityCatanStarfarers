@@ -2,7 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameController : SFController
+public interface IGameController
+{
+    Player[] GetPlayers();
+    Player GetMainPlayer();
+    int GetCurrentPlayerAtTurn();
+    MapScript GetMapScript();
+    HUDScript GetHUDScript();
+}
+
+public class GameController : SFController, IGameController
 {
     public GameObject HUD;
     public GameObject Map;
@@ -16,17 +25,28 @@ public class GameController : SFController
 
     public EncounterCardHandler encounterCardHandler;
     public DrawPileHandler drawPileHandler;
+    public DebugStartState debugStartState;
 
     // Start is called before the first frame update
     void Start()
     {
         
-        DebugStartState debugState = new EncounterCardTestingState(this);
+        
+    }
+
+    public void SetupButtonPressed()
+    {
+        SetUpDebugState(new EncounterCardTestingStateManual(this));
+    }
+
+    public void SetUpDebugState(DebugStartState state)
+    {
+        debugStartState = state;
         //DebugStartState debugState = new PlayerHasRichHelpPoorBonusDebugState(this);
         //DebugStartState debugState = new ShipBuildingOneColonyShipAndOneSpacePort(this);
         //DebugStartState debugState = new BeatPirateTokenDebugState(this);
         //DebugStartState debugState = new BuildASpacePortDebugState(this);
-        debugState.Setup();
+        debugStartState.Setup();
     }
 
     public void On7Rolled()
@@ -135,5 +155,30 @@ public class GameController : SFController
     void Update()
     {
         
+    }
+
+    public Player[] GetPlayers()
+    {
+        return players;
+    }
+
+    public Player GetMainPlayer()
+    {
+        return mainPlayer;
+    }
+
+    public int GetCurrentPlayerAtTurn()
+    {
+        return currentPlayerAtTurn;
+    }
+
+    public MapScript GetMapScript()
+    {
+        return Map.GetComponent<MapScript>();
+    }
+
+    public HUDScript GetHUDScript()
+    {
+        return HUD.GetComponent<HUDScript>();
     }
 }

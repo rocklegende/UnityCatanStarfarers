@@ -102,7 +102,7 @@ public class EncounterCardHandler : MonoBehaviour
         if (currentDecisionNode.action != null)
         {
             currentDecisionNode.action.SetCallback(ValueChosen);
-            currentDecisionNode.action.Execute();
+            currentDecisionNode.action.ExecuteTemplateMethod();
         }
         else
         {

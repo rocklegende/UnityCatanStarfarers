@@ -117,7 +117,41 @@ public class EncounterCardTestingState : DebugStartState
         controller.state = new StartState(controller);
 
         CommonSetup();
-        SetUpgradesForMainPlayer(3);
+        controller.mainPlayer.BuildUpgradeWithoutCost(new BoosterUpgradeToken());
+
+        CommonMapSetup();
+
+        controller.mainPlayer.BuildToken2(
+            controller.mapModel,
+            new ColonyBaseToken().GetType(),
+            new SpacePoint(new HexCoordinates(5, 5), 1),
+            new SpacePortToken().GetType()
+        );
+
+        controller.mainPlayer.BuildToken2(
+            controller.mapModel,
+            new ColonyBaseToken().GetType(),
+            new SpacePoint(new HexCoordinates(5, 5), 0),
+            new ShipToken().GetType()
+        );
+
+        //var encounterFactory = new EncounterCardFactory(controller);
+        //controller.encounterCardHandler.PlayEncounterCard(encounterFactory.CreateEncounterCard16());
+    }
+}
+
+public class EncounterCardTestingStateManual : DebugStartState
+{
+    public EncounterCardTestingStateManual(GameController controller) : base(controller)
+    {
+    }
+
+    public override void Setup()
+    {
+        controller.state = new StartState(controller);
+
+        CommonSetup();
+        controller.mainPlayer.BuildUpgradeWithoutCost(new BoosterUpgradeToken());
 
         CommonMapSetup();
 
@@ -136,7 +170,7 @@ public class EncounterCardTestingState : DebugStartState
         );
 
         var encounterFactory = new EncounterCardFactory(controller);
-        controller.encounterCardHandler.PlayEncounterCard(encounterFactory.CreateEncounterCard5());
+        controller.encounterCardHandler.PlayEncounterCard(encounterFactory.CreateEncounterCard12());
     }
 }
 

@@ -67,6 +67,11 @@ public class DecisionDialog : MonoBehaviour
         }
     }
 
+    public Button GetButtonWithText(string text)
+    {
+        return currentButtons.Find(button => button.GetComponentInChildren<Text>().text == text);
+    }
+
     public void RemoveButtons()
     {
         for (int i = 0; i < buttonHorizontalStack.transform.childCount; i++)

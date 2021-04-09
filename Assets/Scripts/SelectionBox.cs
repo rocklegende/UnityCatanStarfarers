@@ -15,6 +15,7 @@ public class SelectionBox : SFView
     public bool isSelected = false;
     public System.Action<SelectionBox> itemSelectedCallback;
     public GameObject innerComponentContainer;
+    public int selectionIndex;
     private SFModel obj;
 
     Color unselectedColor = ColorCreator.Create(200, 200, 200, 128);

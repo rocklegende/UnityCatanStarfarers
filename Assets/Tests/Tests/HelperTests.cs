@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -10,6 +11,8 @@ namespace Tests
     public class HelperTests
     {
         public Helper helper = new Helper();
+
+        
 
         [Test]
         public void TestSpacePointArrayContainsPointPositive()

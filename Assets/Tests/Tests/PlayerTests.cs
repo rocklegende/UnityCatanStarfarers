@@ -375,6 +375,40 @@ namespace Tests
             Assert.AreEqual(3, spacePortCount);
         }
 
+        
+
+        [Test]
+        public void TestGetRemovableUpgradeTokens()
+        {
+            var player = new TestHelper().CreateGenericPlayer();
+            player.BuildUpgradeWithoutCost(new BoosterUpgradeToken());
+            player.BuildUpgradeWithoutCost(new BoosterUpgradeToken());
+            player.BuildUpgradeWithoutCost(new CannonUpgradeToken());
+
+            var removableTokens = player.ship.GetRemovableTokens();
+            Assert.True(removableTokens.Count == 2);
+            Assert.True(removableTokens.Find(tok => tok is BoosterUpgradeToken) != null);
+            Assert.True(removableTokens.Find(tok => tok is CannonUpgradeToken) != null);
+        }
+
+
+
+        [Test]
+        public void TestGetAttachableUpgradeTokens()
+        {
+            var player = new TestHelper().CreateGenericPlayer();
+            var tokens = player.ship.GetUpgradesThatAreNotFull();
+            Assert.True(tokens.Count == 3);
+
+            for (int i = 0; i < player.ship.BoostersMaxCapacity; i++)
+            {
+                player.BuildUpgradeWithoutCost(new BoosterUpgradeToken());
+            }
+
+            tokens = player.ship.GetUpgradesThatAreNotFull();
+            Assert.True(tokens.Find(tok => tok is BoosterUpgradeToken) == null); //Boosters are full, they cant be in the list anymore
+        }
+
 
 
 

@@ -68,6 +68,27 @@ public class TokenStorage {
     }
 }
 
+public interface PlayerComparer
+{
+    bool comparePlayerStates(Player state1, Player state2);
+}
+
+public class LostOneFameMedalComparer : PlayerComparer
+{
+    public bool comparePlayerStates(Player state1, Player state2)
+    {
+        return state1.GetFameMedalPieces() - 1 == state2.GetFameMedalPieces();
+    }
+}
+
+public class WonOneFameMedalComparer : PlayerComparer
+{
+    public bool comparePlayerStates(Player state1, Player state2)
+    {
+        return state1.GetFameMedalPieces() + 1 == state2.GetFameMedalPieces();
+    }
+}
+
 public class Player : SFModel
 {
     public Color color;
@@ -112,7 +133,18 @@ public class Player : SFModel
         this.notifier = notifier;
     }
 
+    public Player SimpleClone()
+    {
+        //TODO: make real copy of everything here
+        var player = new Player(this.color, this.notifier);
+        player.foodProduceBonus = foodProduceBonus;
+        player.goodsProduceBonus = goodsProduceBonus;
+        player.oreProduceBonus = oreProduceBonus;
+        player.fameMedalPieces = fameMedalPieces;
+        return player;
+    }
 
+    
 
     public void ActivateRichHelpPoorBonus()
     {
@@ -343,6 +375,12 @@ public class Player : SFModel
         DataChanged();
     }
 
+    public void RemoveUpgrade(Token token)
+    {
+        ship.Remove(token);
+        DataChanged();
+    }
+
     public void BuildUpgradeWithoutCost(Token token)
     {
         BuildUpgrade(token, true);
@@ -420,11 +458,11 @@ public class Player : SFModel
 
     public void AddFameMedals(int amount)
     {
-        if (amount < 0)
-        {
-            throw new ArgumentException("Negative values not allowed");
-        }
         fameMedalPieces += amount;
+        if (fameMedalPieces < 0)
+        {
+            fameMedalPieces = 0;
+        }
         DataChanged();
     }
 

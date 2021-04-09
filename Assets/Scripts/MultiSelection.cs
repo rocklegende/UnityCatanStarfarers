@@ -10,11 +10,9 @@ public class MultiSelection : SFView
     public Button selectButton;
     public GameObject optionsHorizontalStack;
     public GameObject selectionBoxPrefab;
-    public System.Action<List<SFModel>> selectCallback;
+    public System.Action<List<int>> selectCallback;
     public List<SelectionBox> selectionBoxes = new List<SelectionBox>();
-
-    public bool multiselect = true;
-    public int multiSelectMaxSelectable = 2;
+    public int maxSelectable = 2;
 
     public List<GameObject> selectionBoxObjects = new List<GameObject>();
 
@@ -23,6 +21,11 @@ public class MultiSelection : SFView
     {
         //TODO: this line is only to debug, remove in production
         //SetSelectableObjects(new Token[] { new BoosterUpgradeToken(), new FreightPodUpgradeToken() });
+    }
+
+    bool IsSingleSelect()
+    {
+        return maxSelectable == 1;
     }
 
     void ClearPreviousBoxes()
@@ -38,10 +41,12 @@ public class MultiSelection : SFView
     {
 
         ClearPreviousBoxes();
-        foreach (var obj in objects)
+        for (int i = 0; i < objects.Length; i++)
         {
+            var obj = objects[i];
             var playerBox = Instantiate(selectionBoxPrefab, optionsHorizontalStack.transform, false);
             playerBox.GetComponent<SelectionBox>().Init(obj);
+            playerBox.GetComponent<SelectionBox>().selectionIndex = i;
             playerBox.GetComponent<SelectionBox>().itemSelectedCallback = BoxWasSelected;
             selectionBoxes.Add(playerBox.GetComponent<SelectionBox>());
             playerBox.transform.parent = optionsHorizontalStack.transform;
@@ -56,45 +61,48 @@ public class MultiSelection : SFView
 
     void BoxWasSelected(SelectionBox box)
     {
-        if (multiselect)
+        if (IsSingleSelect())
         {
-            if (!box.isSelected)
-            {
-                if (GetSelectedBoxes().Count < multiSelectMaxSelectable)
-                {
-                    box.SetSelected(true);
-                }
-            }
-            else
-            {
-                box.SetSelected(false);
-            }
-
+            BoxWasSelectedInSingleSelectMode(box);
         }
         else
         {
-            foreach (var b in GetSelectedBoxes())
+            BoxWasSelectedInMultiSelectMode(box);
+        }
+    }
+
+    void BoxWasSelectedInSingleSelectMode(SelectionBox box)
+    {
+        foreach (var b in GetSelectedBoxes())
+        {
+            b.SetSelected(false);
+        }
+        box.SetSelected(true);
+    }
+
+    void BoxWasSelectedInMultiSelectMode(SelectionBox box)
+    {
+        if (!box.isSelected)
+        {
+            if (GetSelectedBoxes().Count < maxSelectable)
             {
-                b.SetSelected(false);
+                box.SetSelected(true);
             }
-            box.SetSelected(true);
+        }
+        else
+        {
+            box.SetSelected(false);
         }
     }
 
     public void SelectButtonPressed()
     {
-        var selectedObjects = GetSelectedObjects();
-        selectCallback(selectedObjects);
+        var indexes = GetSelectedIndexes();
+        selectCallback(indexes);
     }
 
-    List<SFModel> GetSelectedObjects()
+    List<int> GetSelectedIndexes()
     {
-        return selectionBoxes.Where(box => box.isSelected).Select(selectedBox => selectedBox.GetObject()).ToList();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        return GetSelectedBoxes().Select(selectedBox => selectedBox.selectionIndex).ToList();
     }
 }

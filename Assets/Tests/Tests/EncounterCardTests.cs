@@ -57,10 +57,58 @@ using System.Linq;
 //    }
 //}
 
+public class MockGameController : IGameController
+{
+    Player[] players;
+    public MockGameController()
+    {
+        this.players = new Player[]
+        {
+            new Player(Color.black, new SFElement()),
+            new Player(Color.green, new SFElement()),
+            new Player(Color.red, new SFElement())
+        };
+    }
+
+    public int GetCurrentPlayerAtTurn()
+    {
+        return 0;
+    }
+
+    public HUDScript GetHUDScript()
+    {
+        return null;
+    }
+
+    public Player GetMainPlayer()
+    {
+        return players[0];
+    }
+
+    public MapScript GetMapScript()
+    {
+        return null;
+    }
+
+    public Player[] GetPlayers()
+    {
+        return players;
+    }
+}
+
 namespace Tests
 {
+
+    
+
     public class EncounterCardTests
     {
+
+        IGameController CreateMockGameController()
+        {
+            return new MockGameController();
+        }
+
         //[Test]
         //public void EncounterCard1Test()
         //{
@@ -77,17 +125,50 @@ namespace Tests
 
         //}
 
-        [Test]
-        public void ShipCannotFlyAction()
+        void ResultFound(EncounterActionValue value)
         {
-            //var gameController = new GameController();
-            var action = new ShipCannotFlyAction(null);
-
-            var token = new ColonyBaseToken();
-            action.DidSelectToken(token);
-
-            Assert.True(token.IsDisabled());
+            //
         }
 
+        //[Test]
+        //public void ShipCannotFlyAction()
+        //{
+        //    var gameController = CreateMockGameController();
+        //    var action = new ShipCannotFlyAction(gameController);
+        //    action.SetCallback(ResultFound);
+        //    var token = new ColonyBaseToken();
+        //    action.DidSelectToken(token);
+
+        //    Assert.True(token.IsDisabled());
+        //}
+
+        [Test]
+        public void GetsTriggeredByValueTest()
+        {
+            var node = new DecisionTreeNode(null, new List<int>() { 0, 1, 2 }, null);
+            Assert.True(node.GetsTriggeredByValue(0));
+            Assert.True(node.GetsTriggeredByValue(1));
+            Assert.True(node.GetsTriggeredByValue(2));
+            Assert.False(node.GetsTriggeredByValue(3));
+        }
+
+        [Test]
+        public void GetsTriggeredByValueTest2()
+        {
+            var node = new DecisionTreeNode(null, false, null);
+            Assert.True(node.GetsTriggeredByValue(false));
+        }
+
+        [Test]
+        public void FameMedalGainStrategyTest()
+        {
+            var player = new TestHelper().CreateGenericPlayer();
+            player.AddFameMedals(2);
+            Assert.AreEqual(2, player.GetFameMedalPieces());
+            FameMedalGainStrategy.HandleFameMedalGain(-2, player);
+            Assert.AreEqual(0, player.GetFameMedalPieces());
+            FameMedalGainStrategy.HandleFameMedalGain(-2, player); //cant be below 0
+            Assert.AreEqual(0, player.GetFameMedalPieces());
+        }
     }
 }

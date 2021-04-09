@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class TradePanelScript : MonoBehaviour
 {
+    public System.Action<Hand, Hand> callback;
     public Button MakeTradeWithBankButton;
     public Button MakeTradeWithPlayersButton;
     public GameObject GiveResourceStackRenderer;
@@ -13,6 +14,9 @@ public class TradePanelScript : MonoBehaviour
     ResourceCardStackRenderer _ReceiveResourcesStackScript;
     TradingCalculator calculator;
     Player player;
+
+    int exactInput = -1;
+    int exactOutput = -1;
 
     // Start is called before the first frame update
     void Start()
@@ -38,6 +42,22 @@ public class TradePanelScript : MonoBehaviour
         _GiveResourcesStackScript.SetPlayer(this.player);
     }
 
+    /// <summary>
+    /// Specify if the input hand is only valid for trade if an exact number of cards is reached inside the input hand.
+    /// </summary>
+    public void SetExactInput(int amount)
+    {
+        exactInput = amount;
+    }
+
+    /// <summary>
+    /// Specify if the output hand is only valid for trade if an exact number of cards is reached inside the output hand.
+    /// </summary>
+    public void SetExactOutput(int amount)
+    {
+        exactOutput = amount;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -51,36 +71,31 @@ public class TradePanelScript : MonoBehaviour
 
     void DrawButtons()
     {
-        if (calculator != null)
+        var inputHand = _GiveResourcesStackScript.GetOutput();
+        var outputHand = _ReceiveResourcesStackScript.GetOutput();
+        if (exactInput != -1 && exactOutput != -1)
         {
-            var inputHand = _GiveResourcesStackScript.GetOutput();
-            var outputHand = _ReceiveResourcesStackScript.GetOutput();
-
-            if (calculator.BankTradeIsPossible(inputHand, outputHand))
+            MakeTradeWithBankButton.interactable = inputHand.Count() == exactInput && outputHand.Count() == exactOutput;
+            MakeTradeWithPlayersButton.interactable = false; // Player Trade should not be allowed in this mode;
+        } else
+        {
+            if (calculator != null)
             {
-                MakeTradeWithBankButton.interactable = true;
-            }
-            else
-            {
-                MakeTradeWithBankButton.interactable = false;
-            }
-
-            if (calculator.PlayerTradeIsPossible(inputHand, outputHand))
-            {
-                MakeTradeWithPlayersButton.interactable = true;
-            }
-            else
-            {
-                MakeTradeWithPlayersButton.interactable = false;
+                MakeTradeWithBankButton.interactable = calculator.BankTradeIsPossible(inputHand, outputHand);
+                MakeTradeWithPlayersButton.interactable = calculator.PlayerTradeIsPossible(inputHand, outputHand);
             }
         }
-        
     }
 
     public void OnTradeWithBankButtonClicked()
     {
-        player.SubtractHand(_GiveResourcesStackScript.GetOutput());
-        player.AddHand(_ReceiveResourcesStackScript.GetOutput());
+        var inputHand = _GiveResourcesStackScript.GetOutput();
+        var outputHand = _ReceiveResourcesStackScript.GetOutput();
+
+        player.SubtractHand(inputHand);
+        player.AddHand(outputHand);
+
+        callback(inputHand, outputHand);
 
         _GiveResourcesStackScript.ResetStacks();
         _ReceiveResourcesStackScript.ResetStacks();

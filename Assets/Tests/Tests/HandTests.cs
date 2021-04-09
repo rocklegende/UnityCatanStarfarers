@@ -204,5 +204,27 @@ namespace Tests
                 Assert.True(true);
             }
         }
+
+        [Test]
+        public void HandEqualIfNumberOfResourceCardsOfeachTypeEqual()
+        {
+
+            Hand hand1 = Hand.FromResources(2);
+            Hand hand2 = Hand.FromResources(2);
+
+
+            Assert.True(hand1.IsEqualTo(hand2));
+        }
+
+        [Test]
+        public void HandEqualityNegative()
+        {
+
+            Hand hand1 = Hand.FromResources(2);
+            Hand hand2 = Hand.FromResources(3);
+
+
+            Assert.False(hand1.IsEqualTo(hand2));
+        }
     }
 }

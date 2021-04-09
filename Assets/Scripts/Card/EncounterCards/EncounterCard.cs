@@ -36,6 +36,23 @@ public class DecisionTree
     {
         this.root = root;
     }
+
+    public DecisionTreeNode FindNodeWithAction<T>() where T : EncounterCardAction
+    {
+        // Breadth First Search
+        var queue = new List<DecisionTreeNode>() { root };
+        while (queue.Count > 0)
+        {
+            var node = queue.PopAt(0);
+            if (node.action is T)
+            {
+                return node;
+            }
+            queue.AddRange(node.nextNodes);
+        }
+
+        return null;
+    }
 }
 
 public class DecisionValueActionPair {
@@ -54,7 +71,7 @@ public class DecisionTreeNodeCreator
     {
         var nextNodesList = new List<DecisionTreeNode>();
         var max = -1;
-        foreach(var pair in pairs)
+        foreach (var pair in pairs)
         {
             if ((int)pair.decisionValue > max)
             {
@@ -79,6 +96,48 @@ public class DecisionTreeNodeCreator
         };
         return CreatePickResourcesNode(pairs, gameController);
     }
+
+    // Leaves are all the same practically, therefore these helper methods here
+
+    public static DecisionTreeNode CreateShipCannotFlyNode(GameController gameController, int fameMedalGain = -1)
+    {
+        return new DecisionTreeNode(null, false, new ShipCannotFlyAction(gameController, fameMedalGain));
+    }
+
+    public static DecisionTreeNode CreateNoActionNode(GameController gameController)
+    {
+        return new DecisionTreeNode(null, false, new NoCounterGift(gameController));
+    }
+
+    public static DecisionTreeNode CreateRemoveUpgradeNode(GameController gameController, int fameMedalGain = -1)
+    {
+        return new DecisionTreeNode(null, false, new RemoveUpgradeAction(gameController, fameMedalGain));
+    }
+
+    public static DecisionTreeNode CreateGetUpgradeForFree(GameController gameController, int fameMedalGain = -1)
+    {
+        return new DecisionTreeNode(null, true, new GetOneUpgradeForFree(gameController, fameMedalGain));
+    }
+
+    public static DecisionTreeNode CreateGetTradeShipForFree(GameController gameController)
+    {
+        return new DecisionTreeNode(null, true, new GetTradeShipForFree(gameController));
+    }
+
+    public static DecisionTreeNode CreateLoseOneFameMedal(GameController gameController)
+    {
+        return new DecisionTreeNode(null, false, new LoseOneFameMedalAction(gameController));
+    }
+
+    public static DecisionTreeNode CreateReceiveResources(
+        GameController gameController,
+        int fameMedalGain,
+        Hand giftedCards = null,
+        int cardsSelectableFreely = -1
+    )
+    {
+        return new DecisionTreeNode(null, true, new ReceiveResourcesAndReceiveFameMedalAction(gameController, fameMedalGain, giftedCards, cardsSelectableFreely));
+    }
 }
 ;
 public class DecisionTreeNode
@@ -89,12 +148,31 @@ public class DecisionTreeNode
     public string buttonText { get; set; }
     public string text { get; set; }
 
+    /// <summary>
+    /// Initialize with single action.
+    /// </summary>
+    /// <param name="nextNodes"></param>
+    /// <param name="decisionValue"></param>
+    /// <param name="action"></param>
     public DecisionTreeNode(List<DecisionTreeNode> nextNodes, object decisionValue, EncounterCardAction action)
     {
         this.nextNodes = nextNodes;
         this.decisionValue = decisionValue;
         this.action = action;
     }
+
+    ///// <summary>
+    ///// Initialize with multiple actions that will be executed in the order that the actions are given.
+    ///// </summary>
+    ///// <param name="nextNodes"></param>
+    ///// <param name="decisionValue"></param>
+    ///// <param name="actions"></param>
+    //public DecisionTreeNode(List<DecisionTreeNode> nextNodes, object decisionValue, List<EncounterCardAction> actions)
+    //{
+    //    this.nextNodes = nextNodes;
+    //    this.decisionValue = decisionValue;
+    //    this.actions = actions;
+    //}
 
     public bool HasNext()
     {
@@ -112,6 +190,13 @@ public class DecisionTreeNode
 
     public bool GetsTriggeredByValue(object value)
     {
+        // special case if node gets triggered by multiple values
+        if (value is int && decisionValue is List<int>)
+        {
+            var decisionValues = (List<int>)decisionValue;
+            var intValue = (int)value;
+            return decisionValues.Contains(intValue);
+        }
         return decisionValue.Equals(value);
     }
 
@@ -156,17 +241,29 @@ public abstract class EncounterCardAction
     public HUDScript hud;
     public MapScript mapScript;
     public GameController gameController;
+    public object PredeterminedResult;
 
     public EncounterCardAction(GameController gameController)
     {
         this.gameController = gameController;
-        this.mapScript = gameController.Map.GetComponent<MapScript>();
-        this.hud = gameController.HUD.GetComponent<HUDScript>();
+        this.mapScript = gameController.GetMapScript();
+        this.hud = gameController.GetHUDScript();
     }
 
     public DecisionDialog GetDecisionDialog()
     {
         return hud.decisionDialog.GetComponent<DecisionDialog>();
+    }
+
+    public void ExecuteTemplateMethod()
+    {
+        if (PredeterminedResult != null)
+        {
+            ResultFound(PredeterminedResult);
+        } else
+        {
+            Execute();
+        }
     }
 
     public abstract void Execute();
@@ -176,7 +273,7 @@ public abstract class EncounterCardAction
         this.callback = callback;
     }
 
-    protected void ResultFound(object value)
+    public void ResultFound(object value)
     {
         callback(new EncounterActionValue(value));
     }
@@ -185,15 +282,17 @@ public abstract class EncounterCardAction
 public class GiveupResourcesEncounterAction : EncounterCardAction
 {
     int limit;
+    int onlySelectableAtValue;
     public Hand pickedHand;
-    public GiveupResourcesEncounterAction(GameController gameController, int limit) : base(gameController)
+    public GiveupResourcesEncounterAction(GameController gameController, int limit, int onlySelectableAtValue = -1) : base(gameController)
     {
         this.limit = limit;
+        this.onlySelectableAtValue = onlySelectableAtValue;
     }
 
     public override void Execute()
     {
-        hud.OpenResourcePicker(ResourcesPicked, limit);
+        hud.OpenResourcePicker(ResourcesPicked, limit, onlySelectableAtValue);
         GetDecisionDialog().SetText(String.Format("A starfarers want up to {0} resources, how much do you give (up to {0})?", limit));
     }
 
@@ -205,7 +304,7 @@ public class GiveupResourcesEncounterAction : EncounterCardAction
         hud.player.SubtractHand(hand);
         hud.CloseResourcePicker();
         ResultFound(hand.Count());
-        
+
     }
 }
 
@@ -228,13 +327,28 @@ public class GetResourceFromBankEncounterAction : EncounterCardAction
         hud.CloseResourcePicker();
         hud.player.SubtractHand(hand);
         ResultFound(hand.Count());
-        
+
     }
 }
 
 public class NoCounterGift : EncounterCardAction
 {
     public NoCounterGift(GameController gameController) : base(gameController)
+    {
+
+    }
+
+
+
+    public override void Execute()
+    {
+        ResultFound(true);
+    }
+}
+
+public class PirateLeaves : EncounterCardAction
+{
+    public PirateLeaves(GameController gameController) : base(gameController)
     {
 
     }
@@ -286,20 +400,7 @@ public class ReceiveResourcesAndReceiveFameMedalAction : EncounterCardAction
 
     void ProcessFameMedalGain()
     {
-        if (fameMedalGain > 0)
-        {
-            for (int i = 0; i < fameMedalGain; i++)
-            {
-                hud.player.AddFameMedal();
-            }
-        } else
-        {
-            for (int j = 0; j < -fameMedalGain; j++)
-            {
-                hud.player.RemoveFameMedal();
-            }
-        }
-        
+        FameMedalGainStrategy.HandleFameMedalGain(fameMedalGain, gameController.mainPlayer);
     }
 
     bool CanSelectCardsFreely()
@@ -379,6 +480,7 @@ public class ShipCannotFlyAction : EncounterCardAction
 
     public override void Execute()
     {
+        FameMedalGainStrategy.HandleFameMedalGain(fameMedalGain, gameController.mainPlayer);
         var flyableTokensOfMainPlayer = gameController.mainPlayer.tokens
             .Where(tok => tok.HasShipTokenOnTop()).ToList();
         hud.decisionDialog.SetActive(false);
@@ -412,48 +514,79 @@ public class GetTradeShipForFree : EncounterCardAction
 public class GetOneUpgradeForFree : EncounterCardAction
 {
     int fameMedalGain;
+    public readonly List<Token> selectableTokens;
     public GetOneUpgradeForFree(GameController gameController, int fameMedalGain = 0) : base(gameController)
     {
         this.fameMedalGain = fameMedalGain;
+        selectableTokens = gameController.mainPlayer.ship.GetUpgradesThatAreNotFull();
     }
 
     public override void Execute()
     {
-        hud.OpenUpgradeSelection(new List<Token>() {
-            new BoosterUpgradeToken(),
-            new CannonUpgradeToken(),
-            new FreightPodUpgradeToken()
-        }, UpgradeTokenSelected);
-
-        
-        for (int i = 0; i < fameMedalGain; i++)
+        FameMedalGainStrategy.HandleFameMedalGain(fameMedalGain, gameController.mainPlayer);
+        if (selectableTokens.Count == 0)
         {
-            if (fameMedalGain > 0)
-            {
-                hud.player.AddFameMedal();
-            } else 
-            {
-                hud.player.RemoveFameMedal();
-            }
+            ResultFound(true); // player has no space for addtional tokens, therefore we end this action here
+            return;
         }
 
-        hud.decisionDialog.GetComponent<DecisionDialog>().SetText("You get a free upgrade, please choose one");
+        hud.OpenUpgradeSelection(selectableTokens, UpgradeTokenSelected, 1);
     }
 
-    void UpgradeTokenSelected(List<SFModel> selectedObjects)
+    void UpgradeTokenSelected(List<int> selectedIndexes)
     {
-        foreach (var obj in selectedObjects)
+        foreach (var index in selectedIndexes)
         {
-            if (obj is Token)
-            {
-                var token = (Token)obj;
-                hud.player.BuildUpgradeWithoutCost(token);
-                
-            }
-            else
-            {
-                throw new System.ArgumentException("selected element is not Token, that should not happen!");
-            }
+            hud.player.BuildUpgradeWithoutCost(selectableTokens[index]);
+        }
+        hud.CloseSelection();
+        ResultFound(true);
+    }
+}
+
+public class GetResourceFromEveryPlayer : EncounterCardAction
+{
+    public GetResourceFromEveryPlayer(GameController gameController) : base(gameController)
+    {
+
+    }
+
+    public override void Execute()
+    {
+        //TODO: 
+        throw new NotImplementedException();
+    }
+}
+
+public class RemoveUpgradeAction : EncounterCardAction
+{
+    int fameMedalGain;
+    List<Token> selectableTokens;
+    public RemoveUpgradeAction(GameController gameController, int fameMedalGain = 0) : base(gameController)
+    {
+        this.fameMedalGain = fameMedalGain;
+        selectableTokens = gameController.mainPlayer.ship.GetRemovableTokens();
+    }
+
+
+
+    public override void Execute()
+    {
+        FameMedalGainStrategy.HandleFameMedalGain(fameMedalGain, gameController.mainPlayer);
+        if (selectableTokens.Count == 0)
+        {
+            ResultFound(true); // player has no tokens to lose, therefore we end this action here
+            return;
+        }
+
+        hud.OpenUpgradeSelection(selectableTokens, UpgradeTokenSelected, 1);
+    }
+
+    void UpgradeTokenSelected(List<int> selectedIndexes)
+    {
+        foreach (var index in selectedIndexes)
+        {
+            gameController.mainPlayer.RemoveUpgrade(selectableTokens[index]);
         }
         hud.CloseSelection();
         ResultFound(true);
@@ -497,7 +630,7 @@ public class LoseOneFameMedalAction : EncounterCardAction
         decisionDialogScript.SetCallback(DialogOptionChosen);
         decisionDialogScript.SetOptions(new DialogOption[] {
             new DialogOption("ok", "Ok", true)
-        }) ;
+        });
     }
 
     void DialogOptionChosen(DialogOption option)
@@ -506,6 +639,71 @@ public class LoseOneFameMedalAction : EncounterCardAction
     }
 }
 
+public class LoseHandAction : EncounterCardAction
+{
+
+    public MakeTradeAction makeTradeAction;
+
+    public LoseHandAction(GameController gameController) : base(gameController)
+    {
+
+    }
+
+    public override void Execute()
+    {
+        if (makeTradeAction != null)
+        {
+            gameController.mainPlayer.SubtractHand(makeTradeAction.outputHand);
+        }
+    }
+}
+
+public class ShakeShipAction : EncounterCardAction
+{
+    public ShakeShipAction(GameController gameController) : base(gameController)
+    {
+        
+    }
+
+    public override void Execute()
+    {
+        hud.ShowShipDiceThrowPanel(ShipValueThrown);
+    }
+
+    void ShipValueThrown(ShipDiceThrow shipDiceThrow)
+    {
+        //hud.CloseShipDiceThrowPanel();
+        ResultFound(shipDiceThrow.GetRawValue());
+    }
+}
+
+public class MakeTradeAction : EncounterCardAction
+{
+    int numCardsToGive;
+    int numCardsToReceive;
+    public Hand inputHand;
+    public Hand outputHand;
+
+    public MakeTradeAction(GameController gameController, int numCardsToGive, int numCardsToReceive) : base(gameController)
+    {
+        this.numCardsToGive = numCardsToGive;
+        this.numCardsToReceive = numCardsToReceive;
+    }
+
+    public override void Execute()
+    {
+        hud.OpenTradePanel(numCardsToGive, numCardsToReceive, TradeMade);
+    }
+
+    public void TradeMade(Hand inputHand, Hand outputHand)
+    {
+
+        hud.CloseTradePanel();
+        this.inputHand = inputHand;
+        this.outputHand = outputHand;
+        ResultFound(true);
+    }
+}
 
 
 public class WinOneFameMedalAction : EncounterCardAction
@@ -532,6 +730,27 @@ public class WinOneFameMedalAction : EncounterCardAction
 
 }
 
+public class HasMoreBoostersThanNeighborAction : EncounterCardAction
+{
+    FightEncounterOpponent opponent;
+    public HasMoreBoostersThanNeighborAction(GameController gameController, FightEncounterOpponent opponent) : base(gameController)
+    {
+        this.opponent = opponent;
+    }
+
+    public override void Execute()
+    {
+        var opponentPlayerIndex = EncounterCardHelper.GetOpponentPlayerIndex(opponent, gameController.currentPlayerAtTurn, gameController.players.Length);
+        var opponentPlayer = gameController.players[opponentPlayerIndex];
+        ResultFound(HasEqualOrMoreBoosters(gameController.mainPlayer, opponentPlayer));
+    }
+
+    bool HasEqualOrMoreBoosters(Player origin, Player playerToCompareTo)
+    {
+        return origin.ship.Boosters >= playerToCompareTo.ship.Boosters;
+    }
+}
+
 public class YesOrNoEncounterAction : EncounterCardAction
 {
     public YesOrNoEncounterAction(GameController gameController) : base(gameController)
@@ -555,20 +774,57 @@ public class YesOrNoEncounterAction : EncounterCardAction
     }
 }
 
+public enum FightEncounterOpponent
+{
+    FIRST_LEFT,
+    SECOND_LEFT,
+    FIRST_RIGHT,
+    SECOND_RIGHT
+}
+
+public class EncounterCardHelper
+{
+    public static int GetOpponentPlayerIndex(FightEncounterOpponent opponent, int currentPlayerIndex, int numberOfPlayers)
+    {
+        switch (opponent)
+        {
+            case FightEncounterOpponent.FIRST_RIGHT:
+                return Helper.NextPlayerClockwise(currentPlayerIndex, numberOfPlayers);
+            case FightEncounterOpponent.FIRST_LEFT:
+                return Helper.PreviousPlayerClockwise(currentPlayerIndex, numberOfPlayers);
+            case FightEncounterOpponent.SECOND_LEFT:
+                return Helper.PreviousPlayerClockwiseStepsAway(currentPlayerIndex, numberOfPlayers, 2);
+            case FightEncounterOpponent.SECOND_RIGHT:
+                return Helper.NextPlayerClockwiseStepsAway(currentPlayerIndex, numberOfPlayers, 2);
+        }
+        return -1;
+    }
+}
+
 public class FightEncounterAction : EncounterCardAction
 {
     FightCategory category;
-    public FightEncounterAction(GameController gameController, FightCategory category) : base(gameController)
+    FightEncounterOpponent opponent;
+    public FightEncounterAction(GameController gameController, FightCategory category, FightEncounterOpponent opponent) : base(gameController)
     {
         this.category = category;
+        this.opponent = opponent;
     }
+
+
 
     public override void Execute()
     {
+        var opponentIndex = EncounterCardHelper.GetOpponentPlayerIndex(opponent, gameController.currentPlayerAtTurn, gameController.players.Length);
+        if (opponentIndex == -1)
+        {
+            throw new ArgumentException("Getting opponent index failed");
+        }
+
         hud.fightPanel.SetActive(true);
         var fightPanelScript = hud.fightPanel.GetComponent<FightPanelScript>();
         fightPanelScript.SetFightIsDoneCallback(FightIsDone);
-        fightPanelScript.PlayFight(hud.player, hud.player, category);
+        fightPanelScript.PlayFight(gameController.mainPlayer, gameController.players[opponentIndex], category);
     }
 
     void FightIsDone(bool result)
