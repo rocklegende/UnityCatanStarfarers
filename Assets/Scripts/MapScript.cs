@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Photon.Realtime;
+using Photon.Pun;
 
 public class Constants
 {
@@ -89,7 +91,9 @@ public class MapScript : SFController
     public GameObject DisplayToken(Token token)
     {
         GameObject prefab = tokenRendererPrefab;
-        GameObject tokenInstance = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity);
+
+        GameObject tokenInstance = Helper.Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity);
+        //GameObject tokenInstance = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity);
         tokenInstance.GetComponent<Space.TokenScript>().tokenGameObject = tokenInstance;
         tokenInstance.GetComponent<Space.TokenScript>().tokenModel = token;
         tokenInstance.GetComponent<Space.TokenScript>().Draw();

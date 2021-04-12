@@ -4,6 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using com.onebuckgames.UnityStarFarers;
 
 namespace Tests
 {
@@ -25,6 +26,14 @@ namespace Tests
         [UnitySetUp]
         public IEnumerator SetUp()
         {
+            //yield return new WaitForSeconds(2);
+            //SceneManager.LoadScene(SFScenes.LOBBY_SCENE);
+            //yield return new WaitForSeconds(4);
+            //SFEnvironment.Instance.SetInstantiationStrategy(new DevelopmentInstantiationStrategy());
+
+
+            yield return LoadDefaultScene();
+            //SFEnvironment.Instance.SetInstantiationStrategy(new DevelopmentInstantiationStrategy());
             yield return SetupDebugState();
             gameController = GetGameController();
             encounterCardHandler = gameController.encounterCardHandler;
@@ -167,7 +176,6 @@ namespace Tests
 
         public IEnumerator SetupDebugState()
         {
-            yield return LoadDefaultScene();
             var gameControllerScript = GetGameController();
             gameControllerScript.SetUpDebugState(new EncounterCardTestingState(gameControllerScript));
             yield return null;

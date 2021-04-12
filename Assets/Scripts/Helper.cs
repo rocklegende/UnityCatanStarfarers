@@ -2,6 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
+using com.onebuckgames.UnityStarFarers;
 
 public class BoundingBox
 {
@@ -20,7 +23,13 @@ public class BoundingBox
 }
 
 public class Helper
-{    
+{
+
+    public static GameObject Instantiate(GameObject prefab, Vector3 position, Quaternion rotation, byte group = 0, object[] data = null)
+    {
+        //return SFEnvironment.Instance.instantiationStrategy.Instantiate(prefab, position, rotation, group, data);
+        return GameObject.Instantiate(prefab, position, rotation);
+    }
 
     /// <summary>
     /// Returns clockwise order of player beginning with the current player at turn.
