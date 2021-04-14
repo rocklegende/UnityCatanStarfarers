@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
-
+using com.onebuckgames.UnityStarFarers;
 
 public class TestHelper
 {
@@ -13,7 +13,7 @@ public class TestHelper
 
     public Player CreateGenericPlayer()
     {
-        return new Player(Color.black, new SFElement());
+        return new Player(new SFColor(Color.black));
     }
 
     public static Map CreateMockMap()
@@ -21,8 +21,12 @@ public class TestHelper
         return new Map(new Tile_[,] { });
     }
 
-    //public static bool ListsAreEqual(IList<T> list1, IList<T> list2)
-    //{
 
-    //}
+    public static Map SerializeAndDeserialize(Map original)
+    {
+        var serialized = SFFormatter.Serialize(original);
+        var deserialized = (Map) SFFormatter.Deserialize(serialized);
+        
+        return deserialized;
+    }
 }

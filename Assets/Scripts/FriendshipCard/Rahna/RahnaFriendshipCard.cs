@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
+[Serializable]
 public abstract class RahnaFriendshipCard : AbstractFriendshipCard
 {
     public RahnaFriendshipCard()
@@ -19,6 +20,7 @@ public abstract class RahnaFriendshipCard : AbstractFriendshipCard
 
 }
 
+[Serializable]
 public class RahnaDiscardLimitIncrease : RahnaFriendshipCard
 {
     int newDiscardLimit = 12;
@@ -43,6 +45,7 @@ public class RahnaDiscardLimitIncrease : RahnaFriendshipCard
     }
 }
 
+[Serializable]
 public class RahnaBuyFamemedals : RahnaFriendshipCard
 {
     public override void ActivateEffect(Player targetPlayer)
@@ -66,6 +69,7 @@ public class RahnaBuyFamemedals : RahnaFriendshipCard
     }
 }
 
+[Serializable]
 public class RahnaNoIncomeBonus : RahnaFriendshipCard
 {
     public override void ActivateEffect(Player targetPlayer)
@@ -89,6 +93,8 @@ public class RahnaNoIncomeBonus : RahnaFriendshipCard
     }
 }
 
+
+[Serializable]
 public class RahnaRichHelpPoorBonus : RahnaFriendshipCard
 {
     public override void ActivateEffect(Player targetPlayer)

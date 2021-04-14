@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[Serializable]
 public class TradeStationMedal
 {
     public TradeStation ts;
@@ -19,12 +20,14 @@ public class TradeStationMedal
     }
 }
 
+[Serializable]
 public abstract class TradeStation : TileGroup
 {
     public string name;
     public AbstractFriendshipCard[] tradingCards;
     public List<Token> dockedSpaceships = new List<Token>();
     public TradeStationMedal medal;
+    public bool isNotifying = true;
     int capacity = 5;
 
     public TradeStation(AbstractFriendshipCard[] tradingCards, string name, Tile_[] tiles)
@@ -73,8 +76,11 @@ public abstract class TradeStation : TileGroup
         dockedSpaceships.Add(token);
         AssignOwnerOfMedal();
 
-        var notifier = new SFElement();
-        notifier.app.Notify(SFNotification.open_friendship_card_selection, notifier, new object[] { this, tradingCards });
+        if (isNotifying)
+        {
+            var notifier = new SFElement();
+            notifier.app.Notify(SFNotification.open_friendship_card_selection, notifier, new object[] { this, tradingCards });
+        }
     }
 
     void SetNewMedalOwner(Player player)

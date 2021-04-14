@@ -64,9 +64,9 @@ public class MockGameController : IGameController
     {
         this.players = new Player[]
         {
-            new Player(Color.black, new SFElement()),
-            new Player(Color.green, new SFElement()),
-            new Player(Color.red, new SFElement())
+            new Player(new SFColor(Color.black)),
+            new Player(new SFColor(Color.green)),
+            new Player(new SFColor(Color.red))
         };
     }
 

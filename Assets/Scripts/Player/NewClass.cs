@@ -1,4 +1,7 @@
 ﻿using System;
+using com.onebuckgames.UnityStarFarers;
+
+[Serializable]
 public class SpacePortToken : Token, BuildableToken
 {
     public SpacePortToken(): base("spaceport_token", false, new Cost(new Resource[] { new CarbonResource(), new CarbonResource(), new CarbonResource(), new FoodResource(), new FoodResource() }))
@@ -57,11 +60,13 @@ public class SpacePortToken : Token, BuildableToken
     }
 }
 
+[Serializable]
 public abstract class BuildCondition
 {
     public abstract bool TokenCanBeBuildByPlayer(Token token, Player player, Map map, Player[] players);
 }
 
+[Serializable]
 public class TradeAndColonyBuildCondition : BuildCondition
 {
     public override bool TokenCanBeBuildByPlayer(Token token, Player player, Map map, Player[] players)
@@ -94,6 +99,7 @@ public class TradeAndColonyBuildCondition : BuildCondition
     }
 }
 
+[Serializable]
 public class ColonyBaseToken : Token, Settable, BuildableToken
 {
     BuildCondition buildCondition;
@@ -152,6 +158,7 @@ public class ColonyBaseToken : Token, Settable, BuildableToken
     }
 }
 
+[Serializable]
 public class TradeBaseToken : Token, Settable, BuildableToken
 {
     BuildCondition buildCondition;
@@ -210,6 +217,7 @@ public class TradeBaseToken : Token, Settable, BuildableToken
     }
 }
 
+[Serializable]
 public class ShipToken : Token
 {
     public ShipToken() : base("ship_token", false, new Cost(new Resource[] { }))
@@ -244,6 +252,7 @@ public class ShipToken : Token
     }
 }
 
+[Serializable]
 public class BoosterUpgradeToken : Token, BuildableToken
 {
     public BoosterUpgradeToken() : base("booster_upgrade", false, new Cost(new Resource[] { new FuelResource(), new FuelResource() }))
@@ -287,6 +296,7 @@ public class BoosterUpgradeToken : Token, BuildableToken
     }
 }
 
+[Serializable]
 public class CannonUpgradeToken : Token, BuildableToken
 {
     public CannonUpgradeToken() : base("cannon_upgrade", false, new Cost(new Resource[] { new CarbonResource(), new CarbonResource() }))
@@ -330,6 +340,7 @@ public class CannonUpgradeToken : Token, BuildableToken
     }
 }
 
+[Serializable]
 public class FreightPodUpgradeToken : Token, BuildableToken
 {
     public FreightPodUpgradeToken() : base("freight_pod_upgrade", false, new Cost(new Resource[] { new OreResource(), new OreResource() }))

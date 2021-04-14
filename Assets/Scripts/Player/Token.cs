@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using com.onebuckgames.UnityStarFarers;
 
 public interface Settable
 {
@@ -11,12 +12,13 @@ public interface BuildableToken
     bool CanBeBuildByPlayer(Player player, Map map, Player[] players);
 }
 
-
+[Serializable]
 public abstract class SFModel : Subject
 {
 
 }
 
+[Serializable]
 public abstract class Token : SFModel
 {
     public SpacePoint position = null;
@@ -24,7 +26,7 @@ public abstract class Token : SFModel
     public bool useOwnPositioningSystem = true;
     public Cost cost;
     public string id;
-    protected Color color;
+    protected SFColor color;
     public Token attachedToken = null;
     protected bool isTokenAttachable;
     public int stepsLeft = 20; //TODO: should be 0 in real scenario
@@ -55,9 +57,13 @@ public abstract class Token : SFModel
 
     public void DataChanged()
     {
-        SFElement notifier = new SFElement();
-        notifier.app.Notify(SFNotification.player_data_changed, notifier, new object[] { this });
-        notifier.app.Notify(SFNotification.token_data_changed, notifier, new object[] { this });
+        //SFElement notifier = new SFElement();
+        //Debug.Log(notifier);
+
+        //notifier.app.Notify(SFNotification.player_data_changed, notifier, new object[] { this });
+        //notifier.app.Notify(SFNotification.token_data_changed, notifier, new object[] { this });
+
+        Notify(new object[] { this });
     }
 
     public bool IsDisabled()
@@ -205,7 +211,7 @@ public abstract class Token : SFModel
     }
 
 
-    public void SetColor(Color color)
+    public void SetColor(SFColor color)
     {
         this.color = color;
         if (attachedToken != null)
@@ -215,7 +221,7 @@ public abstract class Token : SFModel
         DataChanged();
     }
 
-    public Color GetColor()
+    public SFColor GetColor()
     {
         return this.color;
     }

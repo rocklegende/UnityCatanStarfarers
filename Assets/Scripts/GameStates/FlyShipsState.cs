@@ -42,7 +42,6 @@ public class FlyShipsState : GameState
         selectedToken.FlyTo(point, mapScript.map);
 
         var errors = flightStateChecker.Check(controller.mapModel, controller.players);
-        Debug.Log("");
 
     }
 

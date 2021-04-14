@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public enum Direction
 {
@@ -29,7 +30,7 @@ public class HexComparer : IComparer
     }
 }
 
-
+[Serializable]
 public class HexCoordinates
 {
     public int q;

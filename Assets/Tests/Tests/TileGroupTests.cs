@@ -314,6 +314,7 @@ namespace Tests
             var player = new TestHelper().CreateGenericPlayer();
             token.owner = player;
 
+            tradeStation.isNotifying = false;
             var spaceShipsBefore = tradeStation.dockedSpaceships.Count;
             tradeStation.OnTokenSettled(token);
             var spaceShipsAfter = tradeStation.dockedSpaceships.Count;
@@ -328,11 +329,12 @@ namespace Tests
             var tokenPos = new SpacePoint(new HexCoordinates(4, 4), 0);
             var tuple = CreateTradeTokenAndTradeStation(tokenPos, center);
             var tradeStation = tuple.Item1;
+            tradeStation.isNotifying = false; //global notifications over an SFElement break this test
             var ownToken = tuple.Item2;
             var player = new TestHelper().CreateGenericPlayer();
             ownToken.owner = player;
 
-            var opponent = new Player(Color.cyan, new SFElement());
+            var opponent = new Player(new SFColor(Color.cyan));
             var opponentToken = new TradeBaseToken();
             opponentToken.owner = opponent;
 

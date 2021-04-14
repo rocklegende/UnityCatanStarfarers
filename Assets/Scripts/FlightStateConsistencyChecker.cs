@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using com.onebuckgames.UnityStarFarers;
 
 public enum FlightStateInconsistency {
     UNSETTLED_TOKEN_ON_TRADEPOINT,

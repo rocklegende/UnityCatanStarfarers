@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public abstract class TileGroup : SFModel
 {
     protected Tile_[] tiles;
@@ -78,6 +79,7 @@ public abstract class TileGroup : SFModel
 
 }
 
+[Serializable]
 public class EmptyTileGroup : TileGroup
 {
     public EmptyTileGroup() : base(new Tile_[] { new EmptyTile(), new EmptyTile(), new EmptyTile() })
@@ -106,6 +108,7 @@ public class EmptyTileGroup : TileGroup
     }
 }
 
+[Serializable]
 public class ResourceTileGroup : TileGroup
 {
 

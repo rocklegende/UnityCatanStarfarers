@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
+
 namespace com.onebuckgames.UnityStarFarers
 {
     public interface InstantiationStrategy
@@ -23,7 +24,8 @@ namespace com.onebuckgames.UnityStarFarers
     {
         public GameObject Instantiate(GameObject prefab, Vector3 position, Quaternion rotation, byte group = 0, object[] data = null)
         {
-            return PhotonNetwork.Instantiate(string.Format("Prefabs/{0}", prefab.name), position, rotation, group, data);
+            var go = PhotonNetwork.Instantiate(string.Format("Prefabs/{0}", prefab.name), position, rotation, group, data);
+            return go;
         }
     }
 

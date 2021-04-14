@@ -4,6 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
+using com.onebuckgames.UnityStarFarers;
 
 namespace Tests
 {
@@ -12,7 +13,7 @@ namespace Tests
 
         Player GetGenericPlayer()
         {
-            return new Player(Color.black, new SFElement());
+            return new Player(new SFColor(Color.black));
         }
 
         void AddCashToPlayer(Player player, int amount = 5)

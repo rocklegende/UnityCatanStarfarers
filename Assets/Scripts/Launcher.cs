@@ -26,6 +26,9 @@ namespace com.onebuckgames.UnityStarFarers
         [SerializeField]
         private byte maxPlayersPerRoom = 2;
 
+        [SerializeField]
+        private bool isDevelopment = true;
+
         #endregion
 
 
@@ -77,27 +80,42 @@ namespace com.onebuckgames.UnityStarFarers
             Debug.Log("PUN Basics Tutorial/Launcher: OnJoinedRoom() called by PUN. Now this client is in a room.");
             progressLabel.GetComponentInChildren<Text>().text = "Joined a room,  waiting for others..";
 
-            if (PhotonNetwork.CurrentRoom.Players.Count == maxPlayersPerRoom)
+            if (isDevelopment)
             {
-                StartGame();
+                StartGame(); // start game immediately when in development mode, dont wait on multiple players
+            }
+
+            //if (PhotonNetwork.CurrentRoom.PlayerCount == maxPlayersPerRoom)
+            //{
+            //    if (PhotonNetwork.IsMasterClient)
+            //    {
+            //        StartGame();
+            //    }
+            //}
+        }
+
+        public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
+        {
+            Debug.LogFormat("OnPlayerEnteredRoom() {0}", newPlayer.NickName);
+
+            if (PhotonNetwork.CurrentRoom.PlayerCount == maxPlayersPerRoom)
+            {
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    StartGame();
+                }
             }
         }
 
-        public IEnumerator Wait()
+        public void StartGame()
         {
-            yield return new WaitForSeconds(3);
             if (!PhotonNetwork.IsMasterClient)
             {
                 Debug.LogError("PhotonNetwork : Trying to start game but we are not the master Client");
             }
             Debug.LogFormat("PhotonNetwork : Loading Level : {0}", PhotonNetwork.CurrentRoom.PlayerCount);
-            PhotonNetwork.LoadLevel(2);
-        }
+            PhotonNetwork.LoadLevel(SFScenes.GAME_SCENE);
 
-        public void StartGame()
-        {
-            StartCoroutine("Wait");
-            
         }
 
 

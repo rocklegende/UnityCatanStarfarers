@@ -11,7 +11,7 @@ namespace Tests
 
         Player GetGenericPlayer()
         {
-            return new Player(Color.black, new SFElement());
+            return new Player(new SFColor(Color.black));
         }
 
         //Hand GetHandWithResources(int food = 0, int goods = 0, int fuel = 0, int ore = 0, int carbon = 0)

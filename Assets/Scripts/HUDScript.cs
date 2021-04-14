@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 
 
-public class HUDScript : SFController, FriendShipCardSelectorDelegate
+public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
 {
     public Player player;
     public Player[] players;
@@ -231,8 +231,10 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
 
         this.players = players;
         SetMainPlayer(players[0]);
+
         for (int i = 1; i < players.Length; i++)
         {
+            players[i - 1].RegisterObserver(this);
             GameObject smallPlayerView = Instantiate(smallPlayerViewPrefab, transform, false);
             smallPlayerView.GetComponent<SmallPlayerInfoView>().SetPlayer(players[i]);
             smallPlayerView.transform.parent = otherPlayerContainer.transform;
@@ -484,9 +486,9 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         {
             switch(p_event_path)
             {
-                case SFNotification.player_data_changed:
-                    OnPlayerDataChanged();
-                    break;
+                //case SFNotification.player_data_changed:
+                //    OnPlayerDataChanged();
+                //    break;
 
                 case SFNotification.open_friendship_card_selection:
                     var tradeStation = (TradeStation)p_data[0];
@@ -502,5 +504,10 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         CloseFriendshipCardSelection();
         station.RemoveCard(card);
         player.AddFriendShipCard(card);
+    }
+
+    public void SubjectDataChanged(object[] data)
+    {
+        OnPlayerDataChanged();
     }
 }

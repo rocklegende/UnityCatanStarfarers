@@ -1,4 +1,6 @@
 ﻿using System;
+
+[Serializable]
 public class Cost
 {
     public Resource[] resources;

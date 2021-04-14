@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using com.onebuckgames.UnityStarFarers;
+using Photon.Pun;
 
 namespace Tests
 {

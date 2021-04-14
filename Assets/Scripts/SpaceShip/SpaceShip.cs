@@ -9,6 +9,7 @@ public enum ShipUpgrade
     BOOSTER
 }
 
+[Serializable]
 public class SpaceShip
 {
     public int Cannons = 0;

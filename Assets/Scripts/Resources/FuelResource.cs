@@ -1,8 +1,10 @@
 ﻿using System;
 using UnityEngine;
+
+[Serializable]
 public class FuelResource : Resource
 {
-    public FuelResource() : base("Fuel", new Color(250.0F / 255.0F, 167.0F / 255.0F, 39.0F / 255.0F), "resource_card_fuel")
+    public FuelResource() : base("Fuel", new SFColor(250, 167, 39), "resource_card_fuel")
     {
 
     }

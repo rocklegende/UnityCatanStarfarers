@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using Photon.Realtime;
 using Photon.Pun;
+using com.onebuckgames.UnityStarFarers;
 
 public class Constants
 {
@@ -19,7 +20,7 @@ public enum MapMode
     SELECT
 }
 
-public class MapScript : SFController
+public class MapScript : SFController, Observer
 {
 
     public GameObject spacePointButton;
@@ -56,6 +57,7 @@ public class MapScript : SFController
     public void SetMap(Map map)
     {
         this.map = map;
+        map.RegisterObserver(this);
         hexagonGameObjects = CreateMap(map);
         TileGroupRenderer.GetComponent<TileGroupRenderer>().Initialize(map);
         CenterCamera();
@@ -92,8 +94,9 @@ public class MapScript : SFController
     {
         GameObject prefab = tokenRendererPrefab;
 
-        GameObject tokenInstance = Helper.Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity);
-        //GameObject tokenInstance = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity);
+        //GameObject tokenInstance = Helper.Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity);
+        GameObject tokenInstance = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity);
+        DontDestroyOnLoad(tokenInstance);
         tokenInstance.GetComponent<Space.TokenScript>().tokenGameObject = tokenInstance;
         tokenInstance.GetComponent<Space.TokenScript>().tokenModel = token;
         tokenInstance.GetComponent<Space.TokenScript>().Draw();
@@ -142,7 +145,7 @@ public class MapScript : SFController
         currentlyShownSpacePointButtons.Clear();
     }
 
-    private void RedrawMap()
+    public void RedrawMap()
     {
         RedrawTokens();
         foreach (GameObject obj in this.hexagonGameObjects)
@@ -357,9 +360,9 @@ public class MapScript : SFController
         {
             switch (p_event_path)
             {
-                case SFNotification.map_data_changed:
-                    RedrawMap();
-                    break;
+                //case SFNotification.map_data_changed:
+                //    RedrawMap();
+                //    break;
 
                 case SFNotification.token_was_selected:
                     HandleClickOfToken((Token)p_data[0]);
@@ -368,5 +371,11 @@ public class MapScript : SFController
             }
         }
 
+    }
+
+    public void SubjectDataChanged(object[] data)
+    {
+        //map data changed
+        RedrawMap();
     }
 }

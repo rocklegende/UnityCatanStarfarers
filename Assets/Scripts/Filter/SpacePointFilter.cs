@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using com.onebuckgames.UnityStarFarers;
 
 public abstract class SpacePointFilter
 {

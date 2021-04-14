@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
+[Serializable]
 public abstract class KhornemFriendshipCard : AbstractFriendshipCard
 {
     public KhornemFriendshipCard()
@@ -19,6 +20,7 @@ public abstract class KhornemFriendshipCard : AbstractFriendshipCard
 
 }
 
+[Serializable]
 public class KhornemOneBoostOneCannon : KhornemFriendshipCard
 {
     public override void ActivateEffect(Player targetPlayer)
@@ -43,6 +45,8 @@ public class KhornemOneBoostOneCannon : KhornemFriendshipCard
     }
 }
 
+
+[Serializable]
 public class KhornemTwoBoost : KhornemFriendshipCard
 {
     public override void ActivateEffect(Player targetPlayer)
@@ -67,6 +71,7 @@ public class KhornemTwoBoost : KhornemFriendshipCard
 
 }
 
+[Serializable]
 public class KhornemTwoCannon : KhornemFriendshipCard
 {
     public override void ActivateEffect(Player targetPlayer)

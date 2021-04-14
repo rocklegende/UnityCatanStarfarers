@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Space
 {
-    public class TokenScript : SFController
+    public class TokenScript : SFController, Observer
     {
 
         public GameObject shipPrefab;
@@ -70,8 +70,7 @@ namespace Space
             GameObject prefab = TokenToPrefab(model);
             var instance = Instantiate(prefab, position, Quaternion.identity);
             MeshRenderer mr = instance.GetComponentInChildren<MeshRenderer>();
-            var color = model.GetColor();
-            mr.material.color = model.GetColor();
+            mr.material.color = model.GetColor().ToUnityColor();
             return instance;
         }
 
@@ -104,13 +103,18 @@ namespace Space
 
         public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)
         {
-            switch(p_event_path)
-            {
-                case SFNotification.token_data_changed:
-                    Redraw();
-                    break;
-                        
-            }
+            //switch (p_event_path)
+            //{
+            //    case SFNotification.token_data_changed:
+            //        Redraw();
+            //        break;
+
+            //}
+        }
+
+        public void SubjectDataChanged(object[] data)
+        {
+            Redraw();
         }
     }
 }

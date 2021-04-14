@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-
+[Serializable]
 public abstract class OrzelFriendshipCard : AbstractFriendshipCard
 {
     public OrzelFriendshipCard()
@@ -20,6 +20,7 @@ public abstract class OrzelFriendshipCard : AbstractFriendshipCard
 
 }
 
+[Serializable]
 public class OrzelFriendshipCardFood : OrzelFriendshipCard
 {
     public override void ActivateEffect(Player targetPlayer)
@@ -43,6 +44,7 @@ public class OrzelFriendshipCardFood : OrzelFriendshipCard
     }
 }
 
+[Serializable]
 public class OrzelFriendshipCardGoods : OrzelFriendshipCard
 {
     public override void ActivateEffect(Player targetPlayer)
@@ -66,6 +68,7 @@ public class OrzelFriendshipCardGoods : OrzelFriendshipCard
     }
 }
 
+[Serializable]
 public class OrzelFriendshipCardOre : OrzelFriendshipCard
 {
     public override void ActivateEffect(Player targetPlayer)
@@ -89,6 +92,7 @@ public class OrzelFriendshipCardOre : OrzelFriendshipCard
     }
 }
 
+[Serializable]
 public class OrzelFriendshipCardCarbon : OrzelFriendshipCard
 {
     public override void ActivateEffect(Player targetPlayer)
@@ -112,6 +116,7 @@ public class OrzelFriendshipCardCarbon : OrzelFriendshipCard
     }
 }
 
+[Serializable]
 public class OrzelFriendshipCardFuel : OrzelFriendshipCard
 {
     public override void ActivateEffect(Player targetPlayer)

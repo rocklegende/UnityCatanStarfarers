@@ -1,5 +1,7 @@
 ﻿using System;
 using UnityEngine;
+
+[Serializable]
 public abstract class Tile_
 {
     public Tile_()

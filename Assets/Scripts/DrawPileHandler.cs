@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Runtime.Serialization;
 
 
 public abstract class DrawPileStack
@@ -75,9 +76,18 @@ public interface Observer {
     void SubjectDataChanged(object[] data);
 }
 
+[Serializable]
 public abstract class Subject {
 
+    [NonSerialized]
     protected List<Observer> observers = new List<Observer>();
+
+    [OnDeserialized]
+    private void OnDeserialized()
+    {
+        observers = new List<Observer>();
+    }
+
 
     public void RegisterObserver(Observer observer)
     {

@@ -2,7 +2,9 @@
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using com.onebuckgames.UnityStarFarers;
 
+[Serializable]
 public class TokenStorage {
 
     List<Token> availableTokens;
@@ -89,9 +91,10 @@ public class WonOneFameMedalComparer : PlayerComparer
     }
 }
 
-public class Player : SFModel
+[Serializable]
+public class Player : SFModel, Observer
 {
-    public Color color;
+    public SFColor color;
     public List<Token> tokens; // tokens on gameboard
     public List<Token> giftedTokens = new List<Token>();
     public TokenStorage tokenStorage;
@@ -108,7 +111,6 @@ public class Player : SFModel
     TradingRules rules;
     List<AbstractFriendshipCard> friendShipCards;
     int FriendShipChips;
-    SFElement notifier;
     int foodProduceBonus;
     int goodsProduceBonus;
     int oreProduceBonus;
@@ -119,7 +121,7 @@ public class Player : SFModel
     int oneCardBonusThreshold = 9;
     int discardLimit = 7;
 
-    public Player(Color color, SFElement notifier)
+    public Player(SFColor color)
     {
         this.color = color;
         fameMedalPieces = 0;
@@ -130,13 +132,12 @@ public class Player : SFModel
         tokenStorage = new TokenStorage();
         friendShipCards = new List<AbstractFriendshipCard>();
         FriendShipChips = 0;
-        this.notifier = notifier;
     }
 
     public Player SimpleClone()
     {
         //TODO: make real copy of everything here
-        var player = new Player(this.color, this.notifier);
+        var player = new Player(this.color);
         player.foodProduceBonus = foodProduceBonus;
         player.goodsProduceBonus = goodsProduceBonus;
         player.oreProduceBonus = oreProduceBonus;
@@ -166,7 +167,9 @@ public class Player : SFModel
 
     void DataChanged()
     {
-        notifier.app.Notify(SFNotification.player_data_changed, notifier, new object[] { this });
+        //notifier.app.Notify(SFNotification.player_data_changed, notifier, new object[] { this });
+
+        Notify(new object[] { this });
     }
 
     public void OnTurnReceived()
@@ -302,6 +305,7 @@ public class Player : SFModel
     {
         tokens.Add(token);
         token.owner = this;
+        token.RegisterObserver(this);
         DataChanged();
     }
 
@@ -331,6 +335,7 @@ public class Player : SFModel
 
     public Token BuildToken2(Map map, Type baseType, SpacePoint position, Type attachedType = null, bool isFree = false)
     {
+        Debug.Log("TH1");
         var baseTokenFromStorage = tokenStorage.RetrieveTokenOfType(baseType);
         var giftedToken = giftedTokens.Find(tok => tok.GetType() == baseType);
         var isGifted = giftedToken != null;
@@ -362,6 +367,7 @@ public class Player : SFModel
 
     public Token BuildTokenWithoutCost(Map map, Type baseType, SpacePoint position, Type attachedType = null)
     {
+        
         return BuildToken2(map, baseType, position, attachedType, true);
     }
 
@@ -606,8 +612,15 @@ public class Player : SFModel
             fuelProduceBonus += n;
         }
     }
+
+    public void SubjectDataChanged(object[] data)
+    {
+        //token data changed, delegate this change up
+        DataChanged();
+    }
 }
 
+[Serializable]
 public class TradingRules {
 
     public int foodTradingRatio = 3;

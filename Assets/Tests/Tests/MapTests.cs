@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
+using com.onebuckgames.UnityStarFarers;
 
 namespace Tests
 {
@@ -389,8 +390,10 @@ namespace Tests
         {
             Map map = CreateSampleMap4x4();
 
+            var newmap = TestHelper.SerializeAndDeserialize(map);
+
             SpacePoint point = new SpacePoint(new HexCoordinates(1, 0), 0);
-            HexCoordinates[] validCoords = map.getValidHexCoordinatesAtPoint(point);
+            HexCoordinates[] validCoords = newmap.getValidHexCoordinatesAtPoint(point);
             HexCoordinates[] expected = new HexCoordinates[]
             {
                 new HexCoordinates(1, 0),
@@ -398,6 +401,8 @@ namespace Tests
 
             Assert.True(helper.HexCoordinateGroupsAreEqual(validCoords, expected));
         }
+
+        
 
         [Test]
         public void TestCoordsToArrayIndexes()
@@ -547,7 +552,7 @@ namespace Tests
             var mapModel = generator.GenerateRandomMap();
 
             var player = new TestHelper().CreateGenericPlayer();
-            var opponent = new Player(Color.green, new SFElement());
+            var opponent = new Player(new SFColor(Color.green));
 
             var flyableColony = BlockadeSetup(mapModel, player, opponent);
             flyableColony.stepsLeft = 3;
@@ -567,7 +572,7 @@ namespace Tests
             var mapModel = generator.GenerateRandomMap();
 
             var player = new TestHelper().CreateGenericPlayer();
-            var opponent = new Player(Color.green, new SFElement());
+            var opponent = new Player(new SFColor(Color.green));
 
             var flyableColony = BlockadeSetup(mapModel, player, opponent);
             flyableColony.stepsLeft = 2;
@@ -588,6 +593,28 @@ namespace Tests
 
             var tradeStation = map.GetTradeStations();
             Assert.AreEqual(4, tradeStation.Count);
+        }
+
+        [Test]
+        public void MapSerialization()
+        {
+            MapGenerator generator = new DefaultMapGenerator();
+            Map original = generator.GenerateRandomMap();
+
+            var player = new TestHelper().CreateGenericPlayer();
+            player.BuildTokenWithoutCost(
+                original,
+                new ColonyBaseToken().GetType(),
+                new SpacePoint(5, 5, 1),
+                new SpacePortToken().GetType()
+            );
+
+            var final = TestHelper.SerializeAndDeserialize(original);
+
+            Assert.AreEqual(final.getOffset(), original.getOffset());
+            Assert.AreEqual(final.width(), original.width());
+            Assert.AreEqual(final.height(), original.height());
+            Assert.False(object.ReferenceEquals(original, final));
         }
 
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+[Serializable]
 public class NormalDiceChip : DiceChip
 {
     public NormalDiceChip(List<int> values) : base(values)

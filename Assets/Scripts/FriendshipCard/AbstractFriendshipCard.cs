@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
+[Serializable]
 public abstract class AbstractFriendshipCard
 {
     public AbstractFriendshipCard()

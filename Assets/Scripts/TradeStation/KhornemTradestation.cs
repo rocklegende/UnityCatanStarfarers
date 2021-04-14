@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-
+[Serializable]
 public class KhornemTradeStation : TradeStation
 {
     public KhornemTradeStation()

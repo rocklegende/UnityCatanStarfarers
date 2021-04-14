@@ -1,4 +1,6 @@
 ﻿using System;
+
+[Serializable]
 public abstract class ResourceCard : Card
 {
     public Resource resource;

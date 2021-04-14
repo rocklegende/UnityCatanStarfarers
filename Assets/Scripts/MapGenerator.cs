@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using com.onebuckgames.UnityStarFarers;
 
 public abstract class MapGenerator
 {

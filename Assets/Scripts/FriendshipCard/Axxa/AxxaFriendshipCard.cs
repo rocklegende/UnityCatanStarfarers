@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
+[Serializable]
 public abstract class AxxaFriendshipCard : AbstractFriendshipCard
 {
     public AxxaFriendshipCard()
@@ -19,6 +20,7 @@ public abstract class AxxaFriendshipCard : AbstractFriendshipCard
 
 }
 
+[Serializable]
 public class AxxaIncreaseFood : AxxaFriendshipCard
 {
     public override void ActivateEffect(Player targetPlayer)
@@ -42,6 +44,7 @@ public class AxxaIncreaseFood : AxxaFriendshipCard
     }
 }
 
+[Serializable]
 public class AxxaIncreaseGoods : AxxaFriendshipCard
 {
     public override void ActivateEffect(Player targetPlayer)
@@ -65,6 +68,7 @@ public class AxxaIncreaseGoods : AxxaFriendshipCard
     }
 }
 
+[Serializable]
 public class AxxaIncreaseOre : AxxaFriendshipCard
 {
     public override void ActivateEffect(Player targetPlayer)
@@ -88,6 +92,7 @@ public class AxxaIncreaseOre : AxxaFriendshipCard
     }
 }
 
+[Serializable]
 public class AxxaIncreaseFuel : AxxaFriendshipCard
 {
     public override void ActivateEffect(Player targetPlayer)
@@ -111,6 +116,7 @@ public class AxxaIncreaseFuel : AxxaFriendshipCard
     }
 }
 
+[Serializable]
 public class AxxaIncreaseCarbon : AxxaFriendshipCard
 {
     public override void ActivateEffect(Player targetPlayer)

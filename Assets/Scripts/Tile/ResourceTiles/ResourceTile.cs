@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
+[Serializable]
 public abstract class ResourceTile : Tile_
 {
     public DiceChip diceChip = null;
@@ -31,7 +32,7 @@ public abstract class ResourceTile : Tile_
 
     public override Color? GetColor()
     {
-        return this.resource.tileColor;
+        return this.resource.tileColor.ToUnityColor();
     }
 
     public override bool blocksTraffic()

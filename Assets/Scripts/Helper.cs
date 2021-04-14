@@ -27,8 +27,8 @@ public class Helper
 
     public static GameObject Instantiate(GameObject prefab, Vector3 position, Quaternion rotation, byte group = 0, object[] data = null)
     {
-        //return SFEnvironment.Instance.instantiationStrategy.Instantiate(prefab, position, rotation, group, data);
-        return GameObject.Instantiate(prefab, position, rotation);
+        return SFEnvironment.Instance.instantiationStrategy.Instantiate(prefab, position, rotation, group, data);
+        //return GameObject.Instantiate(prefab, position, rotation);
     }
 
     /// <summary>

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using com.onebuckgames.UnityStarFarers;
 
 public abstract class DebugStartState
 {
@@ -12,7 +13,7 @@ public abstract class DebugStartState
 
     public Player[] GetGenericPlayers()
     {
-        return new Player[] { new Player(Color.white, controller), new Player(Color.red, controller) };
+        return new Player[] { new Player(new SFColor(Color.white)), new Player(new SFColor(Color.red)) };
     }
 
     public void BuildShipsForMainPlayer(Map map, Player player)
@@ -54,22 +55,23 @@ public abstract class DebugStartState
     {
         controller.players = GetGenericPlayers();
         controller.mainPlayer = controller.players[0];
-        controller.HUD.GetComponent<HUDScript>().SetPlayers(controller.players);
+        
+        controller.HUD.GetComponent<HUDScript>().SetPlayers(controller.players);        
         controller.HUD.GetComponent<HUDScript>().isReceivingNotifications = true;
-
-        GiveResourcesOfAllTypesToPlayer(controller.mainPlayer, 5);
     }
 
     public void CommonMapSetup()
     {
         MapGenerator generator = new DefaultMapGenerator();
         controller.mapModel = generator.GenerateRandomMap();
+        //controller.mapModel = TestHelper.SerializeAndDeserialize(controller.mapModel);
 
         controller.Map.GetComponent<MapScript>().SetMap(controller.mapModel);
         controller.Map.GetComponent<MapScript>().SetPlayers(controller.players);
         controller.Map.GetComponent<MapScript>().isReceivingNotifications = true;
 
         controller.payoutHandler = new PayoutHandler(controller.mapModel);
+        GiveResourcesOfAllTypesToPlayer(controller.mainPlayer, 5);
     }
 
     public abstract void Setup();
@@ -331,7 +333,7 @@ public class PlayerHasRichHelpPoorBonusDebugState : DebugStartState
     {
         controller.state = new StartState(controller);
 
-        controller.players = new Player[] { new Player(Color.green, new SFElement()), new Player(Color.yellow, new SFElement()), new Player(Color.blue, new SFElement()), new Player(Color.red, new SFElement()), };
+        controller.players = new Player[] { new Player(new SFColor(Color.green)), new Player(new SFColor(Color.yellow)), new Player(new SFColor(Color.blue)), new Player(new SFColor(Color.red)), };
         controller.mainPlayer = controller.players[0];
         controller.HUD.GetComponent<HUDScript>().SetPlayers(controller.players);
         controller.HUD.GetComponent<HUDScript>().isReceivingNotifications = true;

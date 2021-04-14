@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 
-
+[Serializable]
 public abstract class PirateTokenBeatCondition
 {
     public PirateTokenBeatCondition()
@@ -15,6 +15,7 @@ public abstract class PirateTokenBeatCondition
     public abstract string GetTextureName();
 }
 
+[Serializable]
 public class FreightPodsBeatCondition : PirateTokenBeatCondition
 {
 
@@ -35,6 +36,8 @@ public class FreightPodsBeatCondition : PirateTokenBeatCondition
     }
 }
 
+
+[Serializable]
 public class CannonBeatCondition : PirateTokenBeatCondition
 {
 
@@ -56,7 +59,7 @@ public class CannonBeatCondition : PirateTokenBeatCondition
 }
 
 
-
+[Serializable]
 public class PirateToken : DiceChip
 {
     bool isBeaten = false;

@@ -21,6 +21,7 @@ public class SpacePointComparer : IComparer
     }
 }
 
+[Serializable]
 public class SpacePoint
 {
     public int vertexNumber;

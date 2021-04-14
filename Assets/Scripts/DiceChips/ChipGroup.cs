@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public abstract class ChipGroup {
 
     public abstract string GetTextureName();
@@ -41,6 +42,7 @@ public abstract class ChipGroup {
     }
 }
 
+[Serializable]
 public class TriangleChipGroup : ChipGroup
 {
     public TriangleChipGroup(List<DiceChip> diceChips) : base(diceChips)
@@ -58,6 +60,7 @@ public class TriangleChipGroup : ChipGroup
     }
 }
 
+[Serializable]
 public class SquareChipGroup : ChipGroup
 {
     public SquareChipGroup(List<DiceChip> diceChips) : base(diceChips)
@@ -75,6 +78,7 @@ public class SquareChipGroup : ChipGroup
     }
 }
 
+[Serializable]
 public class CircleChipGroup : ChipGroup
 {
     public CircleChipGroup(List<DiceChip> diceChips) : base(diceChips)
@@ -92,6 +96,7 @@ public class CircleChipGroup : ChipGroup
     }
 }
 
+[Serializable]
 public class FilledCircleChipGroup : ChipGroup
 {
     public FilledCircleChipGroup(List<DiceChip> diceChips) : base(diceChips)

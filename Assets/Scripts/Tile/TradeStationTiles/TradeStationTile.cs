@@ -1,12 +1,10 @@
 ﻿using System;
 using UnityEngine;
 
+[Serializable]
 public abstract class TradeStationTile : Tile_
 {
-    //Color color;
-
     public TradeStationTile() {
-        //this.color = color;
     }
 
     

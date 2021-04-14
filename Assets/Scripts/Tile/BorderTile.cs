@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
+[Serializable]
 public class BorderTile : Tile_
 {
     public BorderTile()

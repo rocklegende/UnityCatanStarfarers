@@ -1,8 +1,10 @@
 ﻿using System;
 using UnityEngine;
+
+[Serializable]
 public class FoodResource : Resource
 {
-    public FoodResource() : base("Food", new Color(146.0F / 255.0F, 215.0F / 255.0F, 72.0F / 255.0F), "resource_card_food")
+    public FoodResource() : base("Food", new SFColor(146, 215, 72), "resource_card_food")
     {
 
     }

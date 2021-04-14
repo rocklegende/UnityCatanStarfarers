@@ -1,6 +1,13 @@
 ﻿using System;
 using UnityEngine;
 
+public interface SFSerializable
+{
+    byte[] Serialize();
+    object Deserialize(byte[] bytes);
+}
+
+[Serializable]
 public class EmptyTile : Tile_ { 
     public EmptyTile()
     {

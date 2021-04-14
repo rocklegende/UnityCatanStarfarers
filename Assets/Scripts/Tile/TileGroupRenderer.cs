@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using com.onebuckgames.UnityStarFarers;
 
-public class TileGroupRenderer : SFController
+public class TileGroupRenderer : SFController, Observer
 {
     public GameObject mapObject;
     private Map map;
@@ -23,6 +24,7 @@ public class TileGroupRenderer : SFController
         // register itself as observer of mapModel
         // mapModel.registerObserver(this)
         this.map = map;
+        map.RegisterObserver(this);
         DrawTileGroups();
     }
 
@@ -89,21 +91,36 @@ public class TileGroupRenderer : SFController
 
     public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)
     {
-        switch(p_event_path)
+        //switch(p_event_path)
+        //{
+        //    case SFNotification.map_data_changed:
+        //        if (map != null)
+        //        {
+        //            if (map.tileGroups != null)
+        //            {
+        //                //TODO: this is failing because we do some stuff to the tilegroups in the map creation which triggers the notification
+        //                // but we don't have the map created yet. Better way is to let the mapscript activate this class and register it as an
+        //                // observer of the mapModel
+        //                DestroyAllDockButtons();
+        //                DrawTileGroups();
+        //            }
+        //        }
+        //        break;
+        //}
+    }
+
+    public void SubjectDataChanged(object[] data)
+    {
+        if (map != null)
         {
-            case SFNotification.map_data_changed:
-                if (map != null)
-                {
-                    if (map.tileGroups != null)
-                    {
-                        //TODO: this is failing because we do some stuff to the tilegroups in the map creation which triggers the notification
-                        // but we don't have the map created yet. Better way is to let the mapscript activate this class and register it as an
-                        // observer of the mapModel
-                        DestroyAllDockButtons();
-                        DrawTileGroups();
-                    }
-                }
-                break;
+            if (map.tileGroups != null)
+            {
+                //TODO: this is failing because we do some stuff to the tilegroups in the map creation which triggers the notification
+                // but we don't have the map created yet. Better way is to let the mapscript activate this class and register it as an
+                // observer of the mapModel
+                DestroyAllDockButtons();
+                DrawTileGroups();
+            }
         }
     }
 }

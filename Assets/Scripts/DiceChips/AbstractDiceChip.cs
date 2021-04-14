@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 
+[Serializable]
 public abstract class DiceChip
 {
     List<int> values;
