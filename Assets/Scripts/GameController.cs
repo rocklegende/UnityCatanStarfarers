@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
@@ -8,7 +9,7 @@ using com.onebuckgames.UnityStarFarers;
 
 public interface IGameController
 {
-    Player[] GetPlayers();
+    List<Player> GetPlayers();
     Player GetMainPlayer();
     int GetCurrentPlayerAtTurn();
     MapScript GetMapScript();
@@ -23,7 +24,7 @@ public class GameController : SFController, IGameController, Observer
     public Map mapModel;
 
     public GameState state;
-    public Player[] players;
+    public List<Player> players;
     public Player mainPlayer;
     public int currentPlayerAtTurn = 0;
     public PayoutHandler payoutHandler;
@@ -40,11 +41,10 @@ public class GameController : SFController, IGameController, Observer
 
         if (PhotonNetwork.IsMasterClient)
         {
-            //SetupButtonPressed();
             PhotonView photonView = PhotonView.Get(this);
 
             MapGenerator generator = new DefaultMapGenerator();
-            mapModel = generator.GenerateRandomMap(); //MasterClient generates map and sends it to all clients
+            mapModel = generator.GenerateRandomMap(); //MasterClient generates map and sends it to all clients, so we dont create different maps
 
             var mapAsBytes = SFFormatter.Serialize(mapModel);
             photonView.RPC("MapWasGenerated", RpcTarget.All, mapAsBytes);
@@ -60,18 +60,62 @@ public class GameController : SFController, IGameController, Observer
 
     }
 
+    List<Player> CreatePlayers()
+    {
+        var dict = MapPhotonPlayersToOwnPlayerModelDict();
+        var players = dict.Values.ToList();
+        return players;
+    }
+
     
+
+    Dictionary<Photon.Realtime.Player, Player> MapPhotonPlayersToOwnPlayerModelDict()
+    {
+        var dict = new Dictionary<Photon.Realtime.Player, Player>();
+
+        var colors = new SFColor[]
+        {
+            new SFColor(Color.white),
+            new SFColor(Color.green),
+            new SFColor(Color.blue),
+            new SFColor(Color.grey),
+        };
+
+        int idx = 0;
+        foreach(var dictEntry in PhotonNetwork.CurrentRoom.Players)
+        {
+            var networkPlayer = dictEntry.Value;
+            var SFPlayer = new Player(colors[idx]);
+            SFPlayer.name = networkPlayer.NickName;
+            dict.Add(networkPlayer, SFPlayer);
+            idx++;
+        }
+
+        return dict;
+    }
+
+
 
     [PunRPC]
     void MapWasGenerated(byte[] mapAsBytes)
     {
         mapModel = (Map)SFFormatter.Deserialize(mapAsBytes);
         mapModel.RegisterObserver(this);
-        Debug.Log("AHHHHHHHHHHH");
         this.state = new StartState(this);
-        players = new Player[] { new Player(new SFColor(Color.white)), new Player(new SFColor(Color.red)) };
-        mainPlayer = players[0];
-        HUD.GetComponent<HUDScript>().SetPlayers(players);
+
+        //every client sets up the players itself, no need to send that over wire from MasterClient
+        players = CreatePlayers();
+        var playersDict = MapPhotonPlayersToOwnPlayerModelDict();
+        //players = new Player[] { new Player(new SFColor(Color.white)), new Player(new SFColor(Color.red)) };
+
+        mainPlayer = playersDict[PhotonNetwork.LocalPlayer];
+        Debug.Log("PlayerNameBla");
+        Debug.Log(mainPlayer.name);
+        Debug.Log("PlayerNameBla");
+        //mainPlayer = players[0];
+
+
+        HUD.GetComponent<HUDScript>().SetPlayers(players, mainPlayer);
         HUD.GetComponent<HUDScript>().isReceivingNotifications = true;
 
         Map.GetComponent<MapScript>().SetMap(mapModel);
@@ -114,7 +158,7 @@ public class GameController : SFController, IGameController, Observer
     public void PassTurnToNextPlayer()
     {
         currentPlayerAtTurn += 1;
-        if (currentPlayerAtTurn == players.Length)
+        if (currentPlayerAtTurn == players.Count)
         {
             currentPlayerAtTurn = 0;
         }
@@ -235,7 +279,7 @@ public class GameController : SFController, IGameController, Observer
         
     }
 
-    public Player[] GetPlayers()
+    public List<Player> GetPlayers()
     {
         return players;
     }

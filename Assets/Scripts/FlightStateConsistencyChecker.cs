@@ -53,7 +53,7 @@ public class FlightStateConsistencyChecker
     {
     }
 
-    public List<FlightStateInconsistencyError> Check(Map map, Player[] players)
+    public List<FlightStateInconsistencyError> Check(Map map, List<Player> players)
     {
         var errors = new List<FlightStateInconsistencyError>();
         foreach (var player in players)

@@ -11,9 +11,9 @@ public abstract class DebugStartState
         this.controller = controller;
     }
 
-    public Player[] GetGenericPlayers()
+    public List<Player> GetGenericPlayers()
     {
-        return new Player[] { new Player(new SFColor(Color.white)), new Player(new SFColor(Color.red)) };
+        return new List<Player> { new Player(new SFColor(Color.white)), new Player(new SFColor(Color.red)) };
     }
 
     public void BuildShipsForMainPlayer(Map map, Player player)
@@ -184,26 +184,53 @@ public class TwoTradeShipAndOneSpacePort : DebugStartState
 
     public override void Setup()
     {
-        controller.state = new FlyShipsState(controller);
+        
 
         CommonSetup();
 
-        Token spacePort = new ColonyBaseToken();
-        spacePort.attachedToken = new SpacePortToken();
-        spacePort.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 1));
-        controller.mainPlayer.BuildToken(spacePort);
+        
 
-        Token colonyShip = new TradeBaseToken();
-        colonyShip.attachedToken = new ShipToken();
-        colonyShip.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 0));
-        controller.mainPlayer.BuildToken(colonyShip);
 
-        Token colonyShip2 = new TradeBaseToken();
-        colonyShip2.attachedToken = new ShipToken();
-        colonyShip2.SetPosition(new SpacePoint(new HexCoordinates(5, 5).W(), 0));
-        controller.mainPlayer.BuildToken(colonyShip2);
+
+        //Token spacePort = new ColonyBaseToken();
+        //spacePort.attachedToken = new SpacePortToken();
+        //spacePort.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 1));
+        //controller.mainPlayer.BuildToken(spacePort);
+
+        //Token colonyShip = new TradeBaseToken();
+        //colonyShip.attachedToken = new ShipToken();
+        //colonyShip.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 0));
+        //controller.mainPlayer.BuildToken(colonyShip);
+
+        //Token colonyShip2 = new TradeBaseToken();
+        //colonyShip2.attachedToken = new ShipToken();
+        //colonyShip2.SetPosition(new SpacePoint(new HexCoordinates(5, 5).W(), 0));
+        //controller.mainPlayer.BuildToken(colonyShip2);
 
         CommonMapSetup();
+
+        controller.mainPlayer.BuildTokenWithoutCost(
+            controller.mapModel,
+            new ColonyBaseToken().GetType(),
+            new SpacePoint(new HexCoordinates(5, 5), 1),
+            new SpacePortToken().GetType()
+        );
+
+        controller.mainPlayer.BuildTokenWithoutCost(
+            controller.mapModel,
+            new ColonyBaseToken().GetType(),
+            new SpacePoint(new HexCoordinates(5, 5), 0),
+            new ShipToken().GetType()
+        );
+
+        controller.mainPlayer.BuildTokenWithoutCost(
+            controller.mapModel,
+            new TradeBaseToken().GetType(),
+            new SpacePoint(new HexCoordinates(5, 5).W(), 0),
+            new ShipToken().GetType()
+        );
+
+        controller.state = new FlyShipsState(controller);
     }
 }
 
@@ -333,7 +360,7 @@ public class PlayerHasRichHelpPoorBonusDebugState : DebugStartState
     {
         controller.state = new StartState(controller);
 
-        controller.players = new Player[] { new Player(new SFColor(Color.green)), new Player(new SFColor(Color.yellow)), new Player(new SFColor(Color.blue)), new Player(new SFColor(Color.red)), };
+        controller.players = new List<Player>() { new Player(new SFColor(Color.green)), new Player(new SFColor(Color.yellow)), new Player(new SFColor(Color.blue)), new Player(new SFColor(Color.red)), };
         controller.mainPlayer = controller.players[0];
         controller.HUD.GetComponent<HUDScript>().SetPlayers(controller.players);
         controller.HUD.GetComponent<HUDScript>().isReceivingNotifications = true;

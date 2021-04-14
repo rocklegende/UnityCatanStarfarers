@@ -12,7 +12,18 @@ namespace Tests
     {
         public Helper helper = new Helper();
 
-        
+        [Test]
+        public void GetPlayerIndexesOfOthers()
+        {
+
+            var player1 = new Player(new SFColor(Color.black));
+            var player2 = new Player(new SFColor(Color.green));
+            var player3 = new Player(new SFColor(Color.yellow));
+            var allPlayers = new List<Player>() { player1, player2, player3 };
+
+            var indexes = Helper.GetIndexesOfPlayersExceptPlayer(allPlayers, 1);
+            Assert.True(indexes.SequenceEqual(new List<int>() { 0, 2 }));
+        }
 
         [Test]
         public void TestSpacePointArrayContainsPointPositive()

@@ -4,11 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-
 public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
 {
     public Player player;
-    public Player[] players;
+    public List<Player> players;
     public Text oreCardStackText;
     public Text carbonCardStackText;
     public Text foodCardStackText;
@@ -21,6 +20,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
     public Text boosterBonusText;
     public Text cannonsBonusText;
     public Text freightPodsBonusText;
+    public Text playerNameText;
 
     public Text vpText;
     public Text fameMedalPiecesText;
@@ -217,26 +217,35 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
     public void SetMainPlayer (Player player)
     {
         this.player = player;
+        Debug.Log("Playername: " + this.player.name);
         tradePanel.GetComponent<TradePanelScript>().Init(player);
         OnPlayerDataChanged();
     }
 
-    /**
-     * Player at first position is the main player
-     */
-    public void SetPlayers (Player[] players)
+    public void SetPlayers (List<Player> playersList, Player mainPlayer = null)
     {
-
-        
-
-        this.players = players;
-        SetMainPlayer(players[0]);
-
-        for (int i = 1; i < players.Length; i++)
+        this.players = playersList;
+        int mainPlayerIndex = 0;
+        Player _mainPlayer = playersList[0];
+        var indexesOfPlayersOtherThanMain = Helper.GetIndexesOfPlayersExceptPlayer(playersList, mainPlayerIndex);
+        if (mainPlayer != null)
         {
-            players[i - 1].RegisterObserver(this);
+            _mainPlayer = mainPlayer;
+            mainPlayerIndex = playersList.FindIndex(player => player.name == mainPlayer.name);
+            indexesOfPlayersOtherThanMain = Helper.GetIndexesOfPlayersExceptPlayer(playersList, mainPlayerIndex);
+        }
+
+        SetMainPlayer(_mainPlayer);
+        Debug.Log("main player index: " + mainPlayerIndex);
+        Debug.Log("num players: " + playersList.Count);
+        Debug.Log("num indizes: " + indexesOfPlayersOtherThanMain.Count);
+
+        foreach (var otherIndex in indexesOfPlayersOtherThanMain) 
+        {
+            var other = playersList[otherIndex];
+            other.RegisterObserver(this);
             GameObject smallPlayerView = Instantiate(smallPlayerViewPrefab, transform, false);
-            smallPlayerView.GetComponent<SmallPlayerInfoView>().SetPlayer(players[i]);
+            smallPlayerView.GetComponent<SmallPlayerInfoView>().SetPlayer(other); 
             smallPlayerView.transform.parent = otherPlayerContainer.transform;
         }
 
@@ -274,6 +283,12 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         DrawTokenLeft();
         DrawDropDowns();
         DrawExtraActionButtons();
+        DrawName();
+    }
+
+    void DrawName()
+    {
+        playerNameText.text = player.name;
     }
 
     void DrawExtraActionButtons()
@@ -367,7 +382,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
                     {
                         var buildTok = (BuildableToken)option.token;
                         var map = MapObject.GetComponent<MapScript>().map;
-                        dropdown.SetOptionInteractable(option, buildTok.CanBeBuildByPlayer(player, map, players));
+                        dropdown.SetOptionInteractable(option, buildTok.CanBeBuildByPlayer(player, map, players.ToArray()));
                     }
                 }
             }

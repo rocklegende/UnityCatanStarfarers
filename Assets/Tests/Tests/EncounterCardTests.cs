@@ -59,10 +59,10 @@ using System.Linq;
 
 public class MockGameController : IGameController
 {
-    Player[] players;
+    List<Player> players;
     public MockGameController()
     {
-        this.players = new Player[]
+        this.players = new List<Player>
         {
             new Player(new SFColor(Color.black)),
             new Player(new SFColor(Color.green)),
@@ -90,7 +90,7 @@ public class MockGameController : IGameController
         return null;
     }
 
-    public Player[] GetPlayers()
+    public List<Player> GetPlayers()
     {
         return players;
     }
@@ -102,45 +102,7 @@ namespace Tests
     
 
     public class EncounterCardTests
-    {
-
-        IGameController CreateMockGameController()
-        {
-            return new MockGameController();
-        }
-
-        //[Test]
-        //public void EncounterCard1Test()
-        //{
-        //    var gameController = new GameController();
-        //    var factory = new EncounterCardFactory(gameController);
-        //    var encounterCard = factory.CreateEncounterCard1();
-
-        //    var traverser = new EncounterCardTraverser(encounterCard);
-        //    Assert.True(traverser.currentnode == GiveResourceNode());
-        //    traverser.InputReceived(3);
-        //    Assert.True(traverser.currentNode == GetOneFameMedal());
-        //    traverser.InputReceived(true);
-        //    Assert.True(traverser.currentNode == null);
-
-        //}
-
-        void ResultFound(EncounterActionValue value)
-        {
-            //
-        }
-
-        //[Test]
-        //public void ShipCannotFlyAction()
-        //{
-        //    var gameController = CreateMockGameController();
-        //    var action = new ShipCannotFlyAction(gameController);
-        //    action.SetCallback(ResultFound);
-        //    var token = new ColonyBaseToken();
-        //    action.DidSelectToken(token);
-
-        //    Assert.True(token.IsDisabled());
-        //}
+    {   
 
         [Test]
         public void GetsTriggeredByValueTest()

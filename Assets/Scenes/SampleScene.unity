@@ -165,6 +165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6581afec0af3741da84ebf3034dfd54f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playersShared: []
   spacePointButton: {fileID: 3283391190056143853, guid: d7df366e8e0114cf19b038e51ef53fa4,
     type: 3}
   hexPrefab: {fileID: 3956066024327263925, guid: 60fdf00f683a84eb4bf1940f535f46e8,
@@ -175,6 +176,7 @@ MonoBehaviour:
     type: 3}
   TileGroupRenderer: {fileID: 86781946}
   cam: {fileID: 519420031}
+  players: []
   isReceivingNotifications: 0
 --- !u!1 &15347560
 GameObject:
@@ -194,7 +196,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &15347561
 RectTransform:
   m_ObjectHideFlags: 0
@@ -228,6 +230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55f7e798a543f4630a07a90f25abffe1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playersShared: []
   selectButton: {fileID: 1447250666}
   optionsHorizontalStack: {fileID: 1304656329}
   selectionBoxPrefab: {fileID: 9022831689488857018, guid: 6818f0e8666a64e879f5896f939a669e,
@@ -310,6 +313,7 @@ RectTransform:
   - {fileID: 1326812716}
   - {fileID: 802229098}
   - {fileID: 639497381}
+  - {fileID: 326530702}
   m_Father: {fileID: 1145771401}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -658,6 +662,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bde75e3eed794b28b652551970d9f7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playersShared: []
   mapObject: {fileID: 8129259}
   dockStationPrefab: {fileID: 3768021763241174890, guid: 5ffefc163782241e2a8c274e684accd5,
     type: 3}
@@ -1540,6 +1545,84 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 302249240}
+  m_CullTransparentMesh: 0
+--- !u!1 &326530701
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 326530702}
+  - component: {fileID: 326530704}
+  - component: {fileID: 326530703}
+  m_Layer: 5
+  m_Name: Playername
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &326530702
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 326530701}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 18548373}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -6.09, y: 24.67}
+  m_SizeDelta: {x: 160, y: 30}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &326530703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 326530701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: Playername
+--- !u!222 &326530704
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 326530701}
   m_CullTransparentMesh: 0
 --- !u!1 &352513025
 GameObject:
@@ -3939,6 +4022,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13bb44327b72d4405b0efd5494732443, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playersShared: []
   dropDownBtnPrefab: {fileID: 7035080940060633768, guid: 7b24fca50c4214a659ff76d3ab966826,
     type: 3}
   isOpen: 0
@@ -5658,6 +5742,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13bb44327b72d4405b0efd5494732443, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playersShared: []
   dropDownBtnPrefab: {fileID: 7035080940060633768, guid: 7b24fca50c4214a659ff76d3ab966826,
     type: 3}
   isOpen: 0
@@ -5894,6 +5979,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf8be4c648cc3423db14ff95cab9c2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playersShared: []
+  player:
+    name: 
+    receivesBonusOnNoPayout: 0
+    fameMedalBuyPossible: 0
+    ship:
+      Cannons: 0
+      CannonsMaxCapacity: 0
+      CannonsBonus: 0
+      FreightPods: 0
+      FreightPodsMaxCapacity: 0
+      FreightPodsBonus: 0
+      Boosters: 0
+      BoostersMaxCapacity: 0
+      BoostersBonus: 0
+    hasRichHelpPoorBonus: 0
+    richHelpPoorBonusMadeThisRound: 0
+  players: []
   oreCardStackText: {fileID: 880728729}
   carbonCardStackText: {fileID: 1712599411}
   foodCardStackText: {fileID: 1834005181}
@@ -5905,6 +6008,7 @@ MonoBehaviour:
   boosterBonusText: {fileID: 400141205}
   cannonsBonusText: {fileID: 1250480318}
   freightPodsBonusText: {fileID: 831488793}
+  playerNameText: {fileID: 326530703}
   vpText: {fileID: 1314310995}
   fameMedalPiecesText: {fileID: 1224126400}
   ShipsLeft: {fileID: 738587454}
@@ -9050,6 +9154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3426f3723190549b7879c5aea1e7a6ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playersShared: []
   firstDiceText: {fileID: 1408969145}
   secondDiceText: {fileID: 1904579269}
 --- !u!1 &1888064425 stripped
@@ -9108,8 +9213,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7c1a87a7ad3748daae8e44b7b3e30c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playersShared: []
   HUD: {fileID: 1145771400}
   Map: {fileID: 8129259}
+  players: []
+  mainPlayer:
+    name: 
+    receivesBonusOnNoPayout: 0
+    fameMedalBuyPossible: 0
+    ship:
+      Cannons: 0
+      CannonsMaxCapacity: 0
+      CannonsBonus: 0
+      FreightPods: 0
+      FreightPodsMaxCapacity: 0
+      FreightPodsBonus: 0
+      Boosters: 0
+      BoostersMaxCapacity: 0
+      BoostersBonus: 0
+    hasRichHelpPoorBonus: 0
+    richHelpPoorBonusMadeThisRound: 0
   currentPlayerAtTurn: 0
   encounterCardHandler: {fileID: 144255071}
   drawPileHandler: {fileID: 1997335516}

@@ -25,6 +25,20 @@ public class BoundingBox
 public class Helper
 {
 
+    public static List<int> GetIndexesOfPlayersExceptPlayer(List<Player> allPlayers, int excludedPlayerIndex)
+    {
+        var indexesOfPlayersOtherThanMain = new List<int>();
+        for (int i = 0; i < allPlayers.Count; i++)
+        {
+            if (i != excludedPlayerIndex)
+            {
+                indexesOfPlayersOtherThanMain.Add(i);
+            }
+        }
+
+        return indexesOfPlayersOtherThanMain;
+    }
+
     public static GameObject Instantiate(GameObject prefab, Vector3 position, Quaternion rotation, byte group = 0, object[] data = null)
     {
         return SFEnvironment.Instance.instantiationStrategy.Instantiate(prefab, position, rotation, group, data);

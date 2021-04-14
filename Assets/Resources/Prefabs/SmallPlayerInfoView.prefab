@@ -122,7 +122,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 103c38b8844e848a28b7e8e1073919af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerName: {fileID: 0}
+  playersShared: []
+  playerName: {fileID: 9204705158789356184}
   vp: {fileID: 9204705158960416850}
   numResourceCards: {fileID: 9204705159295873500}
   booster: {fileID: 0}
@@ -131,6 +132,22 @@ MonoBehaviour:
   coloniesLeft: {fileID: 0}
   tradeShipsLeft: {fileID: 0}
   spacePortsLeft: {fileID: 0}
+  player:
+    name: 
+    receivesBonusOnNoPayout: 0
+    fameMedalBuyPossible: 0
+    ship:
+      Cannons: 0
+      CannonsMaxCapacity: 0
+      CannonsBonus: 0
+      FreightPods: 0
+      FreightPodsMaxCapacity: 0
+      FreightPodsBonus: 0
+      Boosters: 0
+      BoostersMaxCapacity: 0
+      BoostersBonus: 0
+    hasRichHelpPoorBonus: 0
+    richHelpPoorBonusMadeThisRound: 0
 --- !u!1 &9204705158293488758
 GameObject:
   m_ObjectHideFlags: 0

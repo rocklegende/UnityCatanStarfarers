@@ -10,7 +10,7 @@ public class On7RollStrategy
 
     }
 
-    public void Execute(Player[] players, int currentPlayerIndex, AvailablePiles availablePiles)
+    public void Execute(List<Player> players, int currentPlayerIndex, AvailablePiles availablePiles)
     {
         foreach (var player in players) {
 
@@ -23,7 +23,7 @@ public class On7RollStrategy
 
         //TODO: players[currentPlayerIndex].ChooseCardFromOpponent(1);
 
-        foreach (var index in Helper.NextPlayersClockwise(currentPlayerIndex, players.Length))
+        foreach (var index in Helper.NextPlayersClockwise(currentPlayerIndex, players.Count))
         {
             var c = availablePiles.hiddenDrawPile.DrawCardsFromTop(1);
             players[index].AddCard(c[0]);

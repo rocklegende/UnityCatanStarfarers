@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SmallPlayerInfoView : SFController
+public class SmallPlayerInfoView : SFController, Observer
 {
     public Text playerName;
     public Text vp;
@@ -18,17 +18,24 @@ public class SmallPlayerInfoView : SFController
 
     public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)
     {
-        switch (p_event_path)
-        {
-            case SFNotification.player_data_changed:
-                Draw();
-                break;
-        }
+        //switch (p_event_path)
+        //{
+        //    case SFNotification.player_data_changed:
+        //        Draw();
+        //        break;
+        //}
     }
 
     public void SetPlayer(Player player)
     {
         this.player = player;
+        player.RegisterObserver(this);
+        Draw();
+    }
+
+    public void SubjectDataChanged(object[] data)
+    {
+        //player data changed
         Draw();
     }
 
@@ -36,7 +43,7 @@ public class SmallPlayerInfoView : SFController
     {
         if (player != null)
         {
-            //playerName.text = player.name;
+            playerName.text = player.name;
             vp.text = "VP: " + player.GetVictoryPoints().ToString();
             numResourceCards.text = "Cards: " + player.hand.Count();
         }

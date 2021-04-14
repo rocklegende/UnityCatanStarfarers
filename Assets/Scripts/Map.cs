@@ -6,32 +6,6 @@ using UnityEngine;
 
 namespace com.onebuckgames.UnityStarFarers
 {
-
-
-
-    [Serializable]
-    public class SerializableMap
-    {
-        public enum TileTypes
-        {
-            BORDER,
-
-        }
-
-        public Tile_[,] mapRepresentation;
-        public int offset;
-        public List<TileGroup> tileGroups;
-
-        public SerializableMap(Map map)
-        {
-            this.offset = map.getOffset();
-            this.mapRepresentation = map.getRepresentation();
-            this.tileGroups = map.tileGroups;
-
-        }
-    }
-
-
     [Serializable]
     public class Map : SFModel, Observer
     {
@@ -59,10 +33,6 @@ namespace com.onebuckgames.UnityStarFarers
 
         void DataChanged()
         {
-            //var notifier = new SFElement();
-            //notifier.app.Notify(SFNotification.map_data_changed, notifier);
-            Debug.Log("Jo");
-            Debug.Log(observers.ToString());
             Notify(null);
         }
 

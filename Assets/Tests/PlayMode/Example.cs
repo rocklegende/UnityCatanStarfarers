@@ -11,14 +11,6 @@ namespace Tests
 {
     public class Example
     {
-        //// A Test behaves as an ordinary method
-        //[Test]
-        //public void ExampleSimplePasses()
-        //{
-        //    SceneManager.LoadScene("SampleScene");
-        //    var app = GameObject.Find("app");
-        //    Assert.True(app != null);
-        //}
 
         GameController gameController;
         EncounterCardFactory encounterCardFactory;

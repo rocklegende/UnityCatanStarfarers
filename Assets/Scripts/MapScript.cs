@@ -30,14 +30,14 @@ public class MapScript : SFController, Observer
     public GameObject TileGroupRenderer;
 
     public Camera cam;
-    public Player[] players;
+    public List<Player> players;
     public bool isReceivingNotifications = false;
     public Map map;
     private MapMode mode = MapMode.NORMAL;
     private System.Action<Token> tokenSelectCallback;
     List<GameObject> currentlyShownSpacePointButtons = new List<GameObject>();
     GameObject[] hexagonGameObjects;
-    GameObject[] currentlyDisplayedPlayerTokens;
+    List<GameObject> currentlyDisplayedPlayerTokens;
 
     List<Token> highlightedTokens = new List<Token>();
     List<GameObject> highlightCircles = new List<GameObject>();
@@ -48,7 +48,17 @@ public class MapScript : SFController, Observer
         
     }
 
-    public void SetPlayers(Player[] players)
+    public List<GameObject> GetAllTokenObjects()
+    {
+        return currentlyDisplayedPlayerTokens;
+    }
+
+    public List<GameObject> GetAllShownSpacePointButtons()
+    {
+        return currentlyShownSpacePointButtons;
+    }
+
+    public void SetPlayers(List<Player> players)
     {
         this.players = players;
         currentlyDisplayedPlayerTokens = DisplayPlayerTokens();
@@ -76,7 +86,7 @@ public class MapScript : SFController, Observer
         currentlyDisplayedPlayerTokens = DisplayPlayerTokens();
     }
 
-    GameObject[] DisplayPlayerTokens()
+    List<GameObject> DisplayPlayerTokens()
     {
         List<GameObject> tokens = new List<GameObject>();
         foreach (Token token in map.tokensOnMap)
@@ -85,7 +95,7 @@ public class MapScript : SFController, Observer
             tokens.Add(go);
         }
 
-        return tokens.ToArray();
+        return tokens;
     }
 
 
@@ -350,7 +360,7 @@ public class MapScript : SFController, Observer
 
     public void ShowSpacePointsFulfillingFilters(SpacePointFilter[] filters)
     {
-        SpacePoint[] points = map.GetSpacePointsFullfillingFilters(filters, players);
+        SpacePoint[] points = map.GetSpacePointsFullfillingFilters(filters, players.ToArray());
         CreateButtonsAtSpacePoints(points);
     }
 
