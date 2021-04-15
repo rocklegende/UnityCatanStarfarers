@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using com.onebuckgames.UnityStarFarers;
@@ -44,25 +45,124 @@ namespace Tests
         }
 
         [UnityTest]
-        public IEnumerator TestFlyToCertainSpot()
+        public IEnumerator TestFlyToFreeSpacePoint()
         {
             var mapScript = gameController.GetMapScript();
             var allTokenObjects = mapScript.GetAllTokenObjects();
             var firstClickable = allTokenObjects
-                .Where(gobj => gobj.GetComponent<Space.TokenScript>().tokenModel.CanFly())
+                .Where(gobj => GetTokenScript(gobj).tokenModel.CanFly())
                 .ToList()
                 .First();
 
             //simulate click on token by calling OnClick directly
-            firstClickable.GetComponent<Space.TokenScript>().OnClick(); 
-            var tokenModelFirstClickable = firstClickable.GetComponent<Space.TokenScript>().tokenModel;
+            GetTokenScript(firstClickable).OnClick(); 
+            var tokenModelFirstClickable = GetTokenScript(firstClickable).tokenModel;
 
             //simulate click on spacepointtoken
             var targetSpacePoint = new SpacePoint(11, 5, 0);
-            var spacePointToClick = mapScript.GetAllShownSpacePointButtons().Find(point => point.GetComponent<Space.SpacePointButtonScript>().spacePoint.Equals(targetSpacePoint));
-            spacePointToClick.GetComponent<Space.SpacePointButtonScript>().OnClick();
+            ClickSpacePointButton(targetSpacePoint, mapScript);
 
-            tokenModelFirstClickable.position.Equals(targetSpacePoint);
+            Assert.True(tokenModelFirstClickable.position.Equals(targetSpacePoint));
+
+            yield return null;
+        }
+
+        Space.TokenScript GetTokenScript(GameObject gobj)
+        {
+            return gobj.GetComponent<Space.TokenScript>();
+        }
+
+        void ClickSpacePointButton(SpacePoint targetPoint, MapScript mapScript)
+        {
+            var spacePointToClick = mapScript.GetAllShownSpacePointButtons().Find(pointButton => pointButton.GetComponent<Space.SpacePointButtonScript>().spacePoint.Equals(targetPoint));
+            spacePointToClick.GetComponent<Space.SpacePointButtonScript>().OnClick();
+        }
+
+        [UnityTest]
+        public IEnumerator TestFlyToTradeBaseAndSettle()
+        {
+            var WaitTimeBetweenSteps = 0; //use this to debug this test
+
+            var mapScript = gameController.GetMapScript();
+            var allTokenObjects = mapScript.GetAllTokenObjects();
+            var firstClickableTradeShip = allTokenObjects
+                .Where(gobj => GetTokenScript(gobj).tokenModel.CanFly() && GetTokenScript(gobj).tokenModel is TradeBaseToken)
+                .ToList()
+                .First();
+
+            //simulate click on token by calling OnClick directly
+            GetTokenScript(firstClickableTradeShip).OnClick();
+            var tokenModelFirstClickable = GetTokenScript(firstClickableTradeShip).tokenModel;
+            tokenModelFirstClickable.addSteps(100); //be sure we have enough steps to fly to that tradestation
+            gameController.mainPlayer.BuildUpgradeWithoutCost(new FreightPodUpgradeToken());
+
+            yield return new WaitForSeconds(WaitTimeBetweenSteps);
+
+            //simulate click on spacepoint which is directly at center of a trade station
+            var firstTradeStation = gameController.mapModel.GetTradeStations()[0];
+            var targetSpacePoint = firstTradeStation.GetCenter();
+            ClickSpacePointButton(targetSpacePoint, mapScript);
+
+            yield return new WaitForSeconds(WaitTimeBetweenSteps);
+
+            //simulate click on settle button
+            var settleButton = gameController.GetHUDScript().settleButton;
+            var friendshipCardSelection = gameController.GetHUDScript().friendShipCardSelection;
+            Assert.True(tokenModelFirstClickable.position.Equals(targetSpacePoint));
+            Assert.True(settleButton.activeInHierarchy, "Settle button is not visible!"); //settle button is visible
+            settleButton.GetComponent<Button>().onClick.Invoke();
+
+            yield return new WaitForSeconds(WaitTimeBetweenSteps);
+
+            //select first card of friendshipcards
+            Assert.True(friendshipCardSelection.activeInHierarchy, "Friendshipcard selection is not visible!");
+            var friendshipCardSelectionScript = friendshipCardSelection.GetComponent<FriendShipCardSelector>();
+            friendshipCardSelectionScript.selectButton.onClick.Invoke();
+            yield return new WaitForSeconds(WaitTimeBetweenSteps);
+
+            Assert.False(tokenModelFirstClickable.position.Equals(firstTradeStation.GetCenter()),
+                "Token model is still on the center of the tradestation! Token should move off that center after settling!");
+
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator TestFlyToResourceGroupAndSettle()
+        {
+            var WaitTimeBetweenSteps = 0; //use this to debug this test
+
+            var mapScript = gameController.GetMapScript();
+            var allTokenObjects = mapScript.GetAllTokenObjects();
+            var firstClickableColonyShip = allTokenObjects
+                .Where(gobj => GetTokenScript(gobj).tokenModel.CanFly() && GetTokenScript(gobj).tokenModel is ColonyBaseToken)
+                .ToList()
+                .First();
+
+            //simulate click on token by calling OnClick directly
+            GetTokenScript(firstClickableColonyShip).OnClick();
+            var tokenModelFirstClickable = GetTokenScript(firstClickableColonyShip).tokenModel;
+            tokenModelFirstClickable.addSteps(100); //be sure we have enough steps to fly to that tradestation
+            TestHelper.SetUpgradesForPlayer(gameController.mainPlayer, 5);
+
+            yield return new WaitForSeconds(WaitTimeBetweenSteps);
+
+            //simulate click on spacepoint which is directly at center of a trade station
+            var firstResourceGroup = (ResourceTileGroup)gameController.mapModel.tileGroups.Find(group => group is ResourceTileGroup);
+            var targetSpacePoint = firstResourceGroup.GetSettlePoints()[0];
+            ClickSpacePointButton(targetSpacePoint, mapScript);
+
+            yield return new WaitForSeconds(WaitTimeBetweenSteps);
+
+            //simulate click on settle button
+            var settleButton = gameController.GetHUDScript().settleButton;
+            Assert.True(settleButton.activeInHierarchy, "Settle button is not visible!");
+            settleButton.GetComponent<Button>().onClick.Invoke();
+
+            yield return new WaitForSeconds(WaitTimeBetweenSteps);
+
+            var tokenStaysOnSameSpotAfterSettling = tokenModelFirstClickable.position.Equals(targetSpacePoint);
+            Assert.True(tokenStaysOnSameSpotAfterSettling, "Token changed position after settling on resource tile group. It should stay the same");
+            Assert.True(firstResourceGroup.IsRevealed());
 
             yield return null;
         }

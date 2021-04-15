@@ -19,10 +19,29 @@ public abstract class SFModel : Subject
 }
 
 [Serializable]
+public class SerializableVector3
+{
+    public float x;
+    public float y;
+    public float z;
+    public SerializableVector3(Vector3 unityVector3)
+    {
+        this.x = unityVector3.x;
+        this.y = unityVector3.y;
+        this.z = unityVector3.z;
+    }
+
+    public Vector3 ToUnityVector3()
+    {
+        return new Vector3(x, y, z);
+    }
+}
+
+[Serializable]
 public abstract class Token : SFModel
 {
     public SpacePoint position = null;
-    public Vector3? unityPosition = null;
+    public SerializableVector3 unityPosition = null;
     public bool useOwnPositioningSystem = true;
     public Cost cost;
     public string id;
@@ -100,7 +119,7 @@ public abstract class Token : SFModel
             return position.ToUnityPosition();
         } else
         {
-            return (Vector3)unityPosition;
+            return unityPosition.ToUnityVector3();
         }
     }
 
@@ -179,8 +198,6 @@ public abstract class Token : SFModel
         {
             return 0;
         }
-
-
     }
 
     public abstract int BaseVictoryPoints();
@@ -189,12 +206,7 @@ public abstract class Token : SFModel
 
     public bool IsSettled()
     {
-        if (attachedToken != null)
-        {
-            var hasShipOnTop = attachedToken is ShipToken;
-            return !hasShipOnTop;
-        }
-        return true;
+        return !HasShipTokenOnTop();
     }
 
     public void attachToken(Token token)
@@ -234,7 +246,7 @@ public abstract class Token : SFModel
 
     public void SetUnityPosition(Vector3 pos)
     {
-        this.unityPosition = pos;
+        this.unityPosition = new SerializableVector3(pos);
         DataChanged();
     }
 

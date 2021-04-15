@@ -62,6 +62,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
 
     public GameObject playerSelectionView;
     public GameObject multiSelectionView;
+    List<GameObject> smallPlayerViews = new List<GameObject>();
 
 
 
@@ -222,9 +223,26 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         OnPlayerDataChanged();
     }
 
+    void ObservePlayers(List<Player> playersList)
+    {
+        foreach(var p in playersList)
+        {
+            p.RegisterObserver(this);
+        }
+    }
+
+    public void UpdatePlayers(List<Player> playersList, Player mainPlayer = null)
+    {
+        SetPlayers(playersList, mainPlayer);
+        Draw();
+    }
+
     public void SetPlayers (List<Player> playersList, Player mainPlayer = null)
     {
         this.players = playersList;
+
+        ObservePlayers(playersList);
+
         int mainPlayerIndex = 0;
         Player _mainPlayer = playersList[0];
         var indexesOfPlayersOtherThanMain = Helper.GetIndexesOfPlayersExceptPlayer(playersList, mainPlayerIndex);
@@ -243,13 +261,26 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         foreach (var otherIndex in indexesOfPlayersOtherThanMain) 
         {
             var other = playersList[otherIndex];
-            other.RegisterObserver(this);
-            GameObject smallPlayerView = Instantiate(smallPlayerViewPrefab, transform, false);
-            smallPlayerView.GetComponent<SmallPlayerInfoView>().SetPlayer(other); 
-            smallPlayerView.transform.parent = otherPlayerContainer.transform;
+            if (smallPlayerViews.Count > 0)
+            {
+                //update player of existing smallPlayerView
+                var playerView = smallPlayerViews.Find(view => view.GetComponent<SmallPlayerInfoView>().player.name == other.name);
+                if (playerView != null)
+                {
+                    playerView.GetComponent<SmallPlayerInfoView>().SetPlayer(other);
+                } else
+                {
+                    Debug.LogError("Couldnt find smallPlayerView for name: " + other.name);
+                }
+            } else
+            {
+                //create new smallPlayerView;
+                GameObject smallPlayerView = Instantiate(smallPlayerViewPrefab, transform, false);
+                smallPlayerView.GetComponent<SmallPlayerInfoView>().SetPlayer(other);
+                smallPlayerView.transform.parent = otherPlayerContainer.transform;
+                smallPlayerViews.Add(smallPlayerView);
+            }
         }
-
-        
 
     }
 
@@ -523,6 +554,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
 
     public void SubjectDataChanged(object[] data)
     {
+        Debug.Log("Plauer datachanged!");
         OnPlayerDataChanged();
     }
 }

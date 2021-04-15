@@ -47,6 +47,7 @@ public abstract class TileGroup : SFModel
 
     public void HandleTokenSettled(Token token)
     {
+
         OnTokenSettled(token);
         DataChanged();
     }
@@ -176,6 +177,10 @@ public class ResourceTileGroup : TileGroup
         return pirateTokens.ToArray();
     }
 
+    /// <summary>
+    /// Returns true if all the dice chips of this tilegroup have been revealed.
+    /// </summary>
+    /// <returns></returns>
     public bool IsRevealed()
     {
         return isRevealed;

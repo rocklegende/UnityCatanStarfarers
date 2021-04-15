@@ -29,4 +29,14 @@ public class TestHelper
         
         return deserialized;
     }
+
+    public static void SetUpgradesForPlayer(Player player, int amount)
+    {
+        for (int i = 0; i < amount; i++)
+        {
+            player.ship.Add(new BoosterUpgradeToken());
+            player.ship.Add(new FreightPodUpgradeToken());
+            player.ship.Add(new CannonUpgradeToken());
+        }
+    }
 }

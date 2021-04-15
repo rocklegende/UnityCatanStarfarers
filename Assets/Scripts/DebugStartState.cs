@@ -32,12 +32,7 @@ public abstract class DebugStartState
 
     public void SetUpgradesForMainPlayer(int amount)
     {
-        for (int i = 0; i < amount; i++)
-        {
-            controller.players[0].ship.Add(new BoosterUpgradeToken());
-            controller.players[0].ship.Add(new FreightPodUpgradeToken());
-            controller.players[0].ship.Add(new CannonUpgradeToken());
-        }
+        TestHelper.SetUpgradesForPlayer(controller.mainPlayer, amount);
     }
 
     public void GiveResourcesOfAllTypesToPlayer(Player player, int amount)

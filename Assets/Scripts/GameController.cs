@@ -25,6 +25,7 @@ public class GameController : SFController, IGameController, Observer
 
     public GameState state;
     public List<Player> players;
+    public Dictionary<Photon.Realtime.Player, Player> networkPlayersOwnPlayersMap;
     public Player mainPlayer;
     public int currentPlayerAtTurn = 0;
     public PayoutHandler payoutHandler;
@@ -60,11 +61,20 @@ public class GameController : SFController, IGameController, Observer
 
     }
 
-    List<Player> CreatePlayers()
+    Dictionary<Photon.Realtime.Player, Player> CreatePlayerMap()
     {
         var dict = MapPhotonPlayersToOwnPlayerModelDict();
-        var players = dict.Values.ToList();
-        return players;
+        return dict;
+    }
+
+    Player GetMainPlayerFromDict()
+    {
+        return networkPlayersOwnPlayersMap[PhotonNetwork.LocalPlayer];
+    }
+
+    List<Player> GetAllPlayersFromDict()
+    {
+        return networkPlayersOwnPlayersMap.Values.ToList();
     }
 
     
@@ -94,7 +104,46 @@ public class GameController : SFController, IGameController, Observer
         return dict;
     }
 
+    void ObservePlayers(List<Player> playersList)
+    {
+        foreach (var p in playersList)
+        {
+            p.RegisterObserver(this);
+        }
+    }
 
+    [PunRPC]
+    void PlayerInfoChangedOnRemoteClient(byte[] newPlayerDataAsBytes)
+    {
+        var playerData = (List<Player>)SFFormatter.Deserialize(newPlayerDataAsBytes);
+        UpdateOwnPlayerInfo(playerData);
+        HUD.GetComponent<HUDScript>().UpdatePlayers(GetAllPlayersFromDict(), GetMainPlayerFromDict());
+    }
+
+    void OnLocalPlayerDataChanged()
+    {
+        UpdateOwnPlayerInfo(players);
+        HUD.GetComponent<HUDScript>().UpdatePlayers(GetAllPlayersFromDict(), GetMainPlayerFromDict());
+        PhotonView photonView = PhotonView.Get(this);
+        photonView.RPC("PlayerInfoChangedOnRemoteClient", RpcTarget.Others, SFFormatter.Serialize(players));
+    }
+
+    void UpdateOwnPlayerInfo(List<Player> newPlayerData)
+    {
+        var newDict = new Dictionary<Photon.Realtime.Player, Player>();
+        foreach (var newData in newPlayerData)
+        {
+            foreach (var key in networkPlayersOwnPlayersMap.Keys.ToList())
+            {
+                if (key.NickName == newData.name)
+                {
+                    newDict[key] = newData;
+                }
+            }
+        }
+        networkPlayersOwnPlayersMap = newDict;
+        
+    }
 
     [PunRPC]
     void MapWasGenerated(byte[] mapAsBytes)
@@ -104,11 +153,16 @@ public class GameController : SFController, IGameController, Observer
         this.state = new StartState(this);
 
         //every client sets up the players itself, no need to send that over wire from MasterClient
-        players = CreatePlayers();
-        var playersDict = MapPhotonPlayersToOwnPlayerModelDict();
-        //players = new Player[] { new Player(new SFColor(Color.white)), new Player(new SFColor(Color.red)) };
+        var dict = CreatePlayerMap();
+        networkPlayersOwnPlayersMap = dict;
+        players = GetAllPlayersFromDict();
+        mainPlayer = GetMainPlayerFromDict();
 
-        mainPlayer = playersDict[PhotonNetwork.LocalPlayer];
+        ObservePlayers(players);
+
+        ////players = new Player[] { new Player(new SFColor(Color.white)), new Player(new SFColor(Color.red)) };
+
+        //mainPlayer = playersDict[PhotonNetwork.LocalPlayer];
         Debug.Log("PlayerNameBla");
         Debug.Log(mainPlayer.name);
         Debug.Log("PlayerNameBla");
@@ -127,6 +181,10 @@ public class GameController : SFController, IGameController, Observer
 
     public void SetupButtonPressed()
     {
+        //SetUpDebugState(new TwoTradeShipAndOneSpacePort(this));
+
+        mainPlayer.BuildUpgradeWithoutCost(new FreightPodUpgradeToken());
+
         mainPlayer.AddHand(Hand.FromResources(5, 5, 5, 5, 5));
 
         mainPlayer.BuildTokenWithoutCost(
@@ -135,7 +193,7 @@ public class GameController : SFController, IGameController, Observer
             new SpacePoint(5, 5, 1),
             new SpacePortToken().GetType()
         );
-        //SetUpDebugState(new EncounterCardTestingStateManual(this));
+        
     }
 
     public void SetUpDebugState(DebugStartState state)
@@ -308,5 +366,6 @@ public class GameController : SFController, IGameController, Observer
     {
         Debug.Log("Map Data Changed");
         RedrawMapOnAllClients();
+        OnLocalPlayerDataChanged();
     }
 }

@@ -24,7 +24,10 @@ public class TileGroupRenderer : SFController, Observer
         // register itself as observer of mapModel
         // mapModel.registerObserver(this)
         this.map = map;
-        map.RegisterObserver(this);
+        foreach(var group in map.tileGroups)
+        {
+            group.RegisterObserver(this);
+        }
         DrawTileGroups();
     }
 
@@ -115,6 +118,7 @@ public class TileGroupRenderer : SFController, Observer
         {
             if (map.tileGroups != null)
             {
+                Debug.Log("mapDataChanged");
                 //TODO: this is failing because we do some stuff to the tilegroups in the map creation which triggers the notification
                 // but we don't have the map created yet. Better way is to let the mapscript activate this class and register it as an
                 // observer of the mapModel
