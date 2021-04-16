@@ -76,12 +76,6 @@ public abstract class Token : SFModel
 
     public void DataChanged()
     {
-        //SFElement notifier = new SFElement();
-        //Debug.Log(notifier);
-
-        //notifier.app.Notify(SFNotification.player_data_changed, notifier, new object[] { this });
-        //notifier.app.Notify(SFNotification.token_data_changed, notifier, new object[] { this });
-
         Notify(new object[] { this });
     }
 

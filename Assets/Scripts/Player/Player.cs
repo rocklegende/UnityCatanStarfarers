@@ -92,7 +92,7 @@ public class WonOneFameMedalComparer : PlayerComparer
 }
 
 [Serializable]
-public class Player : SFModel, Observer
+public class Player : SFModel, Observer, IComparable
 {
     public SFColor color;
     public List<Token> tokens; // tokens on gameboard
@@ -617,6 +617,12 @@ public class Player : SFModel, Observer
     {
         //token data changed, delegate this change up
         DataChanged();
+    }
+
+    public int CompareTo(object obj)
+    {
+        var other = (Player) obj;
+        return other.name.CompareTo(name);
     }
 }
 

@@ -92,6 +92,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
     // Update is called once per frame
     void Update()
     {
+        
     }
 
     public void OpenPlayerSelection(Player[] players, System.Action<List<Player>> selectedCallback)
@@ -307,6 +308,9 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
 
     public void Draw()
     {
+        Debug.Log("Drawing HUD!");
+        Debug.Log("player.name: " + player.name);
+        Debug.Log("player.hand.Count(): " + player.hand.Count());
         DrawResourceStacks();
         DrawUpgrades();
         DrawVP();
@@ -315,6 +319,14 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         DrawDropDowns();
         DrawExtraActionButtons();
         DrawName();
+    }
+
+    public void ActivateAllInteraction(bool isInteractive)
+    {
+        foreach(var button in GetComponentsInChildren<Button>())
+        {
+            button.interactable = isInteractive;
+        }
     }
 
     void DrawName()
