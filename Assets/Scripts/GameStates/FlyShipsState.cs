@@ -25,7 +25,16 @@ public class FlyShipsState : GameState
     {
         selectedToken = token;
         var filters = selectedToken.GetFlightEndPointsFilters();
-        mapScript.ShowSpacePointsFulfillingFilters(filters);
+        var spacePoints = mapScript.map.GetSpacePointsFullfillingFilters(filters, controller.players.ToArray());
+        mapScript.OpenSpacePointSelection(spacePoints, SpacePointSelected);
+    }
+
+    void SpacePointSelected(SpacePoint point)
+    {
+        mapScript.HideAllSpacePointButtons();
+        selectedToken.FlyTo(point);
+
+        var errors = flightStateChecker.Check(controller.mapModel, controller.players);
     }
 
     public override void OnNextButtonClicked()
@@ -36,17 +45,23 @@ public class FlyShipsState : GameState
 
     public override void OnSpacePointClicked(SpacePoint point, GameObject spacePointObject)
     {
+
+
         //TODO: dont remove and create buttons, very cost inefficient and slow, instead create
         //all possible spacepoints and just hide and show the one we need right now
-        mapScript.RemoveAllSpacePointButtons(); 
-        selectedToken.FlyTo(point, mapScript.map);
 
-        var errors = flightStateChecker.Check(controller.mapModel, controller.players);
+
+        //DEPRECATED
+        //mapScript.HideAllSpacePointButtons();
+        //selectedToken.FlyTo(point);
+
+        //var errors = flightStateChecker.Check(controller.mapModel, controller.players);
 
     }
 
     public override void OnTokenClicked(Token tokenModel, GameObject tokenGameObject)
     {
+        //DEPRECATED
         //if (tokenModel.owner == controller.mainPlayer)
         //{
         //    selectedToken = tokenModel;
@@ -59,7 +74,7 @@ public class FlyShipsState : GameState
         //{
         //    Debug.Log("Clicked token that is not owned by the main player");
         //}
-        
+
     }
 
     public override void OnBuildShipOptionClicked(Token token)

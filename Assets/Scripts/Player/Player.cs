@@ -4,6 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using com.onebuckgames.UnityStarFarers;
 
+public enum CardType
+{
+    CARBON,
+    FUEL,
+    GOODS,
+    FOOD,
+    ORE
+}
+
 [Serializable]
 public class TokenStorage {
 
@@ -283,6 +292,28 @@ public class Player : SFModel, Observer, IComparable
         return fameMedalPieces;
     }
 
+    public void AddCard(CardType cardType)
+    {
+        switch (cardType)
+        {
+            case CardType.CARBON:
+                AddCard(new CarbonCard());
+                break;
+            case CardType.GOODS:
+                AddCard(new GoodsCard());
+                break;
+            case CardType.FUEL:
+                AddCard(new FuelCard());
+                break;
+            case CardType.ORE:
+                AddCard(new OreCard());
+                break;
+            case CardType.FOOD:
+                AddCard(new FoodCard());
+                break;
+        }
+    }
+
     public void AddCard(Card card)
     {
         hand.AddCard(card);
@@ -335,7 +366,6 @@ public class Player : SFModel, Observer, IComparable
 
     public Token BuildToken2(Map map, Type baseType, SpacePoint position, Type attachedType = null, bool isFree = false)
     {
-        Debug.Log("TH1");
         var baseTokenFromStorage = tokenStorage.RetrieveTokenOfType(baseType);
         var giftedToken = giftedTokens.Find(tok => tok.GetType() == baseType);
         var isGifted = giftedToken != null;

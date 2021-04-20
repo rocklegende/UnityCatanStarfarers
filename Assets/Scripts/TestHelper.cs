@@ -16,6 +16,26 @@ public class TestHelper
         return new Player(new SFColor(Color.black));
     }
 
+    public static List<Player> CreateGenericPlayers3()
+    {
+        var player1 = new Player(new SFColor(Color.black))
+        {
+            name = "Timmi",
+        };
+
+        var player2 = new Player(new SFColor(Color.green))
+        {
+            name = "Paul",
+        };
+
+        var player3 = new Player(new SFColor(Color.yellow))
+        {
+            name = "Gabi",
+        };
+
+        return new List<Player>() { player1, player2, player3 };
+    }
+
     public static Map CreateMockMap()
     {
         return new Map(new Tile_[,] { });

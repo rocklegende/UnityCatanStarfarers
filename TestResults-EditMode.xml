@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="135" result="Passed" total="135" passed="135" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2021-04-17 21:59:23Z" end-time="2021-04-17 21:59:27Z" duration="4.5402045">
+  <test-suite type="TestSuite" id="1155" name="CatanSternfahrer" fullname="CatanSternfahrer" runstate="Runnable" testcasecount="135" result="Passed" start-time="2021-04-17 21:59:23Z" end-time="2021-04-17 21:59:27Z" duration="4.540205" total="135" passed="135" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties />
+    <test-suite type="Assembly" id="1305" name="Tests.dll" fullname="/Users/timhehmann/UnityCatanStarfarers/Library/ScriptAssemblies/Tests.dll" runstate="Runnable" testcasecount="135" result="Passed" start-time="2021-04-17 21:59:23Z" end-time="2021-04-17 21:59:27Z" duration="4.434427" total="135" passed="135" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="3243" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+      </properties>
+      <test-suite type="TestSuite" id="1306" name="Tests" fullname="Tests" runstate="Runnable" testcasecount="135" result="Passed" start-time="2021-04-17 21:59:23Z" end-time="2021-04-17 21:59:27Z" duration="4.364403" total="135" passed="135" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestFixture" id="1156" name="ChipGroupTests" fullname="Tests.ChipGroupTests" classname="Tests.ChipGroupTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2021-04-17 21:59:23Z" end-time="2021-04-17 21:59:23Z" duration="0.061577" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-case id="1158" name="RetrieveChipNegative" fullname="Tests.ChipGroupTests.RetrieveChipNegative" methodname="RetrieveChipNegative" classname="Tests.ChipGroupTests" runstate="Runnable" seed="14164813" result="Passed" start-time="2021-04-17 21:59:23Z" end-time="2021-04-17 21:59:23Z" duration="0.022145" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1157" name="RetrieveChipPositive" fullname="Tests.ChipGroupTests.RetrieveChipPositive" methodname="RetrieveChipPositive" classname="Tests.ChipGroupTests" runstate="Runnable" seed="2052974442" result="Passed" start-time="2021-04-17 21:59:23Z" end-time="2021-04-17 21:59:23Z" duration="0.003105" asserts="0">
+            <properties />
+          </test-case>
+        </test-suite>
+        <test-suite type="TestFixture" id="1159" name="DiceTest" fullname="Tests.DiceTest" classname="Tests.DiceTest" runstate="Runnable" testcasecount="2" result="Passed" start-time="2021-04-17 21:59:23Z" end-time="2021-04-17 21:59:26Z" duration="3.065332" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-case id="1161" name="CheckEvenDistribution" fullname="Tests.DiceTest.CheckEvenDistribution" methodname="CheckEvenDistribution" classname="Tests.DiceTest" runstate="Runnable" seed="948565085" result="Passed" start-time="2021-04-17 21:59:23Z" end-time="2021-04-17 21:59:26Z" duration="3.057239" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1160" name="ThrowDice1000TimesAndCheckValueIsInRange" fullname="Tests.DiceTest.ThrowDice1000TimesAndCheckValueIsInRange" methodname="ThrowDice1000TimesAndCheckValueIsInRange" classname="Tests.DiceTest" runstate="Runnable" seed="1312452554" result="Passed" start-time="2021-04-17 21:59:26Z" end-time="2021-04-17 21:59:26Z" duration="0.003259" asserts="0">
+            <properties />
+          </test-case>
+        </test-suite>
+        <test-suite type="TestFixture" id="1162" name="EncounterCardTests" fullname="Tests.EncounterCardTests" classname="Tests.EncounterCardTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2021-04-17 21:59:26Z" end-time="2021-04-17 21:59:27Z" duration="0.502999" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-case id="1165" name="FameMedalGainStrategyTest" fullname="Tests.EncounterCardTests.FameMedalGainStrategyTest" methodname="FameMedalGainStrategyTest" classname="Tests.EncounterCardTests" runstate="Runnable" seed="1802688687" result="Passed" start-time="2021-04-17 21:59:26Z" end-time="2021-04-17 21:59:27Z" duration="0.015808" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1163" name="GetsTriggeredByValueTest" fullname="Tests.EncounterCardTests.GetsTriggeredByValueTest" methodname="GetsTriggeredByValueTest" classname="Tests.EncounterCardTests" runstate="Runnable" seed="1990824633" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001582" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1164" name="GetsTriggeredByValueTest2" fullname="Tests.EncounterCardTests.GetsTriggeredByValueTest2" methodname="GetsTriggeredByValueTest2" classname="Tests.EncounterCardTests" runstate="Runnable" seed="2097078265" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000577" asserts="0">
+            <properties />
+          </test-case>
+        </test-suite>
+        <test-suite type="TestFixture" id="1166" name="HandTest" fullname="Tests.HandTest" classname="Tests.HandTest" runstate="Runnable" testcasecount="14" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.042959" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-case id="1167" name="CanPayCostTest1" fullname="Tests.HandTest.CanPayCostTest1" methodname="CanPayCostTest1" classname="Tests.HandTest" runstate="Runnable" seed="121815259" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.002794" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1168" name="CanPayCostTest2" fullname="Tests.HandTest.CanPayCostTest2" methodname="CanPayCostTest2" classname="Tests.HandTest" runstate="Runnable" seed="2092746462" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000680" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1169" name="CanPayCostTest3" fullname="Tests.HandTest.CanPayCostTest3" methodname="CanPayCostTest3" classname="Tests.HandTest" runstate="Runnable" seed="1226752366" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000736" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1179" name="HandEqualIfNumberOfResourceCardsOfeachTypeEqual" fullname="Tests.HandTest.HandEqualIfNumberOfResourceCardsOfeachTypeEqual" methodname="HandEqualIfNumberOfResourceCardsOfeachTypeEqual" classname="Tests.HandTest" runstate="Runnable" seed="1167174049" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.002255" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1180" name="HandEqualityNegative" fullname="Tests.HandTest.HandEqualityNegative" methodname="HandEqualityNegative" classname="Tests.HandTest" runstate="Runnable" seed="1796377498" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000754" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1174" name="PayCostTest1" fullname="Tests.HandTest.PayCostTest1" methodname="PayCostTest1" classname="Tests.HandTest" runstate="Runnable" seed="327080886" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001976" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1175" name="PayCostTest2" fullname="Tests.HandTest.PayCostTest2" methodname="PayCostTest2" classname="Tests.HandTest" runstate="Runnable" seed="2047264961" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001074" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1176" name="PayCostTest3" fullname="Tests.HandTest.PayCostTest3" methodname="PayCostTest3" classname="Tests.HandTest" runstate="Runnable" seed="1153503902" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000942" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1177" name="PayCostTest4CannotPay" fullname="Tests.HandTest.PayCostTest4CannotPay" methodname="PayCostTest4CannotPay" classname="Tests.HandTest" runstate="Runnable" seed="511499143" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001220" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1178" name="PayCostTest5CannotPay" fullname="Tests.HandTest.PayCostTest5CannotPay" methodname="PayCostTest5CannotPay" classname="Tests.HandTest" runstate="Runnable" seed="1335009878" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000770" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1170" name="RemoveCardTest1" fullname="Tests.HandTest.RemoveCardTest1" methodname="RemoveCardTest1" classname="Tests.HandTest" runstate="Runnable" seed="334931415" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001118" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1171" name="RemoveCardTest2" fullname="Tests.HandTest.RemoveCardTest2" methodname="RemoveCardTest2" classname="Tests.HandTest" runstate="Runnable" seed="79710904" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000820" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1172" name="SubtractHandTest1" fullname="Tests.HandTest.SubtractHandTest1" methodname="SubtractHandTest1" classname="Tests.HandTest" runstate="Runnable" seed="404625434" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001092" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1173" name="SubtractHandTest2" fullname="Tests.HandTest.SubtractHandTest2" methodname="SubtractHandTest2" classname="Tests.HandTest" runstate="Runnable" seed="61584718" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000915" asserts="0">
+            <properties />
+          </test-case>
+        </test-suite>
+        <test-suite type="TestFixture" id="1181" name="HelperTests" fullname="Tests.HelperTests" classname="Tests.HelperTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.028443" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-case id="1186" name="CreateSpacePointArrayFromShortRepresentationNegativeTest" fullname="Tests.HelperTests.CreateSpacePointArrayFromShortRepresentationNegativeTest" methodname="CreateSpacePointArrayFromShortRepresentationNegativeTest" classname="Tests.HelperTests" runstate="Runnable" seed="770083488" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.002517" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1187" name="CreateSpacePointArrayFromShortRepresentationPositiveTest" fullname="Tests.HelperTests.CreateSpacePointArrayFromShortRepresentationPositiveTest" methodname="CreateSpacePointArrayFromShortRepresentationPositiveTest" classname="Tests.HelperTests" runstate="Runnable" seed="1722425067" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001077" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1182" name="GetPlayerIndexesOfOthers" fullname="Tests.HelperTests.GetPlayerIndexesOfOthers" methodname="GetPlayerIndexesOfOthers" classname="Tests.HelperTests" runstate="Runnable" seed="672093679" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.003069" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1185" name="HelperTestsDistanceBetweenHexCoords" fullname="Tests.HelperTests.HelperTestsDistanceBetweenHexCoords" methodname="HelperTestsDistanceBetweenHexCoords" classname="Tests.HelperTests" runstate="Runnable" seed="1626444280" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001697" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1190" name="HelperTestsGetAllHexesDistanceAwayFromGivenHex" fullname="Tests.HelperTests.HelperTestsGetAllHexesDistanceAwayFromGivenHex" methodname="HelperTestsGetAllHexesDistanceAwayFromGivenHex" classname="Tests.HelperTests" runstate="Runnable" seed="1107407072" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.003854" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1189" name="HelperTestsGetHexesAtCityPositionWithVertex0" fullname="Tests.HelperTests.HelperTestsGetHexesAtCityPositionWithVertex0" methodname="HelperTestsGetHexesAtCityPositionWithVertex0" classname="Tests.HelperTests" runstate="Runnable" seed="1422862707" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001482" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1188" name="HelperTestsGetHexesAtCityPositionWithVertex1" fullname="Tests.HelperTests.HelperTestsGetHexesAtCityPositionWithVertex1" methodname="HelperTestsGetHexesAtCityPositionWithVertex1" classname="Tests.HelperTests" runstate="Runnable" seed="330290433" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000717" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1184" name="TestSpacePointArrayContainsPointNegative" fullname="Tests.HelperTests.TestSpacePointArrayContainsPointNegative" methodname="TestSpacePointArrayContainsPointNegative" classname="Tests.HelperTests" runstate="Runnable" seed="1020551369" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000705" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1183" name="TestSpacePointArrayContainsPointPositive" fullname="Tests.HelperTests.TestSpacePointArrayContainsPointPositive" methodname="TestSpacePointArrayContainsPointPositive" classname="Tests.HelperTests" runstate="Runnable" seed="892894196" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000558" asserts="0">
+            <properties />
+          </test-case>
+        </test-suite>
+        <test-suite type="TestFixture" id="1191" name="HexCoordinatesTests" fullname="Tests.HexCoordinatesTests" classname="Tests.HexCoordinatesTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.013129" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-case id="1193" name="HexCoordinatesGetCubeCoordinates" fullname="Tests.HexCoordinatesTests.HexCoordinatesGetCubeCoordinates" methodname="HexCoordinatesGetCubeCoordinates" classname="Tests.HexCoordinatesTests" runstate="Runnable" seed="727302614" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.004334" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1192" name="HexCoordinatesNeighborTests" fullname="Tests.HexCoordinatesTests.HexCoordinatesNeighborTests" methodname="HexCoordinatesNeighborTests" classname="Tests.HexCoordinatesTests" runstate="Runnable" seed="2103250967" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001520" asserts="0">
+            <properties />
+          </test-case>
+        </test-suite>
+        <test-suite type="TestFixture" id="1194" name="MapTests" fullname="Tests.MapTests" classname="Tests.MapTests" runstate="Runnable" testcasecount="28" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.348624" total="28" passed="28" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-case id="1218" name="ColonyBlockadePreventionTest" fullname="Tests.MapTests.ColonyBlockadePreventionTest" methodname="ColonyBlockadePreventionTest" classname="Tests.MapTests" runstate="Runnable" seed="1408789543" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.035732" asserts="0">
+            <properties />
+            <output><![CDATA[TH1
+TH1
+]]></output>
+          </test-case>
+          <test-case id="1221" name="GetTradeStationsTest" fullname="Tests.MapTests.GetTradeStationsTest" methodname="GetTradeStationsTest" classname="Tests.MapTests" runstate="Runnable" seed="1411419535" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.003425" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1208" name="MapCoordAreInBounds" fullname="Tests.MapTests.MapCoordAreInBounds" methodname="MapCoordAreInBounds" classname="Tests.MapTests" runstate="Runnable" seed="968536317" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001942" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1200" name="MapGetAllAvailableSpacePoints" fullname="Tests.MapTests.MapGetAllAvailableSpacePoints" methodname="MapGetAllAvailableSpacePoints" classname="Tests.MapTests" runstate="Runnable" seed="1585747720" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.003315" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1201" name="MapGetAllSpacePointsInDistance2" fullname="Tests.MapTests.MapGetAllSpacePointsInDistance2" methodname="MapGetAllSpacePointsInDistance2" classname="Tests.MapTests" runstate="Runnable" seed="868520833" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001969" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1202" name="MapGetAllSpacePointsInDistance3" fullname="Tests.MapTests.MapGetAllSpacePointsInDistance3" methodname="MapGetAllSpacePointsInDistance3" classname="Tests.MapTests" runstate="Runnable" seed="1413913697" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001060" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1198" name="MapGetDistanceBetweenPoints1" fullname="Tests.MapTests.MapGetDistanceBetweenPoints1" methodname="MapGetDistanceBetweenPoints1" classname="Tests.MapTests" runstate="Runnable" seed="1104217912" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001369" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1199" name="MapGetDistanceBetweenPoints2" fullname="Tests.MapTests.MapGetDistanceBetweenPoints2" methodname="MapGetDistanceBetweenPoints2" classname="Tests.MapTests" runstate="Runnable" seed="70414837" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001323" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1207" name="MapGetHeight" fullname="Tests.MapTests.MapGetHeight" methodname="MapGetHeight" classname="Tests.MapTests" runstate="Runnable" seed="1081069370" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001266" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1195" name="MapGetNeighborsOfSpacePoint1" fullname="Tests.MapTests.MapGetNeighborsOfSpacePoint1" methodname="MapGetNeighborsOfSpacePoint1" classname="Tests.MapTests" runstate="Runnable" seed="521363588" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001757" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1196" name="MapGetNeighborsOfSpacePoint2" fullname="Tests.MapTests.MapGetNeighborsOfSpacePoint2" methodname="MapGetNeighborsOfSpacePoint2" classname="Tests.MapTests" runstate="Runnable" seed="859344534" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000768" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1197" name="MapGetNeighborsOfSpacePoint3" fullname="Tests.MapTests.MapGetNeighborsOfSpacePoint3" methodname="MapGetNeighborsOfSpacePoint3" classname="Tests.MapTests" runstate="Runnable" seed="772968870" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000719" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1205" name="MapGetOffset" fullname="Tests.MapTests.MapGetOffset" methodname="MapGetOffset" classname="Tests.MapTests" runstate="Runnable" seed="127657522" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001791" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1203" name="MapGetSpacePointsInDistanceZeroCase" fullname="Tests.MapTests.MapGetSpacePointsInDistanceZeroCase" methodname="MapGetSpacePointsInDistanceZeroCase" classname="Tests.MapTests" runstate="Runnable" seed="444145655" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000994" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1204" name="MapGetSpacePointsInsideRangeCase" fullname="Tests.MapTests.MapGetSpacePointsInsideRangeCase" methodname="MapGetSpacePointsInsideRangeCase" classname="Tests.MapTests" runstate="Runnable" seed="144769379" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001091" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1206" name="MapGetWidth" fullname="Tests.MapTests.MapGetWidth" methodname="MapGetWidth" classname="Tests.MapTests" runstate="Runnable" seed="1705164197" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000928" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1209" name="MapHexesAtPointTest1" fullname="Tests.MapTests.MapHexesAtPointTest1" methodname="MapHexesAtPointTest1" classname="Tests.MapTests" runstate="Runnable" seed="2116475815" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000561" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1210" name="MapHexesAtPointTest2" fullname="Tests.MapTests.MapHexesAtPointTest2" methodname="MapHexesAtPointTest2" classname="Tests.MapTests" runstate="Runnable" seed="1213108941" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000570" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1211" name="MapHexesAtPointTest3" fullname="Tests.MapTests.MapHexesAtPointTest3" methodname="MapHexesAtPointTest3" classname="Tests.MapTests" runstate="Runnable" seed="1641327049" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.106448" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1222" name="MapSerialization" fullname="Tests.MapTests.MapSerialization" methodname="MapSerialization" classname="Tests.MapTests" runstate="Runnable" seed="103782672" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.111411" asserts="0">
+            <properties />
+            <output><![CDATA[TH1
+]]></output>
+          </test-case>
+          <test-case id="1219" name="SpacePortBlockadePreventionTest" fullname="Tests.MapTests.SpacePortBlockadePreventionTest" methodname="SpacePortBlockadePreventionTest" classname="Tests.MapTests" runstate="Runnable" seed="544421660" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.010405" asserts="0">
+            <properties />
+            <output><![CDATA[TH1
+TH1
+TH1
+]]></output>
+          </test-case>
+          <test-case id="1220" name="SpacePortBlockadePreventionTestOwnSpacePort" fullname="Tests.MapTests.SpacePortBlockadePreventionTestOwnSpacePort" methodname="SpacePortBlockadePreventionTestOwnSpacePort" classname="Tests.MapTests" runstate="Runnable" seed="1631751339" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.007436" asserts="0">
+            <properties />
+            <output><![CDATA[TH1
+TH1
+TH1
+]]></output>
+          </test-case>
+          <test-case id="1213" name="TestArrayIndexesToCoords1" fullname="Tests.MapTests.TestArrayIndexesToCoords1" methodname="TestArrayIndexesToCoords1" classname="Tests.MapTests" runstate="Runnable" seed="635674531" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001257" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1214" name="TestArrayIndexesToCoords2" fullname="Tests.MapTests.TestArrayIndexesToCoords2" methodname="TestArrayIndexesToCoords2" classname="Tests.MapTests" runstate="Runnable" seed="1806930965" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000900" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1212" name="TestCoordsToArrayIndexes" fullname="Tests.MapTests.TestCoordsToArrayIndexes" methodname="TestCoordsToArrayIndexes" classname="Tests.MapTests" runstate="Runnable" seed="1770018759" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000817" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1217" name="TestSetTileGroupAtSpacePointNegativeTest" fullname="Tests.MapTests.TestSetTileGroupAtSpacePointNegativeTest" methodname="TestSetTileGroupAtSpacePointNegativeTest" classname="Tests.MapTests" runstate="Runnable" seed="502021332" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000851" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1215" name="TestSetTileGroupAtSpacePointPositiveTest1" fullname="Tests.MapTests.TestSetTileGroupAtSpacePointPositiveTest1" methodname="TestSetTileGroupAtSpacePointPositiveTest1" classname="Tests.MapTests" runstate="Runnable" seed="801244281" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000913" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1216" name="TestSetTileGroupAtSpacePointPositiveTest2" fullname="Tests.MapTests.TestSetTileGroupAtSpacePointPositiveTest2" methodname="TestSetTileGroupAtSpacePointPositiveTest2" classname="Tests.MapTests" runstate="Runnable" seed="1493832647" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000822" asserts="0">
+            <properties />
+          </test-case>
+        </test-suite>
+        <test-suite type="TestFixture" id="1223" name="PirateTokenTests" fullname="Tests.PirateTokenTests" classname="Tests.PirateTokenTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.023860" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-case id="1226" name="PirateTokenTestsWithEnumeratorPasses" fullname="Tests.PirateTokenTests.PirateTokenTestsWithEnumeratorPasses" methodname="PirateTokenTestsWithEnumeratorPasses" classname="Tests.PirateTokenTests" runstate="Runnable" seed="833733951" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.016171" asserts="0">
+            <properties>
+              <property name="_JOINTYPE" value="UnityCombinatorial" />
+            </properties>
+          </test-case>
+          <test-case id="1225" name="TestCannonPodBeatCondition" fullname="Tests.PirateTokenTests.TestCannonPodBeatCondition" methodname="TestCannonPodBeatCondition" classname="Tests.PirateTokenTests" runstate="Runnable" seed="1793921199" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001178" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1224" name="TestFreightPodBeatCondition" fullname="Tests.PirateTokenTests.TestFreightPodBeatCondition" methodname="TestFreightPodBeatCondition" classname="Tests.PirateTokenTests" runstate="Runnable" seed="2074410942" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000950" asserts="0">
+            <properties />
+          </test-case>
+        </test-suite>
+        <test-suite type="TestFixture" id="1227" name="PlayerTests" fullname="Tests.PlayerTests" classname="Tests.PlayerTests" runstate="Runnable" testcasecount="23" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.055393" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-case id="1241" name="BuildColonyAtPosition" fullname="Tests.PlayerTests.BuildColonyAtPosition" methodname="BuildColonyAtPosition" classname="Tests.PlayerTests" runstate="Runnable" seed="1931316134" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.002697" asserts="0">
+            <properties />
+            <output><![CDATA[TH1
+]]></output>
+          </test-case>
+          <test-case id="1239" name="BuildColonyShipNegative" fullname="Tests.PlayerTests.BuildColonyShipNegative" methodname="BuildColonyShipNegative" classname="Tests.PlayerTests" runstate="Runnable" seed="244271682" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000879" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1240" name="BuildColonyShipPositive" fullname="Tests.PlayerTests.BuildColonyShipPositive" methodname="BuildColonyShipPositive" classname="Tests.PlayerTests" runstate="Runnable" seed="1148097318" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001145" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1234" name="BuildSpacePortNegative" fullname="Tests.PlayerTests.BuildSpacePortNegative" methodname="BuildSpacePortNegative" classname="Tests.PlayerTests" runstate="Runnable" seed="2032500651" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000727" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1236" name="BuildSpacePortPositive" fullname="Tests.PlayerTests.BuildSpacePortPositive" methodname="BuildSpacePortPositive" classname="Tests.PlayerTests" runstate="Runnable" seed="652632505" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000875" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1237" name="BuildTradeShipNegative" fullname="Tests.PlayerTests.BuildTradeShipNegative" methodname="BuildTradeShipNegative" classname="Tests.PlayerTests" runstate="Runnable" seed="734532027" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000720" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1238" name="BuildTradeShipPositive" fullname="Tests.PlayerTests.BuildTradeShipPositive" methodname="BuildTradeShipPositive" classname="Tests.PlayerTests" runstate="Runnable" seed="1840865988" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000749" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1228" name="GetVictoryPointsFromBeatenPirateTokens" fullname="Tests.PlayerTests.GetVictoryPointsFromBeatenPirateTokens" methodname="GetVictoryPointsFromBeatenPirateTokens" classname="Tests.PlayerTests" runstate="Runnable" seed="284239346" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001351" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1233" name="GetVictoryPointsTestColonyWithSpacePort" fullname="Tests.PlayerTests.GetVictoryPointsTestColonyWithSpacePort" methodname="GetVictoryPointsTestColonyWithSpacePort" classname="Tests.PlayerTests" runstate="Runnable" seed="887281957" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001200" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1229" name="GetVictoryPointsTestSettledColony" fullname="Tests.PlayerTests.GetVictoryPointsTestSettledColony" methodname="GetVictoryPointsTestSettledColony" classname="Tests.PlayerTests" runstate="Runnable" seed="217092464" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000701" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1231" name="GetVictoryPointsTestSettleTradeShip" fullname="Tests.PlayerTests.GetVictoryPointsTestSettleTradeShip" methodname="GetVictoryPointsTestSettleTradeShip" classname="Tests.PlayerTests" runstate="Runnable" seed="623145853" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000803" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1230" name="GetVictoryPointsTestUnsettledColony" fullname="Tests.PlayerTests.GetVictoryPointsTestUnsettledColony" methodname="GetVictoryPointsTestUnsettledColony" classname="Tests.PlayerTests" runstate="Runnable" seed="1570647339" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000718" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1232" name="GetVictoryPointsTestUnsettledTradeShip" fullname="Tests.PlayerTests.GetVictoryPointsTestUnsettledTradeShip" methodname="GetVictoryPointsTestUnsettledTradeShip" classname="Tests.PlayerTests" runstate="Runnable" seed="744917493" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000815" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1244" name="TestFameMedalBuyCanOnlyBeDoneOnce" fullname="Tests.PlayerTests.TestFameMedalBuyCanOnlyBeDoneOnce" methodname="TestFameMedalBuyCanOnlyBeDoneOnce" classname="Tests.PlayerTests" runstate="Runnable" seed="743369899" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001168" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1245" name="TestFameMedalBuyResetsOnNewTurn" fullname="Tests.PlayerTests.TestFameMedalBuyResetsOnNewTurn" methodname="TestFameMedalBuyResetsOnNewTurn" classname="Tests.PlayerTests" runstate="Runnable" seed="823315035" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001064" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1235" name="TestFlyableTokens" fullname="Tests.PlayerTests.TestFlyableTokens" methodname="TestFlyableTokens" classname="Tests.PlayerTests" runstate="Runnable" seed="80483228" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.002433" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1250" name="TestGetAttachableUpgradeTokens" fullname="Tests.PlayerTests.TestGetAttachableUpgradeTokens" methodname="TestGetAttachableUpgradeTokens" classname="Tests.PlayerTests" runstate="Runnable" seed="1785700331" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001932" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1249" name="TestGetRemovableUpgradeTokens" fullname="Tests.PlayerTests.TestGetRemovableUpgradeTokens" methodname="TestGetRemovableUpgradeTokens" classname="Tests.PlayerTests" runstate="Runnable" seed="341880498" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001194" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1242" name="TestGetVPFromFameMedals2" fullname="Tests.PlayerTests.TestGetVPFromFameMedals2" methodname="TestGetVPFromFameMedals2" classname="Tests.PlayerTests" runstate="Runnable" seed="2094051451" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000769" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1243" name="TestGetVPFromFameMedals3" fullname="Tests.PlayerTests.TestGetVPFromFameMedals3" methodname="TestGetVPFromFameMedals3" classname="Tests.PlayerTests" runstate="Runnable" seed="493674519" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000635" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1246" name="TestTokenDisabilityIsRemovedOnNewTurn" fullname="Tests.PlayerTests.TestTokenDisabilityIsRemovedOnNewTurn" methodname="TestTokenDisabilityIsRemovedOnNewTurn" classname="Tests.PlayerTests" runstate="Runnable" seed="511444104" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001043" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1247" name="TokenStorageTest1" fullname="Tests.PlayerTests.TokenStorageTest1" methodname="TokenStorageTest1" classname="Tests.PlayerTests" runstate="Runnable" seed="430241971" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000984" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1248" name="TokenStorageTestAddingAndRetrieving" fullname="Tests.PlayerTests.TokenStorageTestAddingAndRetrieving" methodname="TokenStorageTestAddingAndRetrieving" classname="Tests.PlayerTests" runstate="Runnable" seed="493125226" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001244" asserts="0">
+            <properties />
+          </test-case>
+        </test-suite>
+        <test-suite type="TestFixture" id="1251" name="SevenRollStrategy" fullname="Tests.SevenRollStrategy" classname="Tests.SevenRollStrategy" runstate="Runnable" testcasecount="7" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.019348" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-case id="1254" name="CheckNextPlayer3" fullname="Tests.SevenRollStrategy.CheckNextPlayer3" methodname="CheckNextPlayer3" classname="Tests.SevenRollStrategy" runstate="Runnable" seed="1118480589" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001052" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1255" name="CheckNextPlayer4" fullname="Tests.SevenRollStrategy.CheckNextPlayer4" methodname="CheckNextPlayer4" classname="Tests.SevenRollStrategy" runstate="Runnable" seed="604024568" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000588" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1252" name="CheckNextPlayers1" fullname="Tests.SevenRollStrategy.CheckNextPlayers1" methodname="CheckNextPlayers1" classname="Tests.SevenRollStrategy" runstate="Runnable" seed="547329194" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001154" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1253" name="CheckNextPlayers2" fullname="Tests.SevenRollStrategy.CheckNextPlayers2" methodname="CheckNextPlayers2" classname="Tests.SevenRollStrategy" runstate="Runnable" seed="2076324959" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000782" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1256" name="CheckPreviousPlayer1" fullname="Tests.SevenRollStrategy.CheckPreviousPlayer1" methodname="CheckPreviousPlayer1" classname="Tests.SevenRollStrategy" runstate="Runnable" seed="1084757340" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001143" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1257" name="CheckPreviousPlayer2" fullname="Tests.SevenRollStrategy.CheckPreviousPlayer2" methodname="CheckPreviousPlayer2" classname="Tests.SevenRollStrategy" runstate="Runnable" seed="1764024869" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001061" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1258" name="CheckPreviousPlayer3" fullname="Tests.SevenRollStrategy.CheckPreviousPlayer3" methodname="CheckPreviousPlayer3" classname="Tests.SevenRollStrategy" runstate="Runnable" seed="1822457599" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000618" asserts="0">
+            <properties />
+          </test-case>
+        </test-suite>
+        <test-suite type="TestFixture" id="1259" name="SpacePointTests" fullname="Tests.SpacePointTests" classname="Tests.SpacePointTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.007646" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-case id="1260" name="SpacePointTestsDistance" fullname="Tests.SpacePointTests.SpacePointTestsDistance" methodname="SpacePointTestsDistance" classname="Tests.SpacePointTests" runstate="Runnable" seed="1178652444" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.002168" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1261" name="TestIfEqualsWorks" fullname="Tests.SpacePointTests.TestIfEqualsWorks" methodname="TestIfEqualsWorks" classname="Tests.SpacePointTests" runstate="Runnable" seed="224040822" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000513" asserts="0">
+            <properties />
+          </test-case>
+        </test-suite>
+        <test-suite type="TestFixture" id="1262" name="TileGroupTests" fullname="Tests.TileGroupTests" classname="Tests.TileGroupTests" runstate="Runnable" testcasecount="16" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.053265" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-case id="1271" name="RequestSettleResourceTileGroupToken_IS_OnSettleSpot" fullname="Tests.TileGroupTests.RequestSettleResourceTileGroupToken_IS_OnSettleSpot" methodname="RequestSettleResourceTileGroupToken_IS_OnSettleSpot" classname="Tests.TileGroupTests" runstate="Runnable" seed="1204283891" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001736" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1273" name="RequestSettleResourceTileGroupToken_IS_OnSettleSpot_IS_ColonyShip" fullname="Tests.TileGroupTests.RequestSettleResourceTileGroupToken_IS_OnSettleSpot_IS_ColonyShip" methodname="RequestSettleResourceTileGroupToken_IS_OnSettleSpot_IS_ColonyShip" classname="Tests.TileGroupTests" runstate="Runnable" seed="1278396440" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001501" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1272" name="RequestSettleResourceTileGroupToken_IS_OnSettleSpot_IS_TradeShip" fullname="Tests.TileGroupTests.RequestSettleResourceTileGroupToken_IS_OnSettleSpot_IS_TradeShip" methodname="RequestSettleResourceTileGroupToken_IS_OnSettleSpot_IS_TradeShip" classname="Tests.TileGroupTests" runstate="Runnable" seed="219734517" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001703" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1270" name="RequestSettleResourceTileGroupToken_NOT_OnSettleSpot" fullname="Tests.TileGroupTests.RequestSettleResourceTileGroupToken_NOT_OnSettleSpot" methodname="RequestSettleResourceTileGroupToken_NOT_OnSettleSpot" classname="Tests.TileGroupTests" runstate="Runnable" seed="1968031440" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001226" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1276" name="RequestSettleTradeStation_Is_OnSettleSpot_IS_tradeship_NO_spaceleft" fullname="Tests.TileGroupTests.RequestSettleTradeStation_Is_OnSettleSpot_IS_tradeship_NO_spaceleft" methodname="RequestSettleTradeStation_Is_OnSettleSpot_IS_tradeship_NO_spaceleft" classname="Tests.TileGroupTests" runstate="Runnable" seed="817817725" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001853" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1275" name="RequestSettleTradeStationToken_Is_OnSettleSpot_NOT_tradeship" fullname="Tests.TileGroupTests.RequestSettleTradeStationToken_Is_OnSettleSpot_NOT_tradeship" methodname="RequestSettleTradeStationToken_Is_OnSettleSpot_NOT_tradeship" classname="Tests.TileGroupTests" runstate="Runnable" seed="1153734232" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001487" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1274" name="RequestSettleTradeStationToken_NOT_OnSettleSpot" fullname="Tests.TileGroupTests.RequestSettleTradeStationToken_NOT_OnSettleSpot" methodname="RequestSettleTradeStationToken_NOT_OnSettleSpot" classname="Tests.TileGroupTests" runstate="Runnable" seed="1731934507" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000781" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1265" name="ShiftTilesBy0" fullname="Tests.TileGroupTests.ShiftTilesBy0" methodname="ShiftTilesBy0" classname="Tests.TileGroupTests" runstate="Runnable" seed="1673783527" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000849" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1267" name="ShiftTilesBy1" fullname="Tests.TileGroupTests.ShiftTilesBy1" methodname="ShiftTilesBy1" classname="Tests.TileGroupTests" runstate="Runnable" seed="1012583344" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000622" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1268" name="ShiftTilesBy2" fullname="Tests.TileGroupTests.ShiftTilesBy2" methodname="ShiftTilesBy2" classname="Tests.TileGroupTests" runstate="Runnable" seed="499693099" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000941" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1266" name="ShiftTilesBy3" fullname="Tests.TileGroupTests.ShiftTilesBy3" methodname="ShiftTilesBy3" classname="Tests.TileGroupTests" runstate="Runnable" seed="1237038162" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000632" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1277" name="TestDockingBehaviourOfTradeStation" fullname="Tests.TileGroupTests.TestDockingBehaviourOfTradeStation" methodname="TestDockingBehaviourOfTradeStation" classname="Tests.TileGroupTests" runstate="Runnable" seed="601374211" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.009868" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1264" name="TileGroupFailCreationWithLessThan3Tiles" fullname="Tests.TileGroupTests.TileGroupFailCreationWithLessThan3Tiles" methodname="TileGroupFailCreationWithLessThan3Tiles" classname="Tests.TileGroupTests" runstate="Runnable" seed="1076122777" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001517" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1269" name="TileGroupFailCreationWithMoreThan3Tiles" fullname="Tests.TileGroupTests.TileGroupFailCreationWithMoreThan3Tiles" methodname="TileGroupFailCreationWithMoreThan3Tiles" classname="Tests.TileGroupTests" runstate="Runnable" seed="1608519301" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001173" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1263" name="TileGroupSuccessfulCreationWith3Tiles" fullname="Tests.TileGroupTests.TileGroupSuccessfulCreationWith3Tiles" methodname="TileGroupSuccessfulCreationWith3Tiles" classname="Tests.TileGroupTests" runstate="Runnable" seed="1860649577" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000775" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1278" name="TradeStationHighestPlayer" fullname="Tests.TileGroupTests.TradeStationHighestPlayer" methodname="TradeStationHighestPlayer" classname="Tests.TileGroupTests" runstate="Runnable" seed="434800514" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001617" asserts="0">
+            <properties />
+          </test-case>
+        </test-suite>
+        <test-suite type="TestFixture" id="1279" name="TokenTests" fullname="Tests.TokenTests" classname="Tests.TokenTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.008220" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-case id="1282" name="SettlingColonyShip" fullname="Tests.TokenTests.SettlingColonyShip" methodname="SettlingColonyShip" classname="Tests.TokenTests" runstate="Runnable" seed="559146030" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001022" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1280" name="SettlingMechanisms1" fullname="Tests.TokenTests.SettlingMechanisms1" methodname="SettlingMechanisms1" classname="Tests.TokenTests" runstate="Runnable" seed="486027080" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000582" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1281" name="SettlingTradeShip" fullname="Tests.TokenTests.SettlingTradeShip" methodname="SettlingTradeShip" classname="Tests.TokenTests" runstate="Runnable" seed="1636477038" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000820" asserts="0">
+            <properties />
+          </test-case>
+        </test-suite>
+        <test-suite type="TestFixture" id="1283" name="TradingCalculatorTests" fullname="Tests.TradingCalculatorTests" classname="Tests.TradingCalculatorTests" runstate="Runnable" testcasecount="21" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.047261" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-case id="1294" name="GetOutputFromCarbon1" fullname="Tests.TradingCalculatorTests.GetOutputFromCarbon1" methodname="GetOutputFromCarbon1" classname="Tests.TradingCalculatorTests" runstate="Runnable" seed="340249780" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001253" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1295" name="GetOutputFromCarbon2" fullname="Tests.TradingCalculatorTests.GetOutputFromCarbon2" methodname="GetOutputFromCarbon2" classname="Tests.TradingCalculatorTests" runstate="Runnable" seed="1061991987" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000662" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1296" name="GetOutputFromCarbon3" fullname="Tests.TradingCalculatorTests.GetOutputFromCarbon3" methodname="GetOutputFromCarbon3" classname="Tests.TradingCalculatorTests" runstate="Runnable" seed="2118364241" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000814" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1284" name="GetOutputFromFood1" fullname="Tests.TradingCalculatorTests.GetOutputFromFood1" methodname="GetOutputFromFood1" classname="Tests.TradingCalculatorTests" runstate="Runnable" seed="21400917" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000763" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1285" name="GetOutputFromFood2" fullname="Tests.TradingCalculatorTests.GetOutputFromFood2" methodname="GetOutputFromFood2" classname="Tests.TradingCalculatorTests" runstate="Runnable" seed="1340135208" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000582" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1286" name="GetOutputFromFood3" fullname="Tests.TradingCalculatorTests.GetOutputFromFood3" methodname="GetOutputFromFood3" classname="Tests.TradingCalculatorTests" runstate="Runnable" seed="1057902488" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000943" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1291" name="GetOutputFromFuel1" fullname="Tests.TradingCalculatorTests.GetOutputFromFuel1" methodname="GetOutputFromFuel1" classname="Tests.TradingCalculatorTests" runstate="Runnable" seed="1348730875" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000883" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1292" name="GetOutputFromFuel2" fullname="Tests.TradingCalculatorTests.GetOutputFromFuel2" methodname="GetOutputFromFuel2" classname="Tests.TradingCalculatorTests" runstate="Runnable" seed="1987549716" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000610" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1293" name="GetOutputFromFuel3" fullname="Tests.TradingCalculatorTests.GetOutputFromFuel3" methodname="GetOutputFromFuel3" classname="Tests.TradingCalculatorTests" runstate="Runnable" seed="1836770541" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000661" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1287" name="GetOutputFromGoods0" fullname="Tests.TradingCalculatorTests.GetOutputFromGoods0" methodname="GetOutputFromGoods0" classname="Tests.TradingCalculatorTests" runstate="Runnable" seed="1992223057" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000673" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1288" name="GetOutputFromGoods1" fullname="Tests.TradingCalculatorTests.GetOutputFromGoods1" methodname="GetOutputFromGoods1" classname="Tests.TradingCalculatorTests" runstate="Runnable" seed="1100208122" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000759" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1289" name="GetOutputFromGoods2" fullname="Tests.TradingCalculatorTests.GetOutputFromGoods2" methodname="GetOutputFromGoods2" classname="Tests.TradingCalculatorTests" runstate="Runnable" seed="1661597368" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000687" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1290" name="GetOutputFromGoods3" fullname="Tests.TradingCalculatorTests.GetOutputFromGoods3" methodname="GetOutputFromGoods3" classname="Tests.TradingCalculatorTests" runstate="Runnable" seed="461943660" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000872" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1297" name="GetOutputFromOre1" fullname="Tests.TradingCalculatorTests.GetOutputFromOre1" methodname="GetOutputFromOre1" classname="Tests.TradingCalculatorTests" runstate="Runnable" seed="527353014" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001061" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1298" name="GetOutputFromOre2" fullname="Tests.TradingCalculatorTests.GetOutputFromOre2" methodname="GetOutputFromOre2" classname="Tests.TradingCalculatorTests" runstate="Runnable" seed="492999543" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000825" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1299" name="GetOutputFromOre3" fullname="Tests.TradingCalculatorTests.GetOutputFromOre3" methodname="GetOutputFromOre3" classname="Tests.TradingCalculatorTests" runstate="Runnable" seed="1764327106" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001024" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1302" name="TestBankTradeIsPossibleCaseNegative1" fullname="Tests.TradingCalculatorTests.TestBankTradeIsPossibleCaseNegative1" methodname="TestBankTradeIsPossibleCaseNegative1" classname="Tests.TradingCalculatorTests" runstate="Runnable" seed="240591007" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.001331" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1303" name="TestBankTradeIsPossibleCaseNegative2" fullname="Tests.TradingCalculatorTests.TestBankTradeIsPossibleCaseNegative2" methodname="TestBankTradeIsPossibleCaseNegative2" classname="Tests.TradingCalculatorTests" runstate="Runnable" seed="1150958525" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000860" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1304" name="TestBankTradeIsPossibleCaseNegative3" fullname="Tests.TradingCalculatorTests.TestBankTradeIsPossibleCaseNegative3" methodname="TestBankTradeIsPossibleCaseNegative3" classname="Tests.TradingCalculatorTests" runstate="Runnable" seed="1549758449" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000778" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1301" name="TestBankTradeIsPossibleCasePositive1" fullname="Tests.TradingCalculatorTests.TestBankTradeIsPossibleCasePositive1" methodname="TestBankTradeIsPossibleCasePositive1" classname="Tests.TradingCalculatorTests" runstate="Runnable" seed="1444540848" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000783" asserts="0">
+            <properties />
+          </test-case>
+          <test-case id="1300" name="TestBankTradeIsPossibleZeroCase" fullname="Tests.TradingCalculatorTests.TestBankTradeIsPossibleZeroCase" methodname="TestBankTradeIsPossibleZeroCase" classname="Tests.TradingCalculatorTests" runstate="Runnable" seed="5434231" result="Passed" start-time="2021-04-17 21:59:27Z" end-time="2021-04-17 21:59:27Z" duration="0.000806" asserts="0">
+            <properties />
+          </test-case>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

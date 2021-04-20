@@ -39,6 +39,26 @@ namespace Tests
         }
 
         [Test]
+        public void AddCardTypeToPlayer()
+        {
+            var player = GetGenericPlayer();
+            player.AddCard(CardType.CARBON);
+            Assert.AreEqual(1, player.hand.NumberCardsOfType<CarbonCard>());
+
+            player.AddCard(CardType.GOODS);
+            Assert.AreEqual(1, player.hand.NumberCardsOfType<GoodsCard>());
+
+            player.AddCard(CardType.FUEL);
+            Assert.AreEqual(1, player.hand.NumberCardsOfType<FuelCard>());
+
+            player.AddCard(CardType.ORE);
+            Assert.AreEqual(1, player.hand.NumberCardsOfType<OreCard>());
+
+            player.AddCard(CardType.FOOD);
+            Assert.AreEqual(1, player.hand.NumberCardsOfType<FoodCard>());
+        }
+
+        [Test]
         public void GetVictoryPointsFromBeatenPirateTokens()
         {
             var player = GetGenericPlayer();
@@ -268,6 +288,7 @@ namespace Tests
             try
             {
                 var token = player.BuildToken2(mockMap, new ColonyBaseToken().GetType(), position);
+                Assert.True(token.associatedMap == mockMap);
                 Assert.True(position.Equals(token.position));
             }
             catch (NotEnoughResourcesException e)

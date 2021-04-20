@@ -16,7 +16,7 @@ public class CastShipDiceState : GameState
         controller.mainPlayer.AddRangeToFlyableTokens(shipDiceThrow.GetFlyValue());
         if (shipDiceThrow.TriggersEncounterCard())
         {
-            controller.encounterCardHandler.GetComponent<EncounterCardHandler>().PlayNextCard();
+            controller.SetState(new EncounterCardState(controller));
         } else
         {
             controller.SetState(new FlyShipsState(controller));
@@ -25,10 +25,7 @@ public class CastShipDiceState : GameState
         hudScript.CloseShipDiceThrowPanel();
     }
 
-    void EncounterCardFinished()
-    {
-
-    }
+    
 
     public override void OnBackButtonClicked()
     {

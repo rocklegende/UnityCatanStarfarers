@@ -151,7 +151,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxPlayersPerRoom: 2
-  isDevelopment: 0
+  isDevelopment: 1
+  autoConnect: 1
   controlPanel: {fileID: 1870835602}
   progressLabel: {fileID: 1695372529}
 --- !u!4 &178932000

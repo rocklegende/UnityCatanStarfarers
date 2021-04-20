@@ -39,6 +39,7 @@ namespace com.onebuckgames.UnityStarFarers
         public void AddToken(Token token)
         {
             tokensOnMap.Add(token);
+            token.associatedMap = this;
             token.RegisterObserver(this);
             DataChanged();
         }
@@ -46,6 +47,7 @@ namespace com.onebuckgames.UnityStarFarers
         public void RemoveToken(Token token)
         {
             tokensOnMap.Remove(token);
+            token.associatedMap = null;
             token.RemoveObserver(this);
             DataChanged();
         }
@@ -574,7 +576,7 @@ namespace com.onebuckgames.UnityStarFarers
         }
 
 
-        public SpacePoint[] applyFilter(SpacePoint[] points, SpacePointFilter filter, Player[] players)
+        public List<SpacePoint> applyFilter(List<SpacePoint> points, SpacePointFilter filter, Player[] players)
         {
             List<SpacePoint> validPoints = new List<SpacePoint>();
 
@@ -586,12 +588,12 @@ namespace com.onebuckgames.UnityStarFarers
                 }
             }
 
-            return validPoints.ToArray();
+            return validPoints;
         }
 
-        public SpacePoint[] GetSpacePointsFullfillingFilters(SpacePointFilter[] filters, Player[] players)
+        public List<SpacePoint> GetSpacePointsFullfillingFilters(SpacePointFilter[] filters, Player[] players)
         {
-            SpacePoint[] points = getAllAvailableSpacePoints();
+            List<SpacePoint> points = getAllAvailableSpacePoints();
             foreach (var filter in filters)
             {
                 points = applyFilter(points, filter, players);
@@ -603,7 +605,7 @@ namespace com.onebuckgames.UnityStarFarers
         /// Returns all theoretically possible SpacePoints (also including SpacePoints that are not reachable).
         /// </summary>
         /// <returns></returns>
-        public SpacePoint[] getAllAvailableSpacePoints()
+        public List<SpacePoint> getAllAvailableSpacePoints()
         {
             List<SpacePoint> positions = new List<SpacePoint>();
             HexCoordinates[] allHexCoordinates = getAllHexCoordinates();
@@ -644,7 +646,7 @@ namespace com.onebuckgames.UnityStarFarers
                 }
             }
 
-            return positions.ToArray();
+            return positions;
         }
 
         public void SubjectDataChanged(object[] data)

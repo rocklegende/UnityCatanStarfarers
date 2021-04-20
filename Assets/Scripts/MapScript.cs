@@ -35,6 +35,7 @@ public class MapScript : SFController, Observer
     public Map map;
     private MapMode mode = MapMode.NORMAL;
     private System.Action<Token> tokenSelectCallback;
+    private System.Action<SpacePoint> didSelectSpacePointCallback;
     List<GameObject> currentlyShownSpacePointButtons = new List<GameObject>();
     GameObject[] hexagonGameObjects;
     List<GameObject> currentlyDisplayedPlayerTokens;
@@ -119,11 +120,11 @@ public class MapScript : SFController, Observer
 
     public void ShowAllAvailableSpacePoints()
     {
-        SpacePoint[] allSpacePoints = map.getAllAvailableSpacePoints();
+        var allSpacePoints = map.getAllAvailableSpacePoints();
         CreateButtonsAtSpacePoints(allSpacePoints);
     }
 
-    void CreateButtonsAtSpacePoints(SpacePoint[] points)
+    void CreateButtonsAtSpacePoints(List<SpacePoint> points)
     {
         foreach (SpacePoint point in points)
         {
@@ -145,7 +146,7 @@ public class MapScript : SFController, Observer
         return null;
     }
 
-    public void RemoveAllSpacePointButtons()
+    public void HideAllSpacePointButtons()
     {
         foreach (GameObject go in currentlyShownSpacePointButtons)
         {
@@ -181,10 +182,6 @@ public class MapScript : SFController, Observer
     {
         Helper helper = new Helper();
         BoundingBox bbox = helper.GetLowestPoint(this.gameObject.transform);
-        Logger.log("Lowest X:" + bbox.minX);
-        Logger.log("Lowest Y:" + bbox.minY);
-        Logger.log("Highest Y:" + bbox.maxY);
-        Logger.log("Higest X:" + bbox.maxX);
 
         Vector2 topLeft = new Vector2(bbox.minX, bbox.maxY);
         Vector2 bottomRight = new Vector2(bbox.maxX, bbox.minY);
@@ -222,7 +219,6 @@ public class MapScript : SFController, Observer
 
     GameObject[] CreateMap(Map map)
     {
-
         HexCoordinates[] allValidHexCoords = map.getAllHexCoordinates(true);
 
         List<GameObject> hexagons = new List<GameObject>();
@@ -310,12 +306,6 @@ public class MapScript : SFController, Observer
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void HighlightTokensFullfillingFilters(TokenFilter[] filters)
     {
         List<Token> tokens = GetTokensFullfillingFilters(filters);
@@ -358,10 +348,26 @@ public class MapScript : SFController, Observer
         
     }
 
+    public void OpenSpacePointSelection(List<SpacePoint> spacePointsToChooseFrom, System.Action<SpacePoint> didSelectSpacePoint)
+    {
+        if (spacePointsToChooseFrom.Count < 1)
+        {
+            //immediately make callback call if we have no points to choose from
+            didSelectSpacePoint(null);
+        }
+        ShowSpacePoints(spacePointsToChooseFrom);
+        this.didSelectSpacePointCallback = didSelectSpacePoint;
+    }
+
     public void ShowSpacePointsFulfillingFilters(SpacePointFilter[] filters)
     {
-        SpacePoint[] points = map.GetSpacePointsFullfillingFilters(filters, players.ToArray());
+        List<SpacePoint> points = map.GetSpacePointsFullfillingFilters(filters, players.ToArray());
         CreateButtonsAtSpacePoints(points);
+    }
+
+    public void ShowSpacePoints(List<SpacePoint> spacePoints)
+    {
+        CreateButtonsAtSpacePoints(spacePoints);
     }
 
     public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)
@@ -369,15 +375,15 @@ public class MapScript : SFController, Observer
         if (isReceivingNotifications)
         {
             switch (p_event_path)
-            {
-                //case SFNotification.map_data_changed:
-                //    RedrawMap();
-                //    break;
-
+            {                
                 case SFNotification.token_was_selected:
                     HandleClickOfToken((Token)p_data[0]);
                     break;
 
+                case SFNotification.spacepoint_selected:
+                    didSelectSpacePointCallback?.Invoke((SpacePoint)p_data[0]);
+                    HideAllSpacePointButtons();
+                    break;
             }
         }
 

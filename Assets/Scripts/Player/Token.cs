@@ -51,6 +51,7 @@ public abstract class Token : SFModel
     public int stepsLeft = 20; //TODO: should be 0 in real scenario
     public Player owner;
     protected bool isDisabled = false; //TODO should only be readable from the outside
+    public Map associatedMap;
 
     public Token(string id, bool isTokenAttachable, Cost cost)
     {
@@ -126,19 +127,24 @@ public abstract class Token : SFModel
     }
 
 
-    public void FlyTo(SpacePoint destination, Map map)
+    public void FlyTo(SpacePoint destination)
     {
         if (!CanFly())
         {
             throw new ArgumentException("This token did already exceed its maximum steps.");
         }
-        stepsLeft -= map.distanceBetweenPoints(position, destination);
+        stepsLeft -= associatedMap.distanceBetweenPoints(position, destination);
         SetPosition(destination);
     }
 
     public void addSteps(int steps)
     {
         stepsLeft += steps;
+    }
+
+    public void SetStepsLeft(int steps)
+    {
+        stepsLeft = steps;
     }
 
     /// <summary>

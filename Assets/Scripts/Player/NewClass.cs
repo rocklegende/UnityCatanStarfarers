@@ -50,7 +50,7 @@ public class SpacePortToken : Token, BuildableToken
 
         if (map.IsNotNull())
         {
-            if (map.GetSpacePointsFullfillingFilters(filters, players).Length == 0)
+            if (map.GetSpacePointsFullfillingFilters(filters, players).Count == 0)
             {
                 return false;
             }
@@ -89,7 +89,7 @@ public class TradeAndColonyBuildCondition : BuildCondition
 
         if (map.IsNotNull())
         {
-            if (map.GetSpacePointsFullfillingFilters(filters, players).Length == 0)
+            if (map.GetSpacePointsFullfillingFilters(filters, players).Count == 0)
             {
                 return false;
             }

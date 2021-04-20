@@ -179,8 +179,7 @@ public class EncounterCardFactory
              false,
              new FightEncounterAction(gameController, FightCategory.CANNON, FightEncounterOpponent.FIRST_RIGHT));
 
-        //TODO: the result of this should automatically be false if the player doesnt even have 2 resources
-        var give2ResourcesYesOrNo = new DecisionTreeNode(new List<DecisionTreeNode>() { giveResourceNode, fightWithNeighor }, null, new YesOrNoEncounterAction(gameController));
+        var give2ResourcesYesOrNo = new DecisionTreeNode(new List<DecisionTreeNode>() { giveResourceNode, fightWithNeighor }, null, new GiveTwoResourcesAction(gameController));
 
         return EncounterCard.FromRootNode(give2ResourcesYesOrNo);
     }
@@ -204,8 +203,7 @@ public class EncounterCardFactory
              false,
              new FightEncounterAction(gameController, FightCategory.CANNON, FightEncounterOpponent.SECOND_RIGHT));
 
-        //TODO: the result of this should automatically be false if the player doesnt even have 2 resources
-        var give2ResourcesYesOrNo = new DecisionTreeNode(new List<DecisionTreeNode>() { giveResourceNode, fightWithNeighor }, null, new YesOrNoEncounterAction(gameController));
+        var give2ResourcesYesOrNo = new DecisionTreeNode(new List<DecisionTreeNode>() { giveResourceNode, fightWithNeighor }, null, new GiveTwoResourcesAction(gameController));
 
         return EncounterCard.FromRootNode(give2ResourcesYesOrNo);
     }
@@ -226,8 +224,7 @@ public class EncounterCardFactory
              false,
              new FightEncounterAction(gameController, FightCategory.CANNON, FightEncounterOpponent.FIRST_LEFT));
 
-        //TODO: the result of this should automatically be false if the player doesnt even have 2 resources
-        var give2ResourcesYesOrNo = new DecisionTreeNode(new List<DecisionTreeNode>() { giveResourceNode, fightWithNeighor }, null, new YesOrNoEncounterAction(gameController));
+        var give2ResourcesYesOrNo = new DecisionTreeNode(new List<DecisionTreeNode>() { giveResourceNode, fightWithNeighor }, null, new GiveTwoResourcesAction(gameController));
 
         return EncounterCard.FromRootNode(give2ResourcesYesOrNo);
     }
@@ -247,7 +244,7 @@ public class EncounterCardFactory
         var winFameMedal = new DecisionTreeNode(null, false, new WinOneFameMedalAction(gameController));
 
         var oneForTwoTrade = new DecisionTreeNode(
-            new List<DecisionTreeNode>() { winFameMedal, makeTrade }, null, new YesOrNoEncounterAction(gameController))
+            new List<DecisionTreeNode>() { winFameMedal, makeTrade }, null, new OneForTwoTradeAction(gameController))
         {
             text = GameText.Encounter1For2Trade()
         };
@@ -272,7 +269,7 @@ public class EncounterCardFactory
         var noMedal = new DecisionTreeNode(null, false, new NoCounterGift(gameController));
 
         var oneForTwoTrade = new DecisionTreeNode(
-            new List<DecisionTreeNode>() { noMedal, makeTrade }, null, new YesOrNoEncounterAction(gameController))
+            new List<DecisionTreeNode>() { noMedal, makeTrade }, null, new OneForTwoTradeAction(gameController))
         {
             text = GameText.Encounter1For2Trade()
         };
@@ -285,8 +282,8 @@ public class EncounterCardFactory
     public EncounterCard CreateEncounterCard14()
     {
         var loseFameMedal = new DecisionTreeNode(null, new List<int>() { 1, 2 }, new LoseOneFameMedalAction(gameController));
-        var robButLoseFameMedal = new DecisionTreeNode(null, new List<int>() { 3, 4 }, new GetResourceFromEveryPlayer(gameController)); //TODO action not implemented yet
-        var rob = new DecisionTreeNode(null, new List<int>() { 5 }, new GetResourceFromEveryPlayer(gameController)); //TODO: action not implemented yet
+        var robButLoseFameMedal = new DecisionTreeNode(null, new List<int>() { 3, 4 }, new GetResourceFromEveryPlayer(gameController)); 
+        var rob = new DecisionTreeNode(null, new List<int>() { 5 }, new GetResourceFromEveryPlayer(gameController)); 
 
         var shakeShip = new DecisionTreeNode(new List<DecisionTreeNode>() { loseFameMedal, robButLoseFameMedal, rob }, true, new ShakeShipAction(gameController));
 
@@ -295,7 +292,7 @@ public class EncounterCardFactory
         var winMedal = new DecisionTreeNode(null, false, new WinOneFameMedalAction(gameController));
 
         var robThem = new DecisionTreeNode(
-            new List<DecisionTreeNode>() { winMedal, giveUpResources }, null, new YesOrNoEncounterAction(gameController))
+            new List<DecisionTreeNode>() { winMedal, giveUpResources }, null, new RobPlayersAction(gameController))
         {
             text = GameText.EncounterRobPlayersFor1Card()
         };
@@ -305,8 +302,8 @@ public class EncounterCardFactory
     public EncounterCard CreateEncounterCard15()
     {
         var loseFameMedal = new DecisionTreeNode(null, new List<int>() { 4, 5 }, new LoseOneFameMedalAction(gameController));
-        var robButLoseFameMedal = new DecisionTreeNode(null, new List<int>() { 2, 3 }, new GetResourceFromEveryPlayer(gameController)); //TODO action not implemented yet
-        var rob = new DecisionTreeNode(null, new List<int>() { 1 }, new GetResourceFromEveryPlayer(gameController)); //TODO: action not implemented yet
+        var robButLoseFameMedal = new DecisionTreeNode(null, new List<int>() { 2, 3 }, new GetResourceFromEveryPlayer(gameController)); 
+        var rob = new DecisionTreeNode(null, new List<int>() { 1 }, new GetResourceFromEveryPlayer(gameController)); 
 
         var shakeShip = new DecisionTreeNode(new List<DecisionTreeNode>() { loseFameMedal, robButLoseFameMedal, rob }, true, new ShakeShipAction(gameController));
 
@@ -315,7 +312,7 @@ public class EncounterCardFactory
         var winMedal = new DecisionTreeNode(null, false, new WinOneFameMedalAction(gameController));
 
         var robThem = new DecisionTreeNode(
-            new List<DecisionTreeNode>() { winMedal, giveUpResources }, null, new YesOrNoEncounterAction(gameController))
+            new List<DecisionTreeNode>() { winMedal, giveUpResources }, null, new RobPlayersAction(gameController))
         {
             text = GameText.EncounterRobPlayersFor1Card()
         };
@@ -433,7 +430,7 @@ public class EncounterCardFactory
     public EncounterCard CreateEncounterCard20()
     {
         var removeUpgrade = DecisionTreeNodeCreator.CreateRemoveUpgradeNode(gameController, 1);
-        var getResourceFromOpponents = new DecisionTreeNode(null, true, new GetResourceFromEveryPlayer(gameController)); //TODO
+        var getResourceFromOpponents = new DecisionTreeNode(null, true, new GetResourceFromEveryPlayer(gameController));
 
         var fightWithNeighor = new DecisionTreeNode(
             new List<DecisionTreeNode>() { removeUpgrade, getResourceFromOpponents },
@@ -502,6 +499,188 @@ public class EncounterCardFactory
         };
 
         return EncounterCard.FromRootNode(youWantToFlee);
+    }
+
+    public EncounterCard CreateEncounterCard23()
+    {
+        var giftedHand = new Hand();
+        giftedHand.AddCard(new GoodsCard());
+        giftedHand.AddCard(new GoodsCard());
+        var beute = DecisionTreeNodeCreator.CreateReceiveResources(gameController, 1, null, 2);
+        var cannotFly = DecisionTreeNodeCreator.CreateRemoveUpgradeNode(gameController, 1);
+
+        var fightWithNeighor = new DecisionTreeNode(
+            new List<DecisionTreeNode>() { cannotFly, beute },
+            true,
+            new FightEncounterAction(gameController, FightCategory.BOOSTER, FightEncounterOpponent.FIRST_RIGHT)
+        );
+        var loseFameMedal = DecisionTreeNodeCreator.CreateLoseOneFameMedal(gameController);
+
+
+        var youWantToHelp = new DecisionTreeNode(
+            new List<DecisionTreeNode>() { loseFameMedal, fightWithNeighor }, null, new YesOrNoEncounterAction(gameController))
+        {
+            text = GameText.EncounterOtherStarfarerIsAttackedByPilot()
+        };
+
+        return EncounterCard.FromRootNode(youWantToHelp);
+    }
+
+    public EncounterCard CreateEncounterCard24()
+    {
+        var raumsprung = DecisionTreeNodeCreator.CreateRaumsprung(gameController, 1);
+        var cannotFly = DecisionTreeNodeCreator.CreateShipCannotFlyNode(gameController, 1);
+
+        var fightWithNeighor = new DecisionTreeNode(
+            new List<DecisionTreeNode>() { cannotFly, raumsprung },
+            true,
+            new FightEncounterAction(gameController, FightCategory.BOOSTER, FightEncounterOpponent.FIRST_LEFT)
+        );
+        var loseFameMedal = DecisionTreeNodeCreator.CreateLoseOneFameMedal(gameController);
+
+
+        var youWantToHelp = new DecisionTreeNode(
+            new List<DecisionTreeNode>() { loseFameMedal, fightWithNeighor }, null, new YesOrNoEncounterAction(gameController))
+        {
+            text = GameText.EncounterOtherStarfarerIsAttackedByPilot()
+        };
+
+        return EncounterCard.FromRootNode(youWantToHelp);
+    }
+
+    public EncounterCard CreateEncounterCard25()
+    {
+        var raumsprung = DecisionTreeNodeCreator.CreateRaumsprung(gameController);
+        var cannotFly = DecisionTreeNodeCreator.CreateShipCannotFlyNode(gameController);
+
+        var fightWithNeighor = new DecisionTreeNode(
+            new List<DecisionTreeNode>() { cannotFly, raumsprung },
+            true,
+            new FightEncounterAction(gameController, FightCategory.BOOSTER, FightEncounterOpponent.FIRST_LEFT)
+        );
+        var drawNewCard = new DecisionTreeNode(null, false, new DrawNewCardAction(gameController));
+
+
+        var youWantToMakeARaumsprung = new DecisionTreeNode(
+            new List<DecisionTreeNode>() { drawNewCard, fightWithNeighor }, null, new YesOrNoEncounterAction(gameController))
+        {
+            text = GameText.EncounterWantToTryARaumsprung()
+        };
+
+        return EncounterCard.FromRootNode(youWantToMakeARaumsprung);
+    }
+
+    public EncounterCard CreateEncounterCard26()
+    {
+        var raumsprung = DecisionTreeNodeCreator.CreateRaumsprung(gameController);
+        var cannotFly = DecisionTreeNodeCreator.CreateShipCannotFlyNode(gameController);
+
+        var fightWithNeighor = new DecisionTreeNode(
+            new List<DecisionTreeNode>() { cannotFly, raumsprung },
+            true,
+            new FightEncounterAction(gameController, FightCategory.BOOSTER, FightEncounterOpponent.FIRST_RIGHT)
+        );
+        var drawNewCard = new DecisionTreeNode(null, false, new DrawNewCardAction(gameController));
+
+
+        var youWantToMakeARaumsprung = new DecisionTreeNode(
+            new List<DecisionTreeNode>() { drawNewCard, fightWithNeighor }, null, new YesOrNoEncounterAction(gameController))
+        {
+            text = GameText.EncounterWantToTryARaumsprung()
+        };
+
+        return EncounterCard.FromRootNode(youWantToMakeARaumsprung);
+    }
+
+    public EncounterCard CreateEncounterCard27()
+    {
+        var raumsprung = DecisionTreeNodeCreator.CreateRaumsprung(gameController);
+        var removeUpgrade = DecisionTreeNodeCreator.CreateRemoveUpgradeNode(gameController);
+
+        var fightWithNeighor = new DecisionTreeNode(
+            new List<DecisionTreeNode>() { removeUpgrade, raumsprung },
+            true,
+            new FightEncounterAction(gameController, FightCategory.BOOSTER, FightEncounterOpponent.SECOND_RIGHT)
+        );
+        var drawNewCard = new DecisionTreeNode(null, false, new DrawNewCardAction(gameController));
+
+
+        var youWantToMakeARaumsprung = new DecisionTreeNode(
+            new List<DecisionTreeNode>() { drawNewCard, fightWithNeighor }, null, new YesOrNoEncounterAction(gameController))
+        {
+            text = GameText.EncounterWantToTryARaumsprung()
+        };
+
+        return EncounterCard.FromRootNode(youWantToMakeARaumsprung);
+    }
+
+    public EncounterCard CreateEncounterCard28()
+    {
+        var giveResourceNode = DecisionTreeNodeCreator.Create0to3ResourceNode(
+            gameController,
+            new RemoveUpgradeAction(gameController, -1),
+            new WinOneFameMedalAction(gameController),
+            new RaumsprungAction(gameController),
+            new RaumsprungAction(gameController)
+        );
+
+        return EncounterCard.FromRootNode(giveResourceNode);
+    }
+
+    public EncounterCard CreateEncounterCard29()
+    {
+        var giveResourceNode = DecisionTreeNodeCreator.Create0to3ResourceNode(
+            gameController,
+            new NoCounterGift(gameController),
+            new WinOneFameMedalAction(gameController),
+            new WinOneFameMedalAction(gameController),
+            new GetTradeShipForFree(gameController)
+        );
+
+        return EncounterCard.FromRootNode(giveResourceNode);
+    }
+
+    public EncounterCard CreateEncounterCard30()
+    {
+        var giveResourceNode = DecisionTreeNodeCreator.Create0to3ResourceNode(
+            gameController,
+            new LoseOneFameMedalAction(gameController),
+            new LoseOneFameMedalAction(gameController),
+            new WinOneFameMedalAction(gameController),
+            new RaumsprungAction(gameController, 1)
+        );
+
+        return EncounterCard.FromRootNode(giveResourceNode);
+    }
+
+    public EncounterCard CreateEncounterCard31()
+    {
+        var drawNewCard = new DecisionTreeNode(null, true, new DrawNewCardAction(gameController, true));
+
+        var limit = 8;
+        var discardIfMoreThan8Upgrades = new DecisionTreeNode(
+            new List<DecisionTreeNode>() { drawNewCard }, null, new DiscardIfMoreThanLimitUpgradesAction(gameController, limit))
+        {
+            text = GameText.EncounterDiscardIfMoreThanLimitUpgrades(limit)
+        };
+
+        return EncounterCard.FromRootNode(discardIfMoreThan8Upgrades);
+    }
+
+    public EncounterCard CreateEncounterCard32()
+    {
+        var drawNewCard = new DecisionTreeNode(null, true, new DrawNewCardAction(gameController, true));
+
+        var playersWithMostFreightPodsGetFameMedal = new DecisionTreeNode(new List<DecisionTreeNode>() { drawNewCard }, true, new MostFreightPodsAction(gameController));
+
+        var limit = 6;
+        var discardIfMoreThan6Upgrades = new DecisionTreeNode(
+            new List<DecisionTreeNode>() { playersWithMostFreightPodsGetFameMedal }, null, new DiscardIfMoreThanLimitUpgradesAction(gameController, limit))
+        {
+            text = GameText.EncounterDiscardIfMoreThanLimitUpgrades(limit)
+        };
+
+        return EncounterCard.FromRootNode(discardIfMoreThan6Upgrades);
     }
 
 }

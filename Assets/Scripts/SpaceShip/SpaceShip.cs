@@ -31,6 +31,11 @@ public class SpaceShip
         this.changedCallback = changedCallback;
     }
 
+    public int UpgradesCountWithoutBonuses()
+    {
+        return Boosters + FreightPods + Cannons;
+    }
+
     public  List<Token> GetRemovableTokens()
     {
         var list = new List<Token>();

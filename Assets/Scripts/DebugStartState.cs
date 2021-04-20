@@ -173,35 +173,15 @@ public class EncounterCardTestingStateManual : DebugStartState
 
 public class TwoTradeShipAndOneSpacePort : DebugStartState
 {
-    public TwoTradeShipAndOneSpacePort(GameController controller) : base(controller)
+    string gameState;
+    public TwoTradeShipAndOneSpacePort(GameController controller, string gameState = "flyships") : base(controller)
     {
+        this.gameState = gameState;
     }
 
     public override void Setup()
     {
-        
-
         CommonSetup();
-
-        
-
-
-
-        //Token spacePort = new ColonyBaseToken();
-        //spacePort.attachedToken = new SpacePortToken();
-        //spacePort.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 1));
-        //controller.mainPlayer.BuildToken(spacePort);
-
-        //Token colonyShip = new TradeBaseToken();
-        //colonyShip.attachedToken = new ShipToken();
-        //colonyShip.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 0));
-        //controller.mainPlayer.BuildToken(colonyShip);
-
-        //Token colonyShip2 = new TradeBaseToken();
-        //colonyShip2.attachedToken = new ShipToken();
-        //colonyShip2.SetPosition(new SpacePoint(new HexCoordinates(5, 5).W(), 0));
-        //controller.mainPlayer.BuildToken(colonyShip2);
-
         CommonMapSetup();
 
         controller.mainPlayer.BuildTokenWithoutCost(
@@ -225,7 +205,17 @@ public class TwoTradeShipAndOneSpacePort : DebugStartState
             new ShipToken().GetType()
         );
 
-        controller.state = new FlyShipsState(controller);
+        if (gameState == "flyShips")
+        {
+            controller.state = new FlyShipsState(controller);
+        } else if (gameState == "encounter")
+        {
+            controller.state = new EncounterCardState(controller);
+        } else
+        {
+            controller.state = new FlyShipsState(controller);
+        }
+        
     }
 }
 

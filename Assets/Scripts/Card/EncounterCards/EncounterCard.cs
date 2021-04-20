@@ -3,6 +3,9 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using com.onebuckgames.UnityStarFarers;
+using Photon.Realtime;
+using Photon.Pun;
 
 public class EncounterCard
 {
@@ -138,6 +141,14 @@ public class DecisionTreeNodeCreator
     {
         return new DecisionTreeNode(null, true, new ReceiveResourcesAndReceiveFameMedalAction(gameController, fameMedalGain, giftedCards, cardsSelectableFreely));
     }
+
+    public static DecisionTreeNode CreateRaumsprung(
+        GameController gameController,
+        int fameMedalGain = -1
+    )
+    {
+        return new DecisionTreeNode(null, true, new RaumsprungAction(gameController, fameMedalGain));
+    }
 }
 ;
 public class DecisionTreeNode
@@ -216,13 +227,15 @@ public class DecisionTreeNode
     }
 }
 
-public class  EncounterCardStack
+public abstract class EncounterCardStack
 {
-    List<EncounterCard> cards;
+    protected List<EncounterCard> cards;
     public EncounterCardStack(List<EncounterCard> cards)
     {
         this.cards = cards;
     }
+
+    public abstract void Refill();
 
     public EncounterCard Pop()
     {
@@ -232,6 +245,32 @@ public class  EncounterCardStack
     public bool IsEmpty()
     {
         return cards.Count <= 0;
+    }
+}
+
+public class DefaultEncounterCardStack : EncounterCardStack
+{
+    GameController gameController;
+    public DefaultEncounterCardStack(GameController gameController) : base(new List<EncounterCard>())
+    {
+        this.gameController = gameController;
+        this.cards = GenerateCards(gameController);
+    }
+
+    List<EncounterCard> GenerateCards(GameController gameController)
+    {
+        var factory = new EncounterCardFactory(gameController);
+        return new List<EncounterCard>()
+        {
+            factory.CreateEncounterCard1(),
+            factory.CreateEncounterCard2(),
+        };
+    }
+
+    public override void Refill()
+    {
+        this.cards = GenerateCards(gameController);
+        this.cards.Shuffle();
     }
 }
 
@@ -546,15 +585,47 @@ public class GetOneUpgradeForFree : EncounterCardAction
 
 public class GetResourceFromEveryPlayer : EncounterCardAction
 {
-    public GetResourceFromEveryPlayer(GameController gameController) : base(gameController)
+    int numResources;
+    public GetResourceFromEveryPlayer(GameController gameController, int numResources = 1) : base(gameController)
     {
-
+        this.numResources = numResources;
     }
 
     public override void Execute()
     {
-        //TODO: 
-        throw new NotImplementedException();
+        var mainPlayerIndex = gameController.GetIndexOfPlayer(gameController.mainPlayer);
+        var actionInfo = new RemoteClientAction(RemoteClientActionType.GIVE_RESOURCE, new object[] { numResources }, mainPlayerIndex);
+
+        var otherPlayers = GetTargetPlayers(gameController.players);
+        if (otherPlayers.Count == 0)
+        {
+            ResultFound(true);
+            return;
+        }
+
+        var dispatcher = new RemoteActionDispatcher(gameController);
+        dispatcher.RequestActionFromPlayers(otherPlayers, actionInfo, ResponseReceived);
+    }
+
+    public List<Player> GetTargetPlayers(List<Player> players)
+    {
+        var targetPlayers = Helper.CreateCopyOfList(players);
+        targetPlayers.Remove(gameController.mainPlayer);
+
+        foreach (var otherPlayer in targetPlayers)
+        {
+            if (otherPlayer.hand.Count() < numResources)
+            {
+                targetPlayers.Remove(otherPlayer);
+            }
+        }
+        return targetPlayers;
+    }
+
+    public void ResponseReceived()
+    {
+        Debug.Log("ResultFromEveryPlayerWasFound!");
+        ResultFound(true);
     }
 }
 
@@ -562,13 +633,12 @@ public class RemoveUpgradeAction : EncounterCardAction
 {
     int fameMedalGain;
     List<Token> selectableTokens;
-    public RemoveUpgradeAction(GameController gameController, int fameMedalGain = 0) : base(gameController)
+    public Action doneCallback;
+    public RemoveUpgradeAction(GameController gameController, int fameMedalGain = -1) : base(gameController)
     {
         this.fameMedalGain = fameMedalGain;
         selectableTokens = gameController.mainPlayer.ship.GetRemovableTokens();
     }
-
-
 
     public override void Execute()
     {
@@ -590,6 +660,7 @@ public class RemoveUpgradeAction : EncounterCardAction
         }
         hud.CloseSelection();
         ResultFound(true);
+        doneCallback?.Invoke();
     }
 }
 
@@ -697,7 +768,6 @@ public class MakeTradeAction : EncounterCardAction
 
     public void TradeMade(Hand inputHand, Hand outputHand)
     {
-
         hud.CloseTradePanel();
         this.inputHand = inputHand;
         this.outputHand = outputHand;
@@ -774,6 +844,210 @@ public class YesOrNoEncounterAction : EncounterCardAction
     }
 }
 
+public class DrawNewCardAction : EncounterCardAction
+{
+    bool refillStackBefore;
+    public DrawNewCardAction(GameController gameController, bool refillStackBefore = false) : base(gameController)
+    {
+        this.refillStackBefore = refillStackBefore;
+    }
+
+    public override void Execute()
+    {
+        ResultFound(true);
+        if (refillStackBefore)
+        {
+            gameController.encounterCardHandler.encounterCardStack.Refill();
+        }
+
+        gameController.encounterCardHandler.PlayNextCard();
+    }
+}
+
+public class MostFreightPodsAction : EncounterCardAction
+{
+    public MostFreightPodsAction(GameController gameController) : base(gameController)
+    {
+        
+    }
+
+    public override void Execute()
+    {
+        GiveFameMedalToPlayersWithMostFreightPods(gameController.players);
+        ResultFound(true);
+    }
+
+    public static void GiveFameMedalToPlayersWithMostFreightPods(List<Player> players)
+    {
+        if (players.Count == 0)
+        {
+            return;
+        }
+        List<Player> SortedList = players.OrderByDescending(player => player.ship.FreightPods).ToList();
+        List<Player> PlayersWithMostFreightPods = new List<Player>();
+        int maxFreightPods = SortedList[0].ship.FreightPods;
+        foreach(var player in SortedList)
+        {
+            if (player.ship.FreightPods == maxFreightPods)
+            {
+                PlayersWithMostFreightPods.Add(player);
+            }
+        }
+        // Payout
+        foreach (var player in PlayersWithMostFreightPods)
+        {
+            player.AddFameMedal();
+        }
+    }
+}
+
+public class DiscardIfMoreThanLimitUpgradesAction : EncounterCardAction
+{
+    int limit;
+    public DiscardIfMoreThanLimitUpgradesAction(GameController gameController, int limit) : base(gameController)
+    {
+        this.limit = limit;
+    }
+
+    public override void Execute()
+    {
+        var action = new RemoteClientAction(
+            RemoteClientActionType.GIVEUP_UPGRADE,
+            new object[] { 1 },
+            gameController.GetIndexOfPlayer(gameController.mainPlayer)
+        );
+
+        var dispatcher = new RemoteActionDispatcher(gameController);
+        dispatcher.RequestActionFromPlayers(
+            GetPlayersWithMoreThanLimit(gameController.players, this.limit),
+            action,
+            AllPlayersMadeDecision
+        );
+    }
+
+    public static List<Player> GetPlayersWithMoreThanLimit(List<Player> players, int lim)
+    {
+        return players.Where(player => player.ship.UpgradesCountWithoutBonuses() > lim).ToList();
+    }
+
+    public void AllPlayersMadeDecision()
+    {
+        ResultFound(true);
+    }
+}
+
+public class RaumsprungAction : EncounterCardAction
+{
+    Token selectedToken;
+    int fameMedalGain;
+    int prevSteps;
+    public RaumsprungAction(GameController gameController, int fameMedalGain = -1) : base(gameController)
+    {
+        this.fameMedalGain = fameMedalGain;
+    }
+
+    public override void Execute()
+    {
+        hud.decisionDialog.SetActive(false);
+        FameMedalGainStrategy.HandleFameMedalGain(fameMedalGain, gameController.mainPlayer);
+        var selectableTokens = gameController.mainPlayer.GetTokensThatCanFly();
+        if (selectableTokens.Count == 0)
+        {
+            ResultFound(true);
+            return;
+        }
+        mapScript.OpenTokenSelection(selectableTokens, TokenSelectedForRaumsprung);
+    }
+
+    void TokenSelectedForRaumsprung(Token token)
+    {
+        selectedToken = token;
+        prevSteps = selectedToken.GetStepsLeft();
+        selectedToken.addSteps(100);
+        var filters = selectedToken.GetFlightEndPointsFilters();
+
+        var pointsToChooseFrom = mapScript.map.GetSpacePointsFullfillingFilters(filters, gameController.players.ToArray());
+        mapScript.OpenSpacePointSelection(pointsToChooseFrom, MoveSelectedToken);
+    }
+
+    void MoveSelectedToken(SpacePoint newPosition)
+    {
+        selectedToken.FlyTo(newPosition);
+        selectedToken.SetStepsLeft(prevSteps); //set original steps after flying the free raumsprung
+        hud.decisionDialog.SetActive(true);
+        ResultFound(true);
+    }
+}
+
+public class RobPlayersAction : YesOrNoEncounterAction
+{
+    public RobPlayersAction(GameController gameController) : base(gameController)
+    {
+
+    }
+
+    public static bool HasEnoughResources(Player player)
+    {
+        return player.hand.Count() >= 1;
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+        if (!HasEnoughResources(gameController.mainPlayer)) 
+        {
+            Debug.Log("Main player has not enough resources to execute the rob them action, automatically choosing false");
+            ResultFound(false);
+        }
+    }
+}
+
+public class OneForTwoTradeAction : YesOrNoEncounterAction
+{
+    public OneForTwoTradeAction(GameController gameController) : base(gameController)
+    {
+
+    }
+
+    public static bool HasEnoughResources(Player player)
+    {
+        return player.hand.Count() >= 1;
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+        if (!HasEnoughResources(gameController.mainPlayer))
+        {
+            Debug.Log("Main player has not enough resources to execute the one for two trade action, automatically choosing false");
+            ResultFound(false);
+        }
+    }
+}
+
+public class GiveTwoResourcesAction : YesOrNoEncounterAction
+{
+    public GiveTwoResourcesAction(GameController gameController) : base(gameController)
+    {
+
+    }
+
+    public static bool HasEnoughResources(Player player)
+    {
+        return player.hand.Count() >= 2;
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+        if (!HasEnoughResources(gameController.mainPlayer))
+        {
+            Debug.Log("Main player has not enough resources to execute the one for two trade action, automatically choosing false");
+            ResultFound(false);
+        }
+    }
+}
+
 public enum FightEncounterOpponent
 {
     FIRST_LEFT,
@@ -810,8 +1084,6 @@ public class FightEncounterAction : EncounterCardAction
         this.category = category;
         this.opponent = opponent;
     }
-
-
 
     public override void Execute()
     {

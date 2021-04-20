@@ -1,33 +1,263 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CoverageReport scope="Summary">
   <Summary>
-    <Generatedon>11/16/2020 - 3:43:32 PM</Generatedon>
-    <Parser>OpenCoverParser</Parser>
-    <Assemblies>2</Assemblies>
-    <Classes>10</Classes>
-    <Files>8</Files>
-    <Coveredlines>259</Coveredlines>
-    <Uncoveredlines>116</Uncoveredlines>
-    <Coverablelines>375</Coverablelines>
-    <Totallines>739</Totallines>
-    <Linecoverage>69</Linecoverage>
+    <Generatedon>4/16/2021 - 10:38:37 AM</Generatedon>
+    <Parser>MultiReportParser (3x OpenCoverParser)</Parser>
+    <Assemblies>1</Assemblies>
+    <Classes>242</Classes>
+    <Files>129</Files>
+    <Coveredlines>4219</Coveredlines>
+    <Uncoveredlines>2976</Uncoveredlines>
+    <Coverablelines>7195</Coverablelines>
+    <Totallines>13839</Totallines>
+    <Linecoverage>58.6</Linecoverage>
     <Coveredbranches>0</Coveredbranches>
     <Totalbranches>0</Totalbranches>
   </Summary>
   <Coverage>
-    <Assembly name="ScriptsAssemblyDef" classes="7" coverage="59.3" coveredlines="152" coverablelines="256" totallines="640" branchcoverage="" coveredbranches="0" totalbranches="0">
-      <Class name="CityPosition" coverage="52.6" coveredlines="10" coverablelines="19" totallines="57" branchcoverage="" coveredbranches="0" totalbranches="0" />
-      <Class name="CityPositionComparer" coverage="100" coveredlines="10" coverablelines="10" totallines="57" branchcoverage="" coveredbranches="0" totalbranches="0" />
-      <Class name="Helper" coverage="48.9" coveredlines="23" coverablelines="47" totallines="75" branchcoverage="" coveredbranches="0" totalbranches="0" />
-      <Class name="HexComparer" coverage="100" coveredlines="9" coverablelines="9" totallines="105" branchcoverage="" coveredbranches="0" totalbranches="0" />
-      <Class name="HexCoordinates" coverage="53.6" coveredlines="22" coverablelines="41" totallines="105" branchcoverage="" coveredbranches="0" totalbranches="0" />
-      <Class name="Map" coverage="89.6" coveredlines="78" coverablelines="87" totallines="137" branchcoverage="" coveredbranches="0" totalbranches="0" />
-      <Class name="MapScript" coverage="0" coveredlines="0" coverablelines="43" totallines="104" branchcoverage="" coveredbranches="0" totalbranches="0" />
-    </Assembly>
-    <Assembly name="Tests" classes="3" coverage="89.9" coveredlines="107" coverablelines="119" totallines="261" branchcoverage="" coveredbranches="0" totalbranches="0">
-      <Class name="Tests.HelperTests" coverage="88.8" coveredlines="32" coverablelines="36" totallines="68" branchcoverage="" coveredbranches="0" totalbranches="0" />
-      <Class name="Tests.HexCoordinatesTests" coverage="100" coveredlines="15" coverablelines="15" totallines="34" branchcoverage="" coveredbranches="0" totalbranches="0" />
-      <Class name="Tests.MapTests" coverage="88.2" coveredlines="60" coverablelines="68" totallines="159" branchcoverage="" coveredbranches="0" totalbranches="0" />
+    <Assembly name="ScriptsAssemblyDef" classes="242" coverage="58.6" coveredlines="4219" coverablelines="7195" totallines="56198" branchcoverage="" coveredbranches="0" totalbranches="0">
+      <Class name="AbstractFriendshipCard" coverage="100" coveredlines="3" coverablelines="3" totallines="18" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="AvailablePiles" coverage="67.7" coveredlines="40" coverablelines="59" totallines="223" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="AxxaFriendshipCard" coverage="33.3" coveredlines="3" coverablelines="9" totallines="141" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="AxxaIncreaseCarbon" coverage="0" coveredlines="0" coverablelines="10" totallines="141" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="AxxaIncreaseFood" coverage="0" coveredlines="0" coverablelines="10" totallines="141" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="AxxaIncreaseFuel" coverage="0" coveredlines="0" coverablelines="10" totallines="141" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="AxxaIncreaseGoods" coverage="0" coveredlines="0" coverablelines="10" totallines="141" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="AxxaIncreaseOre" coverage="0" coveredlines="0" coverablelines="10" totallines="141" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="AxxaTradeStation" coverage="50" coveredlines="3" coverablelines="6" totallines="20" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="AxxaTradeStationTile" coverage="100" coveredlines="3" coverablelines="3" totallines="11" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="BeatPirateTokenDebugState" coverage="0" coveredlines="0" coverablelines="11" totallines="379" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="bla" coverage="25" coveredlines="4" coverablelines="16" totallines="41" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="BoosterUpgradeToken" coverage="45.4" coveredlines="10" coverablelines="22" totallines="386" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="BorderTile" coverage="66.6" coveredlines="6" coverablelines="9" totallines="20" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="BoundingBox" coverage="100" coveredlines="7" coverablelines="7" totallines="417" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="BuildASpacePortDebugState" coverage="0" coveredlines="0" coverablelines="9" totallines="379" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="BuildDropDown" coverage="71.1" coveredlines="42" coverablelines="59" totallines="110" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="BuildDropDownBtnImageScript" coverage="50" coveredlines="4" coverablelines="8" totallines="25" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="BuildDropDownOption" coverage="100" coveredlines="7" coverablelines="7" totallines="17" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="CannonBeatCondition" coverage="70" coveredlines="7" coverablelines="10" totallines="92" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="CannonUpgradeToken" coverage="45.4" coveredlines="10" coverablelines="22" totallines="386" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="CannotBeatPirateTokenException" coverage="33.3" coveredlines="3" coverablelines="9" totallines="125" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="CarbonCard" coverage="100" coveredlines="3" coverablelines="3" totallines="9" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="CarbonResource" coverage="100" coveredlines="3" coverablelines="3" totallines="12" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="CarbonResourceTile" coverage="100" coveredlines="6" coverablelines="6" totallines="15" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="Card" coverage="100" coveredlines="3" coverablelines="3" totallines="11" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="CardScript" coverage="86.9" coveredlines="20" coverablelines="23" totallines="54" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="CastNormalDiceState" coverage="0" coveredlines="0" coverablelines="30" totallines="108" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="CastShipDiceState" coverage="0" coveredlines="0" coverablelines="38" totallines="77" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="ChipGroup" coverage="61.9" coveredlines="13" coverablelines="21" totallines="115" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="CircleChipGroup" coverage="66.6" coveredlines="6" coverablelines="9" totallines="115" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="CityPosition" coverage="52.6" coveredlines="10" coverablelines="19" totallines="0" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="CityPositionComparer" coverage="100" coveredlines="10" coverablelines="10" totallines="0" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="ColonyBaseToken" coverage="41.4" coveredlines="17" coverablelines="41" totallines="386" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="ColorCreator" coverage="100" coveredlines="3" coverablelines="3" totallines="71" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="com.onebuckgames.UnityStarFarers.DevelopmentInstantiationStrategy" coverage="0" coveredlines="0" coverablelines="3" totallines="55" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="com.onebuckgames.UnityStarFarers.Launcher" coverage="4" coveredlines="3" coverablelines="74" totallines="203" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="com.onebuckgames.UnityStarFarers.LobbyUserNameInput" coverage="0" coveredlines="0" coverablelines="21" totallines="84" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="com.onebuckgames.UnityStarFarers.Map" coverage="91" coveredlines="417" coverablelines="458" totallines="671" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="com.onebuckgames.UnityStarFarers.ProductionInstantiationStrategy" coverage="0" coveredlines="0" coverablelines="4" totallines="55" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="com.onebuckgames.UnityStarFarers.SFEnvironment" coverage="40" coveredlines="4" coverablelines="10" totallines="55" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="com.onebuckgames.UnityStarFarers.SFScenes" coverage="100" coveredlines="2" coverablelines="2" totallines="203" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="Cost" coverage="100" coveredlines="4" coverablelines="4" totallines="13" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="CostRenderer" coverage="92.8" coveredlines="52" coverablelines="56" totallines="96" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="DebugStartState" coverage="70.4" coveredlines="31" coverablelines="44" totallines="379" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="DecisionDialog" coverage="65.4" coveredlines="36" coverablelines="55" totallines="128" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="DecisionTree" coverage="93.7" coveredlines="15" coverablelines="16" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="DecisionTreeNode" coverage="66.6" coveredlines="24" coverablelines="36" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="DecisionTreeNodeCreator" coverage="23" coveredlines="9" coverablelines="39" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="DecisionValueActionPair" coverage="0" coveredlines="0" coverablelines="5" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="DefaultMapGenerator" coverage="91" coveredlines="163" coverablelines="179" totallines="332" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="DialogButtonValue" coverage="0" coveredlines="0" coverablelines="4" totallines="128" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="DialogOption" coverage="100" coveredlines="6" coverablelines="6" totallines="128" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="DiceChip" coverage="50" coveredlines="15" coverablelines="30" totallines="67" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="DiceThrow" coverage="100" coveredlines="8" coverablelines="8" totallines="35" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="DiceThrower" coverage="100" coveredlines="9" coverablelines="9" totallines="35" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="DiceThrowRenderer" coverage="0" coveredlines="0" coverablelines="22" totallines="47" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="DrawPileHandler" coverage="53.8" coveredlines="7" coverablelines="13" totallines="223" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="DrawPileStack" coverage="91.3" coveredlines="21" coverablelines="23" totallines="223" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="DrawPileView_" coverage="100" coveredlines="15" coverablelines="15" totallines="36" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="EmptyCardStackException" coverage="0" coveredlines="0" coverablelines="9" totallines="125" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="EmptyTile" coverage="100" coveredlines="9" coverablelines="9" totallines="25" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="EmptyTileGroup" coverage="50" coveredlines="7" coverablelines="14" totallines="263" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="EncounterActionValue" coverage="100" coveredlines="4" coverablelines="4" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="EncounterCard" coverage="100" coveredlines="7" coverablelines="7" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="EncounterCardAction" coverage="87.5" coveredlines="21" coverablelines="24" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="EncounterCardFactory" coverage="12" coveredlines="25" coverablelines="207" totallines="507" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="EncounterCardHandler" coverage="73.4" coveredlines="36" coverablelines="49" totallines="141" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="EncounterCardHelper" coverage="0" coveredlines="0" coverablelines="8" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="EncounterCardStack" coverage="0" coveredlines="0" coverablelines="10" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="EncounterCardTestingState" coverage="100" coveredlines="11" coverablelines="11" totallines="379" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="EncounterCardTestingStateManual" coverage="0" coveredlines="0" coverablelines="13" totallines="379" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="EncounterFinishedAction" coverage="0" coveredlines="0" coverablelines="12" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="FameMedalGainStrategy" coverage="100" coveredlines="3" coverablelines="3" totallines="8" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="FightEncounterAction" coverage="26.3" coveredlines="5" coverablelines="19" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="FightPanelScript" coverage="0" coveredlines="0" coverablelines="41" totallines="99" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="FilledCircleChipGroup" coverage="0" coveredlines="0" coverablelines="9" totallines="115" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="FlightStateConsistencyChecker" coverage="100" coveredlines="22" coverablelines="22" totallines="80" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="FlightStateInconsistencyError" coverage="100" coveredlines="5" coverablelines="5" totallines="80" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="FlyShipsState" coverage="72.2" coveredlines="39" coverablelines="54" totallines="106" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="FoodCard" coverage="100" coveredlines="3" coverablelines="3" totallines="9" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="FoodResource" coverage="100" coveredlines="3" coverablelines="3" totallines="11" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="FoodResourceTile" coverage="100" coveredlines="6" coverablelines="6" totallines="15" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="FreightPodsBeatCondition" coverage="100" coveredlines="10" coverablelines="10" totallines="92" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="FreightPodUpgradeToken" coverage="54.5" coveredlines="12" coverablelines="22" totallines="386" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="FriendShipCardSelector" coverage="64" coveredlines="48" coverablelines="75" totallines="132" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="FuelCard" coverage="100" coveredlines="3" coverablelines="3" totallines="9" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="FuelResource" coverage="100" coveredlines="3" coverablelines="3" totallines="11" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="FuelResourceTile" coverage="100" coveredlines="6" coverablelines="6" totallines="15" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="GameConstants" coverage="100" coveredlines="5" coverablelines="5" totallines="15" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="GameController" coverage="14.3" coveredlines="32" coverablelines="223" totallines="411" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="GameState" coverage="100" coveredlines="6" coverablelines="6" totallines="28" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="GameText" coverage="33.3" coveredlines="6" coverablelines="18" totallines="33" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="GetOneUpgradeForFree" coverage="85.7" coveredlines="18" coverablelines="21" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="GetResourceFromBankEncounterAction" coverage="0" coveredlines="0" coverablelines="13" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="GetResourceFromEveryPlayer" coverage="0" coveredlines="0" coverablelines="5" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="GetTradeShipForFree" coverage="0" coveredlines="0" coverablelines="7" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="GiveupResourcesEncounterAction" coverage="0" coveredlines="0" coverablelines="15" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="GoodsCard" coverage="100" coveredlines="3" coverablelines="3" totallines="9" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="GoodsResource" coverage="100" coveredlines="3" coverablelines="3" totallines="11" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="GoodsResourceTile" coverage="100" coveredlines="6" coverablelines="6" totallines="15" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="Hand" coverage="75.1" coveredlines="154" coverablelines="205" totallines="290" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="HasMoreBoostersThanNeighborAction" coverage="33.3" coveredlines="4" coverablelines="12" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="HasSettledColonySpacePointFilter" coverage="100" coveredlines="9" coverablelines="9" totallines="194" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="Helper" coverage="63.7" coveredlines="195" coverablelines="306" totallines="539" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="HexComparer" coverage="100" coveredlines="18" coverablelines="18" totallines="255" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="HexCoordinates" coverage="71.4" coveredlines="75" coverablelines="105" totallines="255" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="HexScript" coverage="100" coveredlines="58" coverablelines="58" totallines="161" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="HUDScript" coverage="59.9" coveredlines="199" coverablelines="332" totallines="572" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="ImmediateAction" coverage="0" coveredlines="0" coverablelines="7" totallines="69" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="IsExactlyStepsAwayAndCannotSettleOnPointCounter" coverage="92.3" coveredlines="24" coverablelines="26" totallines="194" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="IsNeighborOfOwnSpacePortOrNotExactlyStepsAway" coverage="93.3" coveredlines="28" coverablelines="30" totallines="194" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="IsNeighborOwnSpacePortFilter" coverage="100" coveredlines="16" coverablelines="16" totallines="194" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="IsSettledColonyFilter" coverage="0" coveredlines="0" coverablelines="7" totallines="22" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="IsSpacePointFreeFilter" coverage="100" coveredlines="9" coverablelines="9" totallines="194" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="IsStepsAwayFilter" coverage="100" coveredlines="8" coverablelines="8" totallines="194" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="IsValidSpacePointFilter" coverage="100" coveredlines="9" coverablelines="9" totallines="194" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="KhornemFriendshipCard" coverage="33.3" coveredlines="3" coverablelines="9" totallines="98" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="KhornemOneBoostOneCannon" coverage="0" coveredlines="0" coverablelines="11" totallines="98" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="KhornemTradeStation" coverage="50" coveredlines="3" coverablelines="6" totallines="24" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="KhornemTradeStationTile" coverage="100" coveredlines="3" coverablelines="3" totallines="11" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="KhornemTwoBoost" coverage="0" coveredlines="0" coverablelines="10" totallines="98" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="KhornemTwoCannon" coverage="0" coveredlines="0" coverablelines="10" totallines="98" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="Logger" coverage="53.8" coveredlines="7" coverablelines="13" totallines="25" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="LoseHandAction" coverage="100" coveredlines="9" coverablelines="9" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="LoseOneFameMedalAction" coverage="75" coveredlines="9" coverablelines="12" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="LostOneFameMedalComparer" coverage="100" coveredlines="3" coverablelines="3" totallines="674" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="MakeTradeAction" coverage="100" coveredlines="14" coverablelines="14" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="Map" coverage="89.6" coveredlines="78" coverablelines="87" totallines="175" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="MapScript" coverage="71.7" coveredlines="201" coverablelines="280" totallines="563" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="MouseManagerScript" coverage="69.6" coveredlines="23" coverablelines="33" totallines="92" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="MultipleResourcesDrawPileStack" coverage="100" coveredlines="6" coverablelines="6" totallines="223" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="MultiSelection" coverage="34.3" coveredlines="23" coverablelines="67" totallines="108" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="NoCounterGift" coverage="100" coveredlines="6" coverablelines="6" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="NormalChipFactory" coverage="15.3" coveredlines="6" coverablelines="39" totallines="67" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="NormalDiceChip" coverage="75" coveredlines="6" coverablelines="8" totallines="19" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="NotEnoughFreightPodsToDockException" coverage="0" coveredlines="0" coverablelines="9" totallines="125" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="NotEnoughResourcesException" coverage="33.3" coveredlines="3" coverablelines="9" totallines="125" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="NotOnSettleSpotException" coverage="33.3" coveredlines="3" coverablelines="9" totallines="125" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="NullTile" coverage="0" coveredlines="0" coverablelines="9" totallines="19" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="On7RollStrategy" coverage="0" coveredlines="0" coverablelines="15" totallines="108" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="OneTradeOneColonyShipAndOneSpacePort" coverage="0" coveredlines="0" coverablelines="20" totallines="379" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="OreCard" coverage="100" coveredlines="3" coverablelines="3" totallines="9" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="OreResource" coverage="100" coveredlines="3" coverablelines="3" totallines="11" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="OreResourceTile" coverage="100" coveredlines="6" coverablelines="6" totallines="16" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="OrzelFriendshipCard" coverage="66.6" coveredlines="6" coverablelines="9" totallines="141" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="OrzelFriendshipCardCarbon" coverage="30" coveredlines="3" coverablelines="10" totallines="141" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="OrzelFriendshipCardFood" coverage="60" coveredlines="6" coverablelines="10" totallines="141" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="OrzelFriendshipCardFuel" coverage="30" coveredlines="3" coverablelines="10" totallines="141" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="OrzelFriendshipCardGoods" coverage="30" coveredlines="3" coverablelines="10" totallines="141" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="OrzelFriendshipCardOre" coverage="30" coveredlines="3" coverablelines="10" totallines="141" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="OrzelTradeStation" coverage="50" coveredlines="3" coverablelines="6" totallines="26" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="OrzelTradeStationTile" coverage="100" coveredlines="3" coverablelines="3" totallines="11" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="PayoutHandler" coverage="4.7" coveredlines="4" coverablelines="84" totallines="108" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="PirateLeaves" coverage="0" coveredlines="0" coverablelines="6" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="PirateToken" coverage="64.7" coveredlines="11" coverablelines="17" totallines="92" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="PirateTokenBeatCondition" coverage="100" coveredlines="3" coverablelines="3" totallines="92" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="Player" coverage="63.4" coveredlines="227" coverablelines="358" totallines="674" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="PlayerHasRichHelpPoorBonusDebugState" coverage="0" coveredlines="0" coverablelines="23" totallines="379" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="PlayerSelectionBox" coverage="9.3" coveredlines="3" coverablelines="32" totallines="71" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="PlayerSelectionView" coverage="6.7" coveredlines="4" coverablelines="59" totallines="97" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="PlayerView" coverage="0" coveredlines="0" coverablelines="11" totallines="35" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="RahnaBuyFamemedals" coverage="0" coveredlines="0" coverablelines="10" totallines="119" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="RahnaDiscardLimitIncrease" coverage="9" coveredlines="1" coverablelines="11" totallines="119" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="RahnaFriendshipCard" coverage="33.3" coveredlines="3" coverablelines="9" totallines="119" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="RahnaNoIncomeBonus" coverage="0" coveredlines="0" coverablelines="10" totallines="119" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="RahnaRichHelpPoorBonus" coverage="0" coveredlines="0" coverablelines="10" totallines="119" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="RahnaTradeStation" coverage="50" coveredlines="3" coverablelines="6" totallines="21" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="RahnaTradeStationTile" coverage="100" coveredlines="3" coverablelines="3" totallines="11" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="ReceiveResourcesAndReceiveFameMedalAction" coverage="0" coveredlines="0" coverablelines="52" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="RemoveUpgradeAction" coverage="47.6" coveredlines="10" coverablelines="21" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="Resource" coverage="100" coveredlines="6" coverablelines="6" totallines="16" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="ResourceCard" coverage="100" coveredlines="4" coverablelines="4" totallines="12" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="ResourceCardStackRenderer" coverage="33.5" coveredlines="45" coverablelines="134" totallines="252" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="ResourcePicker" coverage="18.4" coveredlines="7" coverablelines="38" totallines="66" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="ResourceTile" coverage="70" coveredlines="28" coverablelines="40" totallines="79" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="ResourceTileGroup" coverage="98" coveredlines="103" coverablelines="105" totallines="263" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="ReturnGift" coverage="0" coveredlines="0" coverablelines="7" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="SelectionBox" coverage="65.6" coveredlines="42" coverablelines="64" totallines="125" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="SelectPositionForShipState" coverage="0" coveredlines="0" coverablelines="48" totallines="92" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="SerializableVector3" coverage="100" coveredlines="9" coverablelines="9" totallines="259" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="SetAllChildObjectsActive" coverage="0" coveredlines="0" coverablelines="3" totallines="32" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="SetAllChildObjectsInactive" coverage="0" coveredlines="0" coverablelines="3" totallines="32" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="SFApplication" coverage="100" coveredlines="11" coverablelines="11" totallines="22" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="SFColor" coverage="72" coveredlines="18" coverablelines="25" totallines="49" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="SFElement" coverage="100" coveredlines="1" coverablelines="1" totallines="10" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="SFFormatter" coverage="100" coveredlines="13" coverablelines="13" totallines="27" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="ShakeShipAction" coverage="100" coveredlines="9" coverablelines="9" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="ShipBuildingOneColonyShipAndOneSpacePort" coverage="0" coveredlines="0" coverablelines="11" totallines="379" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="ShipCannotFlyAction" coverage="0" coveredlines="0" coverablelines="16" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="ShipDiceThrow" coverage="45.4" coveredlines="10" coverablelines="22" totallines="65" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="ShipDiceThrower" coverage="0" coveredlines="0" coverablelines="8" totallines="65" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="ShipDiceThrowRenderer" coverage="43.4" coveredlines="10" coverablelines="23" totallines="50" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="ShipToken" coverage="14.2" coveredlines="3" coverablelines="21" totallines="386" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="Shuffler" coverage="100" coveredlines="28" coverablelines="28" totallines="46" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="SimpleCardStack" coverage="100" coveredlines="16" coverablelines="16" totallines="38" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="SimpleHandRenderer" coverage="90.3" coveredlines="28" coverablelines="31" totallines="58" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="SingleResourceCardStack" coverage="51.6" coveredlines="16" coverablelines="31" totallines="76" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="SingleResourceDrawPileStack" coverage="80" coveredlines="8" coverablelines="10" totallines="223" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="SmallPlayerInfoView" coverage="86.3" coveredlines="19" coverablelines="22" totallines="63" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="Space.SpacePointButtonScript" coverage="100" coveredlines="11" coverablelines="11" totallines="34" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="Space.TokenScript" coverage="75" coveredlines="45" coverablelines="60" totallines="121" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="SpacePoint" coverage="89" coveredlines="49" coverablelines="55" totallines="124" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="SpacePointComparer" coverage="100" coveredlines="10" coverablelines="10" totallines="124" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="SpacePointFilter" coverage="100" coveredlines="3" coverablelines="3" totallines="194" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="SpacePortToken" coverage="54.5" coveredlines="18" coverablelines="33" totallines="386" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="SpaceShip" coverage="55.5" coveredlines="70" coverablelines="126" totallines="188" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="SquareChipGroup" coverage="66.6" coveredlines="6" coverablelines="9" totallines="115" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="StartState" coverage="16.6" coveredlines="5" coverablelines="30" totallines="63" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="Subject" coverage="81.2" coveredlines="13" coverablelines="16" totallines="223" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="TakeResourceFromOpponent" coverage="0" coveredlines="0" coverablelines="29" totallines="69" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="TestHelper" coverage="86.3" coveredlines="19" coverablelines="22" totallines="42" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="TestNormalDiceDebugState" coverage="0" coveredlines="0" coverablelines="10" totallines="379" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="TestShipDiceState" coverage="0" coveredlines="0" coverablelines="10" totallines="379" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="ThreadSafeRandom" coverage="100" coveredlines="1" coverablelines="1" totallines="13" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="Tile_" coverage="100" coveredlines="3" coverablelines="3" totallines="15" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="TileGroup" coverage="100" coveredlines="41" coverablelines="41" totallines="263" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="TileGroupRenderer" coverage="100" coveredlines="67" coverablelines="67" totallines="130" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="Token" coverage="82.6" coveredlines="105" coverablelines="127" totallines="259" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="TokenStorage" coverage="85.4" coveredlines="41" coverablelines="48" totallines="674" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="TradeAndColonyBuildCondition" coverage="87.5" coveredlines="14" coverablelines="16" totallines="386" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="TradeBaseToken" coverage="41.4" coveredlines="17" coverablelines="41" totallines="386" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="TradeOutput" coverage="100" coveredlines="11" coverablelines="11" totallines="114" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="TradePanelScript" coverage="60" coveredlines="33" coverablelines="55" totallines="110" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="TradeshipSpacePointFilter" coverage="0" coveredlines="0" coverablelines="5" totallines="194" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="TradeStation" coverage="89.5" coveredlines="86" coverablelines="96" totallines="167" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="TradeStationButtonScript" coverage="50" coveredlines="3" coverablelines="6" totallines="17" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="TradeStationIsFullException" coverage="33.3" coveredlines="3" coverablelines="9" totallines="125" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="TradeStationMedal" coverage="57.1" coveredlines="4" coverablelines="7" totallines="167" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="TradeStationTile" coverage="100" coveredlines="5" coverablelines="5" totallines="16" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="TradingCalculator" coverage="98.1" coveredlines="52" coverablelines="53" totallines="114" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="TradingRules" coverage="41.6" coveredlines="10" coverablelines="24" totallines="674" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="TriangleChipGroup" coverage="66.6" coveredlines="6" coverablelines="9" totallines="115" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="TwoPlayersWithShips" coverage="0" coveredlines="0" coverablelines="10" totallines="379" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="TwoTradeShipAndOneSpacePort" coverage="100" coveredlines="11" coverablelines="11" totallines="379" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="UnsettledTokenOnColonyPointError" coverage="0" coveredlines="0" coverablelines="6" totallines="80" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="UnsettledTokenOnTradePointError" coverage="50" coveredlines="3" coverablelines="6" totallines="80" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="UpgradeView" coverage="100" coveredlines="11" coverablelines="11" totallines="30" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="WinOneFameMedalAction" coverage="75" coveredlines="9" coverablelines="12" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="WonOneFameMedalComparer" coverage="100" coveredlines="3" coverablelines="3" totallines="674" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="WrongTokenTypeException" coverage="66.6" coveredlines="6" coverablelines="9" totallines="125" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="YesOrNoEncounterAction" coverage="100" coveredlines="11" coverablelines="11" totallines="836" branchcoverage="" coveredbranches="0" totalbranches="0" />
     </Assembly>
   </Coverage>
 </CoverageReport>

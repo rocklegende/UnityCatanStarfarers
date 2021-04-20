@@ -12,36 +12,20 @@ using Photon.Pun;
 
 namespace Tests
 {
+    [Category("No Photon")]
     public class FlyStateTests
     {
         GameController gameController;
+        PlayModeTestHelper testHelper;
 
         [UnitySetUp]
         public IEnumerator SetUp()
         {
-            yield return LoadDefaultScene();
-            yield return SetupDebugState();
-            gameController = GetGameController();
-        }
-
-        public IEnumerator LoadDefaultScene()
-        {
-            SceneManager.LoadScene(SFScenes.GAME_SCENE);
-            yield return null;
-        }
-
-        public GameController GetGameController()
-        {
-            var gameControllerObj = GameObject.Find("GameController");
-            var gameControllerScript = gameControllerObj.GetComponent<GameController>();
-            return gameControllerScript;
-        }
-
-        public IEnumerator SetupDebugState()
-        {
-            var gameControllerScript = GetGameController();
-            gameControllerScript.SetUpDebugState(new TwoTradeShipAndOneSpacePort(gameControllerScript));
-            yield return null;
+            var testHelper = new PlayModeTestHelper();
+            this.testHelper = testHelper;
+            yield return testHelper.LoadDefaultScene();
+            yield return testHelper.SetupDebugState();
+            gameController = testHelper.GetGameController();
         }
 
         [UnityTest]

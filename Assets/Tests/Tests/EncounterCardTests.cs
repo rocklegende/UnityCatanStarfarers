@@ -98,9 +98,6 @@ public class MockGameController : IGameController
 
 namespace Tests
 {
-
-    
-
     public class EncounterCardTests
     {   
 
@@ -132,5 +129,144 @@ namespace Tests
             FameMedalGainStrategy.HandleFameMedalGain(-2, player); //cant be below 0
             Assert.AreEqual(0, player.GetFameMedalPieces());
         }
+
+        [Test]
+        public void GiveTwoResourcesHasEnoughResources()
+        {
+            var player = new TestHelper().CreateGenericPlayer();
+            Assert.AreEqual(0, player.hand.Count());
+            Assert.False(GiveTwoResourcesAction.HasEnoughResources(player));
+            player.AddCard(CardType.CARBON);
+            player.AddCard(CardType.CARBON);
+            Assert.AreEqual(2, player.hand.Count());
+            Assert.True(GiveTwoResourcesAction.HasEnoughResources(player));
+        }
+
+        [Test]
+        public void RobThemActionHasEnoughResources()
+        {
+            var player = new TestHelper().CreateGenericPlayer();
+            Assert.AreEqual(0, player.hand.Count());
+            Assert.False(RobPlayersAction.HasEnoughResources(player));
+            player.AddCard(CardType.CARBON);
+            Assert.AreEqual(1, player.hand.Count());
+            Assert.True(RobPlayersAction.HasEnoughResources(player));
+        }
+
+        [Test]
+        public void OneForTwoTradeHasEnoughResources()
+        {
+            var player = new TestHelper().CreateGenericPlayer();
+            Assert.AreEqual(0, player.hand.Count());
+            Assert.False(OneForTwoTradeAction.HasEnoughResources(player));
+            player.AddCard(CardType.CARBON);
+            Assert.AreEqual(1, player.hand.Count());
+            Assert.True(OneForTwoTradeAction.HasEnoughResources(player));
+        }
+
+        [Test]
+        public void PlayersDontDiscardUpgradesIfNotAboveThreshhold()
+        {
+            var limit = 8;
+            var player = new TestHelper().CreateGenericPlayer();
+
+            var playersWhoNeedToDiscard = DiscardIfMoreThanLimitUpgradesAction
+                .GetPlayersWithMoreThanLimit(new List<Player>() { player }, limit);
+            Assert.True(playersWhoNeedToDiscard.Count == 0);
+
+            for(int i = 0; i < 3; i++)
+            {
+                player.BuildUpgradeWithoutCost(new BoosterUpgradeToken());
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                player.BuildUpgradeWithoutCost(new CannonUpgradeToken());
+            }
+
+            for (int i = 0; i < 2; i++)
+            {
+                player.BuildUpgradeWithoutCost(new CannonUpgradeToken());
+            }
+
+            playersWhoNeedToDiscard = DiscardIfMoreThanLimitUpgradesAction
+                .GetPlayersWithMoreThanLimit(new List<Player>() { player }, limit);
+            Assert.True(playersWhoNeedToDiscard.Count == 0, "Player should not discard, he has exactly 8 upgrades and not above");
+
+            player.BuildUpgradeWithoutCost(new CannonUpgradeToken());
+            playersWhoNeedToDiscard = DiscardIfMoreThanLimitUpgradesAction
+                .GetPlayersWithMoreThanLimit(new List<Player>() { player }, limit);
+            Assert.True(playersWhoNeedToDiscard[0] == player, "Player should now be forced to discard, since he has 9 upgrades (9 > 8)");
+
+        }
+
+        [Test]
+        public void GiveFameMedalToPlayerWithMostFreightPodsWorksCorrectlyAllSame()
+        {
+            var players = TestHelper.CreateGenericPlayers3();
+
+            // 0 - 0 - 0
+            var player1FameMedalBefore = players[0].GetFameMedalPieces();
+            var player2FameMedalBefore = players[1].GetFameMedalPieces();
+            var player3FameMedalBefore = players[2].GetFameMedalPieces();
+
+            MostFreightPodsAction.GiveFameMedalToPlayersWithMostFreightPods(players);
+
+            var player1FameMedalAfter = players[0].GetFameMedalPieces();
+            var player2FameMedalAfter = players[1].GetFameMedalPieces();
+            var player3FameMedalAfter = players[2].GetFameMedalPieces();
+
+            Assert.AreEqual(player1FameMedalBefore + 1, player1FameMedalAfter);
+            Assert.AreEqual(player2FameMedalBefore + 1, player2FameMedalAfter);
+            Assert.AreEqual(player3FameMedalBefore + 1, player3FameMedalAfter);
+        }
+
+        [Test]
+        public void GiveFameMedalToPlayerWithMostFreightPodsWorksCorrectlyOneWinner()
+        {
+            var players = TestHelper.CreateGenericPlayers3();
+
+            //1 - 0 - 0
+            players[0].BuildUpgradeWithoutCost(new FreightPodUpgradeToken());
+
+            var player1FameMedalBefore = players[0].GetFameMedalPieces();
+            var player2FameMedalBefore = players[1].GetFameMedalPieces();
+            var player3FameMedalBefore = players[2].GetFameMedalPieces();
+
+            MostFreightPodsAction.GiveFameMedalToPlayersWithMostFreightPods(players);
+
+            var player1FameMedalAfter = players[0].GetFameMedalPieces();
+            var player2FameMedalAfter = players[1].GetFameMedalPieces();
+            var player3FameMedalAfter = players[2].GetFameMedalPieces();
+
+            Assert.AreEqual(player1FameMedalBefore + 1, player1FameMedalAfter);
+            Assert.AreEqual(player2FameMedalBefore, player2FameMedalAfter);
+            Assert.AreEqual(player3FameMedalBefore, player3FameMedalAfter);
+        }
+
+        [Test]
+        public void GiveFameMedalToPlayerWithMostFreightPodsWorksCorrectlyTwoWinner()
+        {
+            var players = TestHelper.CreateGenericPlayers3();
+
+            // 1 - 1 - 0
+            players[0].BuildUpgradeWithoutCost(new FreightPodUpgradeToken());
+            players[1].BuildUpgradeWithoutCost(new FreightPodUpgradeToken());
+
+            var player1FameMedalBefore = players[0].GetFameMedalPieces();
+            var player2FameMedalBefore = players[1].GetFameMedalPieces();
+            var player3FameMedalBefore = players[2].GetFameMedalPieces();
+
+            MostFreightPodsAction.GiveFameMedalToPlayersWithMostFreightPods(players);
+
+            var player1FameMedalAfter = players[0].GetFameMedalPieces();
+            var player2FameMedalAfter = players[1].GetFameMedalPieces();
+            var player3FameMedalAfter = players[2].GetFameMedalPieces();
+
+            Assert.AreEqual(player1FameMedalBefore + 1, player1FameMedalAfter);
+            Assert.AreEqual(player2FameMedalBefore + 1, player2FameMedalAfter);
+            Assert.AreEqual(player3FameMedalBefore, player3FameMedalAfter);
+        }
+
     }
 }

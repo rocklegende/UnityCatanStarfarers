@@ -29,6 +29,12 @@ namespace com.onebuckgames.UnityStarFarers
         [SerializeField]
         private bool isDevelopment = true;
 
+        [SerializeField]
+        private bool autoConnect = true;
+
+        [SerializeField]
+        private bool loadGameSceneDirectlyWithoutLogin = true;
+
         #endregion
 
 
@@ -84,14 +90,6 @@ namespace com.onebuckgames.UnityStarFarers
             {
                 StartGame(); // start game immediately when in development mode, dont wait on multiple players
             }
-
-            //if (PhotonNetwork.CurrentRoom.PlayerCount == maxPlayersPerRoom)
-            //{
-            //    if (PhotonNetwork.IsMasterClient)
-            //    {
-            //        StartGame();
-            //    }
-            //}
         }
 
         public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
@@ -142,6 +140,16 @@ namespace com.onebuckgames.UnityStarFarers
         void Start()
         {
             ShowIsNotConnecting();
+
+            if (autoConnect)
+            {
+                Connect();
+            }
+
+            if (isDevelopment && loadGameSceneDirectlyWithoutLogin)
+            {
+                SceneManager.LoadScene(SFScenes.GAME_SCENE);
+            }
         }
 
 

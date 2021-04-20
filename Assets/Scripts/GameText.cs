@@ -30,4 +30,14 @@ public class GameText
         return "Do you wanna give up a card to rob them?";
     }
 
+    public static string EncounterWantToTryARaumsprung()
+    {
+        return "Do you want to try a raumsprung?";
+    }
+
+    public static string EncounterDiscardIfMoreThanLimitUpgrades(int limit)
+    {
+        return string.Format("All Players who have more than {0} upgrades, need to discard one", limit);
+    }
+
 }

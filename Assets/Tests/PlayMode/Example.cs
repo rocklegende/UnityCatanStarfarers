@@ -9,28 +9,25 @@ using Photon.Pun;
 
 namespace Tests
 {
+    [Category("No Photon")]
     public class Example
     {
 
         GameController gameController;
+        PlayModeTestHelper testHelper;
         EncounterCardFactory encounterCardFactory;
         EncounterCardHandler encounterCardHandler;
 
         [UnitySetUp]
         public IEnumerator SetUp()
         {
-            //yield return new WaitForSeconds(2);
-            //SceneManager.LoadScene(SFScenes.LOBBY_SCENE);
-            //yield return new WaitForSeconds(4);
-            //SFEnvironment.Instance.SetInstantiationStrategy(new DevelopmentInstantiationStrategy());
-
-
-            yield return LoadDefaultScene();
-            //SFEnvironment.Instance.SetInstantiationStrategy(new DevelopmentInstantiationStrategy());
-            yield return SetupDebugState();
-            gameController = GetGameController();
+            var testHelper = new PlayModeTestHelper();
+            this.testHelper = testHelper;
+            yield return testHelper.LoadDefaultScene();
+            yield return testHelper.SetupDebugState();
+            gameController = testHelper.GetGameController();
             encounterCardHandler = gameController.encounterCardHandler;
-            encounterCardFactory = new EncounterCardFactory(GetGameController());
+            encounterCardFactory = new EncounterCardFactory(gameController);
         }
 
         DecisionDialog GetDecisionDialog(GameController gameController)
@@ -49,18 +46,6 @@ namespace Tests
             button.onClick.Invoke();
         }
 
-        public IEnumerator LoadDefaultScene()
-        {
-            SceneManager.LoadScene("SampleScene");
-            yield return null;
-        }
-
-        public GameController GetGameController()
-        {
-            var gameControllerObj = GameObject.Find("GameController");
-            var gameControllerScript = gameControllerObj.GetComponent<GameController>();
-            return gameControllerScript;
-        }
 
         public EncounterCard GetEncounterCard(int num, EncounterCardFactory factory)
         {
@@ -165,14 +150,7 @@ namespace Tests
             }
 
             return null;
-        }
-
-        public IEnumerator SetupDebugState()
-        {
-            var gameControllerScript = GetGameController();
-            gameControllerScript.SetUpDebugState(new EncounterCardTestingState(gameControllerScript));
-            yield return null;
-        }
+        }        
 
         [UnityTest]
         public IEnumerator TestEncounterCard16_no_no()

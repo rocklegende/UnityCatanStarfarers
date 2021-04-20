@@ -217,9 +217,9 @@ namespace Tests
 
             Map map = CreateSampleMap3x3();
 
-            SpacePoint[] actualPoints = map.getAllAvailableSpacePoints();
+            List<SpacePoint> actualPoints = map.getAllAvailableSpacePoints();
 
-            SpacePoint[] expectedPoints = new SpacePoint[]
+            List<SpacePoint> expectedPoints = new List<SpacePoint>
             {
                 new SpacePoint(new HexCoordinates(0, 1), 0),
                 new SpacePoint(new HexCoordinates(0, 1), 1),
@@ -229,7 +229,7 @@ namespace Tests
                 new SpacePoint(new HexCoordinates(-1, 2), 0)
             };
 
-            Assert.True(spacePointArraysAreEqual(actualPoints, expectedPoints));
+            Assert.True(spacePointArraysAreEqual(actualPoints.ToArray(), expectedPoints.ToArray()));
         }
 
         [Test]
