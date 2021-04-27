@@ -88,6 +88,10 @@ public abstract class Subject {
         observers = new List<Observer>();
     }
 
+    public List<Observer> GetObservers()
+    {
+        return observers;
+    }
 
     public void RegisterObserver(Observer observer)
     {

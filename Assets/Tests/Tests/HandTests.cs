@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -213,7 +214,7 @@ namespace Tests
             Hand hand2 = Hand.FromResources(2);
 
 
-            Assert.True(hand1.IsEqualTo(hand2));
+            Assert.True(hand1.HasSameCardsAs(hand2));
         }
 
         [Test]
@@ -224,7 +225,59 @@ namespace Tests
             Hand hand2 = Hand.FromResources(3);
 
 
-            Assert.False(hand1.IsEqualTo(hand2));
+            Assert.False(hand1.HasSameCardsAs(hand2));
+        }
+
+        [Test]
+        public void GetRandomSubhandIsReturningAHandWithTheExactRequestedSize()
+        {
+            Hand hand = Hand.FromResources(3, 3, 3);
+            Hand sub = hand.GetRandomSubhandOfSize(2);
+            Assert.True(sub.Count() == 2);
+        }
+
+        [Test]
+        public void SubsetTest1()
+        {
+            Hand hand = Hand.FromResources(3, 3, 3);
+            Hand sub = Hand.FromResources(3, 3, 3);
+            Assert.True(sub.IsSubsetOf(hand));
+        }
+
+        [Test]
+        public void SubsetTest2()
+        {
+            Hand hand = Hand.FromResources(3, 3, 3);
+            Hand sub = Hand.FromResources(3, 2, 2);
+            Assert.True(sub.IsSubsetOf(hand));
+        }
+
+        [Test]
+        public void SubsetTest3()
+        {
+            Hand hand = Hand.FromResources(3, 3, 3);
+            Hand sub = Hand.FromResources(3, 3, 4);
+            Assert.False(sub.IsSubsetOf(hand));
+        }
+
+        [Test]
+        public void GetRandomSubhandIsActuallyRandom()
+        {
+            var subhandSize = 100;
+            Hand originalHand = Hand.FromResources(33, 33, 33, 33, 33);
+            var firstRandomHand = originalHand.GetRandomSubhandOfSize(subhandSize);
+            var differsAtLeastOnce = false;
+            for (int i = 0; i < 100; i++)
+            {
+                var rand = originalHand.GetRandomSubhandOfSize(subhandSize);
+                if (!rand.cards.SequenceEqual(firstRandomHand.cards))
+                {
+                    differsAtLeastOnce = true;
+                    break;
+                }
+            }
+
+            Assert.True(differsAtLeastOnce);
         }
     }
 }

@@ -54,6 +54,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
     public GameObject decisionDialog;
     public GameObject fightPanel;
     public GameObject tradePanel;
+    public GameObject tradeOfferView;
 
     public GameObject DoFameMedalBuyButton;
     public GameObject RichHelpPoorBonusButton;
@@ -74,18 +75,12 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         shipDiceThrowRenderer.SetActive(false);
         tradePanel.SetActive(false);
         resourcePicker.SetActive(false);
+        tradeOfferView.SetActive(false);
         CloseSelection();
         CreateBuildDropDowns();
-
-        //Debugging
-        //OpenResourcePicker(ResourcesPicked, 2, 2);
+        
 
         
-    }
-
-    void ResourcesPicked(Hand bla)
-    {
-        Debug.Log("you picked resources");
     }
     
 
@@ -95,17 +90,22 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         
     }
 
-    public void OpenPlayerSelection(Player[] players, System.Action<List<Player>> selectedCallback)
+    public void SomeButtonPressed()
     {
-        playerSelectionView.SetActive(true);
-        playerSelectionView.GetComponent<PlayerSelectionView>().SetSelectablePlayers(players);
-        playerSelectionView.GetComponent<PlayerSelectionView>().selectCallback = selectedCallback;
+        tradeOfferView.GetComponent<TradeOfferView>().Draw();
+    }
+
+    public void DisplayTradeOffer(TradeOffer tradeOffer, System.Action<bool> didMakeDecision)
+    {
+        tradeOfferView.SetActive(true);
+        tradeOfferView.GetComponent<TradeOfferView>().Init(tradeOffer, didMakeDecision);
+        tradeOfferView.GetComponent<TradeOfferView>().Draw();
     }
 
     public void OnRichHelpPoorButtonPressed()
     {
         var action = new TakeResourceFromOpponent(this, player, RichHelpPoorPlayed, 1, 2);
-         action.StartAction();
+        action.StartAction();
     }
 
     void RichHelpPoorPlayed()
@@ -134,20 +134,32 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
     public void OpenUpgradeSelection(List<Token> selectableUpgrades, System.Action<List<int>> selectedIndexesCallback, int maxSelectable = -1)
         //TODO: remove Duplication in OpenPlayerSelection and OpenUpgradeSelection methods
     {
+        if (selectableUpgrades.Count == 0)
+        {
+            selectedIndexesCallback(new List<int>() { });
+            return;
+        }
+
         multiSelectionView.SetActive(true);
         var multiSelectScript = multiSelectionView.GetComponent<MultiSelection>();
         multiSelectScript.SetSelectableObjects(selectableUpgrades.ToArray());
+        multiSelectScript.selectCallback = selectedIndexesCallback;
         if (maxSelectable != -1 && maxSelectable > 0)
         {
             multiSelectScript.maxSelectable = maxSelectable;
         }
 
 
-        multiSelectScript.selectCallback = selectedIndexesCallback;
+        
     }
 
     public void OpenPlayerSelection(List<Player> selectablePlayers, System.Action<List<int>> selectedIndexesCallback, int maxSelectable = -1)
     {
+        if (selectablePlayers.Count == 0)
+        {
+            selectedIndexesCallback(new List<int>() { });
+            return;
+        }
         multiSelectionView.SetActive(true);
         var multiSelectScript = multiSelectionView.GetComponent<MultiSelection>();
         multiSelectScript.SetSelectableObjects(selectablePlayers.ToArray());
@@ -156,6 +168,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         {
             multiSelectScript.maxSelectable = maxSelectable;
         }
+        
     }
 
     public void OpenNormalDiceThrowRenderer(System.Action<DiceThrow> callback)
@@ -171,6 +184,8 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
 
     public void OpenResourcePicker(System.Action<Hand> callback, int cardLimit = -1, int onlySelectableAtValue = -1, bool resetValues = true)
     {
+        //TODO: possibly better to instantiate a new gameobject here to reset all values, so we dont run into problems if we open this multiple times
+
         resourcePicker.SetActive(true);
 
         if (resetValues)
@@ -181,6 +196,20 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         resourcePicker.GetComponent<ResourcePicker>().SetTotalMaximum(cardLimit);
         resourcePicker.GetComponent<ResourcePicker>().SetOnlySelectableAtValue(onlySelectableAtValue);
         resourcePicker.GetComponent<ResourcePicker>().SetCallback(callback);
+    }
+
+    /// <summary>
+    /// Opens the Resource Card Picker for discarding, sets the hand limit of the picker automatically to that of the main player.
+    /// </summary>
+    /// <param name="callback"></param>
+    /// <param name="cardLimit"></param>
+    /// <param name="onlySelectableAtValue"></param>
+    public void OpenDiscardResourcePicker(System.Action<Hand> callback, int cardLimit = -1, int onlySelectableAtValue = -1)
+    {
+        //TODO: possibly better to instantiate a new gameobject here to reset all values, so we dont run into problems if we open this multiple times
+
+        OpenResourcePicker(callback, cardLimit, onlySelectableAtValue);
+        resourcePicker.GetComponent<ResourcePicker>().SetHandLimit(player.hand);
     }
 
     public void CloseResourcePicker()
@@ -268,6 +297,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
                 var playerView = smallPlayerViews.Find(view => view.GetComponent<SmallPlayerInfoView>().player.name == other.name);
                 if (playerView != null)
                 {
+                    Debug.Log(string.Format("Setting new player: {0}; num cards: {1}", other.name, other.hand.Count()));
                     playerView.GetComponent<SmallPlayerInfoView>().SetPlayer(other);
                 } else
                 {
@@ -319,6 +349,15 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         DrawDropDowns();
         DrawExtraActionButtons();
         DrawName();
+        DrawSmallPlayerViews();
+    }
+
+    void DrawSmallPlayerViews()
+    {
+        foreach(var smallPlayerView in smallPlayerViews)
+        {
+            smallPlayerView.GetComponent<SmallPlayerInfoView>().Draw();
+        }
     }
 
     public void ActivateAllInteraction(bool isInteractive)

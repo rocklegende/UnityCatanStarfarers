@@ -50,21 +50,11 @@ public class SingleResourceCardStack : MonoBehaviour
     public void Add()
     {
         AddCallback(this.cardType);
-        //if (this.cardType != null && hand.Count() + 1 <= limit)
-        //{
-        //    hand.AddCard(this.cardType);
-        //}
-        //Redraw();
     }
 
     public void Remove()
     {
         RemoveCallback(this.cardType);
-        //if (hand.Count() > 0)
-        //{
-        //    hand.RemoveCardOfType(this.cardType.GetType());
-        //}
-        //Redraw();
     }
 
     public void SetText(string text)

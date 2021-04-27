@@ -5,30 +5,36 @@ using UnityEngine.UI;
 
 public class ResourceCardStackRenderer : SFController
 {
-    public Hand inputHand;
-    public Player player;
+    private Hand _handLimit = null;
     private int maximumPickableCards = -1;
     private Hand pickedHand = new Hand();
 
     public GameObject stackPrefab;
-    public List<GameObject> stackObjects;
+    public List<GameObject> stackObjects = new List<GameObject>();
     public System.Action<Hand> ChangedCallback;
 
     // Start is called before the first frame update
     void Start()
     {
+        _handLimit = null;
+        stackObjects = new List<GameObject>();
         CreateStacks();
+    }
+
+    public void Init()
+    {
+        
+    }
+
+    public void SetHand(Hand hand)
+    {
+        pickedHand = hand;
+        Changed();
     }
 
     public void SetChangedCallback(System.Action<Hand> callback)
     {
         this.ChangedCallback = callback;
-    }
-
-    public void SetPlayer(Player player)
-    {
-        this.player = player;
-        SetLimits();
     }
 
     public void SetTotalMaximum(int amount)
@@ -46,9 +52,27 @@ public class ResourceCardStackRenderer : SFController
         return MaximumIsSet() && pickedHand.Count() == maximumPickableCards;
     }
 
+    bool NewHandExceedsHandLimit(Hand newHand)
+    {
+        if (this._handLimit != null)
+        {
+            return !newHand.IsSubsetOf(_handLimit);
+        } else
+        {
+            return false;
+        }
+    }
+
     public void IncreaseResource(ResourceCard card)
     {
-        if (!MaximumReached())
+        var futurePickedHand = pickedHand.SimpleClone();
+        futurePickedHand.AddCard(card);
+        Debug.Log("max: " + !MaximumReached());
+        Debug.Log("exceeds: " + !NewHandExceedsHandLimit(futurePickedHand));
+        Debug.Log("this.handLimit: " + this._handLimit);
+        Debug.Log("this.handLimit != null " + this._handLimit != null);
+
+        if (!MaximumReached() && !NewHandExceedsHandLimit(futurePickedHand))
         {
             pickedHand.AddCard(card);
         }
@@ -67,39 +91,10 @@ public class ResourceCardStackRenderer : SFController
         Changed();
     }
 
-    public void SetLimits()
+    public void SetHandLimit(Hand handLimit)
     {
-        var hand = player.hand;
-
-        var fuelStack = FindStackWithResource(new FuelCard());
-        if (fuelStack != null)
-        {
-            fuelStack.SetLimit(hand.NumberCardsOfType<FuelCard>());
-        }
-
-        var oreStack = FindStackWithResource(new OreCard());
-        if (oreStack != null)
-        {
-            oreStack.SetLimit(hand.NumberCardsOfType<OreCard>());
-        }
-
-        var goodsStack = FindStackWithResource(new GoodsCard());
-        if (goodsStack != null)
-        {
-            goodsStack.SetLimit(hand.NumberCardsOfType<GoodsCard>());
-        }
-
-        var foodStack = FindStackWithResource(new FoodCard());
-        if (foodStack != null)
-        {
-            foodStack.SetLimit(hand.NumberCardsOfType<FoodCard>());
-        }
-
-        var CarbonStack = FindStackWithResource(new CarbonCard());
-        if (CarbonStack != null)
-        {
-            CarbonStack.SetLimit(hand.NumberCardsOfType<CarbonCard>());
-        }
+        Debug.Log("Setting hand limit");
+        this._handLimit = handLimit;
     }
 
     SingleResourceCardStack FindStackWithResource(ResourceCard card)
@@ -121,20 +116,14 @@ public class ResourceCardStackRenderer : SFController
     {
         pickedHand.RemoveAllCards();
         Changed();
-        //foreach (var stackObject in stackObjects)
-        //{
-        //    var stackScript = stackObject.GetComponent<SingleResourceCardStack>();
-        //    stackScript.Reset();
-        //}
-        //Changed();
     }
 
     void CreateStacks()
     {
+        Debug.Log("CREATING STACKS");
         var allCardTypes = new Helper().GetAllResourceCardTypes();
         foreach (var cardType in allCardTypes)
         {
-
             var stack = Instantiate(stackPrefab, gameObject.transform, false);
             var stackScript = stack.GetComponent<SingleResourceCardStack>();
             stackScript.Initiliaze(cardType);
@@ -143,110 +132,64 @@ public class ResourceCardStackRenderer : SFController
             stackObjects.Add(stack);
             stack.transform.parent = this.gameObject.transform;
         }
+        Debug.Log("Num stackobjects 1: " + stackObjects.Count);
+        Debug.Log("");
     }
-
-    //void AddCard(ResourceCard)
-    //{
-    //    stackScript.Add();
-    //    Changed();
-    //}
-
-    //void RemoveCard(SingleResourceCardStack stackScript)
-    //{
-    //    stackScript.Remove();
-    //    Changed();
-    //}
 
     void Changed()
     {
+        
         Draw();
-        ChangedCallback(GetOutput());
+        ChangedCallback?.Invoke(GetDisplayedHand());
     }
 
-    
-
-    GameObject FindStackOfCardType(ResourceCard cardType)
+    public Hand GetDisplayedHand()
     {
-        foreach(var stack in stackObjects)
-        {
-            if (stack.GetComponent<SingleResourceCardStack>().GetCardType() == cardType)
-            {
-                return stack;
-            }
-        }
-        return null;
-    }
-
-    void SetInputHand()
-    {
-
-    }
-
-    public Hand GetOutput()
-    {
-        // combine hands of all
         return pickedHand;
     }
 
     // Update is called once per frame
     void Update()
     {
-        //if (player != null)
-        //{
-        //    SetLimits();
-        //}
+        Draw();
     }
 
-    void Draw()
+    public void Draw()
     {
+        //Debug.Log("SingleResourceCardStacks before" + GetComponentsInChildren<SingleResourceCardStack>().Length);
+        //Debug.Log("stackobjects count before" + stackObjects.Count);
+        //foreach (var stack in stackObjects)
+        //{
+        //    GameObject.Destroy(stack);
+        //}
+        //stackObjects = new List<GameObject>();
+        //Debug.Log("SingleResourceCardStacks after" + GetComponentsInChildren<SingleResourceCardStack>().Length);
+        //Debug.Log("stackobjects count after" + stackObjects.Count);
+
+        //CreateStacks();
+        //Debug.Log("Num stackobjects 2" + stackObjects.Count);
+
         DrawResourceStacks();
     }
 
     void DrawResourceStacks()
     {
-        foreach (var stack in stackObjects)
+        Debug.Log("DRAWING");
+        var singlestacks = GetComponentsInChildren<SingleResourceCardStack>().Length;
+        Debug.Log("Num stackobjects" + stackObjects.Count);
+        Debug.Log("Single Resource Card Stack" + gameObject.GetComponentsInChildren<SingleResourceCardStack>().Length);
+        Debug.Log("Drawing hand!" + pickedHand.Count());
+        foreach (var singleStackObject in GetComponentsInChildren<SingleResourceCardStack>())
         {
-            var singleStackObject = stack.GetComponent<SingleResourceCardStack>();
+            //var singleStackObject = stack.GetComponent<SingleResourceCardStack>();
+            var text = pickedHand.NumberCardsOfType(singleStackObject.GetCardType().GetType()).ToString();
+            Debug.Log(text);
             singleStackObject.SetText(pickedHand.NumberCardsOfType(singleStackObject.GetCardType().GetType()).ToString());
         }
     }
 
-    public void OnCarbonCardClicked()
-    {
-
-    }
-
-    public void OnFuelCardClicked()
-    {
-
-    }
-
-    public void OnGoodsCardClicked()
-    {
-
-    }
-
-    public void OnFoodCardClicked()
-    {
-
-    }
-
-    public void OnOreCardClicked()
-    {
-
-    }
-
     public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)
     {
-        //switch (p_event_path)
-        //{
-        //    case SFNotification.player_data_changed:
-        //        if (player != null)
-        //        {
-        //            SetLimits();
-        //        }
-
-        //        break;
-        //}
+        
     }
 }

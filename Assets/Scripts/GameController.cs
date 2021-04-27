@@ -19,7 +19,22 @@ public interface IGameController
 public enum RemoteClientActionType
 {
     GIVE_RESOURCE,
-    GIVEUP_UPGRADE
+    GIVEUP_UPGRADE,
+    SEVEN_ROLL_DISCARD,
+    TRADE_OFFER
+}
+
+[System.Serializable]
+public class RemoteActionCallbackData
+{
+    public readonly Player player;
+    public readonly object data;
+
+    public RemoteActionCallbackData(Player player, object data = null)
+    {
+        this.player = player;
+        this.data = data;
+    }
 }
 
 namespace com.onebuckgames.UnityStarFarers
@@ -54,7 +69,7 @@ public class GameController : SFController, IGameController, Observer
     public Player mainPlayer;
     public int currentPlayerAtTurn = 0;
     public PayoutHandler payoutHandler;
-    private System.Action<Player> dispatcherSomeoneFullfilledActionCallback;
+    private System.Action<RemoteActionCallbackData> dispatcherSomeoneFullfilledActionCallback;
 
     private bool SetupCompleted = false;
 
@@ -83,7 +98,7 @@ public class GameController : SFController, IGameController, Observer
     {
         mapModel = (Map)SFFormatter.Deserialize(mapAsBytes);
         mapModel.RegisterObserver(this);
-        this.state = new StartState(this);
+        this.state = new EncounterCardState(this);
 
         //every client sets up the players itself, no need to send that over wire from MasterClient
         var dict = CreatePlayerMap();
@@ -122,14 +137,18 @@ public class GameController : SFController, IGameController, Observer
 
     public void SetupButtonPressed()
     {
-        SetUpDebugState(new TwoTradeShipAndOneSpacePort(this, "encounter"));
+        //SetUpDebugState(new TwoTradeShipAndOneSpacePort(this, "encounter"));
         InitialPlayerSetup();
 
         //var actionInfo = new RemoteClientAction(RemoteClientActionType.GIVE_RESOURCE, null, GetIndexOfPlayer(GetMainPlayerFromDict()));
         //RunRPC("RemoteClientRequiresAction", RpcTarget.Others, SFFormatter.Serialize(actionInfo));
 
-        var encounterFactory = new EncounterCardFactory(this);
-        this.encounterCardHandler.PlayEncounterCard(encounterFactory.CreateEncounterCard25());
+        //var encounterFactory = new EncounterCardFactory(this);
+        //this.encounterCardHandler.PlayEncounterCard(encounterFactory.CreateEncounterCard32());
+
+        //On7Rolled();
+
+
     }
 
     [PunRPC]
@@ -144,24 +163,35 @@ public class GameController : SFController, IGameController, Observer
             case RemoteClientActionType.GIVEUP_UPGRADE:
                 HandleGiveupUpgradeActionFromRemoteClient(remoteAction);
                 break;
+            case RemoteClientActionType.SEVEN_ROLL_DISCARD:
+                HandleSevenRollDiscardActionFromRemoteClient(remoteAction);
+                break;
+            case RemoteClientActionType.TRADE_OFFER:
+                HandleTradeOfferActionFromRemoteClient(remoteAction);
+                break;
         }
+    }
+
+    void HandleTradeOfferActionFromRemoteClient(RemoteClientAction remoteAction)
+    {
+        var tradeOffer = (TradeOffer)remoteAction.parameters[0];
+        GetHUDScript().DisplayTradeOffer(tradeOffer, (accept) =>
+        {
+            SendResponseBackToCallerOfRemoteClientAction(remoteAction, new RemoteActionCallbackData(mainPlayer, accept));
+        });
     }
 
     void HandleGiveResourceActionFromRemoteClient(RemoteClientAction remoteAction)
     {
         var requiredResources = (int)remoteAction.parameters[0];
-        GetHUDScript().OpenResourcePicker((hand) => {
-            GetHUDScript().CloseResourcePicker();
+        GetHUDScript().OpenDiscardResourcePicker((hand) => {
             Debug.Log("hand picked, count: " + hand.Count());
 
             var sfTargetPlayer = players[remoteAction.sendFromPlayerIndex];
             mainPlayer.PayToOtherPlayer(sfTargetPlayer, hand);
             Debug.Log("paying hand to player: " + sfTargetPlayer.name);
 
-            var photonTargetPlayer = SFPlayerToPhotonPlayer(sfTargetPlayer);
-            recentPhotonResponsePlayer = photonTargetPlayer;
-            Debug.Log("Sending response to player: " + photonTargetPlayer.NickName);
-            RunRPC("RemoteClientFulfilledAction", photonTargetPlayer, SFFormatter.Serialize(mainPlayer));
+            SendResponseBackToCallerOfRemoteClientAction(remoteAction);
         }, requiredResources, requiredResources);
     }
 
@@ -170,7 +200,18 @@ public class GameController : SFController, IGameController, Observer
         var upgradesToDiscard = (int)remoteAction.parameters[0];
 
         var encounterAction = new RemoveUpgradeAction(this);
-        encounterAction.doneCallback = (() => SendResponseBackToCallerOfRemoteClientAction(remoteAction));
+        encounterAction.callback = ((value) => SendResponseBackToCallerOfRemoteClientAction(remoteAction));
+        encounterAction.Execute();
+    }
+
+    void HandleSevenRollDiscardActionFromRemoteClient(RemoteClientAction remoteAction)
+    {
+        var numCardsToDump = On7RollStrategy.NumCardsToDump(mainPlayer.hand.Count());
+        GetHUDScript().OpenDiscardResourcePicker((handPicked) =>
+        {
+            mainPlayer.SubtractHand(handPicked);
+            SendResponseBackToCallerOfRemoteClientAction(remoteAction);
+        }, numCardsToDump, numCardsToDump);
     }
 
     void SendResponseBackToCallerOfRemoteClientAction(RemoteClientAction remoteAction)
@@ -179,7 +220,25 @@ public class GameController : SFController, IGameController, Observer
         var photonTargetPlayer = SFPlayerToPhotonPlayer(sfTargetPlayer);
         recentPhotonResponsePlayer = photonTargetPlayer;
         Debug.Log("Sending response to player: " + photonTargetPlayer.NickName);
-        RunRPC("RemoteClientFulfilledAction", photonTargetPlayer, SFFormatter.Serialize(mainPlayer));
+        RunRPC("RemoteClientFulfilledAction", photonTargetPlayer, SFFormatter.Serialize(new RemoteActionCallbackData(mainPlayer)));
+    }
+
+    void SendResponseBackToCallerOfRemoteClientAction(RemoteClientAction remoteAction, RemoteActionCallbackData data)
+    {
+        var sfTargetPlayer = players[remoteAction.sendFromPlayerIndex];
+        var photonTargetPlayer = SFPlayerToPhotonPlayer(sfTargetPlayer);
+        recentPhotonResponsePlayer = photonTargetPlayer;
+        Debug.Log("Sending response to player: " + photonTargetPlayer.NickName);
+        RunRPC("RemoteClientFulfilledAction", photonTargetPlayer, SFFormatter.Serialize(data));
+    }
+
+    /// <summary>
+    /// Other client finished its trade offer proposal, either by accepting, declining or arborting the trade offer.
+    /// </summary>
+    [PunRPC]
+    public void RemoteClientTradeOfferFinished()
+    {
+        GetHUDScript().tradeOfferView.SetActive(false);
     }
 
     public Player PhotonPlayerToSFPlayer(Photon.Realtime.Player photonPlayer)
@@ -200,18 +259,29 @@ public class GameController : SFController, IGameController, Observer
     }
 
     [PunRPC]
-    void RemoteClientFulfilledAction(byte[] playerWhoFullfilledActionAsBytes)
+    void RemoteClientFulfilledAction(byte[] data)
     {
-        var playerWhoFullfilledAction = (Player) SFFormatter.Deserialize(playerWhoFullfilledActionAsBytes);
-        Debug.Log("Response from " + playerWhoFullfilledAction.name + " card");
-        dispatcherSomeoneFullfilledActionCallback(playerWhoFullfilledAction);
+        var remoteCallbackData = (RemoteActionCallbackData) SFFormatter.Deserialize(data);
+        var playerWhoFullfilledAction = remoteCallbackData.player;
+        Debug.Log("Response from " + playerWhoFullfilledAction.name + " received");
+        dispatcherSomeoneFullfilledActionCallback(remoteCallbackData);
     }
 
     void InitialPlayerSetup()
     {
-        mainPlayer.BuildUpgradeWithoutCost(new FreightPodUpgradeToken());
+        //foreach(var player in players)
+        //{
+        //    for (int i = 0; i < 5; i++)
+        //    {
+        //        player.BuildUpgradeWithoutCost(new FreightPodUpgradeToken());
+        //        player.BuildUpgradeWithoutCost(new BoosterUpgradeToken());
+        //        player.BuildUpgradeWithoutCost(new CannonUpgradeToken());
+        //    }
+        //}
 
         mainPlayer.AddHand(Hand.FromResources(5, 5, 5, 5, 5));
+
+     
 
         //mainPlayer.BuildTokenWithoutCost(
         //    mapModel,
@@ -344,8 +414,8 @@ public class GameController : SFController, IGameController, Observer
 
     public void On7Rolled()
     {
-        var strategy = new On7RollStrategy();
-        strategy.Execute(players, currentPlayerAtTurn, drawPileHandler.availablePiles);
+        var strategy = new On7RollStrategy(this);
+        strategy.Execute();
     }
 
     public void PassTurnToNextPlayer()
@@ -421,7 +491,7 @@ public class GameController : SFController, IGameController, Observer
         }
     }
 
-    public void RunRPC(string methodName, RpcTarget target, System.Action<Player> rpcCallback, params object[] parameters)
+    public void RunRPC(string methodName, RpcTarget target, System.Action<RemoteActionCallbackData> rpcCallback, params object[] parameters)
     {
         PhotonView photonView = PhotonView.Get(this);
         this.dispatcherSomeoneFullfilledActionCallback = rpcCallback;
@@ -434,7 +504,7 @@ public class GameController : SFController, IGameController, Observer
         photonView.RPC(methodName, target, parameters);
     }
 
-    public void RunRPC(string methodName, Photon.Realtime.Player remotePlayer, System.Action<Player> rpcCallback, params object[] parameters)
+    public void RunRPC(string methodName, Photon.Realtime.Player remotePlayer, System.Action<RemoteActionCallbackData> rpcCallback, params object[] parameters)
     {
         PhotonView photonView = PhotonView.Get(this);
         this.dispatcherSomeoneFullfilledActionCallback = rpcCallback;

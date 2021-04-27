@@ -8,7 +8,10 @@ public class ResourcePicker : MonoBehaviour
     Action<Hand> callback;
     public GameObject resourceCardStack;
     public Button selectButton;
-    int onlySelectableAtValue = -1; //decided if the selection is only possible at a specific value, -1 means all is selectable
+    /// <summary>
+    /// Decides if the selection is only possible at a specific value, -1 means all is selectable
+    /// </summary>
+    int onlySelectableAtValue = -1; 
 
     public ResourcePicker()
     {
@@ -29,7 +32,7 @@ public class ResourcePicker : MonoBehaviour
         onlySelectableAtValue = value;
         if (onlySelectableAtValue != -1)
         {
-            var currentPickedHand = resourceCardStack.GetComponent<ResourceCardStackRenderer>().GetOutput();
+            var currentPickedHand = resourceCardStack.GetComponent<ResourceCardStackRenderer>().GetDisplayedHand();
             SetSelectButtonInteractive(onlySelectableAtValue == currentPickedHand.Count());
         }
     }
@@ -47,6 +50,16 @@ public class ResourcePicker : MonoBehaviour
         }
     }
 
+    public Hand GetCurrentlyPickedHand()
+    {
+        return resourceCardStack.GetComponent<ResourceCardStackRenderer>().GetDisplayedHand();
+    }
+
+    public void SetHandLimit(Hand limitHand)
+    {
+        resourceCardStack.GetComponent<ResourceCardStackRenderer>().SetHandLimit(limitHand);
+    }
+
     public void SetTotalMaximum(int amount)
     {
         resourceCardStack.GetComponent<ResourceCardStackRenderer>().SetTotalMaximum(amount);
@@ -59,8 +72,9 @@ public class ResourcePicker : MonoBehaviour
 
     public void OnSelectButtonClick()
     {
-        var outputHand = resourceCardStack.GetComponent<ResourceCardStackRenderer>().GetOutput();
+        var outputHand = resourceCardStack.GetComponent<ResourceCardStackRenderer>().GetDisplayedHand();
         Debug.Log("picked num resources: " + outputHand.Count());
+        gameObject.SetActive(false);
         callback(outputHand);
     }
 }

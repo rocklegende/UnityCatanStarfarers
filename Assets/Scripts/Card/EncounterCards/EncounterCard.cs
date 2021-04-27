@@ -622,7 +622,7 @@ public class GetResourceFromEveryPlayer : EncounterCardAction
         return targetPlayers;
     }
 
-    public void ResponseReceived()
+    public void ResponseReceived(Dictionary<string, RemoteActionCallbackData> dict)
     {
         Debug.Log("ResultFromEveryPlayerWasFound!");
         ResultFound(true);
@@ -930,7 +930,7 @@ public class DiscardIfMoreThanLimitUpgradesAction : EncounterCardAction
         return players.Where(player => player.ship.UpgradesCountWithoutBonuses() > lim).ToList();
     }
 
-    public void AllPlayersMadeDecision()
+    public void AllPlayersMadeDecision(Dictionary<string, RemoteActionCallbackData> dict)
     {
         ResultFound(true);
     }

@@ -22,6 +22,37 @@ public class Hand : Subject
         Notify(null);
     }
 
+    public Hand GetRandomSubhandOfSize(int size)
+    {
+        if (size > Count())
+        {
+            throw new ArgumentException(string.Format("not enough resources to make a subhand of {0} card", size));
+        }
+        var randomHand = new Hand();
+        var handClone = SimpleClone();
+        handClone.cards.Shuffle();
+
+        for (int i = 0; i < size; i++)
+        {
+            var card = handClone.cards.PopAt(0);
+            randomHand.AddCard(card);
+        }
+        return randomHand;
+    }
+
+    public bool IsSubsetOf(Hand targetHand)
+    {
+        foreach(var cardType in new Helper().GetAllResourceCardTypes())
+        {
+            if (NumberCardsOfType(cardType.GetType()) > targetHand.NumberCardsOfType(cardType.GetType()))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public int Count()
     {
         return cards.Count;
@@ -34,7 +65,12 @@ public class Hand : Subject
         return clone;
     }
 
-    public bool IsEqualTo(Hand other)
+    /// <summary>
+    /// Returns true if both hands have the exact same number of cards of each type
+    /// </summary>
+    /// <param name="other"></param>
+    /// <returns></returns>
+    public bool HasSameCardsAs(Hand other)
     {
         foreach(var cardType in new Helper().GetAllResourceCardTypes())
         {
@@ -90,19 +126,7 @@ public class Hand : Subject
 
     public Hand GetRandomHand(int numCards)
     {
-        if (numCards > Count())
-        {
-            throw new ArgumentException("Not enough cards left for that operation");
-        }
-
-        var returnHand = new Hand();
-        cards.Shuffle();
-        for (int i = 0; i < numCards; i++)
-        {
-            var card = cards[i];
-            returnHand.AddCard(card);
-        }
-        return returnHand;
+        return GetRandomSubhandOfSize(numCards);
     }
 
     public void SubtractHand(Hand h)

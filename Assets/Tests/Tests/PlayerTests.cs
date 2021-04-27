@@ -16,18 +16,6 @@ namespace Tests
             return new Player(new SFColor(Color.black));
         }
 
-        void AddCashToPlayer(Player player, int amount = 5)
-        {
-            for (int i = 0; i < amount; i++)
-            {
-                player.AddCard(new GoodsCard());
-                player.AddCard(new FuelCard());
-                player.AddCard(new CarbonCard());
-                player.AddCard(new FoodCard());
-                player.AddCard(new OreCard());
-            }
-        }
-
         int VpFromTokens(Token[] tokens)
         {
             var player = GetGenericPlayer();
@@ -431,10 +419,17 @@ namespace Tests
             Assert.True(tokens.Find(tok => tok is BoosterUpgradeToken) == null); //Boosters are full, they cant be in the list anymore
         }
 
+        [Test]
+        public void PayToOtherPlayer()
+        {
+            var players = TestHelper.CreateGenericPlayers3();
+            players[0].AddHand(Hand.FromResources(3, 2, 1));
+            players[1].AddHand(Hand.FromResources(3, 2, 3));
 
+            players[0].PayToOtherPlayer(players[1], Hand.FromResources(1));
 
-
-
-
+            Assert.True(players[0].hand.HasSameCardsAs(Hand.FromResources(2, 2, 1)));
+            Assert.True(players[1].hand.HasSameCardsAs(Hand.FromResources(4, 2, 3)));
+        }
     }
 }

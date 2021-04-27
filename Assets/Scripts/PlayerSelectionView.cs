@@ -33,7 +33,7 @@ public class PlayerSelectionView : MonoBehaviour
         }
     }
 
-    public void SetSelectablePlayers(Player[] players)
+    public void SetSelectablePlayers(List<Player> players)
     {
 
         ClearPreviousBoxes();

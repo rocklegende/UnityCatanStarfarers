@@ -1,28 +1,62 @@
 ﻿using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using com.onebuckgames.UnityStarFarers;
 
 public class On7RollStrategy
 {
-    public On7RollStrategy()
+    GameController gameController;
+    public On7RollStrategy(GameController gameController)
     {
-
+        this.gameController = gameController;
     }
 
-    public void Execute(List<Player> players, int currentPlayerIndex, AvailablePiles availablePiles)
+    public static int NumCardsToDump(int numCardsOnHand)
     {
-        foreach (var player in players) {
+        return numCardsOnHand / 2;
+    }
 
-            if (player.hand.Count() > player.GetDiscardLimit())
-            {
-                //player needs to dump cards
-                //TODO: hudOfThatPlayer.RequestThrowingAwayResources
-            }
-        }
+    public void Execute()
+    {
+        var players = gameController.players;
+        var remoteClientAction = new RemoteClientAction(
+            RemoteClientActionType.SEVEN_ROLL_DISCARD,
+            null,
+            gameController.GetIndexOfPlayer(gameController.mainPlayer)
+        );
+        var dispatcher = new RemoteActionDispatcher(gameController);
+        dispatcher.RequestActionFromPlayers(
+            players.Where(player => player.ExceedsDiscardLimit()).ToList(),
+            remoteClientAction,
+            PlayersDumpedCards
+        );
+    }
 
-        //TODO: players[currentPlayerIndex].ChooseCardFromOpponent(1);
+    void PlayersDumpedCards(Dictionary<string, RemoteActionCallbackData> dict)
+    {
+        var selectablePlayers = gameController.players.Where(p => p.hand.Count() > 0 && p.name != gameController.mainPlayer.name).ToList();
+        gameController.GetHUDScript().OpenPlayerSelection(
+            selectablePlayers,
+            ((selectedIndexes) => {
+                if (selectedIndexes.Count > 0)
+                {
+                    var selectedPlayer = selectablePlayers[selectedIndexes[0]];
+                    selectedPlayer.PayToOtherPlayer(gameController.mainPlayer, selectedPlayer.hand.GetRandomSubhandOfSize(1));
+                }
+                PlayerPickedCardFromOpponent();
+            }),
+            1);
+    }
 
+    void PlayerPickedCardFromOpponent()
+    {
+        GivePlayersCardsFromDrawPile(gameController.drawPileHandler.availablePiles, gameController.players, gameController.currentPlayerAtTurn);
+    }
+
+    void GivePlayersCardsFromDrawPile(AvailablePiles availablePiles, List<Player> players, int currentPlayerIndex)
+    {
         foreach (var index in Helper.NextPlayersClockwise(currentPlayerIndex, players.Count))
         {
             var c = availablePiles.hiddenDrawPile.DrawCardsFromTop(1);
@@ -30,8 +64,6 @@ public class On7RollStrategy
             //TODO: this could fail if no resources are left maybe
         }
     }
-
-    
 }
 
 public class CastNormalDiceState : GameState

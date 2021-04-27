@@ -154,7 +154,14 @@ public class Player : SFModel, Observer, IComparable
         return player;
     }
 
-    
+    /// <summary>
+    /// Returns true if the player has more cards than the allowed discard limit (used on 7 Roll)
+    /// </summary>
+    /// <returns></returns>
+    public bool ExceedsDiscardLimit()
+    {
+        return hand.Count() > GetDiscardLimit();
+    }
 
     public void ActivateRichHelpPoorBonus()
     {

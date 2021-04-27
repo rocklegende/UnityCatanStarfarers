@@ -62,5 +62,26 @@ namespace Tests
             Assert.AreEqual(1, previous);
         }
 
+        [Test]
+        public void CheckNumCardsToDump()
+        {
+            var numCardsOnHand = 8;
+            Assert.AreEqual(4, On7RollStrategy.NumCardsToDump(numCardsOnHand));
+            numCardsOnHand = 9;
+            Assert.AreEqual(4, On7RollStrategy.NumCardsToDump(numCardsOnHand));
+            numCardsOnHand = 10;
+            Assert.AreEqual(5, On7RollStrategy.NumCardsToDump(numCardsOnHand));
+        }
+
+        [Test]
+        public void CheckWhenToDumpCards()
+        {
+            var player = new TestHelper().CreateGenericPlayer();
+            player.AddHand(Hand.FromResources(7));
+            Assert.False(player.ExceedsDiscardLimit());
+            player.AddHand(Hand.FromResources(7));
+            Assert.True(player.ExceedsDiscardLimit());
+        }
+
     }
 }

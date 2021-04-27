@@ -261,6 +261,23 @@ namespace Tests
             Assert.False(tc.BankTradeIsPossible(tradingInput, tradingOutput)); //should not be possible, since a trade output of 0 cards is not allowed
         }
 
+        [Test]
+        public void MakeTradeWithPlayer()
+        {
+            var players = TestHelper.CreateGenericPlayers3();
+            var tradeOriginPlayer = players[0];
+            var tradeDestinationPlayer = players[1];
+            tradeOriginPlayer.AddHand(Hand.FromResources(3, 3, 3));
+            tradeDestinationPlayer.AddHand(Hand.FromResources(3, 3, 3));
+
+            var giveHand = Hand.FromResources(0, 1, 1);
+            var receiveHand = Hand.FromResources(2, 0, 0);
+            TradePanelScript.MakeTradeWithPlayer(new TradeOffer(giveHand, receiveHand, tradeOriginPlayer), tradeOriginPlayer, tradeDestinationPlayer);
+
+            Assert.True(tradeOriginPlayer.hand.HasSameCardsAs(Hand.FromResources(5, 2, 2)));
+            Assert.True(tradeDestinationPlayer.hand.HasSameCardsAs(Hand.FromResources(1, 4, 4)));
+        }
+
 
     }
 }

@@ -31,9 +31,9 @@ public class TradingCalculator
 
     bool IsTradeAllowed(Hand inputHand, Hand outputHand)
     {
-        if (outputHand.Count() == 0)
+        if (inputHand.Count() == 0)
         {
-            return false; //no trade should be allowed where the output is zero
+            return false; //only receiving cards and not giving something up is not allowed!
         }
 
         return true;

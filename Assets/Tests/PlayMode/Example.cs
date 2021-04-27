@@ -150,7 +150,50 @@ namespace Tests
             }
 
             return null;
-        }        
+        }
+
+        [UnityTest]
+        public IEnumerator TradeOfferPanelDisplaysTradeCorrectly()
+        {
+            var hudScript = gameController.GetHUDScript();
+
+
+            var giveHandInTradeOffer = Hand.FromResources(1, 2, 3);
+            var receiveHandInTradeOffer = Hand.FromResources(3, 3, 3);
+            var tradeOffer = new TradeOffer(giveHandInTradeOffer, receiveHandInTradeOffer, gameController.mainPlayer);
+            hudScript.DisplayTradeOffer(tradeOffer, (decision) => { });
+            Assert.True(hudScript.tradeOfferView.activeInHierarchy);
+            var tradeOfferViewScript = hudScript.tradeOfferView.GetComponent<TradeOfferView>();
+            var displayedGiveHand = tradeOfferViewScript.GiveResourceStackRenderer.GetComponent<ResourceCardStackRenderer>().GetDisplayedHand();
+            var displayedReceiveHand = tradeOfferViewScript.ReceiveResourceStackRenderer.GetComponent<ResourceCardStackRenderer>().GetDisplayedHand();
+            yield return new WaitForSeconds(10);
+
+            Assert.True(displayedGiveHand.HasSameCardsAs(receiveHandInTradeOffer));
+            Assert.True(displayedReceiveHand.HasSameCardsAs(giveHandInTradeOffer));
+
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ResourcePickerAutomaticallyClosesWhenMakingSelection()
+        {
+            var hudScript = gameController.GetHUDScript();
+            hudScript.OpenDiscardResourcePicker((hand) => { Assert.False(hudScript.resourcePicker.activeInHierarchy); });
+            Assert.True(hudScript.resourcePicker.activeInHierarchy);
+            yield return new WaitForSeconds(4);
+            hudScript.resourcePicker.GetComponent<ResourcePicker>().selectButton.onClick.Invoke();
+        }
+
+        [UnityTest]
+        public IEnumerator PlayerSelectionAutomaticallyClosesWhenMakingSelection()
+        {
+            var players = TestHelper.CreateGenericPlayers3();
+            var hudScript = gameController.GetHUDScript();
+            hudScript.OpenPlayerSelection(players, (hand) => { Assert.False(hudScript.multiSelectionView.activeInHierarchy); });
+            Assert.True(hudScript.multiSelectionView.activeInHierarchy);
+            yield return new WaitForSeconds(4);
+            hudScript.multiSelectionView.GetComponent<MultiSelection>().selectButton.onClick.Invoke();
+        }
 
         [UnityTest]
         public IEnumerator TestEncounterCard16_no_no()
@@ -276,7 +319,7 @@ namespace Tests
             var handAfterDiceRoll = gameController.mainPlayer.hand;
 
             handAfterTrade.SubtractHand(receivedHand); //test if the received hand will be removed from the player if a 3 is rolled
-            Assert.True(handAfterTrade.IsEqualTo(handAfterDiceRoll));
+            Assert.True(handAfterTrade.HasSameCardsAs(handAfterDiceRoll));
 
             yield return null;
         }

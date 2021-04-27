@@ -39,7 +39,7 @@ public class MultiSelection : SFView
 
     public void SetSelectableObjects(SFModel[] objects)
     {
-
+        
         ClearPreviousBoxes();
         for (int i = 0; i < objects.Length; i++)
         {
@@ -98,6 +98,7 @@ public class MultiSelection : SFView
     public void SelectButtonPressed()
     {
         var indexes = GetSelectedIndexes();
+        gameObject.SetActive(false);
         selectCallback(indexes);
     }
 

@@ -25,41 +25,32 @@ public class TakeResourceFromOpponent : ImmediateAction
 {
     Player beneficialPlayer;
     int numResources;
-    int playersToChooseFrom;
+    int numPlayersToRobFrom;
     HUDScript hudScript;
+    List<Player> selectablePlayers;
 
-    public TakeResourceFromOpponent(HUDScript hudScript, Player beneficialPlayer, Action isDoneCallback, int numResources, int playersToChooseFrom) : base(isDoneCallback)
+    public TakeResourceFromOpponent(HUDScript hudScript, Player beneficialPlayer, Action isDoneCallback, int numResources, int numPlayersToRobFrom) : base(isDoneCallback)
     {
         this.beneficialPlayer = beneficialPlayer;
         this.numResources = numResources;
         this.hudScript = hudScript;
-        this.playersToChooseFrom = playersToChooseFrom;
+        this.numPlayersToRobFrom = numPlayersToRobFrom;
     }
 
     public override void StartAction()
     {
-        var playersWithoutMainPlayer = hudScript.players.Where(player => player.color != beneficialPlayer.color).ToArray();
-
-        var selectionView = hudScript.playerSelectionView.GetComponent<PlayerSelectionView>();
-
-        if (playersToChooseFrom == 1)
-        {
-            selectionView.multiselect = false;
-        } else
-        {
-            selectionView.multiselect = true;
-            selectionView.multiSelectMaxSelectable = playersToChooseFrom;
-        }
-
-        hudScript.OpenPlayerSelection(playersWithoutMainPlayer, PlayersPicked);
-        // generalState.Show("Player A takes resources from opponents")
+        selectablePlayers = hudScript.players
+            .Where(player => player.color != beneficialPlayer.color && player.hand.Count() > 0)
+            .ToList();
+        hudScript.OpenPlayerSelection(selectablePlayers, IndexesPicked, numPlayersToRobFrom);
+        // TODO: generalState.Show("Player A takes resources from opponents")
     }
 
-    void PlayersPicked(List<Player> players)
+    void IndexesPicked(List<int> indexes)
     {
-
-        foreach(var player in players)
+        foreach(var index in indexes)
         {
+            var player = selectablePlayers[index];
             var handToPay = player.hand.GetRandomHand(numResources);
             player.PayToOtherPlayer(beneficialPlayer, handToPay);
         }
