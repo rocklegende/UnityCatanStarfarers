@@ -810,7 +810,7 @@ public class HasMoreBoostersThanNeighborAction : EncounterCardAction
 
     public override void Execute()
     {
-        var opponentPlayerIndex = EncounterCardHelper.GetOpponentPlayerIndex(opponent, gameController.currentPlayerAtTurn, gameController.players.Count);
+        var opponentPlayerIndex = EncounterCardHelper.GetOpponentPlayerIndex(opponent, gameController.currentPlayerAtTurnIndex, gameController.players.Count);
         var opponentPlayer = gameController.players[opponentPlayerIndex];
         ResultFound(HasEqualOrMoreBoosters(gameController.mainPlayer, opponentPlayer));
     }
@@ -1087,7 +1087,7 @@ public class FightEncounterAction : EncounterCardAction
 
     public override void Execute()
     {
-        var opponentIndex = EncounterCardHelper.GetOpponentPlayerIndex(opponent, gameController.currentPlayerAtTurn, gameController.players.Count);
+        var opponentIndex = EncounterCardHelper.GetOpponentPlayerIndex(opponent, gameController.currentPlayerAtTurnIndex, gameController.players.Count);
         if (opponentIndex == -1)
         {
             throw new ArgumentException("Getting opponent index failed");

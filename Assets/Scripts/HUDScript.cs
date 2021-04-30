@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -40,6 +41,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
     public GameObject foodCardStack;
     public List<BuildDropDownOption> buildDropDownOptions;
     public bool isReceivingNotifications = false;
+    public bool isInteractionActivated = true;
 
     public Text stateText;
     public GameObject settleButton;
@@ -261,58 +263,56 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         }
     }
 
-    public void UpdatePlayers(List<Player> playersList, Player mainPlayer = null)
+    public void UpdatePlayers(List<Player> playersList, Player mainPlayer)
     {
         SetPlayers(playersList, mainPlayer);
         Draw();
     }
 
-    public void SetPlayers (List<Player> playersList, Player mainPlayer = null)
+    public void SetPlayers (List<Player> playersList, Player mainPlayer)
     {
         this.players = playersList;
 
         ObservePlayers(playersList);
 
-        int mainPlayerIndex = 0;
-        Player _mainPlayer = playersList[0];
-        var indexesOfPlayersOtherThanMain = Helper.GetIndexesOfPlayersExceptPlayer(playersList, mainPlayerIndex);
-        if (mainPlayer != null)
-        {
-            _mainPlayer = mainPlayer;
-            mainPlayerIndex = playersList.FindIndex(player => player.name == mainPlayer.name);
-            indexesOfPlayersOtherThanMain = Helper.GetIndexesOfPlayersExceptPlayer(playersList, mainPlayerIndex);
-        }
+        //var mainPlayerIndex = playersList.FindIndex(player => player.name == mainPlayer.name);
+        //var indexesOfPlayersOtherThanMain = Helper.GetIndexesOfPlayersExceptPlayer(playersList, mainPlayerIndex);
+        var playersOtherThanMain = playersList.Where(p => p.name != mainPlayer.name);
+        SetMainPlayer(mainPlayer);
 
-        SetMainPlayer(_mainPlayer);
-        Debug.Log("main player index: " + mainPlayerIndex);
-        Debug.Log("num players: " + playersList.Count);
-        Debug.Log("num indizes: " + indexesOfPlayersOtherThanMain.Count);
-
-        foreach (var otherIndex in indexesOfPlayersOtherThanMain) 
+        foreach (var notMainPlayer in playersOtherThanMain) 
         {
-            var other = playersList[otherIndex];
             if (smallPlayerViews.Count > 0)
             {
-                //update player of existing smallPlayerView
-                var playerView = smallPlayerViews.Find(view => view.GetComponent<SmallPlayerInfoView>().player.name == other.name);
-                if (playerView != null)
-                {
-                    Debug.Log(string.Format("Setting new player: {0}; num cards: {1}", other.name, other.hand.Count()));
-                    playerView.GetComponent<SmallPlayerInfoView>().SetPlayer(other);
-                } else
-                {
-                    Debug.LogError("Couldnt find smallPlayerView for name: " + other.name);
-                }
+                UpdateExistingSmallPlayerView(notMainPlayer);
             } else
             {
-                //create new smallPlayerView;
-                GameObject smallPlayerView = Instantiate(smallPlayerViewPrefab, transform, false);
-                smallPlayerView.GetComponent<SmallPlayerInfoView>().SetPlayer(other);
-                smallPlayerView.transform.parent = otherPlayerContainer.transform;
-                smallPlayerViews.Add(smallPlayerView);
+                AddSmallPlayerView(notMainPlayer);
             }
         }
 
+    }
+
+    void UpdateExistingSmallPlayerView(Player playerData)
+    {
+        var playerView = smallPlayerViews.Find(view => view.GetComponent<SmallPlayerInfoView>().player.name == playerData.name);
+        if (playerView != null)
+        {
+            Debug.Log(string.Format("Setting new player: {0}; num cards: {1}", playerData.name, playerData.hand.Count()));
+            playerView.GetComponent<SmallPlayerInfoView>().SetPlayer(playerData);
+        }
+        else
+        {
+            Debug.LogError("Couldnt find smallPlayerView for name: " + playerData.name);
+        }
+    }
+
+    void AddSmallPlayerView(Player playerData)
+    {
+        GameObject smallPlayerView = Instantiate(smallPlayerViewPrefab, transform, false);
+        smallPlayerView.GetComponent<SmallPlayerInfoView>().SetPlayer(playerData);
+        smallPlayerView.transform.parent = otherPlayerContainer.transform;
+        smallPlayerViews.Add(smallPlayerView);
     }
 
     public void ShowShipDiceThrowPanel(System.Action<ShipDiceThrow> callback)
@@ -338,9 +338,6 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
 
     public void Draw()
     {
-        Debug.Log("Drawing HUD!");
-        Debug.Log("player.name: " + player.name);
-        Debug.Log("player.hand.Count(): " + player.hand.Count());
         DrawResourceStacks();
         DrawUpgrades();
         DrawVP();
@@ -362,6 +359,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
 
     public void ActivateAllInteraction(bool isInteractive)
     {
+        this.isInteractionActivated = isInteractive;
         foreach(var button in GetComponentsInChildren<Button>())
         {
             button.interactable = isInteractive;
@@ -583,10 +581,6 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         {
             switch(p_event_path)
             {
-                //case SFNotification.player_data_changed:
-                //    OnPlayerDataChanged();
-                //    break;
-
                 case SFNotification.open_friendship_card_selection:
                     var tradeStation = (TradeStation)p_data[0];
                     var cards = (AbstractFriendshipCard[])p_data[1];
@@ -605,7 +599,6 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
 
     public void SubjectDataChanged(object[] data)
     {
-        Debug.Log("Plauer datachanged!");
         OnPlayerDataChanged();
     }
 }

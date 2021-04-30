@@ -7,7 +7,7 @@ public class StartState : GameState
 {
     public StartState(GameController controller) : base(controller)
     {
-        hudScript.SetStateText("StartState Player " + controller.currentPlayerAtTurn);
+        hudScript.SetStateText("StartState Player " + controller.currentPlayerAtTurnIndex);
         hudScript.ShowSettleButton(false);
     }
 

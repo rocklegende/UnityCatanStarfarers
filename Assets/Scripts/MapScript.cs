@@ -30,16 +30,15 @@ public class MapScript : SFController, Observer
     public GameObject TileGroupRenderer;
 
     public Camera cam;
-    public List<Player> players;
     public bool isReceivingNotifications = false;
     public Map map;
     private MapMode mode = MapMode.NORMAL;
     private System.Action<Token> tokenSelectCallback;
     private System.Action<SpacePoint> didSelectSpacePointCallback;
+
     List<GameObject> currentlyShownSpacePointButtons = new List<GameObject>();
     GameObject[] hexagonGameObjects;
     List<GameObject> currentlyDisplayedPlayerTokens;
-
     List<Token> highlightedTokens = new List<Token>();
     List<GameObject> highlightCircles = new List<GameObject>();
 
@@ -59,18 +58,13 @@ public class MapScript : SFController, Observer
         return currentlyShownSpacePointButtons;
     }
 
-    public void SetPlayers(List<Player> players)
-    {
-        this.players = players;
-        currentlyDisplayedPlayerTokens = DisplayPlayerTokens();
-    }
-
     public void SetMap(Map map)
     {
         this.map = map;
         map.RegisterObserver(this);
         hexagonGameObjects = CreateMap(map);
         TileGroupRenderer.GetComponent<TileGroupRenderer>().Initialize(map);
+        currentlyDisplayedPlayerTokens = DisplayPlayerTokens();
         CenterCamera();
     }
 
@@ -359,7 +353,7 @@ public class MapScript : SFController, Observer
         this.didSelectSpacePointCallback = didSelectSpacePoint;
     }
 
-    public void ShowSpacePointsFulfillingFilters(SpacePointFilter[] filters)
+    public void ShowSpacePointsFulfillingFilters(SpacePointFilter[] filters, List<Player> players)
     {
         List<SpacePoint> points = map.GetSpacePointsFullfillingFilters(filters, players.ToArray());
         CreateButtonsAtSpacePoints(points);

@@ -205,17 +205,6 @@ public class DrawPileHandler : MonoBehaviour
     {
         availablePiles = new AvailablePiles();
         drawPileView.GetComponent<DrawPileView_>().Init(availablePiles, this);
-
-        availablePiles.DrawCardsFromHiddenDrawPile(2);
-        //StartCoroutine("WaitFour");
-    }
-
-    IEnumerable WaitFour()
-    {
-        Debug.Log("Coroutine started");
-        yield return new WaitForSeconds(4);
-        availablePiles.DrawCardsFromHiddenDrawPile(2);
-        yield return new WaitForSeconds(3);
     }
 
     // Update is called once per frame

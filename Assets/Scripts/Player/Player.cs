@@ -108,15 +108,19 @@ public class Player : SFModel, Observer, IComparable
     public List<Token> giftedTokens = new List<Token>();
     public TokenStorage tokenStorage;
     public string name = "DefaultPlayerName";
-
     public bool receivesBonusOnNoPayout = false;
     public bool fameMedalBuyPossible = false;
-    bool fameMedalBuyMadeThisRound = false;
-    int fameMedalPieces;
     public SpaceShip ship;
     public Hand hand;
     public bool hasRichHelpPoorBonus = false;
     public bool richHelpPoorBonusMadeThisRound = false;
+    /// <summary>
+    /// Position in the order of turns. 0 means this is the first player in the order.
+    /// </summary>
+    public int TurnOrderPosition;
+
+    bool fameMedalBuyMadeThisRound = false;
+    int fameMedalPieces;
     TradingRules rules;
     List<AbstractFriendshipCard> friendShipCards;
     int FriendShipChips;

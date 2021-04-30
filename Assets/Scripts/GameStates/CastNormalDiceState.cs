@@ -52,7 +52,7 @@ public class On7RollStrategy
 
     void PlayerPickedCardFromOpponent()
     {
-        GivePlayersCardsFromDrawPile(gameController.drawPileHandler.availablePiles, gameController.players, gameController.currentPlayerAtTurn);
+        GivePlayersCardsFromDrawPile(gameController.drawPileHandler.availablePiles, gameController.players, gameController.currentPlayerAtTurnIndex);
     }
 
     void GivePlayersCardsFromDrawPile(AvailablePiles availablePiles, List<Player> players, int currentPlayerIndex)

@@ -51,7 +51,7 @@ public abstract class DebugStartState
         controller.players = GetGenericPlayers();
         controller.mainPlayer = controller.players[0];
         
-        controller.HUD.GetComponent<HUDScript>().SetPlayers(controller.players);        
+        controller.HUD.GetComponent<HUDScript>().SetPlayers(controller.players, controller.mainPlayer);        
         controller.HUD.GetComponent<HUDScript>().isReceivingNotifications = true;
     }
 
@@ -62,7 +62,6 @@ public abstract class DebugStartState
         //controller.mapModel = TestHelper.SerializeAndDeserialize(controller.mapModel);
 
         controller.Map.GetComponent<MapScript>().SetMap(controller.mapModel);
-        controller.Map.GetComponent<MapScript>().SetPlayers(controller.players);
         controller.Map.GetComponent<MapScript>().isReceivingNotifications = true;
 
         controller.payoutHandler = new PayoutHandler(controller.mapModel);
@@ -347,7 +346,7 @@ public class PlayerHasRichHelpPoorBonusDebugState : DebugStartState
 
         controller.players = new List<Player>() { new Player(new SFColor(Color.green)), new Player(new SFColor(Color.yellow)), new Player(new SFColor(Color.blue)), new Player(new SFColor(Color.red)), };
         controller.mainPlayer = controller.players[0];
-        controller.HUD.GetComponent<HUDScript>().SetPlayers(controller.players);
+        controller.HUD.GetComponent<HUDScript>().SetPlayers(controller.players, controller.mainPlayer);
         controller.HUD.GetComponent<HUDScript>().isReceivingNotifications = true;
 
         foreach (var player in controller.players)
