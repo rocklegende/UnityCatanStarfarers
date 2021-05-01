@@ -6,23 +6,21 @@ using com.onebuckgames.UnityStarFarers;
 public class TileGroupRenderer : SFController, Observer
 {
     public GameObject mapObject;
-    private Map map;
     public GameObject dockStationPrefab;
-    bool alreadyDrawn = false;
+
+    private Map map;
+
     List<GameObject> dockButtons = new List<GameObject>();
 
-    // Use this for initialization
+    
     void Start()
     {
         // get all the tilegroups from map and render them according to their state
         // attach this script somewhere inside the map, it will automatically update the tilegroups
-        
     }
 
     public void Initialize(Map map)
     {
-        // register itself as observer of mapModel
-        // mapModel.registerObserver(this)
         this.map = map;
         foreach(var group in map.tileGroups)
         {
@@ -72,7 +70,7 @@ public class TileGroupRenderer : SFController, Observer
                 {
                     var token = tradeStation.dockedSpaceships[i];
                     var newPos = btns[i].transform.position;
-                    token.SetPosition(new SpacePoint(new HexCoordinates(100, 100), 0)); //just point to really random point, garbage point
+                    token.SetPosition(SpacePoint.GarbagePoint);
                     token.useOwnPositioningSystem = false;
                     token.SetUnityPosition(newPos);
                 }
@@ -80,36 +78,14 @@ public class TileGroupRenderer : SFController, Observer
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
-        //var mapScript = mapObject.GetComponent<MapScript>();
-        //map = mapScript.map;
-        //if (map.tileGroups != null && !alreadyDrawn)
-        //{
-        //    DrawTileGroups();
-        //    alreadyDrawn = true;
-        //}
+        
     }
 
     public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)
     {
-        //switch(p_event_path)
-        //{
-        //    case SFNotification.map_data_changed:
-        //        if (map != null)
-        //        {
-        //            if (map.tileGroups != null)
-        //            {
-        //                //TODO: this is failing because we do some stuff to the tilegroups in the map creation which triggers the notification
-        //                // but we don't have the map created yet. Better way is to let the mapscript activate this class and register it as an
-        //                // observer of the mapModel
-        //                DestroyAllDockButtons();
-        //                DrawTileGroups();
-        //            }
-        //        }
-        //        break;
-        //}
+        
     }
 
     public void SubjectDataChanged(object[] data)
@@ -118,10 +94,6 @@ public class TileGroupRenderer : SFController, Observer
         {
             if (map.tileGroups != null)
             {
-                Debug.Log("mapDataChanged");
-                //TODO: this is failing because we do some stuff to the tilegroups in the map creation which triggers the notification
-                // but we don't have the map created yet. Better way is to let the mapscript activate this class and register it as an
-                // observer of the mapModel
                 DestroyAllDockButtons();
                 DrawTileGroups();
             }

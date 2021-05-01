@@ -21,11 +21,6 @@ public class ResourceCardStackRenderer : SFController
         CreateStacks();
     }
 
-    public void Init()
-    {
-        
-    }
-
     public void SetHand(Hand hand)
     {
         pickedHand = hand;
@@ -67,10 +62,6 @@ public class ResourceCardStackRenderer : SFController
     {
         var futurePickedHand = pickedHand.SimpleClone();
         futurePickedHand.AddCard(card);
-        Debug.Log("max: " + !MaximumReached());
-        Debug.Log("exceeds: " + !NewHandExceedsHandLimit(futurePickedHand));
-        Debug.Log("this.handLimit: " + this._handLimit);
-        Debug.Log("this.handLimit != null " + this._handLimit != null);
 
         if (!MaximumReached() && !NewHandExceedsHandLimit(futurePickedHand))
         {
@@ -110,8 +101,6 @@ public class ResourceCardStackRenderer : SFController
         return null;
     }
 
-
-
     public void ResetStacks()
     {
         pickedHand.RemoveAllCards();
@@ -120,7 +109,6 @@ public class ResourceCardStackRenderer : SFController
 
     void CreateStacks()
     {
-        Debug.Log("CREATING STACKS");
         var allCardTypes = new Helper().GetAllResourceCardTypes();
         foreach (var cardType in allCardTypes)
         {
@@ -132,13 +120,10 @@ public class ResourceCardStackRenderer : SFController
             stackObjects.Add(stack);
             stack.transform.parent = this.gameObject.transform;
         }
-        Debug.Log("Num stackobjects 1: " + stackObjects.Count);
-        Debug.Log("");
     }
 
     void Changed()
     {
-        
         Draw();
         ChangedCallback?.Invoke(GetDisplayedHand());
     }
@@ -148,42 +133,21 @@ public class ResourceCardStackRenderer : SFController
         return pickedHand;
     }
 
-    // Update is called once per frame
     void Update()
     {
+        //TODO: somehow displaying a hand via SetHand does not display the hand immediately, therefore the workaround for now is to update it every frame
         Draw();
     }
 
     public void Draw()
     {
-        //Debug.Log("SingleResourceCardStacks before" + GetComponentsInChildren<SingleResourceCardStack>().Length);
-        //Debug.Log("stackobjects count before" + stackObjects.Count);
-        //foreach (var stack in stackObjects)
-        //{
-        //    GameObject.Destroy(stack);
-        //}
-        //stackObjects = new List<GameObject>();
-        //Debug.Log("SingleResourceCardStacks after" + GetComponentsInChildren<SingleResourceCardStack>().Length);
-        //Debug.Log("stackobjects count after" + stackObjects.Count);
-
-        //CreateStacks();
-        //Debug.Log("Num stackobjects 2" + stackObjects.Count);
-
         DrawResourceStacks();
     }
 
     void DrawResourceStacks()
-    {
-        Debug.Log("DRAWING");
-        var singlestacks = GetComponentsInChildren<SingleResourceCardStack>().Length;
-        Debug.Log("Num stackobjects" + stackObjects.Count);
-        Debug.Log("Single Resource Card Stack" + gameObject.GetComponentsInChildren<SingleResourceCardStack>().Length);
-        Debug.Log("Drawing hand!" + pickedHand.Count());
+    {        
         foreach (var singleStackObject in GetComponentsInChildren<SingleResourceCardStack>())
         {
-            //var singleStackObject = stack.GetComponent<SingleResourceCardStack>();
-            var text = pickedHand.NumberCardsOfType(singleStackObject.GetCardType().GetType()).ToString();
-            Debug.Log(text);
             singleStackObject.SetText(pickedHand.NumberCardsOfType(singleStackObject.GetCardType().GetType()).ToString());
         }
     }

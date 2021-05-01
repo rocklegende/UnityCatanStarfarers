@@ -186,7 +186,7 @@ public class SpaceShip
         }
         else
         {
-
+            throw new ArgumentException();
         }
         changedCallback();
     }

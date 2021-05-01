@@ -116,6 +116,9 @@ namespace Tests
             var WaitTimeBetweenSteps = 0; //use this to debug this test
 
             var mapScript = gameController.GetMapScript();
+            var hudScript = gameController.GetHUDScript();
+            var previousVp = gameController.mainPlayer.GetVictoryPoints();
+
             var allTokenObjects = mapScript.GetAllTokenObjects();
             var firstClickableColonyShip = allTokenObjects
                 .Where(gobj => GetTokenScript(gobj).tokenModel.CanFly() && GetTokenScript(gobj).tokenModel is ColonyBaseToken)
@@ -147,6 +150,8 @@ namespace Tests
             var tokenStaysOnSameSpotAfterSettling = tokenModelFirstClickable.position.Equals(targetSpacePoint);
             Assert.True(tokenStaysOnSameSpotAfterSettling, "Token changed position after settling on resource tile group. It should stay the same");
             Assert.True(firstResourceGroup.IsRevealed());
+
+            Assert.AreNotEqual(previousVp.ToString(), hudScript.vpText.text, "Hud doesnt seem to update correcty. VPs presented are still the same value."); 
 
             yield return null;
         }

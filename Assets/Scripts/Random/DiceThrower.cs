@@ -20,7 +20,6 @@ public class DiceThrow {
 
 public class DiceThrower
 {
-    
     private int maxDiceValue = 6;
     public DiceThrower()
     {

@@ -176,7 +176,6 @@ MonoBehaviour:
     type: 3}
   TileGroupRenderer: {fileID: 86781946}
   cam: {fileID: 519420031}
-  players: []
   isReceivingNotifications: 0
 --- !u!1 &15347560
 GameObject:
@@ -3313,7 +3312,6 @@ Transform:
   m_Children:
   - {fileID: 1901680713}
   - {fileID: 144255070}
-  - {fileID: 1997335515}
   m_Father: {fileID: 784815561}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6697,6 +6695,7 @@ MonoBehaviour:
       BoostersBonus: 0
     hasRichHelpPoorBonus: 0
     richHelpPoorBonusMadeThisRound: 0
+    TurnOrderPosition: 0
   players: []
   oreCardStackText: {fileID: 880728729}
   carbonCardStackText: {fileID: 1712599411}
@@ -6724,6 +6723,7 @@ MonoBehaviour:
   goodsCardStack: {fileID: 0}
   foodCardStack: {fileID: 0}
   isReceivingNotifications: 0
+  isInteractionActivated: 1
   stateText: {fileID: 1152645940}
   settleButton: {fileID: 2067213578}
   friendShipCardSelection: {fileID: 1238029382}
@@ -10548,7 +10548,8 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1997335515}
   m_Father: {fileID: 694176732}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -10584,7 +10585,8 @@ MonoBehaviour:
       BoostersBonus: 0
     hasRichHelpPoorBonus: 0
     richHelpPoorBonusMadeThisRound: 0
-  currentPlayerAtTurn: 0
+    TurnOrderPosition: 0
+  currentPlayerAtTurnIndex: 0
   encounterCardHandler: {fileID: 144255071}
   drawPileHandler: {fileID: 1997335516}
 --- !u!114 &1901680715
@@ -10994,12 +10996,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1997335514}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 694176732}
-  m_RootOrder: 2
+  m_Father: {fileID: 1901680713}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1997335516
 MonoBehaviour:

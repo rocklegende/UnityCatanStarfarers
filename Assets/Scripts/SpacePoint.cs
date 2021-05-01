@@ -29,6 +29,11 @@ public class SpacePoint
     public bool visited = false;
     public SpacePoint prev = null;
 
+    /// <summary>
+    /// Point to use if the token position is not relevant anymore, like after settling on a trade station.
+    /// </summary>
+    public static SpacePoint GarbagePoint = new SpacePoint(100, 100, 0);
+
     public override bool Equals(System.Object obj)
     {
         var cityPos = obj as SpacePoint;

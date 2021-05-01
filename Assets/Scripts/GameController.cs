@@ -88,11 +88,19 @@ public class GameController : SFController, IGameController, Observer
     public DebugStartState debugStartState;
     public Photon.Realtime.Player recentPhotonResponsePlayer;
 
+
+    private bool devMode = false;
     private System.Action<RemoteActionCallbackData> dispatcherSomeoneFullfilledActionCallback;
-    
+
+    void Awake()
+    {
+        PhotonNetwork.OfflineMode = GameConstants.isDevelopment;
+    }
+
     void Start()
     {
         encounterCardHandler.encounterCardStack = new DefaultEncounterCardStack(this);
+
         if (PhotonNetwork.IsMasterClient)
         {
             PhotonView photonView = PhotonView.Get(this);
@@ -115,13 +123,11 @@ public class GameController : SFController, IGameController, Observer
         var turnOrder = new Dictionary<string, int>();
         var numPlayers = PhotonNetwork.CurrentRoom.PlayerCount;
         var order = new List<int>();
-        //for(int i = 0; i < numPlayers; i++)
-        //{
-        //    order.Add(i);
-        //}
-        //order.Shuffle();
-        order.Add(1);
-        order.Add(0);
+        for (int i = 0; i < numPlayers; i++)
+        {
+            order.Add(i);
+        }
+        order.Shuffle();
 
         for (int i = 0; i < numPlayers; i++)
         {
@@ -142,17 +148,35 @@ public class GameController : SFController, IGameController, Observer
         //every client sets up the players itself, no need to send that over wire from MasterClient
         var dict = CreatePlayerMap(gameStartInformation.turnOrder);
         networkPlayersOwnPlayersMap = dict;
-        //PROD
         players = GetAllPlayersFromDict();
         mainPlayer = GetMainPlayerFromDict();
 
-        //DEV
-        //var player1 = new Player(new SFColor(Color.white));
-        //player1.name = "Tim";
-        //var player2 = new Player(new SFColor(Color.black));
-        //player2.name = "Paul";
-        //players = new List<Player> { player1, player2 };
-        //mainPlayer = players[0];
+        Init();
+    }
+
+    /// <summary>
+    /// Initialize the gamecontroller without Photon. Useful for test purposes.
+    /// </summary>
+    /// <param name="map"></param>
+    /// <param name="players"></param>
+    /// <param name="mainPlayer"></param>
+    public void DevelopmentGameStartInformationGenerated(Map map, List<Player> players, Player mainPlayer)
+    {
+        PhotonNetwork.OfflineMode = true;
+        devMode = true;
+
+        mapModel = map;
+        mapModel.RegisterObserver(this);
+        this.state = new StartState(this);
+
+        this.players = players;
+        this.mainPlayer = mainPlayer;
+
+        Init();
+    }
+
+    public void Init()
+    {
 
         ObservePlayers(players);
         Debug.Log("TH1");
@@ -169,9 +193,7 @@ public class GameController : SFController, IGameController, Observer
         Map.GetComponent<MapScript>().isReceivingNotifications = true;
 
         payoutHandler = new PayoutHandler(mapModel);
-        HandleIsMyTurn();
-
-        //InitialPlayerSetup();
+        OnTurnChanged();
     }
 
     public int OwnPlayerIndex()
@@ -463,7 +485,7 @@ public class GameController : SFController, IGameController, Observer
 
         //we lose the observers by serializing the players, therefore we need to observe them again after the update
         ObservePlayers(newPlayerData);
-        HUD.GetComponent<HUDScript>().UpdatePlayers(GetAllPlayersFromDict(), GetMainPlayerFromDict());
+        HUD.GetComponent<HUDScript>().UpdatePlayers(players, mainPlayer);
     }
 
     public void SetUpDebugState(DebugStartState state)
@@ -492,7 +514,7 @@ public class GameController : SFController, IGameController, Observer
         RunRPC("CurrentPlayerAtTurnChanged", RpcTarget.All, currentPlayerAtTurnIndex);
     }
 
-    void HandleIsMyTurn()
+    void OnTurnChanged()
     {
         Debug.Log("currentPlayerAtTurnIndex" + currentPlayerAtTurnIndex);
         Debug.Log("Current player: " + GetCurrentPlayerAtTurn().name);
@@ -514,18 +536,18 @@ public class GameController : SFController, IGameController, Observer
     void CurrentPlayerAtTurnChanged(int newPlayerAtTurnIndex)
     {
         currentPlayerAtTurnIndex = newPlayerAtTurnIndex;
-        HandleIsMyTurn();
+        OnTurnChanged();
     }
 
     public void PayoutLowPointsBonus(Player player)
     {
-        //Debug.Log("Paying low points bonus to player: " + player.name);
-        //Debug.Log("Num observers: " + player.GetObservers());
-        //var cards = drawPileHandler.availablePiles.DrawCardsFromHiddenDrawPile(2);
-        //foreach (var c in cards)
-        //{
-        //    player.AddCard(c);
-        //}
+        Debug.Log("Paying low points bonus to player: " + player.name);
+        Debug.Log("Num observers: " + player.GetObservers());
+        var cards = drawPileHandler.availablePiles.DrawCardsFromHiddenDrawPile(2);
+        foreach (var c in cards)
+        {
+            player.AddCard(c);
+        }
     }
 
     public void SetState(GameState state)
@@ -670,6 +692,10 @@ public class GameController : SFController, IGameController, Observer
     public void SubjectDataChanged(object[] data)
     {
         Debug.Log("Map Data Changed");
+        if (devMode)
+        {
+            return;
+        }
         RedrawMapOnAllClients();
         OnLocalPlayerDataChanged();
     }

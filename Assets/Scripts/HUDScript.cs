@@ -80,9 +80,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         tradeOfferView.SetActive(false);
         CloseSelection();
         CreateBuildDropDowns();
-        
-
-        
+      
     }
     
 
@@ -90,6 +88,11 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
     void Update()
     {
         
+    }
+
+    public List<GameObject> GetSmallPlayerViews()
+    {
+        return smallPlayerViews;
     }
 
     public void SomeButtonPressed()
@@ -275,8 +278,6 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
 
         ObservePlayers(playersList);
 
-        //var mainPlayerIndex = playersList.FindIndex(player => player.name == mainPlayer.name);
-        //var indexesOfPlayersOtherThanMain = Helper.GetIndexesOfPlayersExceptPlayer(playersList, mainPlayerIndex);
         var playersOtherThanMain = playersList.Where(p => p.name != mainPlayer.name);
         SetMainPlayer(mainPlayer);
 
@@ -548,31 +549,6 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         {
             tradePanel.SetActive(true);
         }
-    }
-
-    public void AddOre()
-    {
-        
-    }
-
-    public void AddFood()
-    {
-        
-    }
-
-    public void AddGoods()
-    {
-        
-    }
-
-    public void AddFuel()
-    {
-        
-    }
-
-    public void AddCarbon()
-    {
-        
     }
 
     public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)
