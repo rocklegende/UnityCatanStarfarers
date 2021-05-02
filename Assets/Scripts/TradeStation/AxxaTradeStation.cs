@@ -1,12 +1,13 @@
 ﻿using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 [Serializable]
 public class AxxaTradeStation : TradeStation
 {
     public AxxaTradeStation()
         : base(
-            new AbstractFriendshipCard[] { new AxxaIncreaseFood(), new AxxaIncreaseCarbon(), new AxxaIncreaseFuel(), new AxxaIncreaseGoods(), new AxxaIncreaseOre() },
+            new List<AbstractFriendshipCard>() { new AxxaIncreaseFood(), new AxxaIncreaseCarbon(), new AxxaIncreaseFuel(), new AxxaIncreaseGoods(), new AxxaIncreaseOre() },
             "Axxa",
             new Tile_[] { new AxxaTradeStationTile(), new AxxaTradeStationTile(), new AxxaTradeStationTile() }
             )

@@ -84,7 +84,6 @@ public class ResourceCardStackRenderer : SFController
 
     public void SetHandLimit(Hand handLimit)
     {
-        Debug.Log("Setting hand limit");
         this._handLimit = handLimit;
     }
 

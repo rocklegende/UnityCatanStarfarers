@@ -12,7 +12,7 @@ public interface FriendShipCardSelectorDelegate
 public class FriendShipCardSelector : MonoBehaviour
 {
     private int activeIndex = 0;
-    private AbstractFriendshipCard[] friendshipCards;
+    private List<AbstractFriendshipCard> friendshipCards;
     private float distanceBetweenCards = 120.0f;
     public TradeStation tradeStation;
 
@@ -32,7 +32,7 @@ public class FriendShipCardSelector : MonoBehaviour
         
     }
 
-    public void SetCards(AbstractFriendshipCard[] cards)
+    void SetCards(List<AbstractFriendshipCard> cards)
     {
         friendshipCards = cards;
         if (actualCardObjects != null)
@@ -47,9 +47,10 @@ public class FriendShipCardSelector : MonoBehaviour
         SetCardActive(activeIndex);
     }
 
-    public void SetTradeStation(TradeStation ts)
+    public void DisplaySelectionForTradeStation(TradeStation ts)
     {
         tradeStation = ts;
+        SetCards(tradeStation.tradingCards);
     }
 
     // Update is called once per frame
@@ -79,7 +80,7 @@ public class FriendShipCardSelector : MonoBehaviour
     private void SetCardActive(int activeIndex)
     {
         var disabledIndexes = new List<int>();
-        for (int i = 0; i < friendshipCards.Length; i++)
+        for (int i = 0; i < friendshipCards.Count; i++)
         {
             if (i != activeIndex)
             {
@@ -100,7 +101,7 @@ public class FriendShipCardSelector : MonoBehaviour
         delegate_.didSelectFriendshipCard(tradeStation, friendshipCards[activeIndex]);
     }
 
-    public void ShiftCards(float x_translation)
+    void ShiftCards(float x_translation)
     {
         cardContainer.transform.position += new Vector3(x_translation, 0);
     }
@@ -116,7 +117,7 @@ public class FriendShipCardSelector : MonoBehaviour
 
     public void OnRightButtonPressed()
     {
-        if (activeIndex < friendshipCards.Length - 1)
+        if (activeIndex < friendshipCards.Count - 1)
         {
             SetActiveIndex(activeIndex + 1);
             ShiftCards(-distanceBetweenCards);

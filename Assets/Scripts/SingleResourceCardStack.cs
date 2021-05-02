@@ -61,6 +61,4 @@ public class SingleResourceCardStack : MonoBehaviour
     {
         label.text = text;
     }
-
-
 }

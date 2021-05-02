@@ -16,14 +16,14 @@ public abstract class DrawPileStack
         return cards.Count;
     }
 
-    public ResourceCard[] DrawCardsFromTop(int amount, bool shuffleBefore = false)
+    public List<ResourceCard> DrawCardsFromTop(int amount, bool shuffleBefore = false)
     {
         if (amount > CardsLeft())
         {
             throw new ArgumentException("Not enough cards left for that operation");
         }
 
-        var returnList = new List<ResourceCard>();
+        var poppedCards = new List<ResourceCard>();
         if (shuffleBefore)
         {
             cards.Shuffle();
@@ -31,9 +31,9 @@ public abstract class DrawPileStack
         for (int i = 0; i < amount; i++)
         {
             var card = cards.PopAt(0);
-            returnList.Add(card);
+            poppedCards.Add(card);
         }
-        return returnList.ToArray();
+        return poppedCards;
     }
 
     public List<ResourceCard> GetCards()
@@ -172,14 +172,14 @@ public class AvailablePiles : Subject
         return null;
     }
 
-    public ResourceCard[] DrawCardsFromHiddenDrawPile(int amount)
+    public List<ResourceCard> DrawCardsFromHiddenDrawPile(int amount)
     {
         var cards = hiddenDrawPile.DrawCardsFromTop(amount, true);
         Notify(null);
         return cards;
     }
 
-    public ResourceCard[] DrawCardsOfOpenDrawPile(int amount, Type resourceCardType)
+    public List<ResourceCard> DrawCardsOfOpenDrawPile(int amount, Type resourceCardType)
     {
         var stack = FindOpenResourceCardStack(resourceCardType);
         if (stack != null)

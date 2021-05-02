@@ -177,14 +177,7 @@ public class GameController : SFController, IGameController, Observer
 
     public void Init()
     {
-
         ObservePlayers(players);
-        Debug.Log("TH1");
-        foreach (var observer in mainPlayer.GetObservers())
-        {
-            Debug.Log(observer.GetType());
-        }
-
 
         HUD.GetComponent<HUDScript>().SetPlayers(players, mainPlayer);
         HUD.GetComponent<HUDScript>().isReceivingNotifications = true;
@@ -541,13 +534,9 @@ public class GameController : SFController, IGameController, Observer
 
     public void PayoutLowPointsBonus(Player player)
     {
-        Debug.Log("Paying low points bonus to player: " + player.name);
-        Debug.Log("Num observers: " + player.GetObservers());
         var cards = drawPileHandler.availablePiles.DrawCardsFromHiddenDrawPile(2);
-        foreach (var c in cards)
-        {
-            player.AddCard(c);
-        }
+        player.AddHand(Hand.FromResourceCards(cards));
+        
     }
 
     public void SetState(GameState state)
@@ -636,7 +625,6 @@ public class GameController : SFController, IGameController, Observer
             case SFNotification.spacepoint_selected:
                 var point = (SpacePoint)p_data[0];
                 var spacePointObject = (GameObject)p_data[1];
-                point.print();
                 state.OnSpacePointClicked(point, spacePointObject);
                 break;
 
@@ -691,7 +679,6 @@ public class GameController : SFController, IGameController, Observer
 
     public void SubjectDataChanged(object[] data)
     {
-        Debug.Log("Map Data Changed");
         if (devMode)
         {
             return;

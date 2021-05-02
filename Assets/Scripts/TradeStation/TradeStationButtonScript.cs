@@ -12,6 +12,6 @@ public class TradeStationButtonScript : MonoBehaviour
     }
 
     void OnClick() {
-        Logger.log("JOOO");
+
     }
 }

@@ -24,13 +24,13 @@ public class TradeStationMedal
 public abstract class TradeStation : TileGroup
 {
     public string name;
-    public AbstractFriendshipCard[] tradingCards;
+    public List<AbstractFriendshipCard> tradingCards;
     public List<Token> dockedSpaceships = new List<Token>();
     public TradeStationMedal medal;
     public bool isNotifying = true;
     int capacity = 5;
 
-    public TradeStation(AbstractFriendshipCard[] tradingCards, string name, Tile_[] tiles)
+    public TradeStation(List<AbstractFriendshipCard> tradingCards, string name, Tile_[] tiles)
         : base(tiles)
     {
         this.name = name;
@@ -68,7 +68,7 @@ public abstract class TradeStation : TileGroup
 
     public void RemoveCard(AbstractFriendshipCard card)
     {
-        tradingCards = tradingCards.Where(i => i != card).ToArray();
+        tradingCards.Remove(card);
     }
 
     public override void OnTokenSettled(Token token)
@@ -79,7 +79,7 @@ public abstract class TradeStation : TileGroup
         if (isNotifying)
         {
             var notifier = new SFElement();
-            notifier.app.Notify(SFNotification.open_friendship_card_selection, notifier, new object[] { this, tradingCards });
+            notifier.app.Notify(SFNotification.open_friendship_card_selection, notifier, new object[] { this });
         }
     }
 

@@ -4,20 +4,8 @@ using UnityEngine;
 
 public class TradeOfferResponseTableView : MonoBehaviour
 {
-
     public GameObject tableRowPrefab;
     public System.Action<Player> callback;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public void AddRow(Player player)
     {

@@ -279,5 +279,13 @@ namespace Tests
 
             Assert.True(differsAtLeastOnce);
         }
+
+        [Test]
+        public void HandFromCards()
+        {
+            var cards = new List<ResourceCard>() { new FuelCard(), new GoodsCard(), new FoodCard(), new CarbonCard(), new OreCard() };
+            var hand = Hand.FromResourceCards(cards);
+            Assert.True(hand.HasSameCardsAs(Hand.FromResources(1, 1, 1, 1, 1)));
+        }
     }
 }

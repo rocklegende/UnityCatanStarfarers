@@ -651,14 +651,12 @@ namespace com.onebuckgames.UnityStarFarers
 
         public void SubjectDataChanged(object[] data)
         {
-            Debug.Log("Token data changed");
             if (data != null)
             {
                 if (data.Length > 0)
                 {
                     if (data[0] is Token)
                     {
-                        Debug.Log("Token data changed 2");
                         OnTokenDataChanged((Token)data[0]);
                     }
                 }

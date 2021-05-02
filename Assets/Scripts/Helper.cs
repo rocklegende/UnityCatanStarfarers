@@ -272,8 +272,6 @@ public class Helper
         Transform[] childObjects = parent.GetComponentsInChildren<Transform>();
         foreach (Transform child in childObjects)
         {
-            Logger.log(child.gameObject.name);
-            Logger.log(child.transform.position.y);
             Renderer renderer = child.GetComponent<Renderer>();
             //if (renderer != null)
             //{

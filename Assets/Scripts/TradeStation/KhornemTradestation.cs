@@ -1,12 +1,13 @@
 ﻿using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 [Serializable]
 public class KhornemTradeStation : TradeStation
 {
     public KhornemTradeStation()
         : base(
-            new AbstractFriendshipCard[] {
+            new List<AbstractFriendshipCard>() {
                 new KhornemOneBoostOneCannon(),
                 new KhornemTwoBoost(),
                 new KhornemTwoCannon()

@@ -134,7 +134,7 @@ namespace Tests
         {
             foreach(SpacePoint spacePoint in spacePoints)
             {
-                spacePoint.print();
+                //spacePoint.print();
             }
         }
 

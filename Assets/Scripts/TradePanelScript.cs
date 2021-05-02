@@ -68,6 +68,7 @@ public class TradePanelScript : SFController
 
     /// <summary>
     /// Specify if the input hand is only valid for trade if an exact number of cards is reached inside the input hand.
+    /// This is useful for the encounter action where you can decide to trade in resources.
     /// </summary>
     public void SetExactInput(int amount)
     {
@@ -76,6 +77,7 @@ public class TradePanelScript : SFController
 
     /// <summary>
     /// Specify if the output hand is only valid for trade if an exact number of cards is reached inside the output hand.
+    /// This is useful for the encounter action where you can decide to trade in resources.
     /// </summary>
     public void SetExactOutput(int amount)
     {

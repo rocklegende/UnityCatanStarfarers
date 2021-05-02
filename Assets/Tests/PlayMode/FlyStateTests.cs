@@ -85,6 +85,7 @@ namespace Tests
             //simulate click on spacepoint which is directly at center of a trade station
             var firstTradeStation = gameController.mapModel.GetTradeStations()[0];
             var targetSpacePoint = firstTradeStation.GetCenter();
+            var prevNumCards = firstTradeStation.tradingCards.Count;
             ClickSpacePointButton(targetSpacePoint, mapScript);
 
             yield return new WaitForSeconds(WaitTimeBetweenSteps);
@@ -106,6 +107,7 @@ namespace Tests
 
             Assert.False(tokenModelFirstClickable.position.Equals(firstTradeStation.GetCenter()),
                 "Token model is still on the center of the tradestation! Token should move off that center after settling!");
+            Assert.AreEqual(prevNumCards - 1, firstTradeStation.tradingCards.Count, "Picking trading card didnt remove the card from the tradeStation cards");
 
             yield return null;
         }

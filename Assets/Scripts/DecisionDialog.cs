@@ -102,18 +102,6 @@ public class DecisionDialog : MonoBehaviour
         callback(option);
     }
 
-    void OpenResourcePicker()
-    {
-        //SetActive(true) resourcePicker
-        //resourcePicker.callback = OnHandChosen(hand)
-        //
-    }
-
-    void OnHandChosen(Hand hand)
-    {
-        //OnOptionChosen(hand.count)
-    }
-
     // Start is called before the first frame update
     void Start()
     {       

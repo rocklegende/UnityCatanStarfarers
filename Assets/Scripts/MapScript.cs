@@ -328,7 +328,6 @@ public class MapScript : SFController, Observer
         {
             if (highlightedTokens.Contains(token))
             {
-                Debug.Log("one of the highlightedTokens was selected, returning to normal map mode");
                 this.tokenSelectCallback(token);
                 RemoveAllHighlights();
                 mode = MapMode.NORMAL;

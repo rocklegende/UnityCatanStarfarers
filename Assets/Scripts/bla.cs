@@ -31,9 +31,6 @@ public class bla : MonoBehaviour
 
     private void OnMouseDown()
     {
-        point.print();
-
-        // Send notification that this button was clicked
         this.transform.parent.gameObject.GetComponent<Space.SpacePointButtonScript>().OnClick();
     }
 

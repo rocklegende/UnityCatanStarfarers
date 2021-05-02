@@ -73,7 +73,6 @@ public class ResourcePicker : MonoBehaviour
     public void OnSelectButtonClick()
     {
         var outputHand = resourceCardStack.GetComponent<ResourceCardStackRenderer>().GetDisplayedHand();
-        Debug.Log("picked num resources: " + outputHand.Count());
         gameObject.SetActive(false);
         callback(outputHand);
     }

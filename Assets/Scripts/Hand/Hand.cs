@@ -87,6 +87,16 @@ public class Hand : Subject
         
     }
 
+    public static Hand FromResourceCards(List<ResourceCard> _cards)
+    {
+        var hand = new Hand();
+        foreach(var card in _cards)
+        {
+            hand.AddCard(card);
+        }
+        return hand;
+    }
+
     public static Hand FromResources(int food = 0, int goods = 0, int fuel = 0, int ore = 0, int carbon = 0)
     {
         var hand = new Hand();

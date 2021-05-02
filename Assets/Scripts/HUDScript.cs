@@ -253,7 +253,6 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
     public void SetMainPlayer (Player player)
     {
         this.player = player;
-        Debug.Log("Playername: " + this.player.name);
         tradePanel.GetComponent<TradePanelScript>().Init(player);
         OnPlayerDataChanged();
     }
@@ -374,22 +373,10 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
 
     void DrawExtraActionButtons()
     {
-        if (player.CanBuyFameMedal())
-        {
-            DoFameMedalBuyButton.SetActive(true);
-        } else
-        {
-            DoFameMedalBuyButton.SetActive(false);
-        }
+        DoFameMedalBuyButton.SetActive(player.CanBuyFameMedal());
 
-        if (player.hasRichHelpPoorBonus && !player.richHelpPoorBonusMadeThisRound)
-        {
-            RichHelpPoorBonusButton.SetActive(true);
-        }
-        else
-        {
-            RichHelpPoorBonusButton.SetActive(false);
-        }
+        var richHelpPoorBonusIsPossible = player.hasRichHelpPoorBonus && !player.richHelpPoorBonusMadeThisRound;
+        RichHelpPoorBonusButton.SetActive(richHelpPoorBonusIsPossible);
     }
 
     void DrawFameMedalPieces()
@@ -507,10 +494,9 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         app.Notify(SFNotification.settle_button_clicked, this);
     }
 
-    public void ShowFriendshipCardSelection(TradeStation tradeStation, AbstractFriendshipCard[] cards)
+    public void ShowFriendshipCardSelection(TradeStation tradeStation)
     {
-        friendShipCardSelection.GetComponent<FriendShipCardSelector>().SetCards(cards);
-        friendShipCardSelection.GetComponent<FriendShipCardSelector>().SetTradeStation(tradeStation);
+        friendShipCardSelection.GetComponent<FriendShipCardSelector>().DisplaySelectionForTradeStation(tradeStation);
         friendShipCardSelection.SetActive(true);
     }
 
@@ -559,8 +545,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
             {
                 case SFNotification.open_friendship_card_selection:
                     var tradeStation = (TradeStation)p_data[0];
-                    var cards = (AbstractFriendshipCard[])p_data[1];
-                    ShowFriendshipCardSelection(tradeStation, cards);
+                    ShowFriendshipCardSelection(tradeStation);
                     break;
             }
         }
