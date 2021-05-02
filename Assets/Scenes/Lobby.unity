@@ -152,7 +152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxPlayersPerRoom: 2
   isDevelopment: 0
-  autoConnect: 0
+  autoConnect: 1
   loadGameSceneDirectlyWithoutLogin: 0
   controlPanel: {fileID: 1870835602}
   progressLabel: {fileID: 1695372529}

@@ -338,29 +338,69 @@ public class GameController : SFController, IGameController, Observer
         //    }
         //}
 
-        mainPlayer.AddHand(Hand.FromResources(5, 5, 5, 5, 5));
+        foreach(var player in players)
+        {
+            player.AddHand(Hand.FromResources(5, 5, 5, 5, 5));
+        }
+
 
         foreach(var observer in mainPlayer.GetObservers())
         {
             Debug.Log(observer.GetType());
         }
+
+
+
+
         
 
-     
+        if (players.Count == 2)
+        {
+            Debug.Log("Player 1 color: " + players[0].color.ConvertToString());
+            players[0].BuildTokenWithoutCost(
+                mapModel,
+                new ColonyBaseToken().GetType(),
+                new SpacePoint(5, 5, 1),
+                new SpacePortToken().GetType()
+            );
 
-        //mainPlayer.BuildTokenWithoutCost(
-        //    mapModel,
-        //    new ColonyBaseToken().GetType(),
-        //    new SpacePoint(5, 5, 1),
-        //    new SpacePortToken().GetType()
-        //);
+            players[0].BuildTokenWithoutCost(
+                mapModel,
+                new ColonyBaseToken().GetType(),
+                new SpacePoint(5, 5, 0),
+                new ShipToken().GetType()
+            );
 
-        //mainPlayer.BuildTokenWithoutCost(
-        //    mapModel,
-        //    new ColonyBaseToken().GetType(),
-        //    new SpacePoint(5, 5, 0),
-        //    new ShipToken().GetType()
-        //);
+            Debug.Log("Player 2 color: " + players[1].color.ConvertToString());
+            players[1].BuildTokenWithoutCost(
+                mapModel,
+                new ColonyBaseToken().GetType(),
+                new SpacePoint(3, 10, 0),
+                new SpacePortToken().GetType()
+            );
+
+            players[1].BuildTokenWithoutCost(
+                mapModel,
+                new ColonyBaseToken().GetType(),
+                new SpacePoint(4, 9, 1),
+                new ShipToken().GetType()
+            );
+        } else
+        {
+            mainPlayer.BuildTokenWithoutCost(
+            mapModel,
+            new ColonyBaseToken().GetType(),
+            new SpacePoint(5, 5, 1),
+            new SpacePortToken().GetType()
+        );
+
+            mainPlayer.BuildTokenWithoutCost(
+                mapModel,
+                new ColonyBaseToken().GetType(),
+                new SpacePoint(5, 5, 0),
+                new ShipToken().GetType()
+            );
+        }
     }
 
     Dictionary<Photon.Realtime.Player, Player> CreatePlayerMap(Dictionary<string, int> turnOrder)

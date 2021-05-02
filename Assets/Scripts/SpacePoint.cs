@@ -98,6 +98,8 @@ public class SpacePoint
         return this.coordinates.DistanceTo(pos.coordinates) * 2 + (MinMax[0].vertexNumber - MinMax[1].vertexNumber);
     }
 
+    public static SpacePoint Zero = new SpacePoint(0, 0, 0); 
+
     public SpacePoint(int q, int r, int vertexNumber)
     {
         this.coordinates = new HexCoordinates(q, r);

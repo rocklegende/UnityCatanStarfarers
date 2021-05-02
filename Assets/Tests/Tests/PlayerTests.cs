@@ -99,6 +99,7 @@ namespace Tests
         [Test]
         public void BuildSpacePortNegative()
         {
+            var map = new DefaultMapGenerator().GenerateRandomMap();
             var player = GetGenericPlayer();
             player.AddCard(new FuelCard());
 
@@ -106,7 +107,7 @@ namespace Tests
 
             try
             {
-                player.BuildToken(token);
+                player.BuildToken(map, token.GetType(), SpacePoint.Zero);
                 Assert.True(false);
             } catch (NotEnoughResourcesException e)
             {
@@ -143,6 +144,7 @@ namespace Tests
         [Test]
         public void BuildSpacePortPositive()
         {
+            var map = new DefaultMapGenerator().GenerateRandomMap();
             var player = GetGenericPlayer();
             player.AddCard(new FuelCard());
             player.AddCard(new CarbonCard());
@@ -155,7 +157,7 @@ namespace Tests
 
             try
             {
-                player.BuildToken(token);
+                player.BuildToken(map, token.GetType(), SpacePoint.Zero);
                 Assert.True(player.hand.NumberCardsOfType<FuelCard>() == 1);
                 Assert.True(player.hand.NumberCardsOfType<CarbonCard>() == 0);
                 Assert.True(true);
@@ -171,6 +173,7 @@ namespace Tests
         [Test]
         public void BuildTradeShipNegative()
         {
+            var map = new DefaultMapGenerator().GenerateRandomMap();
             var player = GetGenericPlayer();
             player.AddCard(new FuelCard());
 
@@ -178,7 +181,7 @@ namespace Tests
 
             try
             {
-                player.BuildToken(token);
+                player.BuildToken(map, token.GetType(), SpacePoint.Zero);
                 Assert.True(false);
             }
             catch (NotEnoughResourcesException e)
@@ -191,6 +194,7 @@ namespace Tests
         [Test]
         public void BuildTradeShipPositive()
         {
+            var map = new DefaultMapGenerator().GenerateRandomMap();
             var player = GetGenericPlayer();
             player.AddCard(new OreCard());
             player.AddCard(new FuelCard());
@@ -201,7 +205,7 @@ namespace Tests
 
             try
             {
-                player.BuildToken(token);
+                player.BuildToken(map, token.GetType(), SpacePoint.Zero);
                 Assert.True(player.hand.NumberCardsOfType<FuelCard>() == 0);
                 Assert.True(player.hand.NumberCardsOfType<GoodsCard>() == 0);
                 Assert.True(player.hand.NumberCardsOfType<OreCard>() == 0);
@@ -217,6 +221,7 @@ namespace Tests
         [Test]
         public void BuildColonyShipNegative()
         {
+            var map = new DefaultMapGenerator().GenerateRandomMap();
             var player = GetGenericPlayer();
             player.AddCard(new FuelCard());
 
@@ -224,7 +229,7 @@ namespace Tests
 
             try
             {
-                player.BuildToken(token);
+                player.BuildToken(map, token.GetType(), SpacePoint.Zero);
                 Assert.True(false);
             }
             catch (NotEnoughResourcesException e)
@@ -237,6 +242,7 @@ namespace Tests
         [Test]
         public void BuildColonyShipPositive()
         {
+            var map = new DefaultMapGenerator().GenerateRandomMap();
             var player = GetGenericPlayer();
             player.AddCard(new OreCard());
             player.AddCard(new FuelCard());
@@ -247,7 +253,7 @@ namespace Tests
 
             try
             {
-                player.BuildToken(token);
+                player.BuildToken(map, token.GetType(), SpacePoint.Zero);
                 Assert.True(player.hand.NumberCardsOfType<FuelCard>() == 0);
                 Assert.True(player.hand.NumberCardsOfType<GoodsCard>() == 0);
                 Assert.True(player.hand.NumberCardsOfType<OreCard>() == 0);
@@ -275,7 +281,7 @@ namespace Tests
 
             try
             {
-                var token = player.BuildToken2(mockMap, new ColonyBaseToken().GetType(), position);
+                var token = player.BuildToken(mockMap, new ColonyBaseToken().GetType(), position);
                 Assert.True(token.associatedMap == mockMap);
                 Assert.True(position.Equals(token.position));
             }
@@ -430,6 +436,17 @@ namespace Tests
 
             Assert.True(players[0].hand.HasSameCardsAs(Hand.FromResources(2, 2, 1)));
             Assert.True(players[1].hand.HasSameCardsAs(Hand.FromResources(4, 2, 3)));
+        }
+
+        [Test]
+        public void BuildingColonyCorrectlyAssignedColor()
+        {
+            var map = new DefaultMapGenerator().GenerateRandomMap();
+            var player = new TestHelper().CreateGenericPlayer();
+            player.AddHand(Hand.FromResources(2, 2, 2, 2, 2));
+            var buildedToken = player.BuildToken(map, new ColonyBaseToken().GetType(), new SpacePoint(0, 0, 0), new ShipToken().GetType());
+            Assert.True(buildedToken.GetColor().Equals(player.color));
+            Assert.True(buildedToken.attachedToken.GetColor().Equals(player.color));
         }
     }
 }

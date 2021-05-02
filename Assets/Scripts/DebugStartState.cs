@@ -84,14 +84,14 @@ public class ShipBuildingOneColonyShipAndOneSpacePort : DebugStartState
         CommonSetup();
         SetUpgradesForMainPlayer(5);
 
-        controller.mainPlayer.BuildToken2(
+        controller.mainPlayer.BuildToken(
             controller.mapModel,
             new ColonyBaseToken().GetType(),
             new SpacePoint(new HexCoordinates(5, 5), 1),
             new SpacePortToken().GetType()
         );
 
-        controller.mainPlayer.BuildToken2(
+        controller.mainPlayer.BuildToken(
             controller.mapModel,
             new ColonyBaseToken().GetType(),
             new SpacePoint(new HexCoordinates(5, 5), 0),
@@ -117,14 +117,14 @@ public class EncounterCardTestingState : DebugStartState
 
         CommonMapSetup();
 
-        controller.mainPlayer.BuildToken2(
+        controller.mainPlayer.BuildToken(
             controller.mapModel,
             new ColonyBaseToken().GetType(),
             new SpacePoint(new HexCoordinates(5, 5), 1),
             new SpacePortToken().GetType()
         );
 
-        controller.mainPlayer.BuildToken2(
+        controller.mainPlayer.BuildToken(
             controller.mapModel,
             new ColonyBaseToken().GetType(),
             new SpacePoint(new HexCoordinates(5, 5), 0),
@@ -151,14 +151,14 @@ public class EncounterCardTestingStateManual : DebugStartState
 
         CommonMapSetup();
 
-        controller.mainPlayer.BuildToken2(
+        controller.mainPlayer.BuildToken(
             controller.mapModel,
             new ColonyBaseToken().GetType(),
             new SpacePoint(new HexCoordinates(5, 5), 1),
             new SpacePortToken().GetType()
         );
 
-        controller.mainPlayer.BuildToken2(
+        controller.mainPlayer.BuildToken(
             controller.mapModel,
             new ColonyBaseToken().GetType(),
             new SpacePoint(new HexCoordinates(5, 5), 0),
@@ -230,20 +230,26 @@ public class OneTradeOneColonyShipAndOneSpacePort : DebugStartState
 
         CommonSetup();
 
-        Token spacePort = new ColonyBaseToken();
-        spacePort.attachedToken = new SpacePortToken();
-        spacePort.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 1));
-        controller.mainPlayer.BuildToken(spacePort);
+        controller.mainPlayer.BuildTokenWithoutCost(
+            controller.mapModel,
+            new ColonyBaseToken().GetType(),
+            new SpacePoint(new HexCoordinates(5, 5), 1),
+            new SpacePortToken().GetType()
+        );
 
-        Token colonyShip = new TradeBaseToken();
-        colonyShip.attachedToken = new ShipToken();
-        colonyShip.SetPosition(new SpacePoint(new HexCoordinates(5, 5), 0));
-        controller.mainPlayer.BuildToken(colonyShip);
+        controller.mainPlayer.BuildTokenWithoutCost(
+            controller.mapModel,
+            new ColonyBaseToken().GetType(),
+            new SpacePoint(new HexCoordinates(5, 5), 0),
+            new ShipToken().GetType()
+        );
 
-        Token colonyShip2 = new ColonyBaseToken();
-        colonyShip2.attachedToken = new ShipToken();
-        colonyShip2.SetPosition(new SpacePoint(new HexCoordinates(5, 5).W(), 0));
-        controller.mainPlayer.BuildToken(colonyShip2);
+        controller.mainPlayer.BuildTokenWithoutCost(
+            controller.mapModel,
+            new ColonyBaseToken().GetType(),
+            new SpacePoint(new HexCoordinates(5, 5).W(), 0),
+            new ShipToken().GetType()
+        );
 
 
         CommonMapSetup();

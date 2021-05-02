@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -143,7 +144,7 @@ namespace com.onebuckgames.UnityStarFarers
 
             if (autoConnect)
             {
-                Connect();
+                StartCoroutine("Wait1SecondsThenConnect");
             }
 
             if (isDevelopment && loadGameSceneDirectlyWithoutLogin)
@@ -152,6 +153,11 @@ namespace com.onebuckgames.UnityStarFarers
             }
         }
 
+        IEnumerator Wait1SecondsThenConnect()
+        {
+            yield return new WaitForSeconds(1);
+            Connect();
+        }
 
         #endregion
 

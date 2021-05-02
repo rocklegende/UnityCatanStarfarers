@@ -357,25 +357,7 @@ public class Player : SFModel, Observer, IComparable
         DataChanged();
     }
 
-    /// <summary>
-    /// DEPRECATED METHOD, PLEASE USE BuildToken2
-    /// </summary>
-    /// <param name="token"></param>
-    /// <param name="position"></param>
-    public void BuildToken(Token token, SpacePoint position = null)
-    {
-        // deprecated
-        var tokenFromStorage = tokenStorage.RetrieveTokenOfType(token.GetType());
-        hand.PayCost(tokenFromStorage.cost);
-        if (position != null)
-        {
-            tokenFromStorage.position = position;
-        }
-        tokenFromStorage.SetColor(color);
-        AddToken(tokenFromStorage);
-    }
-
-    public Token BuildToken2(Map map, Type baseType, SpacePoint position, Type attachedType = null, bool isFree = false)
+    public Token BuildToken(Map map, Type baseType, SpacePoint position, Type attachedType = null, bool isFree = false)
     {
         var baseTokenFromStorage = tokenStorage.RetrieveTokenOfType(baseType);
         var giftedToken = giftedTokens.Find(tok => tok.GetType() == baseType);
@@ -403,13 +385,15 @@ public class Player : SFModel, Observer, IComparable
         baseTokenFromStorage.SetColor(color);
         map.AddToken(baseTokenFromStorage);
         AddToken(baseTokenFromStorage);
+
+        Debug.Log(string.Format("Player {0} builds token with color {1}", name, baseTokenFromStorage.GetColor().ConvertToString()));
         return baseTokenFromStorage;
     }
 
     public Token BuildTokenWithoutCost(Map map, Type baseType, SpacePoint position, Type attachedType = null)
     {
         
-        return BuildToken2(map, baseType, position, attachedType, true);
+        return BuildToken(map, baseType, position, attachedType, true);
     }
 
     public void BuildUpgrade(Token token, bool isForFree = false)

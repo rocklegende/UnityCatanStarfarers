@@ -127,5 +127,18 @@ namespace Tests
             Assert.True(helper.HexCoordinateGroupsAreEqual(twoAway, expectedCoordinates));
             Assert.True(helper.HexCoordinateGroupsAreEqual(helper.getAllHexesDistanceAwayFromHex(origin, 0), new HexCoordinates[] { origin }));
         }
+
+        [Test]
+        public void SFColorTestConversionWorks()
+        {
+            var unityBlack = Color.black;
+            var sfColor = new SFColor(Color.black);
+            var convertedUnityBlack = sfColor.ToUnityColor();
+
+            Assert.True(convertedUnityBlack.r == unityBlack.r);
+            Assert.True(convertedUnityBlack.g == unityBlack.g);
+            Assert.True(convertedUnityBlack.b == unityBlack.b);
+            Assert.True(convertedUnityBlack.a == unityBlack.a);
+        }
     }
 }
