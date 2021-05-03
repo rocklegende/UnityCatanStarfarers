@@ -26,7 +26,7 @@ public class FightPanelScript : MonoBehaviour
 
     public void SetFightIsDoneCallback(Action<bool> callback)
     {
-        this.fightIsDoneCallback = callback;
+        fightIsDoneCallback = callback;
     }
 
     public void PlayFight(Player origin, Player opponent, FightCategory fightCategory)

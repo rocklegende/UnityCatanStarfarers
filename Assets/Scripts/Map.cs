@@ -591,7 +591,7 @@ namespace com.onebuckgames.UnityStarFarers
             return validPoints;
         }
 
-        public List<SpacePoint> GetSpacePointsFullfillingFilters(SpacePointFilter[] filters, Player[] players)
+        public List<SpacePoint> GetSpacePointsFullfillingFilters(List<SpacePointFilter> filters, Player[] players)
         {
             List<SpacePoint> points = getAllAvailableSpacePoints();
             foreach (var filter in filters)

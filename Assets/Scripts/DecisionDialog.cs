@@ -28,14 +28,13 @@ public class DialogOption
 
 public class DecisionDialog : MonoBehaviour
 {
-
     public Text textObject;
-    string text;
-    Action<DialogOption> callback;
-    Action doneCallback;
     public Button btnPrefab;
     public GameObject buttonHorizontalStack;
     public List<Button> currentButtons;
+
+    Action<DialogOption> callback;
+    Action doneCallback;
 
     public void SetText(string text)
     {
@@ -100,17 +99,5 @@ public class DecisionDialog : MonoBehaviour
     public void OnOptionChosen(DialogOption option)
     {
         callback(option);
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {       
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

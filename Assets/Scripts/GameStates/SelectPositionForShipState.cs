@@ -19,7 +19,7 @@ public class SelectPositionForShipState : GameState
         if (token is TradeBaseToken || token is ColonyBaseToken)
         {
             //TODO: let Token decide which points to show
-            var filters = new SpacePointFilter[] {
+            var filters = new List<SpacePointFilter> {
                 new IsValidSpacePointFilter(),
                 new IsSpacePointFreeFilter(),
                 new IsNeighborOwnSpacePortFilter()
@@ -27,7 +27,7 @@ public class SelectPositionForShipState : GameState
             controller.Map.GetComponent<MapScript>().ShowSpacePointsFulfillingFilters(filters, controller.players);
         } else if (token is SpacePortToken)
         {
-            var tokenFilters = new TokenFilter[] {
+            var tokenFilters = new List<TokenFilter> {
                 new IsSettledColonyFilter()
             };
             controller.Map.GetComponent<MapScript>().HighlightTokensFullfillingFilters(tokenFilters);
@@ -62,22 +62,22 @@ public class SelectPositionForShipState : GameState
 
     public override void OnBuildShipOptionClicked(Token token)
     {
-        throw new System.NotImplementedException();
+        //throw new System.NotImplementedException();
     }
 
     public override void OnBackButtonClicked()
     {
-        throw new System.NotImplementedException();
+        //throw new System.NotImplementedException();
     }
 
     public override void OnBuildUpgradeOptionClicked(Token token)
     {
-        throw new System.NotImplementedException();
+        //throw new System.NotImplementedException();
     }
 
     public override void OnSettleButtonPressed()
     {
-        throw new System.NotImplementedException();
+        //throw new System.NotImplementedException();
     }
 
     public override void OnTokenCanSettle(bool canSettle, Token token)
@@ -87,6 +87,6 @@ public class SelectPositionForShipState : GameState
 
     public override void Setup()
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 }

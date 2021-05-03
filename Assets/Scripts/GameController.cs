@@ -88,14 +88,11 @@ public class GameController : SFController, IGameController, Observer
     public DebugStartState debugStartState;
     public Photon.Realtime.Player recentPhotonResponsePlayer;
 
-
-    private bool devMode = false;
+    /// <summary>
+    /// Run GameController in testMode
+    /// </summary>
+    private bool testMode = false;
     private System.Action<RemoteActionCallbackData> dispatcherSomeoneFullfilledActionCallback;
-
-    void Awake()
-    {
-        PhotonNetwork.OfflineMode = GameConstants.isDevelopment;
-    }
 
     void Start()
     {
@@ -163,7 +160,7 @@ public class GameController : SFController, IGameController, Observer
     public void DevelopmentGameStartInformationGenerated(Map map, List<Player> players, Player mainPlayer)
     {
         PhotonNetwork.OfflineMode = true;
-        devMode = true;
+        testMode = true;
 
         mapModel = map;
         mapModel.RegisterObserver(this);
@@ -342,17 +339,6 @@ public class GameController : SFController, IGameController, Observer
         {
             player.AddHand(Hand.FromResources(5, 5, 5, 5, 5));
         }
-
-
-        foreach(var observer in mainPlayer.GetObservers())
-        {
-            Debug.Log(observer.GetType());
-        }
-
-
-
-
-        
 
         if (players.Count == 2)
         {
@@ -719,7 +705,7 @@ public class GameController : SFController, IGameController, Observer
 
     public void SubjectDataChanged(object[] data)
     {
-        if (devMode)
+        if (testMode)
         {
             return;
         }

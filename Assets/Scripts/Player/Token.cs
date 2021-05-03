@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using System.Collections.Generic;
 using com.onebuckgames.UnityStarFarers;
 
 public interface Settable
@@ -60,9 +61,9 @@ public abstract class Token : SFModel
         this.cost = cost;
     }
 
-    public SpacePointFilter[] GetFlightEndPointsFilters()
+    public List<SpacePointFilter> GetFlightEndPointsFilters()
     {
-        var filters = new SpacePointFilter[] {
+        var filters = new List<SpacePointFilter> {
             new IsValidSpacePointFilter(),
             new IsSpacePointFreeFilter(),
             new IsStepsAwayFilter(position, GetStepsLeft()),

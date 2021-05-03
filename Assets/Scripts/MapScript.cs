@@ -300,13 +300,13 @@ public class MapScript : SFController, Observer
 
     }
 
-    public void HighlightTokensFullfillingFilters(TokenFilter[] filters)
+    public void HighlightTokensFullfillingFilters(List<TokenFilter> filters)
     {
         List<Token> tokens = GetTokensFullfillingFilters(filters);
         HighlightTokens(tokens);
     }
 
-    public List<Token> GetTokensFullfillingFilters(TokenFilter[] filters)
+    public List<Token> GetTokensFullfillingFilters(List<TokenFilter> filters)
     {
         var tokens = Helper.CreateCopyOfList(map.tokensOnMap);
         foreach (var filter in filters)
@@ -352,7 +352,7 @@ public class MapScript : SFController, Observer
         this.didSelectSpacePointCallback = didSelectSpacePoint;
     }
 
-    public void ShowSpacePointsFulfillingFilters(SpacePointFilter[] filters, List<Player> players)
+    public void ShowSpacePointsFulfillingFilters(List<SpacePointFilter> filters, List<Player> players)
     {
         List<SpacePoint> points = map.GetSpacePointsFullfillingFilters(filters, players.ToArray());
         CreateButtonsAtSpacePoints(points);

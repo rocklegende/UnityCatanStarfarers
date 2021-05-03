@@ -105,7 +105,6 @@ public abstract class Subject {
 
     protected void Notify(object[] data)
     {
-
         foreach (var observer in Helper.CreateCopyOfList(observers))
         {
             observer.SubjectDataChanged(data);

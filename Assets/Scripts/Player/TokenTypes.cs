@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using com.onebuckgames.UnityStarFarers;
 
 [Serializable]
@@ -44,10 +45,10 @@ public class SpacePortToken : Token, BuildableToken
             return false;
         }
 
-        var filters = new SpacePointFilter[] {
-                new IsValidSpacePointFilter(),
-                new HasSettledColonySpacePointFilter()
-            };
+        var filters = new List<SpacePointFilter> {
+            new IsValidSpacePointFilter(),
+            new HasSettledColonySpacePointFilter()
+        };
 
         if (map.IsNotNull())
         {
@@ -82,7 +83,7 @@ public class TradeAndColonyBuildCondition : BuildCondition
             return false;
         }
 
-        var filters = new SpacePointFilter[] {
+        var filters = new List<SpacePointFilter> {
                 new IsValidSpacePointFilter(),
                 new IsSpacePointFreeFilter(),
                 new IsNeighborOwnSpacePortFilter()

@@ -187,8 +187,6 @@ public class Player : SFModel, Observer, IComparable
 
     void DataChanged()
     {
-        //notifier.app.Notify(SFNotification.player_data_changed, notifier, new object[] { this });
-
         Notify(new object[] { this });
     }
 
@@ -366,16 +364,19 @@ public class Player : SFModel, Observer, IComparable
         if (isGifted)
         {
             giftedTokens.Remove(giftedToken);
+        } else
+        {
+            if (!isFree)
+            {
+                hand.PayCost(baseTokenFromStorage.cost);
+            }
         }
 
-        if (!isFree && !isGifted)
-        {
-            hand.PayCost(baseTokenFromStorage.cost);
-        }
         if (position != null)
         {
             baseTokenFromStorage.position = position;
         }
+
         if (attachedType != null)
         {
             var attachedTokenFromStorage = tokenStorage.RetrieveTokenOfType(attachedType);
@@ -386,7 +387,6 @@ public class Player : SFModel, Observer, IComparable
         map.AddToken(baseTokenFromStorage);
         AddToken(baseTokenFromStorage);
 
-        Debug.Log(string.Format("Player {0} builds token with color {1}", name, baseTokenFromStorage.GetColor().ConvertToString()));
         return baseTokenFromStorage;
     }
 

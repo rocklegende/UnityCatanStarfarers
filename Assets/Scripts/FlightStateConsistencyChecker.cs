@@ -62,13 +62,9 @@ public class FlightStateConsistencyChecker
             {
                 if (token.HasShipTokenOnTop())
                 {
-                    // alle tradestations durchgehen
-                    // map.getAllTradeStations()
-                    // jede tradestation durchgehen und gucken ob token.position == center ist
-                    // wenn ja, dann liegt hier ein Fehler vor
                     var allTradeStations = map.GetTradeStations();
-                    var found = allTradeStations.Find(ts => ts.GetSettlePoints().Contains(token.position));
-                    if (found != null)
+                    var tradeStationWithTokenInCenter = allTradeStations.Find(ts => ts.GetSettlePoints().Contains(token.position));
+                    if (tradeStationWithTokenInCenter != null)
                     {
                         errors.Add(new UnsettledTokenOnTradePointError(player, token));
                     }
