@@ -57,6 +57,12 @@ public class IsValidSpacePointFilter : SpacePointFilter
 
 public class IsNeighborOwnSpacePortFilter : SpacePointFilter
 {
+    Player mainPlayer;
+    public IsNeighborOwnSpacePortFilter(Player mainPlayer)
+    {
+        this.mainPlayer = mainPlayer;
+    }
+
     public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
     {
         SpacePoint[] neighborPoints = map.GetNeighborsOfSpacePoint(point); //all neighbors
@@ -66,7 +72,7 @@ public class IsNeighborOwnSpacePortFilter : SpacePointFilter
             {
                 if (token.position.Equals(neighbor))
                 {
-                    if (token.attachedToken is SpacePortToken)
+                    if (token.attachedToken is SpacePortToken && token.owner == mainPlayer)
                     {
                         return true;
                     }

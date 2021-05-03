@@ -385,6 +385,7 @@ public class MapScript : SFController, Observer
     public void SubjectDataChanged(object[] data)
     {
         //map data changed
+        Debug.Log("MapScript reacting to map data change");
         RedrawMap();
     }
 }

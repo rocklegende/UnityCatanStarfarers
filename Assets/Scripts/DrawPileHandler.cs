@@ -80,6 +80,11 @@ public interface Observer {
 public abstract class Subject {
 
     [NonSerialized]
+    protected System.Timers.Timer updateTimer;
+
+    protected object[] currentData;
+
+    [NonSerialized]
     protected List<Observer> observers = new List<Observer>();
 
     [OnDeserialized]
@@ -103,12 +108,49 @@ public abstract class Subject {
         observers.Remove(observer);
     }
 
+    void SetupTimer(int timeout)
+    {
+        updateTimer = new System.Timers.Timer();
+        updateTimer.Elapsed += new System.Timers.ElapsedEventHandler(NotifyForReal);
+        updateTimer.Interval = timeout;
+        updateTimer.AutoReset = false;
+        updateTimer.Enabled = true;
+    }
+
+    protected void NotifyForReal(System.Object source, System.Timers.ElapsedEventArgs e)
+    {
+        Debug.Log(GetType());
+        Debug.Log("notifying for real");
+        Debug.Log("num observers" + observers.Count);
+        //if (observers.Count == 2)
+        //{
+        //    Debug.Log(observers[0].GetType() + ", " + observers[1].GetType() );
+        //    observers[0].SubjectDataChanged(currentData);
+        //    observers[1].SubjectDataChanged(currentData);
+        //}
+
+        for (int i = 0; i < observers.Count; i++)
+        {
+            Debug.Log(observers[i].GetType());
+            observers[i].SubjectDataChanged(currentData);
+        }
+    }
+
     protected void Notify(object[] data)
     {
         foreach (var observer in Helper.CreateCopyOfList(observers))
         {
             observer.SubjectDataChanged(data);
         }
+
+        //currentData = data;
+        //Debug.Log("setting up new timer");
+        //if (updateTimer != null)
+        //{
+        //    updateTimer.Stop();
+        //    updateTimer = null;
+        //}
+        //SetupTimer(500);
     }
 
 } 

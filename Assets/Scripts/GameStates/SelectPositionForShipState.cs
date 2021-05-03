@@ -22,7 +22,7 @@ public class SelectPositionForShipState : GameState
             var filters = new List<SpacePointFilter> {
                 new IsValidSpacePointFilter(),
                 new IsSpacePointFreeFilter(),
-                new IsNeighborOwnSpacePortFilter()
+                new IsNeighborOwnSpacePortFilter(controller.mainPlayer)
             };
             controller.Map.GetComponent<MapScript>().ShowSpacePointsFulfillingFilters(filters, controller.players);
         } else if (token is SpacePortToken)

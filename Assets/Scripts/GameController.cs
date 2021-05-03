@@ -93,6 +93,7 @@ public class GameController : SFController, IGameController, Observer
     /// </summary>
     private bool testMode = false;
     private System.Action<RemoteActionCallbackData> dispatcherSomeoneFullfilledActionCallback;
+    private System.Timers.Timer updateTimer;
 
     void Start()
     {
@@ -457,55 +458,7 @@ public class GameController : SFController, IGameController, Observer
 
     
 
-    [PunRPC]
-    void PlayerInfoChangedOnRemoteClient(byte[] newPlayerDataAsBytes)
-    {
-        var playerData = (List<Player>)SFFormatter.Deserialize(newPlayerDataAsBytes);
-
-        Debug.Log("Remote client changed player data!");
-        foreach (var player in playerData)
-        {
-            Debug.Log(string.Format("name: {0}, cards: {1}", player.name, player.hand.Count()));
-        }
-
-        UpdatePlayers(playerData);
-    }
-
-    void OnLocalPlayerDataChanged()
-    {
-        Debug.Log("Local player data changed!");
-        foreach (var player in players)
-        {
-            Debug.Log(string.Format("name: {0}, cards: {1}", player.name, player.hand.Count()));
-        }
-
-        UpdatePlayers(players);
-        PhotonView photonView = PhotonView.Get(this);
-        photonView.RPC("PlayerInfoChangedOnRemoteClient", RpcTarget.Others, SFFormatter.Serialize(players));
-    }
-
-    void UpdatePlayers(List<Player> newPlayerData)
-    {
-        
-        var newDict = new Dictionary<Photon.Realtime.Player, Player>();
-        foreach (var newData in newPlayerData)
-        {
-            foreach (var key in networkPlayersOwnPlayersMap.Keys.ToList())
-            {
-                if (key.NickName == newData.name)
-                {
-                    newDict[key] = newData;
-                }
-            }
-        }
-        networkPlayersOwnPlayersMap = newDict;
-        players = GetAllPlayersFromDict();
-        mainPlayer = GetMainPlayerFromDict();
-
-        //we lose the observers by serializing the players, therefore we need to observe them again after the update
-        ObservePlayers(newPlayerData);
-        HUD.GetComponent<HUDScript>().UpdatePlayers(players, mainPlayer);
-    }
+    
 
     public void SetUpDebugState(DebugStartState state)
     {
@@ -640,6 +593,60 @@ public class GameController : SFController, IGameController, Observer
         mapScript.RedrawMap();
     }
 
+    [PunRPC]
+    void PlayerInfoChangedOnRemoteClient(byte[] newPlayerDataAsBytes)
+    {
+
+        var playerData = (List<Player>)SFFormatter.Deserialize(newPlayerDataAsBytes);
+
+        Debug.Log("Remote client changed player data!");
+        foreach (var player in playerData)
+        {
+            Debug.Log(string.Format("name: {0}, cards: {1}", player.name, player.hand.Count()));
+        }
+
+        UpdatePlayers(playerData);
+    }
+
+    void OnLocalPlayerDataChanged()
+    {
+        Debug.Log("Local player data changed!");
+        foreach (var player in players)
+        {
+            Debug.Log(string.Format("name: {0}, cards: {1}", player.name, player.hand.Count()));
+        }
+
+        UpdatePlayers(players);
+
+        PhotonView photonView = PhotonView.Get(this);
+        photonView.RPC("PlayerInfoChangedOnRemoteClient", RpcTarget.Others, SFFormatter.Serialize(players));
+        
+            
+    }
+
+    void UpdatePlayers(List<Player> newPlayerData)
+    {
+
+        var newDict = new Dictionary<Photon.Realtime.Player, Player>();
+        foreach (var newData in newPlayerData)
+        {
+            foreach (var key in networkPlayersOwnPlayersMap.Keys.ToList())
+            {
+                if (key.NickName == newData.name)
+                {
+                    newDict[key] = newData;
+                }
+            }
+        }
+        networkPlayersOwnPlayersMap = newDict;
+        players = GetAllPlayersFromDict();
+        mainPlayer = GetMainPlayerFromDict();
+
+        //we lose the observers by serializing the players, therefore we need to observe them again after the update
+        ObservePlayers(newPlayerData);
+        HUD.GetComponent<HUDScript>().UpdatePlayers(players, mainPlayer);
+    }
+
     public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)
     {
         switch (p_event_path)
@@ -703,12 +710,32 @@ public class GameController : SFController, IGameController, Observer
         return HUD.GetComponent<HUDScript>();
     }
 
+    
+
     public void SubjectDataChanged(object[] data)
     {
         if (testMode)
         {
             return;
         }
+        // if we receive multiple updates in a short time (100ms), only react on the last one
+        // TODO: probably better to do this inside the subject, so we have the functionality for all the observable stuff
+        Debug.Log("Map data changed");
+        try
+        {
+            StopCoroutine("MakeUpdate");
+            Debug.Log("Stopped Make Update coroutine");
+        } catch
+        {
+            Debug.Log("Couldnt stop coroutine");
+        }
+        StartCoroutine("MakeUpdate");
+    }
+
+    public IEnumerator MakeUpdate()
+    {
+        yield return new WaitForSeconds(0.5F);
+        Debug.Log("Updateing GameController!");
         RedrawMapOnAllClients();
         OnLocalPlayerDataChanged();
     }

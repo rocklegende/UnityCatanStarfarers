@@ -86,7 +86,7 @@ public class TradeAndColonyBuildCondition : BuildCondition
         var filters = new List<SpacePointFilter> {
                 new IsValidSpacePointFilter(),
                 new IsSpacePointFreeFilter(),
-                new IsNeighborOwnSpacePortFilter()
+                new IsNeighborOwnSpacePortFilter(player)
             };
 
         if (map.IsNotNull())
