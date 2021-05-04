@@ -44,7 +44,12 @@ public class CastShipDiceState : GameState
 
     public override void OnNextButtonClicked()
     {
-        controller.SetState(new FlyShipsState(controller));
+        Debug.Log("Clicked next button in throw ship dice state, not doing anything");
+        if (GameConstants.isDevelopment)
+        {
+            hudScript.CloseShipDiceThrowPanel();
+            controller.SetState(new FlyShipsState(controller));
+        }
     }
 
     public override void OnSettleButtonPressed()

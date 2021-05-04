@@ -83,14 +83,19 @@ public class IsNeighborOwnSpacePortFilter : SpacePointFilter
     }
 }
 
-public class HasSettledColonySpacePointFilter : SpacePointFilter
+public class IsOwnSettledColonySpacePointFilter : SpacePointFilter
 {
-    //TODO: we look at the token of every player here! we only want the own player
+    Player mainPlayer;
+    public IsOwnSettledColonySpacePointFilter(Player mainPlayer)
+    {
+        this.mainPlayer = mainPlayer;
+    }
+
     public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
     {
         foreach (Token token in GetAllTokenOfPlayers(players))
         {
-            if (token.position.Equals(point) && token is ColonyBaseToken && token.attachedToken.IsNull())
+            if (token.position.Equals(point) && token is ColonyBaseToken && token.attachedToken.IsNull() && token.owner == mainPlayer)
             {
                 return true;
             }

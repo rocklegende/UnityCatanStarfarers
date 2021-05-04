@@ -37,10 +37,16 @@ public class FlyShipsState : GameState
         var errors = flightStateChecker.Check(controller.mapModel, controller.players);
     }
 
-    public override void OnNextButtonClicked()
+    void SwitchToNextState()
     {
         controller.PassTurnToNextPlayer();
         controller.SetState(new CastNormalDiceState(controller));
+        mapScript.CloseTokenSelection();
+    }
+
+    public override void OnNextButtonClicked()
+    {
+        SwitchToNextState();
     }
 
     public override void OnSpacePointClicked(SpacePoint point, GameObject spacePointObject)

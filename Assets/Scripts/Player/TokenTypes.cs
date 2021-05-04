@@ -5,8 +5,10 @@ using com.onebuckgames.UnityStarFarers;
 [Serializable]
 public class SpacePortToken : Token, BuildableToken
 {
+    BuildCondition buildCondition;
     public SpacePortToken() : base("spaceport_token", false, new Cost(new Resource[] { new CarbonResource(), new CarbonResource(), new CarbonResource(), new FoodResource(), new FoodResource() }))
     {
+        buildCondition = new SpacePortBuildCondition();
     }
 
     protected override void OnSettle()
@@ -40,25 +42,7 @@ public class SpacePortToken : Token, BuildableToken
 
     public bool CanBeBuildByPlayer(Player player, Map map, Player[] players)
     {
-        if (!PlayerHasTokenInStorageAndCanPay(player))
-        {
-            return false;
-        }
-
-        var filters = new List<SpacePointFilter> {
-            new IsValidSpacePointFilter(),
-            new HasSettledColonySpacePointFilter()
-        };
-
-        if (map.IsNotNull())
-        {
-            if (map.GetSpacePointsFullfillingFilters(filters, players).Count == 0)
-            {
-                return false;
-            }
-        }
-
-        return true;
+        return buildCondition.TokenCanBeBuildByPlayer(this, player, map, players);
     }
 }
 
@@ -100,6 +84,34 @@ public class TradeAndColonyBuildCondition : BuildCondition
         return true;
     }
 }
+
+[Serializable]
+public class SpacePortBuildCondition : BuildCondition
+{
+    public override bool TokenCanBeBuildByPlayer(Token token, Player player, Map map, Player[] players)
+    {
+        if (!token.PlayerHasTokenInStorageAndCanPay(player))
+        {
+            return false;
+        }
+
+        var filters = new List<SpacePointFilter> {
+            new IsValidSpacePointFilter(),
+            new IsOwnSettledColonySpacePointFilter(player)
+        };
+
+        if (map.IsNotNull())
+        {
+            if (map.GetSpacePointsFullfillingFilters(filters, players).Count == 0)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+
 
 [Serializable]
 public class ColonyBaseToken : Token, Settable, BuildableToken

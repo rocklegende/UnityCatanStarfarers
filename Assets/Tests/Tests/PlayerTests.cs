@@ -97,26 +97,6 @@ namespace Tests
         }
 
         [Test]
-        public void BuildSpacePortNegative()
-        {
-            var map = new DefaultMapGenerator().GenerateRandomMap();
-            var player = GetGenericPlayer();
-            player.AddCard(new FuelCard());
-
-            var token = new SpacePortToken();
-
-            try
-            {
-                player.BuildToken(map, token.GetType(), SpacePoint.Zero);
-                Assert.True(false);
-            } catch (NotEnoughResourcesException e)
-            {
-                Assert.True(true);
-            }
-
-        }
-
-        [Test]
         public void TestFlyableTokens()
         {
             var player = GetGenericPlayer();
@@ -142,7 +122,27 @@ namespace Tests
         }
 
         [Test]
-        public void BuildSpacePortPositive()
+        public void BuildSpacePortNegativeNotEnoughResources()
+        {
+            var map = new DefaultMapGenerator().GenerateRandomMap();
+            var player = GetGenericPlayer();
+            player.AddCard(new FuelCard());
+
+            var token = new SpacePortToken();
+
+            try
+            {
+                player.BuildToken(map, token.GetType(), SpacePoint.Zero);
+                Assert.True(false);
+            } catch (NotEnoughResourcesException e)
+            {
+                Assert.True(true);
+            }
+
+        }
+
+        [Test]
+        public void BuildSpacePortPositiveEnoughResources()
         {
             var map = new DefaultMapGenerator().GenerateRandomMap();
             var player = GetGenericPlayer();

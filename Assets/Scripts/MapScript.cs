@@ -255,6 +255,12 @@ public class MapScript : SFController, Observer
         
     }
 
+    public void CloseTokenSelection()
+    {
+        mode = MapMode.NORMAL;
+        RemoveAllHighlights();
+    }
+
     public void RemoveAllHighlights()
     {
         highlightedTokens = new List<Token>();

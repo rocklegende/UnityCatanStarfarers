@@ -617,5 +617,70 @@ namespace Tests
             Assert.False(object.ReferenceEquals(original, final));
         }
 
+        [Test]
+        public void SpacePortCannotBeBuildOnOtherSettledColonies()
+        {
+            var position = new SpacePoint(8, 6, 1);
+            Map map = new DefaultMapGenerator().GenerateRandomMap();
+            var players = TestHelper.CreateGenericPlayers3();
+            players[1].BuildTokenWithoutCost(
+                map,
+                new ColonyBaseToken().GetType(),
+                position
+            );
+
+            var pointsOfFirstPlayer = map.GetSpacePointsFullfillingFilters(
+                new List<SpacePointFilter>()
+                {
+                    new IsOwnSettledColonySpacePointFilter(players[0])
+                },
+                players.ToArray()
+            );
+
+            var pointsOfSecondPlayer = map.GetSpacePointsFullfillingFilters(
+                new List<SpacePointFilter>()
+                {
+                    new IsOwnSettledColonySpacePointFilter(players[1])
+                },
+                players.ToArray()
+            );
+
+            Assert.AreEqual(0, pointsOfFirstPlayer.Count);
+            Assert.AreEqual(1, pointsOfSecondPlayer.Count);
+        }
+
+        [Test]
+        public void ShipCannotBeBuildNextToOtherSpacePorts()
+        {
+            var position = new SpacePoint(8, 6, 1);
+            Map map = new DefaultMapGenerator().GenerateRandomMap();
+            var players = TestHelper.CreateGenericPlayers3();
+            players[1].BuildTokenWithoutCost(
+                map,
+                new ColonyBaseToken().GetType(),
+                position,
+                new SpacePortToken().GetType()
+            );
+
+            var pointsOfFirstPlayer = map.GetSpacePointsFullfillingFilters(
+                new List<SpacePointFilter>()
+                {
+                    new IsNeighborOwnSpacePortFilter(players[0])
+                },
+                players.ToArray()
+            );
+
+            var pointsOfSecondPlayer = map.GetSpacePointsFullfillingFilters(
+                new List<SpacePointFilter>()
+                {
+                    new IsNeighborOwnSpacePortFilter(players[1])
+                },
+                players.ToArray()
+            );
+
+            Assert.AreEqual(0, pointsOfFirstPlayer.Count);
+            Assert.AreEqual(3, pointsOfSecondPlayer.Count);
+        }
+
     }
 }
