@@ -31,9 +31,13 @@ namespace Tests
         }
 
         [Test]
-        public void TestIfEqualsWorks()
+        public void TestIfDictionaryLookupWorks()
         {
-
+            var dict = new Dictionary<SpacePoint, int>();
+            var spacePoint = new SpacePoint(1, 1, 1);
+            dict.Add(spacePoint, 1);
+            Assert.True(dict.ContainsKey(spacePoint));
+            Assert.True(dict[spacePoint] == 1);
         }
 
     }

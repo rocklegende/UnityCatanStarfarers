@@ -14,13 +14,15 @@ public class CastShipDiceState : GameState
         Debug.Log("Total ship dice value is: " + shipDiceThrow.GetRawValue() + "trigger encounter card" + shipDiceThrow.TriggersEncounterCard());
 
         controller.mainPlayer.AddRangeToFlyableTokens(shipDiceThrow.GetFlyValue());
-        if (shipDiceThrow.TriggersEncounterCard())
-        {
-            controller.SetState(new EncounterCardState(controller));
-        } else
-        {
-            controller.SetState(new FlyShipsState(controller));
-        }
+        //if (shipDiceThrow.TriggersEncounterCard())
+        //{
+        //    controller.SetState(new EncounterCardState(controller));
+        //} else
+        //{
+        //    controller.SetState(new FlyShipsState(controller));
+        //}
+        //Debug
+        controller.SetState(new FlyShipsState(controller));
 
         hudScript.CloseShipDiceThrowPanel();
     }

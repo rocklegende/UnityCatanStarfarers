@@ -8,7 +8,7 @@ public class BuildDropDown : SFController
 {
 
     List<BuildDropDownOption> options;
-    GameObject[] buttons;
+    List<Button> buttons;
     public GameObject dropDownBtnPrefab;
     public bool isOpen = false;
     public GameObject dropDown;
@@ -23,6 +23,15 @@ public class BuildDropDown : SFController
     {
         options = opts;
         DrawOptions();
+    }
+
+    public void SelectOptionAtIndex(int index)
+    {
+        if (index < 0 || index >= options.Count)
+        {
+            throw new ArgumentException("index not valid");
+        }
+        buttons[index].onClick.Invoke();
     }
 
     public List<BuildDropDownOption> GetOptions()
@@ -66,22 +75,22 @@ public class BuildDropDown : SFController
         float verticalOffset = 60.0f;
         Vector3 position = new Vector3(200, 200, 0);
 
-        List<GameObject> list = new List<GameObject>();
+        List<Button> list = new List<Button>();
 
-        foreach(BuildDropDownOption option in options)
+        foreach (BuildDropDownOption option in options)
         {
             GameObject btn = DrawOption(option, position);
             position += new Vector3(0, verticalOffset, 0);
-            list.Add(btn);
+            list.Add(btn.GetComponent<Button>());
         }
 
-        buttons = list.ToArray();
+        buttons = list;
     }
 
     public void SetOptionInteractable(BuildDropDownOption option, bool isInteractable)
     {
         int index = options.FindIndex(opt => opt.imageName == option.imageName); //TODO: finding based on image name looks weird and could easily not work if changes are made
-        this.buttons[index].GetComponent<Button>().interactable = isInteractable;
+        this.buttons[index].interactable = isInteractable;
     }
 
     

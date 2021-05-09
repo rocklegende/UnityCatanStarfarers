@@ -28,17 +28,17 @@ namespace Tests
         [Test]
         public void TestSpacePointArrayContainsPointPositive()
         {
-            SpacePoint[] spArray = new SpacePoint[] { new SpacePoint(new HexCoordinates(0, 1), 1) };
+            List<SpacePoint> spacePoints = new List<SpacePoint> { new SpacePoint(new HexCoordinates(0, 1), 1) };
             var searchedPoint = new SpacePoint(new HexCoordinates(0, 1), 1);
-            Assert.True(helper.SpacePointArrayContainsPoint(spArray, searchedPoint));
+            Assert.True(spacePoints.Contains(searchedPoint));
         }
 
         [Test]
         public void TestSpacePointArrayContainsPointNegative()
         {
-            SpacePoint[] spArray = new SpacePoint[] { new SpacePoint(new HexCoordinates(0, 1), 1) };
+            List<SpacePoint> spacePoints = new List<SpacePoint> { new SpacePoint(new HexCoordinates(0, 1), 1) };
             var searchedPoint = new SpacePoint(new HexCoordinates(0, 1), 0);
-            Assert.False(helper.SpacePointArrayContainsPoint(spArray, searchedPoint));
+            Assert.False(spacePoints.Contains(searchedPoint));
         }
 
         [Test]
@@ -55,7 +55,7 @@ namespace Tests
             try
             {
                 // this should fail, since we can't have vertexNumber 2
-                SpacePoint[] points = helper.SpacePointArrayFromShortRep(shortRepresentation);
+                List<SpacePoint> points = helper.SpacePointArrayFromShortRep(shortRepresentation);
                 // if it comes to this point than the creation succeeded, which should NOT happen
                 Assert.True(false);
             }
@@ -72,7 +72,7 @@ namespace Tests
         public void CreateSpacePointArrayFromShortRepresentationPositiveTest()
         {
             string[] shortRepresentation = new string[] { "1,1,0", "1,2,1" };
-            SpacePoint[] points = helper.SpacePointArrayFromShortRep(shortRepresentation);
+            List<SpacePoint> points = helper.SpacePointArrayFromShortRep(shortRepresentation);
             Assert.True(points[0].Equals(new SpacePoint(new HexCoordinates(1, 1), 0)));
             Assert.True(points[1].Equals(new SpacePoint(new HexCoordinates(1, 2), 1)));
         }

@@ -18,14 +18,23 @@ public class FlyShipsState : GameState
         hudScript.SetStateText("FlyShipsState");
         hudScript.ShowSettleButton(false);
         flightStateChecker = new FlightStateConsistencyChecker();
+        OpenTokenSelectionForAllFlyableTokens();
+    }
+
+    void OpenTokenSelectionForAllFlyableTokens()
+    {
         mapScript.OpenTokenSelection(controller.mainPlayer.tokens.Where(tok => tok.CanFly()).ToList(), TokenSelected);
     }
 
     void TokenSelected(Token token)
     {
         selectedToken = token;
-        var filters = selectedToken.GetFlightEndPointsFilters();
-        var spacePoints = mapScript.map.GetSpacePointsFullfillingFilters(filters, controller.players.ToArray());
+        OpenSpacePointSelectionForToken(selectedToken);
+    }
+
+    void OpenSpacePointSelectionForToken(Token token)
+    {
+        var spacePoints = token.ReachableSpacePoints();
         mapScript.OpenSpacePointSelection(spacePoints, SpacePointSelected);
     }
 
@@ -35,6 +44,11 @@ public class FlyShipsState : GameState
         selectedToken.FlyTo(point);
 
         var errors = flightStateChecker.Check(controller.mapModel, controller.players);
+
+        if (controller.mainPlayer.GetTokensThatCanFly().Count > 0)
+        {
+            OpenTokenSelectionForAllFlyableTokens();
+        }
     }
 
     void SwitchToNextState()
@@ -52,34 +66,11 @@ public class FlyShipsState : GameState
     public override void OnSpacePointClicked(SpacePoint point, GameObject spacePointObject)
     {
 
-
-        //TODO: dont remove and create buttons, very cost inefficient and slow, instead create
-        //all possible spacepoints and just hide and show the one we need right now
-
-
-        //DEPRECATED
-        //mapScript.HideAllSpacePointButtons();
-        //selectedToken.FlyTo(point);
-
-        //var errors = flightStateChecker.Check(controller.mapModel, controller.players);
-
     }
 
     public override void OnTokenClicked(Token tokenModel, GameObject tokenGameObject)
     {
-        //DEPRECATED
-        //if (tokenModel.owner == controller.mainPlayer)
-        //{
-        //    selectedToken = tokenModel;
-        //    if (selectedToken.CanFly())
-        //    {
-        //        var filters = selectedToken.GetFlightEndPointsFilters();
-        //        mapScript.ShowSpacePointsFulfillingFilters(filters);
-        //    }
-        //} else
-        //{
-        //    Debug.Log("Clicked token that is not owned by the main player");
-        //}
+        
 
     }
 
@@ -105,6 +96,16 @@ public class FlyShipsState : GameState
             mapScript.SettleToken(selectedToken);
             hudScript.ShowSettleButton(false);
             selectedToken = null;
+
+            if (controller.mainPlayer.GetTokensThatCanFly().Count > 0)
+            {
+                mapScript.CloseTokenSelection();
+                controller.SetState(new FlyShipsState(controller));
+            } else
+            {
+                SwitchToNextState();
+            }
+            
         }
     }
 

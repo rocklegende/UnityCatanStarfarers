@@ -177,6 +177,8 @@ MonoBehaviour:
   TileGroupRenderer: {fileID: 86781946}
   cam: {fileID: 519420031}
   isReceivingNotifications: 0
+  map:
+    AllAvailableSpacePoints: []
 --- !u!1 &15347560
 GameObject:
   m_ObjectHideFlags: 0
@@ -6742,6 +6744,7 @@ MonoBehaviour:
   MapObject: {fileID: 8129259}
   playerSelectionView: {fileID: 764293694}
   multiSelectionView: {fileID: 15347560}
+  BuildShipsButton: {fileID: 2027855246}
 --- !u!1 &1147678336
 GameObject:
   m_ObjectHideFlags: 0
@@ -10568,6 +10571,8 @@ MonoBehaviour:
   playersShared: []
   HUD: {fileID: 1145771400}
   Map: {fileID: 8129259}
+  mapModel:
+    AllAvailableSpacePoints: []
   players: []
   mainPlayer:
     name: 

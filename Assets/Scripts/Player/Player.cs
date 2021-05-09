@@ -390,6 +390,49 @@ public class Player : SFModel, Observer, IComparable
         return baseTokenFromStorage;
     }
 
+    public Token BuildColonyShipForFree(Map map, SpacePoint position)
+    {
+        return BuildColonyShip(
+            map, position, true
+        );
+    }
+
+    //TODO: add test for this method, just test if we get the desired colony at that position, check for type and position
+    public Token BuildColonyShip(Map map, SpacePoint position, bool isFree = false)
+    {
+        return BuildToken(
+            map,
+            new ColonyBaseToken().GetType(),
+            position,
+            new ShipToken().GetType(),
+            isFree
+        );
+    }
+
+    public Token BuildTradeShipForFree(Map map, SpacePoint position)
+    {
+        return BuildTradeShip(
+            map, position, true
+        );
+    }
+
+    //TODO: add test for this method
+    public Token BuildTradeShip(Map map, SpacePoint position, bool isFree = false)
+    {
+        return BuildToken(
+            map,
+            new TradeBaseToken().GetType(),
+            position,
+            new ShipToken().GetType(),
+            isFree
+        );
+    }
+
+    //public Token BuildSpacePort(SpacePoint position, bool isFree = false)
+    //{
+
+    //}
+
     public Token BuildTokenWithoutCost(Map map, Type baseType, SpacePoint position, Type attachedType = null)
     {
         

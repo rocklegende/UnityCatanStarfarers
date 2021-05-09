@@ -110,8 +110,11 @@ namespace Tests
         }
 
 
-        private bool spacePointArraysAreEqual(SpacePoint[] spacePoints1, SpacePoint[] spacePoints2)
+        private bool spacePointArraysAreEqual(List<SpacePoint> spacePointsList1, List<SpacePoint> spacePointsList2)
         {
+            var spacePoints1 = spacePointsList1.ToArray();
+            var spacePoints2 = spacePointsList2.ToArray();
+
             if (spacePoints1.Length != spacePoints2.Length)
             {
                 return false;
@@ -121,7 +124,7 @@ namespace Tests
 
             for (int i = 0; i < spacePoints1.Length; i++)
             {
-                if (!spacePoints1[i].Equals(spacePoints2[i]))
+                if (!spacePoints1[i].IsEqualTo(spacePoints2[i]))
                 {
                     return false;
                 } 
@@ -130,7 +133,7 @@ namespace Tests
             return true;
         }
 
-        private void printSpacePoints(SpacePoint[] spacePoints)
+        private void printSpacePoints(List<SpacePoint> spacePoints)
         {
             foreach(SpacePoint spacePoint in spacePoints)
             {
@@ -144,15 +147,15 @@ namespace Tests
             Map map = CreateSampleMapWithObstacles();
 
             var origin = new SpacePoint(new HexCoordinates(0, 1), 0);
-            SpacePoint[] neighbors = map.GetNeighborsOfSpacePoint(origin);
+            List<SpacePoint> neighbors = map.GetNeighborsOfSpacePoint(origin);
 
             var se_point = new SpacePoint(new HexCoordinates(1, 1), 1);
             var n_point = new SpacePoint(new HexCoordinates(1, 0), 1);
             var sw_point = new SpacePoint(new HexCoordinates(0, 1), 1);
 
-            Assert.False(new Helper().SpacePointArrayContainsPoint(neighbors, se_point)); // should be blocked
-            Assert.True(new Helper().SpacePointArrayContainsPoint(neighbors, n_point)); // should NOT be blocked
-            Assert.True(new Helper().SpacePointArrayContainsPoint(neighbors, sw_point)); // should NOT be blocked
+            Assert.False(neighbors.Contains(se_point)); // should be blocked
+            Assert.True(neighbors.Contains(n_point)); // should NOT be blocked
+            Assert.True(neighbors.Contains(sw_point)); // should NOT be blocked
         }
 
         [Test]
@@ -161,15 +164,15 @@ namespace Tests
             Map map = CreateSampleMapWithObstacles();
 
             var origin = new SpacePoint(new HexCoordinates(1, 1), 1);
-            SpacePoint[] neighbors = map.GetNeighborsOfSpacePoint(origin);
+            List<SpacePoint> neighbors = map.GetNeighborsOfSpacePoint(origin);
 
             var s_point = new SpacePoint(new HexCoordinates(0, 2), 0);
             var ne_point = new SpacePoint(new HexCoordinates(1, 1), 0);
             var nw_point = new SpacePoint(new HexCoordinates(0, 1), 0);
 
-            Assert.False(new Helper().SpacePointArrayContainsPoint(neighbors, s_point)); // should be blocked
-            Assert.False(new Helper().SpacePointArrayContainsPoint(neighbors, ne_point)); // should be blocked
-            Assert.False(new Helper().SpacePointArrayContainsPoint(neighbors, nw_point)); // should be blocked
+            Assert.False(neighbors.Contains(s_point)); // should be blocked
+            Assert.False(neighbors.Contains(ne_point)); // should be blocked
+            Assert.False(neighbors.Contains(nw_point)); // should be blocked
         }
 
         [Test]
@@ -178,15 +181,15 @@ namespace Tests
             Map map = CreateSampleMapWithObstacles();
 
             var origin = new SpacePoint(new HexCoordinates(0, 1), 1);
-            SpacePoint[] neighbors = map.GetNeighborsOfSpacePoint(origin);
+            List<SpacePoint> neighbors = map.GetNeighborsOfSpacePoint(origin);
 
             var s_point = new SpacePoint(new HexCoordinates(-1, 2), 0);
             var ne_point = new SpacePoint(new HexCoordinates(0, 1), 0);
             var nw_point = new SpacePoint(new HexCoordinates(-1, 1), 0);
 
-            Assert.True(new Helper().SpacePointArrayContainsPoint(neighbors, s_point)); // should be blocked
-            Assert.True(new Helper().SpacePointArrayContainsPoint(neighbors, ne_point)); // should be blocked
-            Assert.True(new Helper().SpacePointArrayContainsPoint(neighbors, nw_point)); // should be blocked
+            Assert.True(neighbors.Contains(s_point)); // should be blocked
+            Assert.True(neighbors.Contains(ne_point)); // should be blocked
+            Assert.True(neighbors.Contains(nw_point)); // should be blocked
         }
 
         [Test]
@@ -217,7 +220,7 @@ namespace Tests
 
             Map map = CreateSampleMap3x3();
 
-            List<SpacePoint> actualPoints = map.getAllAvailableSpacePoints();
+            List<SpacePoint> actualPoints = map.AllAvailableSpacePoints;
 
             List<SpacePoint> expectedPoints = new List<SpacePoint>
             {
@@ -229,7 +232,7 @@ namespace Tests
                 new SpacePoint(new HexCoordinates(-1, 2), 0)
             };
 
-            Assert.True(spacePointArraysAreEqual(actualPoints.ToArray(), expectedPoints.ToArray()));
+            Assert.True(spacePointArraysAreEqual(actualPoints, expectedPoints));
         }
 
         [Test]
@@ -239,9 +242,9 @@ namespace Tests
             Map map = CreateSampleMapWithObstacles3();
 
             SpacePoint origin = new SpacePoint(new HexCoordinates(1, 1), 0);
-            SpacePoint[] spacePointsTwoStepsAway = map.GetSpacePointsInDistance(origin, 2);
+            List<SpacePoint> spacePointsTwoStepsAway = map.GetSpacePointsInDistance(origin, 2);
 
-            SpacePoint[] expectedPoints = new SpacePoint[]
+            List<SpacePoint> expectedPoints = new List<SpacePoint>
             {
                 new SpacePoint(new HexCoordinates(0, 2), 0),
                 new SpacePoint(new HexCoordinates(1, 2), 0),
@@ -258,8 +261,8 @@ namespace Tests
             Map map = CreateSampleMapWithObstacles3();
             SpacePoint origin = new SpacePoint(new HexCoordinates(2, 1), 0);
 
-            SpacePoint[] spacePointsThreeStepsAway = map.GetSpacePointsInDistance(origin, 3);
-            SpacePoint[] expectedPoints = new SpacePoint[]
+            List<SpacePoint> spacePointsThreeStepsAway = map.GetSpacePointsInDistance(origin, 3);
+            List<SpacePoint> expectedPoints = new List<SpacePoint>
             {
                 new SpacePoint(new HexCoordinates(1, 1), 1),
                 new SpacePoint(new HexCoordinates(2, 2), 1),
@@ -275,8 +278,8 @@ namespace Tests
             Map map = CreateSampleMapWithObstacles3();
             SpacePoint origin = new SpacePoint(new HexCoordinates(1, 1), 0);
 
-            SpacePoint[] spacePointsThreeStepsAway = map.GetSpacePointsInDistance(origin, 0);
-            SpacePoint[] expectedPoints = new SpacePoint[]
+            List<SpacePoint> spacePointsThreeStepsAway = map.GetSpacePointsInDistance(origin, 0);
+            List<SpacePoint> expectedPoints = new List<SpacePoint>
             {
                 new SpacePoint(new HexCoordinates(1, 1), 0),
             };
@@ -291,8 +294,8 @@ namespace Tests
             Map map = CreateSampleMapWithObstacles3();
             SpacePoint origin = new SpacePoint(new HexCoordinates(1, 2), 0);
 
-            SpacePoint[] spacePointsThreeStepsAway = map.GetSpacePointsInsideRange(origin, 3, 2);
-            SpacePoint[] expectedPoints = new SpacePoint[]
+            List<SpacePoint> spacePointsThreeStepsAway = map.GetSpacePointsInsideRange(origin, 3, 2);
+            List<SpacePoint> expectedPoints = new List<SpacePoint>
             {
                 new SpacePoint(new HexCoordinates(1, 1), 0),
                 new SpacePoint(new HexCoordinates(1, 1), 1),
@@ -517,7 +520,7 @@ namespace Tests
             //point should not fulfill the filter because the tilegroup is not revealed
             var tileGroup = (ResourceTileGroup)mapModel.FindTileGroupAtPoint(pointShouldNotBeReachable);
             Assert.True(!tileGroup.IsRevealed());
-            Assert.True(!filter.pointFulfillsFilter(pointShouldNotBeReachable, mapModel, new Player[] { player }));
+            Assert.True(!filter.pointFulfillsFilter(pointShouldNotBeReachable, mapModel));
         }
 
         Token BlockadeSetup(Map map, Player player, Player opponent)
@@ -562,7 +565,7 @@ namespace Tests
 
             var filter = new IsNeighborOfOwnSpacePortOrNotExactlyStepsAway(flyableColony, player, 3);
             //point should not fulfill the filter because the point is next to a other spaceport
-            Assert.True(!filter.pointFulfillsFilter(pointShouldNotBeReachable, mapModel, new Player[] { player, opponent }));
+            Assert.True(!filter.pointFulfillsFilter(pointShouldNotBeReachable, mapModel));
         }
 
         [Test]
@@ -582,7 +585,7 @@ namespace Tests
 
             var filter = new IsNeighborOfOwnSpacePortOrNotExactlyStepsAway(flyableColony, player, 2);
             //point should fulfill the filter because the point is next to own spaceport
-            Assert.True(filter.pointFulfillsFilter(pointShouldBeReachable, mapModel, new Player[] { player, opponent }));
+            Assert.True(filter.pointFulfillsFilter(pointShouldBeReachable, mapModel));
         }
 
         [Test]
@@ -633,16 +636,14 @@ namespace Tests
                 new List<SpacePointFilter>()
                 {
                     new IsOwnSettledColonySpacePointFilter(players[0])
-                },
-                players.ToArray()
+                }
             );
 
             var pointsOfSecondPlayer = map.GetSpacePointsFullfillingFilters(
                 new List<SpacePointFilter>()
                 {
                     new IsOwnSettledColonySpacePointFilter(players[1])
-                },
-                players.ToArray()
+                }
             );
 
             Assert.AreEqual(0, pointsOfFirstPlayer.Count);
@@ -666,16 +667,14 @@ namespace Tests
                 new List<SpacePointFilter>()
                 {
                     new IsNeighborOwnSpacePortFilter(players[0])
-                },
-                players.ToArray()
+                }
             );
 
             var pointsOfSecondPlayer = map.GetSpacePointsFullfillingFilters(
                 new List<SpacePointFilter>()
                 {
                     new IsNeighborOwnSpacePortFilter(players[1])
-                },
-                players.ToArray()
+                }
             );
 
             Assert.AreEqual(0, pointsOfFirstPlayer.Count);

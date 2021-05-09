@@ -40,32 +40,35 @@ public class SpacePortToken : Token, BuildableToken
 
 
 
-    public bool CanBeBuildByPlayer(Player player, Map map, Player[] players)
+    public bool CanBeBuildByPlayer(Player player, Map map)
     {
-        return buildCondition.TokenCanBeBuildByPlayer(this, player, map, players);
+        return buildCondition.TokenCanBeBuildByPlayer(this, player, map);
     }
 }
 
 [Serializable]
 public abstract class BuildCondition
 {
-    public abstract bool TokenCanBeBuildByPlayer(Token token, Player player, Map map, Player[] players);
+    public abstract bool TokenCanBeBuildByPlayer(Token token, Player player, Map map);
 }
 
 [Serializable]
 public class TradeAndColonyBuildCondition : BuildCondition
 {
-    public override bool TokenCanBeBuildByPlayer(Token token, Player player, Map map, Player[] players)
+    public override bool TokenCanBeBuildByPlayer(Token token, Player player, Map map)
     {
         if (!token.PlayerHasTokenInStorageAndCanPay(player))
         {
             return false;
         }
 
-        if (player.tokenStorage.GetTokensOfType(new ShipToken().GetType()).Length == 0)
+        var hasNoShipsLeft = player.tokenStorage.GetTokensOfType(new ShipToken().GetType()).Length == 0;
+        if (hasNoShipsLeft)
         {
             return false;
         }
+
+        //TODO: var hasPointsToBuild = token.GetPossibleBuildPoints()
 
         var filters = new List<SpacePointFilter> {
                 new IsValidSpacePointFilter(),
@@ -75,7 +78,7 @@ public class TradeAndColonyBuildCondition : BuildCondition
 
         if (map.IsNotNull())
         {
-            if (map.GetSpacePointsFullfillingFilters(filters, players).Count == 0)
+            if (map.GetSpacePointsFullfillingFilters(filters).Count == 0)
             {
                 return false;
             }
@@ -88,7 +91,7 @@ public class TradeAndColonyBuildCondition : BuildCondition
 [Serializable]
 public class SpacePortBuildCondition : BuildCondition
 {
-    public override bool TokenCanBeBuildByPlayer(Token token, Player player, Map map, Player[] players)
+    public override bool TokenCanBeBuildByPlayer(Token token, Player player, Map map)
     {
         if (!token.PlayerHasTokenInStorageAndCanPay(player))
         {
@@ -102,7 +105,7 @@ public class SpacePortBuildCondition : BuildCondition
 
         if (map.IsNotNull())
         {
-            if (map.GetSpacePointsFullfillingFilters(filters, players).Count == 0)
+            if (map.GetSpacePointsFullfillingFilters(filters).Count == 0)
             {
                 return false;
             }
@@ -127,9 +130,9 @@ public class ColonyBaseToken : Token, Settable, BuildableToken
         return 1;
     }
 
-    public bool CanBeBuildByPlayer(Player player, Map map, Player[] players)
+    public bool CanBeBuildByPlayer(Player player, Map map)
     {
-        return buildCondition.TokenCanBeBuildByPlayer(this, player, map, players);
+        return buildCondition.TokenCanBeBuildByPlayer(this, player, map);
     }
 
     public bool CanSettle(Tile_[] tiles)
@@ -186,9 +189,9 @@ public class TradeBaseToken : Token, Settable, BuildableToken
         return 1;
     }
 
-    public bool CanBeBuildByPlayer(Player player, Map map, Player[] players)
+    public bool CanBeBuildByPlayer(Player player, Map map)
     {
-        return buildCondition.TokenCanBeBuildByPlayer(this, player, map, players);
+        return buildCondition.TokenCanBeBuildByPlayer(this, player, map);
     }
 
     public bool CanSettle(Tile_[] tiles)
@@ -294,7 +297,7 @@ public class BoosterUpgradeToken : Token, BuildableToken
         return 0;
     }
 
-    public bool CanBeBuildByPlayer(Player player, Map map, Player[] players)
+    public bool CanBeBuildByPlayer(Player player, Map map)
     {
         if (!player.hand.CanPayCost(cost))
         {
@@ -338,7 +341,7 @@ public class CannonUpgradeToken : Token, BuildableToken
         return 0;
     }
 
-    public bool CanBeBuildByPlayer(Player player, Map map, Player[] players)
+    public bool CanBeBuildByPlayer(Player player, Map map)
     {
         if (!player.hand.CanPayCost(cost))
         {
@@ -382,7 +385,7 @@ public class FreightPodUpgradeToken : Token, BuildableToken
         return 0;
     }
 
-    public bool CanBeBuildByPlayer(Player player, Map map, Player[] players)
+    public bool CanBeBuildByPlayer(Player player, Map map)
     {
         if (!player.hand.CanPayCost(cost))
         {

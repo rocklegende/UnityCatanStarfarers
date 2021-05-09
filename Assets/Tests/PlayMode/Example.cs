@@ -24,8 +24,8 @@ namespace Tests
             var testHelper = new PlayModeTestHelper();
             this.testHelper = testHelper;
             yield return testHelper.LoadDefaultScene();
-            yield return testHelper.SetupDebugState();
             gameController = testHelper.GetGameController();
+            yield return testHelper.SetupDebugState(new TwoTradeShipAndOneSpacePort(gameController));
             encounterCardHandler = gameController.encounterCardHandler;
             encounterCardFactory = new EncounterCardFactory(gameController);
         }
@@ -178,7 +178,6 @@ namespace Tests
             var tradeOfferViewScript = hudScript.tradeOfferView.GetComponent<TradeOfferView>();
             var displayedGiveHand = tradeOfferViewScript.GiveResourceStackRenderer.GetComponent<ResourceCardStackRenderer>().GetDisplayedHand();
             var displayedReceiveHand = tradeOfferViewScript.ReceiveResourceStackRenderer.GetComponent<ResourceCardStackRenderer>().GetDisplayedHand();
-            yield return new WaitForSeconds(10);
 
             Assert.True(displayedGiveHand.HasSameCardsAs(receiveHandInTradeOffer));
             Assert.True(displayedReceiveHand.HasSameCardsAs(giveHandInTradeOffer));

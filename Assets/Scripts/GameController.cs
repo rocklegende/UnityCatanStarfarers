@@ -93,7 +93,6 @@ public class GameController : SFController, IGameController, Observer
     /// </summary>
     private bool testMode = false;
     private System.Action<RemoteActionCallbackData> dispatcherSomeoneFullfilledActionCallback;
-    private System.Timers.Timer updateTimer;
 
     void Start()
     {
@@ -125,7 +124,7 @@ public class GameController : SFController, IGameController, Observer
         {
             order.Add(i);
         }
-        order.Shuffle();
+        //order.Shuffle();
 
         for (int i = 0; i < numPlayers; i++)
         {
@@ -141,7 +140,7 @@ public class GameController : SFController, IGameController, Observer
 
         mapModel = gameStartInformation.map;
         mapModel.RegisterObserver(this);
-        this.state = new StartState(this);
+        this.state = new BuildAndTradeState(this);
 
         //every client sets up the players itself, no need to send that over wire from MasterClient
         var dict = CreatePlayerMap(gameStartInformation.turnOrder);
@@ -165,7 +164,7 @@ public class GameController : SFController, IGameController, Observer
 
         mapModel = map;
         mapModel.RegisterObserver(this);
-        this.state = new StartState(this);
+        this.state = new BuildAndTradeState(this);
 
         this.players = players;
         this.mainPlayer = mainPlayer;
@@ -326,17 +325,18 @@ public class GameController : SFController, IGameController, Observer
 
     void InitialPlayerSetup()
     {
-        //foreach(var player in players)
-        //{
-        //    for (int i = 0; i < 5; i++)
-        //    {
-        //        player.BuildUpgradeWithoutCost(new FreightPodUpgradeToken());
-        //        player.BuildUpgradeWithoutCost(new BoosterUpgradeToken());
-        //        player.BuildUpgradeWithoutCost(new CannonUpgradeToken());
-        //    }
-        //}
+        var playersWithFullUpgrades = new List<Player>() { mainPlayer };
+        foreach (var player in playersWithFullUpgrades)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                player.BuildUpgradeWithoutCost(new FreightPodUpgradeToken());
+                player.BuildUpgradeWithoutCost(new BoosterUpgradeToken());
+                player.BuildUpgradeWithoutCost(new CannonUpgradeToken());
+            }
+        }
 
-        foreach(var player in players)
+        foreach (var player in players)
         {
             player.AddHand(Hand.FromResources(5, 5, 5, 5, 5));
         }
@@ -497,7 +497,7 @@ public class GameController : SFController, IGameController, Observer
             PayoutLowPointsBonus(mainPlayer);
             mainPlayer.OnTurnReceived();
             GetHUDScript().ActivateAllInteraction(true);
-            SetState(new StartState(this));
+            SetState(new BuildAndTradeState(this));
         } else
         {
             GetHUDScript().ActivateAllInteraction(false);

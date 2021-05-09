@@ -283,7 +283,7 @@ namespace Tests
             {
                 var token = player.BuildToken(mockMap, new ColonyBaseToken().GetType(), position);
                 Assert.True(token.associatedMap == mockMap);
-                Assert.True(position.Equals(token.position));
+                Assert.True(position.IsEqualTo(token.position));
             }
             catch (NotEnoughResourcesException e)
             {

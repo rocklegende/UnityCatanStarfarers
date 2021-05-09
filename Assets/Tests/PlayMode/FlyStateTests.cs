@@ -24,8 +24,8 @@ namespace Tests
             var testHelper = new PlayModeTestHelper();
             this.testHelper = testHelper;
             yield return testHelper.LoadDefaultScene();
-            yield return testHelper.SetupDebugState();
             gameController = testHelper.GetGameController();
+            yield return testHelper.SetupDebugState(new TwoTradeShipAndOneSpacePort(gameController));
         }
 
         [UnityTest]
@@ -44,7 +44,7 @@ namespace Tests
 
             //simulate click on spacepointtoken
             var targetSpacePoint = new SpacePoint(11, 5, 0);
-            ClickSpacePointButton(targetSpacePoint, mapScript);
+            testHelper.ClickSpacePointButton(targetSpacePoint, mapScript);
 
             Assert.True(tokenModelFirstClickable.position.Equals(targetSpacePoint));
 
@@ -54,12 +54,6 @@ namespace Tests
         Space.TokenScript GetTokenScript(GameObject gobj)
         {
             return gobj.GetComponent<Space.TokenScript>();
-        }
-
-        void ClickSpacePointButton(SpacePoint targetPoint, MapScript mapScript)
-        {
-            var spacePointToClick = mapScript.GetAllShownSpacePointButtons().Find(pointButton => pointButton.GetComponent<Space.SpacePointButtonScript>().spacePoint.Equals(targetPoint));
-            spacePointToClick.GetComponent<Space.SpacePointButtonScript>().OnClick();
         }
 
         [UnityTest]
@@ -75,6 +69,7 @@ namespace Tests
                 .First();
 
             //simulate click on token by calling OnClick directly
+            var prevHighlightedTokens = gameController.GetMapScript().GetHighlightedTokens();
             GetTokenScript(firstClickableTradeShip).OnClick();
             var tokenModelFirstClickable = GetTokenScript(firstClickableTradeShip).tokenModel;
             tokenModelFirstClickable.addSteps(100); //be sure we have enough steps to fly to that tradestation
@@ -86,7 +81,7 @@ namespace Tests
             var firstTradeStation = gameController.mapModel.GetTradeStations()[0];
             var targetSpacePoint = firstTradeStation.GetCenter();
             var prevNumCards = firstTradeStation.tradingCards.Count;
-            ClickSpacePointButton(targetSpacePoint, mapScript);
+            testHelper.ClickSpacePointButton(targetSpacePoint, mapScript);
 
             yield return new WaitForSeconds(WaitTimeBetweenSteps);
 
@@ -108,6 +103,7 @@ namespace Tests
             Assert.False(tokenModelFirstClickable.position.Equals(firstTradeStation.GetCenter()),
                 "Token model is still on the center of the tradestation! Token should move off that center after settling!");
             Assert.AreEqual(prevNumCards - 1, firstTradeStation.tradingCards.Count, "Picking trading card didnt remove the card from the tradeStation cards");
+            Assert.AreEqual(prevHighlightedTokens.Count - 1, gameController.GetMapScript().GetHighlightedTokens().Count);
 
             yield return null;
         }
@@ -138,7 +134,7 @@ namespace Tests
             //simulate click on spacepoint which is directly at center of a trade station
             var firstResourceGroup = (ResourceTileGroup)gameController.mapModel.tileGroups.Find(group => group is ResourceTileGroup);
             var targetSpacePoint = firstResourceGroup.GetSettlePoints()[0];
-            ClickSpacePointButton(targetSpacePoint, mapScript);
+            testHelper.ClickSpacePointButton(targetSpacePoint, mapScript);
 
             yield return new WaitForSeconds(WaitTimeBetweenSteps);
 

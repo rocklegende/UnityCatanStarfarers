@@ -66,6 +66,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
     public GameObject playerSelectionView;
     public GameObject multiSelectionView;
     List<GameObject> smallPlayerViews = new List<GameObject>();
+    public Button BuildShipsButton;
 
 
 
@@ -450,7 +451,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
                     {
                         var buildTok = (BuildableToken)option.token;
                         var map = MapObject.GetComponent<MapScript>().map;
-                        dropdown.SetOptionInteractable(option, buildTok.CanBeBuildByPlayer(player, map, players.ToArray()));
+                        dropdown.SetOptionInteractable(option, buildTok.CanBeBuildByPlayer(player, map));
                     }
                 }
             }

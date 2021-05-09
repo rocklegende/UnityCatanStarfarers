@@ -21,8 +21,9 @@ namespace Tests
             var testHelper = new PlayModeTestHelper();
             this.testHelper = testHelper;
             yield return testHelper.LoadDefaultScene();
-            yield return testHelper.SetupDebugState();
             gameController = testHelper.GetGameController();
+            yield return testHelper.SetupDebugState(new TwoTradeShipAndOneSpacePort(gameController));
+            
         }
 
         [UnityTest]

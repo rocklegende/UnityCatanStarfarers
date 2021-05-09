@@ -11,8 +11,8 @@ public abstract class MapGenerator
 
 public class DefaultMapGenerator : MapGenerator
 {
-    SpacePoint[] basePoints;
-    SpacePoint[] randomSpawnPoints;
+    List<SpacePoint> basePoints;
+    List<SpacePoint> randomSpawnPoints;
     List<TileGroup> spaceTileGroups;
     List<TileGroup> spaceTileGroupsCopy;
     List<ResourceTileGroup> baseTileGroupsCopy;

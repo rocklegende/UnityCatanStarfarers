@@ -155,18 +155,6 @@ public class Helper
         return newList;
     }
 
-    public bool SpacePointArrayContainsPoint(SpacePoint[] arr, SpacePoint point)
-    {
-        foreach (var p in arr)
-        {
-            if (p.Equals(point))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public List<Token> GetAllTokenOfPlayers(Player[] players)
     {
         List<Token> tokens = new List<Token>();
@@ -244,7 +232,7 @@ public class Helper
         return sprite;
     }
 
-    public SpacePoint[] SpacePointArrayFromShortRep(string[] shortRepresentation)
+    public List<SpacePoint> SpacePointArrayFromShortRep(string[] shortRepresentation)
     {
         List<SpacePoint> points = new List<SpacePoint>();
         char[] charSeparators = new char[] { ',' };
@@ -254,7 +242,7 @@ public class Helper
             points.Add(newPoint);
         }
 
-        return points.ToArray();
+        return points;
     }
 
     public Vector3 unitsToPixel(Vector3 unityUnitVector)

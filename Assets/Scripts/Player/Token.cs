@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using com.onebuckgames.UnityStarFarers;
+using System.Collections;
+using System.Linq;
 
 public interface Settable
 {
@@ -10,7 +12,8 @@ public interface Settable
 
 public interface BuildableToken
 {
-    bool CanBeBuildByPlayer(Player player, Map map, Player[] players);
+    bool CanBeBuildByPlayer(Player player, Map map);
+    //TODO: get possible build points for this token, add play tests for building tokens
 }
 
 [Serializable]
@@ -61,17 +64,90 @@ public abstract class Token : SFModel
         this.cost = cost;
     }
 
-    public List<SpacePointFilter> GetFlightEndPointsFilters()
+    public bool IsNextToOtherSpacePort()
     {
+        var neighbors = GetNeighborTokens();
+        foreach (var neighbor in neighbors)
+        {
+            if (neighbor.owner != this.owner)
+            {
+                if (neighbor.attachedToken != null)
+                {
+                    if (neighbor.attachedToken is SpacePortToken)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Get Tokens that are next to this token, regardless of owner.
+    /// </summary>
+    /// <returns></returns>
+    public List<Token> GetNeighborTokens()
+    {
+        var neighbors = new List<Token>();
+        var neighborSpacePoints = associatedMap.GetNeighborsOfSpacePoint(position);
+        foreach (var neighbor in neighborSpacePoints)
+        {
+            var token = associatedMap.TokenAtPoint(neighbor);
+            if (token != null)
+            {
+                neighbors.Add(token);
+            }
+        }
+        return neighbors;
+    }
+
+    /// <summary>
+    /// Returns list of all space points this token can reach.
+    /// </summary>
+    /// <returns></returns>
+    public List<SpacePoint> ReachableSpacePoints()
+    {
+        var pointsInsideRangeMap = associatedMap.GetSpacePointsInsideRangeWithDistanceMap(position, GetStepsLeft());
+
         var filters = new List<SpacePointFilter> {
             new IsValidSpacePointFilter(),
             new IsSpacePointFreeFilter(),
-            new IsStepsAwayFilter(position, GetStepsLeft()),
-            new IsExactlyStepsAwayAndCannotSettleOnPointCounter(this, GetStepsLeft()),
-            new IsNeighborOfOwnSpacePortOrNotExactlyStepsAway(this, owner, GetStepsLeft())
         };
+        var validAndFreePoints = associatedMap.GetSpacePointsFullfillingFilters(filters);
 
-        return filters;
+        var result = new List<SpacePoint>();
+        foreach(var point in validAndFreePoints)
+        {
+            
+            if (!pointsInsideRangeMap.Keys.ToList().Contains(point))
+            {
+                continue;
+            }
+
+            var containsItKey = pointsInsideRangeMap.ContainsKey(point);
+            var isAtMaximumReachOfToken = pointsInsideRangeMap[point] == GetStepsLeft();
+            var cannotSettleAtPoint = !associatedMap.TokenCanSettle(this, point);
+            if (isAtMaximumReachOfToken && (IsNextToOtherSpacePort() || cannotSettleAtPoint))
+            {
+                //prevent blocking spots for others
+                continue;
+            }
+
+            result.Add(point);
+        }
+        return result;
+
+        //var filters = new List<SpacePointFilter> {
+        //    new IsValidSpacePointFilter(),
+        //    new IsSpacePointFreeFilter(),
+        //    // TODO: these filters take very long time to calculate because we make n * BFS to calculate if point is steps away,
+        //    // better to only create distance map once and then filter out points that are not inside this distance map
+        //    new IsStepsAwayFilter(position, GetStepsLeft()),
+        //    new IsExactlyStepsAwayAndCannotSettleOnPointCounter(this, GetStepsLeft()),
+        //    new IsNeighborOfOwnSpacePortOrNotExactlyStepsAway(this, owner, GetStepsLeft())
+        //};
+
     }
 
     public abstract Token makeCopy();
@@ -167,6 +243,10 @@ public abstract class Token : SFModel
         DataChanged();
     }
 
+    /// <summary>
+    /// Token is able to fly minimum of 1 step.
+    /// </summary>
+    /// <returns></returns>
     public bool CanFly()
     {
         return HasShipTokenOnTop() && stepsLeft > 0 && !isDisabled;

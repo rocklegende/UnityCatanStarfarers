@@ -24,7 +24,7 @@ public class SelectPositionForShipState : GameState
                 new IsSpacePointFreeFilter(),
                 new IsNeighborOwnSpacePortFilter(controller.mainPlayer)
             };
-            controller.Map.GetComponent<MapScript>().ShowSpacePointsFulfillingFilters(filters, controller.players);
+            controller.Map.GetComponent<MapScript>().ShowSpacePointsFulfillingFilters(filters);
         } else if (token is SpacePortToken)
         {
             var tokenFilters = new List<TokenFilter> {
@@ -47,7 +47,7 @@ public class SelectPositionForShipState : GameState
     {
         controller.Map.GetComponent<MapScript>().HideAllSpacePointButtons();
         controller.mainPlayer.BuildToken(controller.mapModel, token.GetType(), point, new ShipToken().GetType());
-        controller.SetState(new StartState(controller));
+        controller.SetState(new BuildAndTradeState(controller));
     }
 
     public override void OnTokenClicked(Token tokenModel, GameObject tokenGameObject)
@@ -56,7 +56,7 @@ public class SelectPositionForShipState : GameState
         if (tokenModel is ColonyBaseToken)
         {
             tokenModel.attachToken(new SpacePortToken());
-            controller.SetState(new StartState(controller));
+            controller.SetState(new BuildAndTradeState(controller));
         }
     }
 

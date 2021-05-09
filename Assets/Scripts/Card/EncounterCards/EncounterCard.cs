@@ -964,9 +964,8 @@ public class RaumsprungAction : EncounterCardAction
         selectedToken = token;
         prevSteps = selectedToken.GetStepsLeft();
         selectedToken.addSteps(100);
-        var filters = selectedToken.GetFlightEndPointsFilters();
 
-        var pointsToChooseFrom = mapScript.map.GetSpacePointsFullfillingFilters(filters, gameController.players.ToArray());
+        var pointsToChooseFrom = selectedToken.ReachableSpacePoints();
         mapScript.OpenSpacePointSelection(pointsToChooseFrom, MoveSelectedToken);
     }
 

@@ -95,7 +95,7 @@ public class CastNormalDiceState : GameState
     void SwitchToNextState()
     {
         hudScript.CloseNormalDiceThrowRenderer();
-        controller.SetState(new StartState(controller));
+        controller.SetState(new BuildAndTradeState(controller));
     }
 
     public override void OnBackButtonClicked()

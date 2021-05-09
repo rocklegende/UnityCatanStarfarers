@@ -36,7 +36,7 @@ public class MapScript : SFController, Observer
     private System.Action<Token> tokenSelectCallback;
     private System.Action<SpacePoint> didSelectSpacePointCallback;
 
-    List<GameObject> currentlyShownSpacePointButtons = new List<GameObject>();
+    List<GameObject> allSpacePointButtons = new List<GameObject>();
     GameObject[] hexagonGameObjects;
     List<GameObject> currentlyDisplayedPlayerTokens;
     List<Token> highlightedTokens = new List<Token>();
@@ -44,8 +44,13 @@ public class MapScript : SFController, Observer
 
     void Start()
     {
-
         
+
+    }
+
+    public List<Token> GetHighlightedTokens()
+    {
+        return highlightedTokens;
     }
 
     public List<GameObject> GetAllTokenObjects()
@@ -55,7 +60,7 @@ public class MapScript : SFController, Observer
 
     public List<GameObject> GetAllShownSpacePointButtons()
     {
-        return currentlyShownSpacePointButtons;
+        return allSpacePointButtons.Where(btn => btn.activeInHierarchy).ToList();
     }
 
     public void SetMap(Map map)
@@ -66,6 +71,7 @@ public class MapScript : SFController, Observer
         TileGroupRenderer.GetComponent<TileGroupRenderer>().Initialize(map);
         currentlyDisplayedPlayerTokens = DisplayPlayerTokens();
         CenterCamera();
+        CreateAllSpacePointButtons();
     }
 
     void RedrawTokens()
@@ -99,7 +105,6 @@ public class MapScript : SFController, Observer
     {
         GameObject prefab = tokenRendererPrefab;
 
-        //GameObject tokenInstance = Helper.Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity);
         GameObject tokenInstance = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity);
         DontDestroyOnLoad(tokenInstance);
         tokenInstance.GetComponent<Space.TokenScript>().tokenGameObject = tokenInstance;
@@ -110,19 +115,18 @@ public class MapScript : SFController, Observer
         return tokenInstance;
     }
 
-
-
-    public void ShowAllAvailableSpacePoints()
+    void CreateAllSpacePointButtons()
     {
-        var allSpacePoints = map.getAllAvailableSpacePoints();
-        CreateButtonsAtSpacePoints(allSpacePoints);
-    }
-
-    void CreateButtonsAtSpacePoints(List<SpacePoint> points)
-    {
+        var points = map.AllAvailableSpacePoints;
         foreach (SpacePoint point in points)
         {
-            CreateButtonAtSpacePoint(point);
+            GameObject btn = (GameObject)Instantiate(spacePointButton, point.ToUnityPosition(), Quaternion.identity);
+            btn.GetComponent<Space.SpacePointButtonScript>().spacePoint = point;
+            btn.GetComponent<Space.SpacePointButtonScript>().referenceToInstance = btn;
+            btn.GetComponentInChildren<bla>().point = point;
+            allSpacePointButtons.Add(btn);
+            btn.transform.parent = this.gameObject.transform;
+            btn.SetActive(false);
         }
     }
 
@@ -142,12 +146,10 @@ public class MapScript : SFController, Observer
 
     public void HideAllSpacePointButtons()
     {
-        foreach (GameObject go in currentlyShownSpacePointButtons)
+        foreach (GameObject go in allSpacePointButtons)
         {
-            GameObject.Destroy(go);
+            go.SetActive(false);
         }
-
-        currentlyShownSpacePointButtons.Clear();
     }
 
     public void RedrawMap()
@@ -183,19 +185,6 @@ public class MapScript : SFController, Observer
         Vector2 middle = (topLeft + bottomRight) / 2;
 
         Camera.main.transform.position = new Vector3(middle.x, middle.y, Camera.main.transform.position.z);
-    }
-
-    public void CreateButtonAtSpacePoint(SpacePoint point)
-    {
-        GameObject btn = (GameObject)Instantiate(spacePointButton, point.ToUnityPosition(), Quaternion.identity);
-        btn.GetComponent<Space.SpacePointButtonScript>().spacePoint = point;
-        btn.GetComponent<Space.SpacePointButtonScript>().referenceToInstance = btn;
-
-        btn.GetComponentInChildren<bla>().point = point;
-        currentlyShownSpacePointButtons.Add(btn);
-
-        btn.transform.parent = this.gameObject.transform;
-
     }
 
     public GameObject CreateHexagon(Vector2 position, HexCoordinates coords)
@@ -330,13 +319,19 @@ public class MapScript : SFController, Observer
 
     public void HandleClickOfToken(Token token)
     {
+        Debug.Log("TOken was clicked");
         if (mode == MapMode.SELECT)
         {
+            Debug.Log("Num highlighted tokens: " + highlightedTokens.Count);
             if (highlightedTokens.Contains(token))
             {
+
                 this.tokenSelectCallback(token);
                 RemoveAllHighlights();
                 mode = MapMode.NORMAL;
+            } else
+            {
+                Debug.Log("CLicked token not part of highlightedTokens");
             }
         }
     }
@@ -358,15 +353,26 @@ public class MapScript : SFController, Observer
         this.didSelectSpacePointCallback = didSelectSpacePoint;
     }
 
-    public void ShowSpacePointsFulfillingFilters(List<SpacePointFilter> filters, List<Player> players)
+    public void ShowSpacePointsFulfillingFilters(List<SpacePointFilter> filters)
     {
-        List<SpacePoint> points = map.GetSpacePointsFullfillingFilters(filters, players.ToArray());
-        CreateButtonsAtSpacePoints(points);
+        List<SpacePoint> points = map.GetSpacePointsFullfillingFilters(filters);
+        ShowSpacePoints(points);
     }
 
     public void ShowSpacePoints(List<SpacePoint> spacePoints)
     {
-        CreateButtonsAtSpacePoints(spacePoints);
+        foreach (var point in spacePoints)
+        {
+            var associatedButton = allSpacePointButtons.Find(btn => btn.GetComponent<Space.SpacePointButtonScript>().spacePoint.Equals(point));
+            if (associatedButton != null)
+            {
+                associatedButton.SetActive(true);
+            }
+            else
+            {
+                Debug.LogError("Couldnt find button with spacepoint");
+            }
+        }
     }
 
     public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)

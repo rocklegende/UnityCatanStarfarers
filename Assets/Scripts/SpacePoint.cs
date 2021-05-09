@@ -34,6 +34,17 @@ public class SpacePoint
     /// </summary>
     public static SpacePoint GarbagePoint = new SpacePoint(100, 100, 0);
 
+    public bool IsEqualTo(SpacePoint other)
+    {
+        if (other == null)
+        {
+            // If it is null then it is not equal to this instance.
+            return false;
+        }
+
+        return this.coordinates.Equals(other.coordinates) && this.vertexNumber == other.vertexNumber;
+    }
+
     public override bool Equals(System.Object obj)
     {
         var cityPos = obj as SpacePoint;
@@ -47,9 +58,19 @@ public class SpacePoint
         return this.coordinates.Equals(cityPos.coordinates) && this.vertexNumber == cityPos.vertexNumber;
     }
 
+    public override int GetHashCode()
+    {
+        return string.Format("(CityPosition) q:{0}, r:{1}, vertex:{2}", this.coordinates.q, this.coordinates.r, vertexNumber).GetHashCode();
+    }
+
+    public override string ToString()
+    {
+        return "(SpacePoint) q:" + this.coordinates.q + ", r:" + this.coordinates.r + "vertex: " + vertexNumber;
+    }
+
     public void print()
     {
-        Logger.log("(CityPosition) q:" + this.coordinates.q + ", r:" + this.coordinates.r + "vertex: " + vertexNumber);
+        Logger.log(ToString());
     }
 
     public List<SpacePoint> GetNeighbors()
@@ -98,7 +119,7 @@ public class SpacePoint
         return this.coordinates.DistanceTo(pos.coordinates) * 2 + (MinMax[0].vertexNumber - MinMax[1].vertexNumber);
     }
 
-    public static SpacePoint Zero = new SpacePoint(0, 0, 0); 
+    public static SpacePoint Zero =  new SpacePoint(0, 0, 0); 
 
     public SpacePoint(int q, int r, int vertexNumber)
     {
@@ -117,7 +138,7 @@ public class SpacePoint
         this.vertexNumber = vertexNumber;
 
         if (this.vertexNumber < 0 || this.vertexNumber > 1)
-        {
+        { 
             throw new ArgumentOutOfRangeException("vertexNumber has to be 0 or 1");
         }
     }

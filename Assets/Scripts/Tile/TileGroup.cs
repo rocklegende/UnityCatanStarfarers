@@ -56,7 +56,7 @@ public abstract class TileGroup : SFModel
     {
         foreach (var settlePoint in settlePoints)
         {
-            if (settlePoint.Equals(point))
+            if (settlePoint.IsEqualTo(point))
             {
                 return true;
             }

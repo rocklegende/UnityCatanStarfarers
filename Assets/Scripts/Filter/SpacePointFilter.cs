@@ -6,16 +6,12 @@ using com.onebuckgames.UnityStarFarers;
 
 public abstract class SpacePointFilter
 {
-    public abstract bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players);
-    public List<Token> GetAllTokenOfPlayers(Player[] players)
-    {
-        return new Helper().GetAllTokenOfPlayers(players);
-    }
+    public abstract bool pointFulfillsFilter(SpacePoint point, Map map);    
 }
 
 public class TradeshipSpacePointFilter : SpacePointFilter
 {
-    public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
+    public override bool pointFulfillsFilter(SpacePoint point, Map map)
     {
         Tile_[] tiles = map.getTilesAtPoint(point);
         var t = map.GetTilesOfType<ResourceTile>(tiles);
@@ -25,11 +21,11 @@ public class TradeshipSpacePointFilter : SpacePointFilter
 
 public class IsSpacePointFreeFilter : SpacePointFilter
 {
-    public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
+    public override bool pointFulfillsFilter(SpacePoint point, Map map)
     {
-        foreach(Token token in GetAllTokenOfPlayers(players))
+        foreach (Token token in map.tokensOnMap)
         {
-            if (token.position.Equals(point))
+            if (token.position.IsEqualTo(point))
             {
                 return false;
             }
@@ -40,7 +36,7 @@ public class IsSpacePointFreeFilter : SpacePointFilter
 
 public class IsValidSpacePointFilter : SpacePointFilter
 {
-    public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
+    public override bool pointFulfillsFilter(SpacePoint point, Map map)
     {
         var tiles = map.getTilesAtPoint(point);
         ResourceTile[] resourceTiles = map.GetTilesOfType<ResourceTile>(tiles);
@@ -63,14 +59,14 @@ public class IsNeighborOwnSpacePortFilter : SpacePointFilter
         this.mainPlayer = mainPlayer;
     }
 
-    public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
+    public override bool pointFulfillsFilter(SpacePoint point, Map map)
     {
-        SpacePoint[] neighborPoints = map.GetNeighborsOfSpacePoint(point); //all neighbors
+        List<SpacePoint> neighborPoints = map.GetNeighborsOfSpacePoint(point);
         foreach (SpacePoint neighbor in neighborPoints)
         {
-            foreach (Token token in GetAllTokenOfPlayers(players))
+            foreach (Token token in map.tokensOnMap)
             {
-                if (token.position.Equals(neighbor))
+                if (token.position.IsEqualTo(neighbor))
                 {
                     if (token.attachedToken is SpacePortToken && token.owner == mainPlayer)
                     {
@@ -91,11 +87,11 @@ public class IsOwnSettledColonySpacePointFilter : SpacePointFilter
         this.mainPlayer = mainPlayer;
     }
 
-    public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
+    public override bool pointFulfillsFilter(SpacePoint point, Map map)
     {
-        foreach (Token token in GetAllTokenOfPlayers(players))
+        foreach (Token token in map.tokensOnMap)
         {
-            if (token.position.Equals(point) && token is ColonyBaseToken && token.attachedToken.IsNull() && token.owner == mainPlayer)
+            if (token.position.IsEqualTo(point) && token is ColonyBaseToken && token.attachedToken.IsNull() && token.owner == mainPlayer)
             {
                 return true;
             }
@@ -113,9 +109,9 @@ public class IsStepsAwayFilter : SpacePointFilter
         this.origin = origin;
         this.steps = steps;
     }
-    public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
+    public override bool pointFulfillsFilter(SpacePoint point, Map map)
     {
-        return new Helper().SpacePointArrayContainsPoint(map.GetSpacePointsInsideRange(origin, steps), point);
+        return map.GetSpacePointsInsideRange(origin, steps).Contains(point);
     }
 }
 
@@ -128,9 +124,9 @@ public class IsExactlyStepsAwayAndCannotSettleOnPointCounter : SpacePointFilter
         this.token = token;
         this.exact_steps = exact_steps;
     }
-    public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
+    public override bool pointFulfillsFilter(SpacePoint point, Map map)
     {
-        var isExactlyStepsAway = new Helper().SpacePointArrayContainsPoint(map.GetSpacePointsInsideRange(token.position, exact_steps, exact_steps), point);
+        var isExactlyStepsAway = map.GetSpacePointsInsideRange(token.position, exact_steps, exact_steps).Contains(point);
         if (!isExactlyStepsAway)
         {
             return true;
@@ -173,9 +169,9 @@ public class IsNeighborOfOwnSpacePortOrNotExactlyStepsAway : SpacePointFilter
         this.token = token;
     }
 
-    public override bool pointFulfillsFilter(SpacePoint point, Map map, Player[] players)
+    public override bool pointFulfillsFilter(SpacePoint point, Map map)
     {
-        var isExactlyStepsAway = new Helper().SpacePointArrayContainsPoint(map.GetSpacePointsInsideRange(token.position, exactSteps, exactSteps), point);
+        var isExactlyStepsAway = map.GetSpacePointsInsideRange(token.position, exactSteps, exactSteps).Contains(point);
         if (!isExactlyStepsAway)
         {
             return true;
@@ -197,8 +193,6 @@ public class IsNeighborOfOwnSpacePortOrNotExactlyStepsAway : SpacePointFilter
                     }
                 }
             }
-            
-            
         }
         return false;
     }

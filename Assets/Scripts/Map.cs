@@ -9,11 +9,12 @@ namespace com.onebuckgames.UnityStarFarers
     [Serializable]
     public class Map : SFModel, Observer
     {
+        public List<TileGroup> tileGroups;
+        public List<Token> tokensOnMap;
+        public List<SpacePoint> AllAvailableSpacePoints;
 
         private Tile_[,] mapRepresentation;
         private int offset;
-        public List<TileGroup> tileGroups;
-        public List<Token> tokensOnMap;
 
         public Map(Tile_[,] mapRepresentation, List<TileGroup> tileGroups = null)
         {
@@ -29,6 +30,8 @@ namespace com.onebuckgames.UnityStarFarers
                     group.RegisterObserver(this);
                 }
             }
+
+            AllAvailableSpacePoints = GetAllAvailableSpacePoints();
         }
 
         void DataChanged()
@@ -124,7 +127,7 @@ namespace com.onebuckgames.UnityStarFarers
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
-        public SpacePoint[] GetNeighborsOfSpacePoint(SpacePoint point)
+        public List<SpacePoint> GetNeighborsOfSpacePoint(SpacePoint point)
         {
             var actualValidNeighbors = new List<SpacePoint>();
             var coords = point.coordinates;
@@ -166,7 +169,7 @@ namespace com.onebuckgames.UnityStarFarers
                         actualValidNeighbors.Add(sw_point);
                     }
                 }   
-                return actualValidNeighbors.ToArray();
+                return actualValidNeighbors;
             }
             else if (point.vertexNumber == 1)
             {
@@ -201,7 +204,7 @@ namespace com.onebuckgames.UnityStarFarers
                         actualValidNeighbors.Add(ne_point);
                     }
                 }
-                return actualValidNeighbors.ToArray();
+                return actualValidNeighbors;
             }
             else
             {
@@ -209,21 +212,36 @@ namespace com.onebuckgames.UnityStarFarers
             }
         }
 
-        public SpacePoint[] GetSpacePointsInDistance(SpacePoint origin, int distance)
+        public List<SpacePoint> GetSpacePointsInDistance(SpacePoint origin, int distance)
         {
             return GetSpacePointsInsideRange(origin, distance, distance);
         }
 
         /// <summary>
-        /// Returns every point that is inside the given min max range (min and max values are included) from given SpacePoint
+        /// Returns list of every point that is inside the given min max range (min and max values are included) from given SpacePoint.
+        /// 
+        /// </summary>
+        /// <param name="origin"></param>
+        /// <param name="max"></param>
+        /// <param name="min"></param>
+        /// <returns>List(SpacePoint)</returns>
+        public List<SpacePoint> GetSpacePointsInsideRange(SpacePoint origin, int max, int min = 0)
+        {
+            return GetSpacePointsInsideRangeWithDistanceMap(origin, max, min).Keys.ToList();
+        }
+
+        /// <summary>
+        /// Returns distance map of every point that is inside the given min max range (min and max values are included) from given SpacePoint.
+        /// Key is SpacePoint, Value is distance from origin.
         /// </summary>
         /// <param name="origin"></param>
         /// <param name="max"></param>
         /// <param name="min"></param>
         /// <returns></returns>
-        public SpacePoint[] GetSpacePointsInsideRange(SpacePoint origin, int max, int min = 0)
-
+        public Dictionary<SpacePoint, int> GetSpacePointsInsideRangeWithDistanceMap(SpacePoint origin, int max, int min = 0)
         {
+            Dictionary<SpacePoint, int> distanceMap = new Dictionary<SpacePoint, int>();
+
             if (min < 0 || max < 0 || min > max)
             {
                 throw new ArgumentException("Please insert distance >= 0");
@@ -231,7 +249,8 @@ namespace com.onebuckgames.UnityStarFarers
 
             if (max == 0 && min == 0)
             {
-                return new SpacePoint[] { origin };
+                distanceMap.Add(origin, 0);
+                return distanceMap;
             }
 
             List<SpacePoint> visitedPoints = new List<SpacePoint>();
@@ -249,7 +268,7 @@ namespace com.onebuckgames.UnityStarFarers
                     var neighbors = GetNeighborsOfSpacePoint(point);
                     foreach (SpacePoint neighbor in neighbors)
                     {
-                        bool neighborVisited = new Helper().SpacePointArrayContainsPoint(visitedPoints.ToArray(), neighbor);
+                        bool neighborVisited = visitedPoints.Contains(neighbor);
                         if (!neighborVisited)
                         {
                             visitedPoints.Add(neighbor);
@@ -260,12 +279,14 @@ namespace com.onebuckgames.UnityStarFarers
                 steps++;
             }
 
-            List<SpacePoint> points = new List<SpacePoint>();
-            for (int i = min; i <= max; i++)
+            for (int distance = min; distance <= max; distance++)
             {
-                points.AddRange(tracker[i]);
+                foreach (var point in tracker[distance])
+                {
+                    distanceMap.Add(point, distance);
+                }
             }
-            return points.ToArray(); 
+            return distanceMap;
         }
 
         /// <summary>
@@ -308,7 +329,7 @@ namespace com.onebuckgames.UnityStarFarers
                         }
                         return dist;
                     }
-                    bool neighborVisited = helper.SpacePointArrayContainsPoint(visitedPoints.ToArray(), neighbor);
+                    bool neighborVisited = visitedPoints.Contains(neighbor);
                     if (!neighborVisited)
                     {
                         visitedPoints.Add(neighbor);
@@ -576,13 +597,13 @@ namespace com.onebuckgames.UnityStarFarers
         }
 
 
-        public List<SpacePoint> applyFilter(List<SpacePoint> points, SpacePointFilter filter, Player[] players)
+        public List<SpacePoint> applyFilter(List<SpacePoint> points, SpacePointFilter filter)
         {
             List<SpacePoint> validPoints = new List<SpacePoint>();
 
             foreach (SpacePoint point in points)
             {
-                if (filter.pointFulfillsFilter(point, this, players))
+                if (filter.pointFulfillsFilter(point, this))
                 {
                     validPoints.Add(point);
                 }
@@ -591,12 +612,12 @@ namespace com.onebuckgames.UnityStarFarers
             return validPoints;
         }
 
-        public List<SpacePoint> GetSpacePointsFullfillingFilters(List<SpacePointFilter> filters, Player[] players)
+        public List<SpacePoint> GetSpacePointsFullfillingFilters(List<SpacePointFilter> filters)
         {
-            List<SpacePoint> points = getAllAvailableSpacePoints();
+            List<SpacePoint> points = AllAvailableSpacePoints; //GetAllAvailableSpacePoints();
             foreach (var filter in filters)
             {
-                points = applyFilter(points, filter, players);
+                points = applyFilter(points, filter);
             }
             return points;
         }
@@ -605,7 +626,7 @@ namespace com.onebuckgames.UnityStarFarers
         /// Returns all theoretically possible SpacePoints (also including SpacePoints that are not reachable).
         /// </summary>
         /// <returns></returns>
-        public List<SpacePoint> getAllAvailableSpacePoints()
+        List<SpacePoint> GetAllAvailableSpacePoints()
         {
             List<SpacePoint> positions = new List<SpacePoint>();
             HexCoordinates[] allHexCoordinates = getAllHexCoordinates();

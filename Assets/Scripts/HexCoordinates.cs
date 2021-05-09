@@ -49,6 +49,17 @@ public class HexCoordinates
         return this.q == hex.q && this.r == hex.r;
     }
 
+    //public bool IsEqualTo(HexCoordinates hex)
+    //{
+    //    if (hex == null)
+    //    {
+    //        // If it is null then it is not equal to this instance.
+    //        return false;
+    //    }
+
+    //    return this.q == hex.q && this.r == hex.r;
+    //}
+
     public HexCoordinates(int q, int r)
     {
         this.q = q;

@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StartState : GameState
+public class BuildAndTradeState : GameState
 {
-    public StartState(GameController controller) : base(controller)
+    public BuildAndTradeState(GameController controller) : base(controller)
     {
-        hudScript.SetStateText("StartState Player " + controller.currentPlayerAtTurnIndex);
+        hudScript.SetStateText("Build&Trade Player " + controller.currentPlayerAtTurnIndex);
         hudScript.ShowSettleButton(false);
     }
 

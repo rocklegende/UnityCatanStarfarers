@@ -11,5 +11,5 @@ public static class GameConstants
 
     public static bool ShowTextAboveSpacePointButtons = true;
 
-    public static bool isDevelopment = false;
+    public static bool isDevelopment = true;
 }

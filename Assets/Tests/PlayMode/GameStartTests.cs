@@ -56,7 +56,7 @@ namespace Tests
             var smallPlayerViews = gameController.GetHUDScript().GetSmallPlayerViews();
             Assert.AreEqual(1, smallPlayerViews.Count);
 
-            //we have two players, main player is at postion 0 so the other is at position 1, this players should be in the single smallPlayerView
+            //we have two players, main player is at postion 0 so the other is at position 1, so player 1 should be displayed in the single smallPlayerView
             Assert.True(smallPlayerViews[0].GetComponent<SmallPlayerInfoView>().player == gameController.players[1]); 
             yield return null;
         }

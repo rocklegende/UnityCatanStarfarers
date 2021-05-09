@@ -42,10 +42,16 @@ public class PlayModeTestHelper
         return gameControllerScript;
     }
 
-    public IEnumerator SetupDebugState()
+    public IEnumerator SetupDebugState(DebugStartState debugState)
     {
         var gameControllerScript = GetGameController();
-        gameControllerScript.SetUpDebugState(new TwoTradeShipAndOneSpacePort(gameControllerScript));
+        gameControllerScript.SetUpDebugState(debugState);
         yield return null;
+    }
+
+    public void ClickSpacePointButton(SpacePoint targetPoint, MapScript mapScript)
+    {
+        var spacePointToClick = mapScript.GetAllShownSpacePointButtons().Find(pointButton => pointButton.GetComponent<Space.SpacePointButtonScript>().spacePoint.Equals(targetPoint));
+        spacePointToClick.GetComponent<Space.SpacePointButtonScript>().OnClick();
     }
 }
