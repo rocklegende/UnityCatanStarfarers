@@ -68,6 +68,9 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
     List<GameObject> smallPlayerViews = new List<GameObject>();
     public Button BuildShipsButton;
 
+    private List<BuildDropDownOption> buildShipsDropdownOptions;
+    private List<BuildDropDownOption> buildUpgradesDropdownOptions;
+
 
 
     // Start is called before the first frame update
@@ -137,7 +140,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         multiSelectionView.SetActive(false);
     }
 
-    public void OpenUpgradeSelection(List<Token> selectableUpgrades, System.Action<List<int>> selectedIndexesCallback, int maxSelectable = -1)
+    public void OpenUpgradeSelection(List<Upgrade> selectableUpgrades, System.Action<List<int>> selectedIndexesCallback, int maxSelectable = -1)
         //TODO: remove Duplication in OpenPlayerSelection and OpenUpgradeSelection methods
     {
         if (selectableUpgrades.Count == 0)
@@ -154,8 +157,6 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         {
             multiSelectScript.maxSelectable = maxSelectable;
         }
-
-
         
     }
 
@@ -225,25 +226,44 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
 
     void CreateBuildDropDowns()
     {
-        //TODO: refactor the building process
-        List<BuildDropDownOption> options = new List<BuildDropDownOption>();
-        var spacePortOption = new BuildDropDownOption("build_space_port_btn", new SpacePortToken(), BuildTokenBtnPressed);
-        var buildTradeOption = new BuildDropDownOption("build_trade_ship_btn", new TradeBaseToken(), BuildTokenBtnPressed);
-        var buildColonyOption = new BuildDropDownOption("build_colony_ship_btn", new ColonyBaseToken(), BuildTokenBtnPressed);
+        CreateBuildShipsDropdown();
+        CreateUpgradeDropdown();
+    }
 
-        var buildShipsOptions = new List<BuildDropDownOption> {
-            buildColonyOption,
-            buildTradeOption,
-            spacePortOption
-        };
-        buildShipsDropDownRef.GetComponent<BuildDropDown>().SetOptions(buildShipsOptions);
-
+    private void CreateUpgradeDropdown()
+    {
         var upgradeOptions = new List<BuildDropDownOption> {
-            new BuildDropDownOption("booster", new BoosterUpgradeToken(), BuildUpgradeBtnPressed),
-            new BuildDropDownOption("cannon", new CannonUpgradeToken(), BuildUpgradeBtnPressed),
-            new BuildDropDownOption("freightpod", new FreightPodUpgradeToken(), BuildUpgradeBtnPressed)
+            new BuildDropDownOption(new BoosterUpgradeToken(), "booster", new BoosterUpgradeToken().cost),
+            new BuildDropDownOption(new CannonUpgradeToken(), "cannon", new CannonUpgradeToken().cost),
+            new BuildDropDownOption(new FreightPodUpgradeToken(), "freightpod", new FreightPodUpgradeToken().cost)
         };
+        buildUpgradesDropdownOptions = upgradeOptions;
         upgradesDropDownRef.GetComponent<BuildDropDown>().SetOptions(upgradeOptions);
+        upgradesDropDownRef.GetComponent<BuildDropDown>().optionSelectedCallback = UpgradeDropdownOptionSelected;
+    }
+
+    private void CreateBuildShipsDropdown()
+    {
+        var buildShipsOptions = new List<BuildDropDownOption> {
+            new BuildDropDownOption(new SpacePortToken(), "build_space_port_btn", new SpacePortToken().cost),
+            new BuildDropDownOption(new TradeBaseToken(), "build_trade_ship_btn", new TradeBaseToken().cost),
+            new BuildDropDownOption(new ColonyBaseToken(),"build_colony_ship_btn", new ColonyBaseToken().cost)
+        };
+        buildShipsDropdownOptions = buildShipsOptions;
+        buildShipsDropDownRef.GetComponent<BuildDropDown>().SetOptions(buildShipsOptions);
+        buildShipsDropDownRef.GetComponent<BuildDropDown>().optionSelectedCallback = TokenDropdownOptionSelected;
+    }
+
+    public void TokenDropdownOptionSelected(int index)
+    {
+        CloseAllDropDowns();
+        app.Notify(SFNotification.HUD_build_token_btn_clicked, this, new object[] { (Token)buildShipsDropdownOptions[index].buildableToken });
+    }
+
+    public void UpgradeDropdownOptionSelected(int index)
+    {
+        CloseAllDropDowns();
+        app.Notify(SFNotification.HUD_build_upgrade_btn_clicked, this, new object[] { (Upgrade)buildUpgradesDropdownOptions[index].buildableToken });
     }
 
     public void SetStateText(string text)
@@ -447,11 +467,10 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
             {
                 foreach (var option in dropdown.GetOptions())
                 {
-                    if (option.token is BuildableToken)
+                    if (option.buildableToken != null)
                     {
-                        var buildTok = (BuildableToken)option.token;
                         var map = MapObject.GetComponent<MapScript>().map;
-                        dropdown.SetOptionInteractable(option, buildTok.CanBeBuildByPlayer(player, map));
+                        dropdown.SetOptionInteractable(option, option.buildableToken.CanBeBuildByPlayer(player, map));
                     }
                 }
             }
@@ -473,21 +492,9 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         tradePanel.SetActive(false);
     }
 
-    void BuildTokenBtnPressed(Token token)
-    {
-        CloseAllDropDowns();
-        app.Notify(SFNotification.HUD_build_token_btn_clicked, this, new object[] { token });
-    }
-
     public void NextButtonClicked()
     {
         app.Notify(SFNotification.next_button_clicked, this);
-    }
-
-    void BuildUpgradeBtnPressed(Token token)
-    {
-        CloseAllDropDowns();
-        app.Notify(SFNotification.HUD_build_upgrade_btn_clicked, this, new object[] { token });
     }
 
     public void SettleButtonPressed()

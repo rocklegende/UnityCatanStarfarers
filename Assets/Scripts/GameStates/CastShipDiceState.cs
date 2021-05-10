@@ -39,7 +39,7 @@ public class CastShipDiceState : GameState
         throw new NotImplementedException();
     }
 
-    public override void OnBuildUpgradeOptionClicked(Token token)
+    public override void OnBuildUpgradeOptionClicked(Upgrade upgrade)
     {
         throw new NotImplementedException();
     }

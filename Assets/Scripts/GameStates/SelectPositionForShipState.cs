@@ -16,7 +16,7 @@ public class SelectPositionForShipState : GameState
 
     public void Init()
     {
-        if (token is TradeBaseToken || token is ColonyBaseToken)
+        if (token is BuildableToken)
         {
             //TODO: let Token decide which points to show
             var filters = new List<SpacePointFilter> {
@@ -70,7 +70,7 @@ public class SelectPositionForShipState : GameState
         //throw new System.NotImplementedException();
     }
 
-    public override void OnBuildUpgradeOptionClicked(Token token)
+    public override void OnBuildUpgradeOptionClicked(Upgrade upgrade)
     {
         //throw new System.NotImplementedException();
     }

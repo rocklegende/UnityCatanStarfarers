@@ -51,7 +51,7 @@ public class EncounterCardState : GameState
         Debug.Log("pressed back");
     }
 
-    public override void OnBuildUpgradeOptionClicked(Token token)
+    public override void OnBuildUpgradeOptionClicked(Upgrade upgrade)
     {
         Debug.Log("not reacting");
     }

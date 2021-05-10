@@ -25,7 +25,7 @@ namespace Tests
         void SelectColonyShipFromDropdown()
         {
             var hud = gameController.GetHUDScript();
-            hud.buildShipsDropDownRef.GetComponent<BuildDropDown>().SelectOptionAtIndex(0);
+            hud.buildShipsDropDownRef.GetComponent<BuildDropDown>().SelectOptionAtIndex(2);
         }
 
         void SelectTradeShipFromDropdown()
@@ -37,7 +37,7 @@ namespace Tests
         void SelectSpacePortFromDropdown()
         {
             var hud = gameController.GetHUDScript();
-            hud.buildShipsDropDownRef.GetComponent<BuildDropDown>().SelectOptionAtIndex(2);
+            hud.buildShipsDropDownRef.GetComponent<BuildDropDown>().SelectOptionAtIndex(0);
         }
 
         [UnityTest]

@@ -401,7 +401,7 @@ namespace Tests
             player.BuildUpgradeWithoutCost(new BoosterUpgradeToken());
             player.BuildUpgradeWithoutCost(new CannonUpgradeToken());
 
-            var removableTokens = player.ship.GetRemovableTokens();
+            var removableTokens = player.ship.GetRemovableUpgrades();
             Assert.True(removableTokens.Count == 2);
             Assert.True(removableTokens.Find(tok => tok is BoosterUpgradeToken) != null);
             Assert.True(removableTokens.Find(tok => tok is CannonUpgradeToken) != null);

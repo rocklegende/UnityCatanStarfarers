@@ -5,15 +5,11 @@ using com.onebuckgames.UnityStarFarers;
 using System.Collections;
 using System.Linq;
 
-public interface Settable
-{
-    bool CanSettle(Tile_[] tiles);
-}
 
 public interface BuildableToken
 {
     bool CanBeBuildByPlayer(Player player, Map map);
-    //TODO: get possible build points for this token, add play tests for building tokens
+    List<SpacePoint> GetPossibleBuildSpots(Player player, Map map);
 }
 
 [Serializable]

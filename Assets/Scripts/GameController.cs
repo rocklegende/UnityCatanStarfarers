@@ -667,12 +667,11 @@ public class GameController : SFController, IGameController, Observer
 
             case SFNotification.HUD_build_token_btn_clicked:
                 var tok = (Token)p_data[0];
-                Debug.Log(tok);
                 state.OnBuildShipOptionClicked((Token)p_data[0]);
                 break;
 
             case SFNotification.HUD_build_upgrade_btn_clicked:
-                state.OnBuildUpgradeOptionClicked((Token)p_data[0]);
+                state.OnBuildUpgradeOptionClicked((Upgrade)p_data[0]);
                 break;
 
             case SFNotification.next_button_clicked:

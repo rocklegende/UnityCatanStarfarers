@@ -246,7 +246,7 @@ namespace Tests
 
             int prevBoosters = gameController.mainPlayer.ship.Boosters;
             //select to upgrade booster
-            var boosterIndex = getUpgradeAction.selectableTokens.FindIndex(tok => tok is BoosterUpgradeToken);
+            var boosterIndex = getUpgradeAction.selectableUpgrades.FindIndex(tok => tok is BoosterUpgradeToken);
             var multiSelection = gameController.GetHUDScript().multiSelectionView.GetComponent<MultiSelection>();
             multiSelection.selectCallback(new List<int>() { boosterIndex });
 

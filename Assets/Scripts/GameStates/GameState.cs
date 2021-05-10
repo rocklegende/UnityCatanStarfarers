@@ -19,7 +19,7 @@ public abstract class GameState
     public abstract void OnNextButtonClicked();
     public abstract void OnBackButtonClicked();
     public abstract void OnBuildShipOptionClicked(Token token);
-    public abstract void OnBuildUpgradeOptionClicked(Token token);
+    public abstract void OnBuildUpgradeOptionClicked(Upgrade upgrade);
     public abstract void OnSettleButtonPressed();
     public abstract void OnTokenCanSettle(bool canSettle, Token token);
     public abstract void Setup();

@@ -44,6 +44,16 @@ public class SpacePortToken : Token, BuildableToken
     {
         return buildCondition.TokenCanBeBuildByPlayer(this, player, map);
     }
+
+    public List<SpacePoint> GetPossibleBuildSpots(Player player, Map map)
+    {
+        var filters = new List<SpacePointFilter> {
+            new IsValidSpacePointFilter(),
+            new IsOwnSettledColonySpacePointFilter(player)
+        };
+
+        return map.GetSpacePointsFullfillingFilters(filters);
+    }
 }
 
 [Serializable]
@@ -68,21 +78,30 @@ public class TradeAndColonyBuildCondition : BuildCondition
             return false;
         }
 
-        //TODO: var hasPointsToBuild = token.GetPossibleBuildPoints()
-
-        var filters = new List<SpacePointFilter> {
-                new IsValidSpacePointFilter(),
-                new IsSpacePointFreeFilter(),
-                new IsNeighborOwnSpacePortFilter(player)
-            };
-
-        if (map.IsNotNull())
+        if (token is BuildableToken)
         {
-            if (map.GetSpacePointsFullfillingFilters(filters).Count == 0)
+            var buildableToken = (BuildableToken)token;
+            if (map.IsNotNull())
             {
-                return false;
+                if (buildableToken.GetPossibleBuildSpots(player, map).Count == 0)
+                {
+                    return false;
+                }
             }
         }
+        //var filters = new List<SpacePointFilter> {
+        //        new IsValidSpacePointFilter(),
+        //        new IsSpacePointFreeFilter(),
+        //        new IsNeighborOwnSpacePortFilter(player)
+        //    };
+
+        //if (map.IsNotNull())
+        //{
+        //    if (map.GetSpacePointsFullfillingFilters(filters).Count == 0)
+        //    {
+        //        return false;
+        //    }
+        //}
 
         return true;
     }
@@ -117,7 +136,7 @@ public class SpacePortBuildCondition : BuildCondition
 
 
 [Serializable]
-public class ColonyBaseToken : Token, Settable, BuildableToken
+public class ColonyBaseToken : Token, BuildableToken
 {
     BuildCondition buildCondition;
     public ColonyBaseToken() : base("colonybase_token", true, new Cost(new Resource[] { new FuelResource(), new OreResource(), new CarbonResource(), new FoodResource() }))
@@ -133,20 +152,7 @@ public class ColonyBaseToken : Token, Settable, BuildableToken
     public bool CanBeBuildByPlayer(Player player, Map map)
     {
         return buildCondition.TokenCanBeBuildByPlayer(this, player, map);
-    }
-
-    public bool CanSettle(Tile_[] tiles)
-    {
-        int count = 0;
-        foreach (var tile in tiles)
-        {
-            if (tile is ResourceTile)
-            {
-                count += 1;
-            }
-        }
-        return count == 2;
-    }
+    } 
 
     public override Token makeCopy()
     {
@@ -173,10 +179,20 @@ public class ColonyBaseToken : Token, Settable, BuildableToken
     {
         return 1;
     }
+
+    public List<SpacePoint> GetPossibleBuildSpots(Player player, Map map)
+    {
+        var filters = new List<SpacePointFilter> {
+            new IsValidSpacePointFilter(),
+            new IsSpacePointFreeFilter(),
+            new IsNeighborOwnSpacePortFilter(player)
+        };
+        return map.GetSpacePointsFullfillingFilters(filters);
+    }
 }
 
 [Serializable]
-public class TradeBaseToken : Token, Settable, BuildableToken
+public class TradeBaseToken : Token, BuildableToken
 {
     BuildCondition buildCondition;
     public TradeBaseToken() : base("tradebase_token", true, new Cost(new Resource[] { new OreResource(), new FuelResource(), new GoodsResource(), new GoodsResource() }))
@@ -192,19 +208,6 @@ public class TradeBaseToken : Token, Settable, BuildableToken
     public bool CanBeBuildByPlayer(Player player, Map map)
     {
         return buildCondition.TokenCanBeBuildByPlayer(this, player, map);
-    }
-
-    public bool CanSettle(Tile_[] tiles)
-    {
-        int count = 0;
-        foreach (var tile in tiles)
-        {
-            if (tile is TradeStationTile)
-            {
-                count += 1;
-            }
-        }
-        return count == 3;
     }
 
     public override Token makeCopy()
@@ -231,6 +234,16 @@ public class TradeBaseToken : Token, Settable, BuildableToken
     public override int ResourceProduce()
     {
         return 0;
+    }
+
+    public List<SpacePoint> GetPossibleBuildSpots(Player player, Map map)
+    {
+        var filters = new List<SpacePointFilter> {
+            new IsValidSpacePointFilter(),
+            new IsSpacePointFreeFilter(),
+            new IsNeighborOwnSpacePortFilter(player)
+        };
+        return map.GetSpacePointsFullfillingFilters(filters);
     }
 }
 
@@ -270,34 +283,14 @@ public class ShipToken : Token
 }
 
 [Serializable]
-public class BoosterUpgradeToken : Token, BuildableToken
+public class BoosterUpgradeToken : Upgrade, BuildableToken
 {
-    public BoosterUpgradeToken() : base("booster_upgrade", false, new Cost(new Resource[] { new FuelResource(), new FuelResource() }))
+    public BoosterUpgradeToken() : base("booster_upgrade", new Cost(new Resource[] { new FuelResource(), new FuelResource() }))
     {
 
     }
 
-    public override int BaseVictoryPoints()
-    {
-        return 0;
-    }
-
-    public override Token makeCopy()
-    {
-        throw new NotImplementedException();
-    }
-
-    protected override void OnSettle()
-    {
-        throw new NotImplementedException();
-    }
-
-    public override int ResourceProduce()
-    {
-        return 0;
-    }
-
-    public bool CanBeBuildByPlayer(Player player, Map map)
+    public override bool CanBeBuildByPlayer(Player player, Map map)
     {
         if (!player.hand.CanPayCost(cost))
         {
@@ -311,37 +304,22 @@ public class BoosterUpgradeToken : Token, BuildableToken
 
         return true;
     }
+
+    public List<SpacePoint> GetPossibleBuildSpots(Player player, Map map)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 [Serializable]
-public class CannonUpgradeToken : Token, BuildableToken
+public class CannonUpgradeToken : Upgrade, BuildableToken
 {
-    public CannonUpgradeToken() : base("cannon_upgrade", false, new Cost(new Resource[] { new CarbonResource(), new CarbonResource() }))
+    public CannonUpgradeToken() : base("cannon_upgrade", new Cost(new Resource[] { new CarbonResource(), new CarbonResource() }))
     {
 
     }
 
-    public override int BaseVictoryPoints()
-    {
-        return 0;
-    }
-
-    public override Token makeCopy()
-    {
-        throw new NotImplementedException();
-    }
-
-    protected override void OnSettle()
-    {
-        throw new NotImplementedException();
-    }
-
-    public override int ResourceProduce()
-    {
-        return 0;
-    }
-
-    public bool CanBeBuildByPlayer(Player player, Map map)
+    public override bool CanBeBuildByPlayer(Player player, Map map)
     {
         if (!player.hand.CanPayCost(cost))
         {
@@ -355,37 +333,37 @@ public class CannonUpgradeToken : Token, BuildableToken
 
         return true;
     }
+
+    public List<SpacePoint> GetPossibleBuildSpots(Player player, Map map)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 [Serializable]
-public class FreightPodUpgradeToken : Token, BuildableToken
+public abstract class Upgrade : SFModel
 {
-    public FreightPodUpgradeToken() : base("freight_pod_upgrade", false, new Cost(new Resource[] { new OreResource(), new OreResource() }))
+    public string id { get; }
+    public Cost cost { get; }
+
+    public Upgrade(string id, Cost cost)
+    {
+        this.id = id;
+        this.cost = cost;
+    }
+
+    public abstract bool CanBeBuildByPlayer(Player player, Map map);
+}
+
+[Serializable]
+public class FreightPodUpgradeToken : Upgrade, BuildableToken
+{
+    public FreightPodUpgradeToken() : base("freight_pod_upgrade", new Cost(new Resource[] { new OreResource(), new OreResource() }))
     {
 
     }
 
-    public override int BaseVictoryPoints()
-    {
-        return 0;
-    }
-
-    public override Token makeCopy()
-    {
-        throw new NotImplementedException();
-    }
-
-    protected override void OnSettle()
-    {
-        throw new NotImplementedException();
-    }
-
-    public override int ResourceProduce()
-    {
-        return 0;
-    }
-
-    public bool CanBeBuildByPlayer(Player player, Map map)
+    public override bool CanBeBuildByPlayer(Player player, Map map)
     {
         if (!player.hand.CanPayCost(cost))
         {
@@ -398,6 +376,11 @@ public class FreightPodUpgradeToken : Token, BuildableToken
         }
 
         return true;
+    }
+
+    public List<SpacePoint> GetPossibleBuildSpots(Player player, Map map)
+    {
+        throw new NotImplementedException();
     }
 }
 

@@ -41,9 +41,9 @@ public class BuildAndTradeState : GameState
         Debug.Log("pressed back");
     }
 
-    public override void OnBuildUpgradeOptionClicked(Token token)
+    public override void OnBuildUpgradeOptionClicked(Upgrade upgrade)
     {
-        controller.mainPlayer.BuildUpgrade(token);
+        controller.mainPlayer.BuildUpgrade(upgrade);
     }
 
     public override void OnSettleButtonPressed()

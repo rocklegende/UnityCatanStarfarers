@@ -36,9 +36,9 @@ public class SpaceShip
         return Boosters + FreightPods + Cannons;
     }
 
-    public  List<Token> GetRemovableTokens()
+    public  List<Upgrade> GetRemovableUpgrades()
     {
-        var list = new List<Token>();
+        var list = new List<Upgrade>();
         if (Cannons > 0)
         {
             list.Add(new CannonUpgradeToken());
@@ -56,9 +56,9 @@ public class SpaceShip
         return list;
     }
 
-    public List<Token> GetUpgradesThatAreNotFull()
+    public List<Upgrade> GetUpgradesThatAreNotFull()
     {
-        var list = new List<Token>();
+        var list = new List<Upgrade>();
         if (!IsCannonsFull())
         {
             list.Add(new CannonUpgradeToken());
@@ -76,15 +76,15 @@ public class SpaceShip
         return list;
     }
 
-    public void Add(Token token)
+    public void Add(Upgrade upgrade)
     {
-        if (token is BoosterUpgradeToken)
+        if (upgrade is BoosterUpgradeToken)
         {
             Boosters += 1;
-        } else if (token is CannonUpgradeToken)
+        } else if (upgrade is CannonUpgradeToken)
         {
             Cannons += 1;
-        } else if (token is FreightPodUpgradeToken)
+        } else if (upgrade is FreightPodUpgradeToken)
         {
             FreightPods += 1;
         } else
@@ -158,9 +158,9 @@ public class SpaceShip
         return IsUpgradeRackFull(ShipUpgrade.FREIGHTPOD);
     }
 
-    public void Remove(Token token)
+    public void Remove(Upgrade upgrade)
     {
-        if (token is BoosterUpgradeToken)
+        if (upgrade is BoosterUpgradeToken)
         {
             Boosters -= 1;
             if (Boosters < 0)
@@ -168,7 +168,7 @@ public class SpaceShip
                 Boosters = 0;
             }
         }
-        else if (token is CannonUpgradeToken)
+        else if (upgrade is CannonUpgradeToken)
         {
             Cannons -= 1;
             if (Cannons < 0)
@@ -176,7 +176,7 @@ public class SpaceShip
                 Cannons = 0;
             }
         }
-        else if (token is FreightPodUpgradeToken)
+        else if (upgrade is FreightPodUpgradeToken)
         {
             FreightPods -= 1;
             if (FreightPods < 0)

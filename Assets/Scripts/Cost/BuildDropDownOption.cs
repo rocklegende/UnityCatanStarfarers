@@ -1,17 +1,16 @@
 ﻿using System;
 public class BuildDropDownOption
 {
-    public delegate void DelegateMethod(Token token);
+    public BuildableToken buildableToken; 
     public string imageName;
-    public Token token;
-    public DelegateMethod method;
+    public Cost cost;
     public bool disabled = false;
 
-    public BuildDropDownOption(string imageName, Token token, DelegateMethod method)
+    public BuildDropDownOption(BuildableToken buildableToken, string imageName, Cost cost)
     {
         this.imageName = imageName;
-        this.token = token;
-        this.method = method;
+        this.cost = cost;
+        this.buildableToken = buildableToken;
     }
 
 }

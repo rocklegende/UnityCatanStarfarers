@@ -439,25 +439,25 @@ public class Player : SFModel, Observer, IComparable
         return BuildToken(map, baseType, position, attachedType, true);
     }
 
-    public void BuildUpgrade(Token token, bool isForFree = false)
+    public void BuildUpgrade(Upgrade upgrade, bool isForFree = false)
     {
-        ship.Add(token);
+        ship.Add(upgrade);
         if (!isForFree)
         {
-            hand.PayCost(token.cost);
+            hand.PayCost(upgrade.cost);
         }
         DataChanged();
     }
 
-    public void RemoveUpgrade(Token token)
+    public void RemoveUpgrade(Upgrade upgrade)
     {
-        ship.Remove(token);
+        ship.Remove(upgrade);
         DataChanged();
     }
 
-    public void BuildUpgradeWithoutCost(Token token)
+    public void BuildUpgradeWithoutCost(Upgrade upgrade)
     {
-        BuildUpgrade(token, true);
+        BuildUpgrade(upgrade, true);
     }
 
     public int GetVictoryPoints()

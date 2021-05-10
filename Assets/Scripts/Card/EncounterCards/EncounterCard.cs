@@ -553,30 +553,30 @@ public class GetTradeShipForFree : EncounterCardAction
 public class GetOneUpgradeForFree : EncounterCardAction
 {
     int fameMedalGain;
-    public readonly List<Token> selectableTokens;
+    public readonly List<Upgrade> selectableUpgrades;
     public GetOneUpgradeForFree(GameController gameController, int fameMedalGain = 0) : base(gameController)
     {
         this.fameMedalGain = fameMedalGain;
-        selectableTokens = gameController.mainPlayer.ship.GetUpgradesThatAreNotFull();
+        selectableUpgrades = gameController.mainPlayer.ship.GetUpgradesThatAreNotFull();
     }
 
     public override void Execute()
     {
         FameMedalGainStrategy.HandleFameMedalGain(fameMedalGain, gameController.mainPlayer);
-        if (selectableTokens.Count == 0)
+        if (selectableUpgrades.Count == 0)
         {
             ResultFound(true); // player has no space for addtional tokens, therefore we end this action here
             return;
         }
 
-        hud.OpenUpgradeSelection(selectableTokens, UpgradeTokenSelected, 1);
+        hud.OpenUpgradeSelection(selectableUpgrades, UpgradeSelected, 1);
     }
 
-    void UpgradeTokenSelected(List<int> selectedIndexes)
+    void UpgradeSelected(List<int> selectedIndexes)
     {
         foreach (var index in selectedIndexes)
         {
-            hud.player.BuildUpgradeWithoutCost(selectableTokens[index]);
+            hud.player.BuildUpgradeWithoutCost(selectableUpgrades[index]);
         }
         hud.CloseSelection();
         ResultFound(true);
@@ -632,31 +632,31 @@ public class GetResourceFromEveryPlayer : EncounterCardAction
 public class RemoveUpgradeAction : EncounterCardAction
 {
     int fameMedalGain;
-    List<Token> selectableTokens;
+    List<Upgrade> selectableUpgrades;
     public Action doneCallback;
     public RemoveUpgradeAction(GameController gameController, int fameMedalGain = -1) : base(gameController)
     {
         this.fameMedalGain = fameMedalGain;
-        selectableTokens = gameController.mainPlayer.ship.GetRemovableTokens();
+        selectableUpgrades = gameController.mainPlayer.ship.GetRemovableUpgrades();
     }
 
     public override void Execute()
     {
         FameMedalGainStrategy.HandleFameMedalGain(fameMedalGain, gameController.mainPlayer);
-        if (selectableTokens.Count == 0)
+        if (selectableUpgrades.Count == 0)
         {
             ResultFound(true); // player has no tokens to lose, therefore we end this action here
             return;
         }
 
-        hud.OpenUpgradeSelection(selectableTokens, UpgradeTokenSelected, 1);
+        hud.OpenUpgradeSelection(selectableUpgrades, UpgradeTokenSelected, 1);
     }
 
     void UpgradeTokenSelected(List<int> selectedIndexes)
     {
         foreach (var index in selectedIndexes)
         {
-            gameController.mainPlayer.RemoveUpgrade(selectableTokens[index]);
+            gameController.mainPlayer.RemoveUpgrade(selectableUpgrades[index]);
         }
         hud.CloseSelection();
         ResultFound(true);
