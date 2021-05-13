@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 using com.onebuckgames.UnityStarFarers;
 
 [Serializable]
@@ -170,6 +171,11 @@ public class ColonyBaseToken : Token, BuildableToken
     {
         if (attachedToken != null)
         {
+            if (!owner.tokens.Contains(this))
+            {
+                Debug.Log("NOT OWNER");
+                //throw new ArgumentException();
+            }
             owner.tokenStorage.AddToken(attachedToken);
             attachedToken = null;
         }

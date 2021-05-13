@@ -23,13 +23,16 @@ public class FlyShipsState : GameState
 
     void OpenTokenSelectionForAllFlyableTokens()
     {
-        mapScript.OpenTokenSelection(controller.mainPlayer.tokens.Where(tok => tok.CanFly()).ToList(), TokenSelected);
+        var tokens = controller.mainPlayer.tokens.Where(tok => tok.CanFly());
+
+        mapScript.OpenTokenSelection(controller.mainPlayer.GetTokensThatCanFly(), TokenSelected);
     }
 
     void TokenSelected(Token token)
     {
         selectedToken = token;
         OpenSpacePointSelectionForToken(selectedToken);
+        //mapScript.SettleToken(selectedToken);
     }
 
     void OpenSpacePointSelectionForToken(Token token)
@@ -41,14 +44,16 @@ public class FlyShipsState : GameState
     void SpacePointSelected(SpacePoint point)
     {
         mapScript.HideAllSpacePointButtons();
+        var isOwnerBefore = selectedToken.owner == controller.mainPlayer;
         selectedToken.FlyTo(point);
+        var isOwnerAfter = selectedToken.owner == controller.mainPlayer;
 
-        var errors = flightStateChecker.Check(controller.mapModel, controller.players);
+        var errors = flightStateChecker.Check(controller.mapModel);
 
-        if (controller.mainPlayer.GetTokensThatCanFly().Count > 0)
-        {
-            OpenTokenSelectionForAllFlyableTokens();
-        }
+        //if (controller.mainPlayer.GetTokensThatCanFly().Count > 0)
+        //{
+        //    OpenTokenSelectionForAllFlyableTokens();
+        //}
     }
 
     void SwitchToNextState()
@@ -101,12 +106,27 @@ public class FlyShipsState : GameState
             {
                 mapScript.CloseTokenSelection();
                 controller.SetState(new FlyShipsState(controller));
-            } else
-            {
-                SwitchToNextState();
             }
-            
+            else
+            {
+                // if we switch here, were triggering an update of the gamedata, this interferes with updates from previous stuff
+                //SwitchToNextState();
+            }
+
         }
+    }
+
+    void UpdateSelectedTokenFromGameData()
+    {
+        //make sure we have the correct selected token,
+        //because if the whole game data changes we have a selected token
+        //with wrong references (token owner is not the actual object anymore and so on)
+        selectedToken = controller.mainPlayer.tokens.Find(tok => tok.guid == selectedToken.guid);
+    }
+
+    public override void OnGameDataChanged()
+    {
+        UpdateSelectedTokenFromGameData();
     }
 
     public override void OnTokenCanSettle(bool canSettle, Token token)

@@ -355,6 +355,15 @@ namespace Tests
         }
 
         [Test]
+        public void AddingTokenSetsCorrectOwner()
+        {
+            var player = GetGenericPlayer();
+            var token = new ColonyBaseToken();
+            player.AddToken(token);
+            Assert.True(token.owner == player);
+        }
+
+        [Test]
         public void TestTokenDisabilityIsRemovedOnNewTurn()
         {
             var token = new ColonyBaseToken();

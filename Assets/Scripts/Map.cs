@@ -39,6 +39,14 @@ namespace com.onebuckgames.UnityStarFarers
             Notify(null);
         }
 
+        public void ReObserveTokens()
+        {
+            foreach(var token in tokensOnMap)
+            {
+                token.RegisterObserver(this);
+            }
+        }
+
         public void AddToken(Token token)
         {
             tokensOnMap.Add(token);
@@ -66,11 +74,39 @@ namespace com.onebuckgames.UnityStarFarers
         }
 
         /// <summary>
-        /// 
+        /// Token is currently on a settle point of a tilegroup
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="futurePositionOfToken"></param>
+        /// <returns></returns>
+        public bool TokenIsBlockingSettlePoint(Token token, SpacePoint futurePositionOfToken = null)
+        {
+            SpacePoint pointToSearch;
+            if (futurePositionOfToken != null)
+            {
+                pointToSearch = futurePositionOfToken;
+            }
+            else
+            {
+                pointToSearch = token.position;
+            }
+
+            var tileGroup = FindTileGroupAtPoint(pointToSearch);
+            if (tileGroup != null)
+            {
+                return tileGroup.GetSettlePoints().Contains(pointToSearch);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Returns true if the given token can currently settle.
         /// </summary>
         /// <param name="token"></param>
         /// <param name="futurePositionOfToken">
-        /// Use this if the token will be at that point on the next move. So you can see if it actually can settle there.</param>
+        /// Use this if the token will be at that point on the next move.
+        /// So if we move that Token in to that position, would it be able to settle there?
+        /// </param>
         /// <returns></returns>
         public bool TokenCanSettle(Token token, SpacePoint futurePositionOfToken = null)
         {

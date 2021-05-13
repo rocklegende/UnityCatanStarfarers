@@ -78,4 +78,9 @@ public class CastShipDiceState : GameState
     {
         throw new NotImplementedException();
     }
+
+    public override void OnGameDataChanged()
+    {
+        //throw new NotImplementedException();
+    }
 }

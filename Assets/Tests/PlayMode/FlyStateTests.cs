@@ -26,6 +26,7 @@ namespace Tests
             yield return testHelper.LoadDefaultScene();
             gameController = testHelper.GetGameController();
             yield return testHelper.SetupDebugState(new TwoTradeShipAndOneSpacePort(gameController));
+            //testHelper.DevelopmentSetup(gameController);
         }
 
         [UnityTest]
@@ -38,9 +39,12 @@ namespace Tests
                 .ToList()
                 .First();
 
+            //be sure we have enough steps to fly to that point
+            var tokenModelFirstClickable = GetTokenScript(firstClickable).tokenModel;
+            tokenModelFirstClickable.addSteps(100);
+
             //simulate click on token by calling OnClick directly
             GetTokenScript(firstClickable).OnClick(); 
-            var tokenModelFirstClickable = GetTokenScript(firstClickable).tokenModel;
 
             //simulate click on spacepointtoken
             var targetSpacePoint = new SpacePoint(11, 5, 0);
@@ -68,11 +72,13 @@ namespace Tests
                 .ToList()
                 .First();
 
+            //be sure we have enough steps to fly to that tradestation
+            var tokenModelFirstClickable = GetTokenScript(firstClickableTradeShip).tokenModel;
+            tokenModelFirstClickable.addSteps(100);
+
             //simulate click on token by calling OnClick directly
             var prevHighlightedTokens = gameController.GetMapScript().GetHighlightedTokens();
             GetTokenScript(firstClickableTradeShip).OnClick();
-            var tokenModelFirstClickable = GetTokenScript(firstClickableTradeShip).tokenModel;
-            tokenModelFirstClickable.addSteps(100); //be sure we have enough steps to fly to that tradestation
             gameController.mainPlayer.BuildUpgradeWithoutCost(new FreightPodUpgradeToken());
 
             yield return new WaitForSeconds(WaitTimeBetweenSteps);
@@ -123,10 +129,12 @@ namespace Tests
                 .ToList()
                 .First();
 
+            //be sure we have enough steps to fly to that tradestation
+            var tokenModelFirstClickable = GetTokenScript(firstClickableColonyShip).tokenModel;
+            tokenModelFirstClickable.addSteps(100); 
+
             //simulate click on token by calling OnClick directly
             GetTokenScript(firstClickableColonyShip).OnClick();
-            var tokenModelFirstClickable = GetTokenScript(firstClickableColonyShip).tokenModel;
-            tokenModelFirstClickable.addSteps(100); //be sure we have enough steps to fly to that tradestation
             TestHelper.SetUpgradesForPlayer(gameController.mainPlayer, 5);
 
             yield return new WaitForSeconds(WaitTimeBetweenSteps);

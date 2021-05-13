@@ -60,4 +60,9 @@ public class BuildAndTradeState : GameState
     {
         throw new NotImplementedException();
     }
+
+    public override void OnGameDataChanged()
+    {
+        //throw new NotImplementedException();
+    }
 }

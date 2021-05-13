@@ -44,39 +44,23 @@ public abstract class Token : SFModel
     public SerializableVector3 unityPosition = null;
     public bool useOwnPositioningSystem = true;
     public Cost cost;
+    public Guid guid;
     public string id;
-    protected SFColor color;
     public Token attachedToken = null;
-    protected bool isTokenAttachable;
     public int stepsLeft = 20; //TODO: should be 0 in real scenario
     public Player owner;
-    protected bool isDisabled = false; //TODO should only be readable from the outside
     public Map associatedMap;
+
+    protected SFColor color;
+    protected bool isTokenAttachable;
+    protected bool isDisabled = false; //TODO should only be readable from the outside
 
     public Token(string id, bool isTokenAttachable, Cost cost)
     {
         this.id = id;
         this.isTokenAttachable = isTokenAttachable;
         this.cost = cost;
-    }
-
-    public bool IsNextToOtherSpacePort()
-    {
-        var neighbors = GetNeighborTokens();
-        foreach (var neighbor in neighbors)
-        {
-            if (neighbor.owner != this.owner)
-            {
-                if (neighbor.attachedToken != null)
-                {
-                    if (neighbor.attachedToken is SpacePortToken)
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        this.guid = Guid.NewGuid();
     }
 
     /// <summary>
@@ -98,6 +82,25 @@ public abstract class Token : SFModel
         return neighbors;
     }
 
+    bool SpacePointIsNextToOtherSpacePort(SpacePoint point)
+    {
+        foreach(var neighborSpacePoint in associatedMap.GetNeighborsOfSpacePoint(point))
+        {
+            var neighbor = associatedMap.TokenAtPoint(neighborSpacePoint);
+            if (neighbor != null)
+            {
+                if (neighbor.attachedToken != null)
+                {
+                    if (neighbor.attachedToken is SpacePortToken && neighbor.owner != this.owner)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     /// <summary>
     /// Returns list of all space points this token can reach.
     /// </summary>
@@ -115,16 +118,14 @@ public abstract class Token : SFModel
         var result = new List<SpacePoint>();
         foreach(var point in validAndFreePoints)
         {
-            
             if (!pointsInsideRangeMap.Keys.ToList().Contains(point))
             {
                 continue;
             }
 
-            var containsItKey = pointsInsideRangeMap.ContainsKey(point);
             var isAtMaximumReachOfToken = pointsInsideRangeMap[point] == GetStepsLeft();
-            var cannotSettleAtPoint = !associatedMap.TokenCanSettle(this, point);
-            if (isAtMaximumReachOfToken && (IsNextToOtherSpacePort() || cannotSettleAtPoint))
+            var tokenIsBlockingSettlePointAndCannotSettle = !associatedMap.TokenCanSettle(this, point) && associatedMap.TokenIsBlockingSettlePoint(this, point);
+            if (isAtMaximumReachOfToken && (SpacePointIsNextToOtherSpacePort(point) || tokenIsBlockingSettlePointAndCannotSettle))
             {
                 //prevent blocking spots for others
                 continue;
@@ -133,16 +134,6 @@ public abstract class Token : SFModel
             result.Add(point);
         }
         return result;
-
-        //var filters = new List<SpacePointFilter> {
-        //    new IsValidSpacePointFilter(),
-        //    new IsSpacePointFreeFilter(),
-        //    // TODO: these filters take very long time to calculate because we make n * BFS to calculate if point is steps away,
-        //    // better to only create distance map once and then filter out points that are not inside this distance map
-        //    new IsStepsAwayFilter(position, GetStepsLeft()),
-        //    new IsExactlyStepsAwayAndCannotSettleOnPointCounter(this, GetStepsLeft()),
-        //    new IsNeighborOfOwnSpacePortOrNotExactlyStepsAway(this, owner, GetStepsLeft())
-        //};
 
     }
 

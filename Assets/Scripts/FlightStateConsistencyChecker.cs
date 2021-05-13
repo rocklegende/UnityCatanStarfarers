@@ -53,24 +53,23 @@ public class FlightStateConsistencyChecker
     {
     }
 
-    public List<FlightStateInconsistencyError> Check(Map map, List<Player> players)
+    public List<FlightStateInconsistencyError> Check(Map map)
     {
         var errors = new List<FlightStateInconsistencyError>();
-        foreach (var player in players)
+        
+        foreach(var token in map.tokensOnMap)
         {
-            foreach(var token in player.tokens)
+            if (token.HasShipTokenOnTop())
             {
-                if (token.HasShipTokenOnTop())
+                var allTradeStations = map.GetTradeStations();
+                var tradeStationWithTokenInCenter = allTradeStations.Find(ts => ts.GetSettlePoints().Contains(token.position));
+                if (tradeStationWithTokenInCenter != null)
                 {
-                    var allTradeStations = map.GetTradeStations();
-                    var tradeStationWithTokenInCenter = allTradeStations.Find(ts => ts.GetSettlePoints().Contains(token.position));
-                    if (tradeStationWithTokenInCenter != null)
-                    {
-                        errors.Add(new UnsettledTokenOnTradePointError(player, token));
-                    }
+                    errors.Add(new UnsettledTokenOnTradePointError(token.owner, token));
                 }
             }
         }
+        
         return errors;
     }
 }

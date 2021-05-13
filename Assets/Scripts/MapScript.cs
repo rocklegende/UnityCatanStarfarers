@@ -74,6 +74,14 @@ public class MapScript : SFController, Observer
         CreateAllSpacePointButtons();
     }
 
+    public void UpdateMap(Map newMap)
+    {
+        this.map = newMap;
+        map.RegisterObserver(this);
+        map.ReObserveTokens();
+        RedrawMap();
+    }
+
     void RedrawTokens()
     {
         if (currentlyDisplayedPlayerTokens != null)
@@ -154,6 +162,7 @@ public class MapScript : SFController, Observer
 
     public void RedrawMap()
     {
+        Debug.Log("Th1 - Redrawing Map!");
         RedrawTokens();
         foreach (GameObject obj in this.hexagonGameObjects)
         {
@@ -269,9 +278,15 @@ public class MapScript : SFController, Observer
 
     void HighlightToken(Token token)
     {
-        highlightedTokens.Add(token);
-        var circleHighlight = DrawCircleAtSpacePoint(token.position);
-        highlightCircles.Add(circleHighlight);
+        if (map.tokensOnMap.Contains(token))
+        {
+            highlightedTokens.Add(token);
+            var circleHighlight = DrawCircleAtSpacePoint(token.position);
+            highlightCircles.Add(circleHighlight);
+        } else
+        {
+            throw new System.ArgumentException("trying to highlight token that is not part of the map model!");
+        } 
     }
 
     void DrawCircleAtSpacePoints(List<SpacePoint> points)
@@ -322,14 +337,25 @@ public class MapScript : SFController, Observer
         Debug.Log("TOken was clicked");
         if (mode == MapMode.SELECT)
         {
-            Debug.Log("Num highlighted tokens: " + highlightedTokens.Count);
+            //Debug.Log("Num highlighted tokens: " + highlightedTokens.Count);
+            //var findHighlighted = highlightedTokens.Find(t => t.guid == token.guid);
+            //if (findHighlighted != null)
+            //{
+
+            //    this.tokenSelectCallback(token);
+            //    RemoveAllHighlights();
+            //    mode = MapMode.NORMAL;
+            //}
+            //else
+            //{
+            //    Debug.Log("CLicked token not part of highlightedTokens");
+            //}
             if (highlightedTokens.Contains(token))
             {
-
+                CloseTokenSelection();
                 this.tokenSelectCallback(token);
-                RemoveAllHighlights();
-                mode = MapMode.NORMAL;
-            } else
+            }
+            else
             {
                 Debug.Log("CLicked token not part of highlightedTokens");
             }

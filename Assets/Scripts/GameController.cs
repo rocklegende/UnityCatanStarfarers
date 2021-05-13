@@ -207,6 +207,11 @@ public class GameController : SFController, IGameController, Observer
 
     }
 
+    public void OpenTokenSelectionForMainPlayer()
+    {
+        GetMapScript().OpenTokenSelection(mainPlayer.GetTokensThatCanFly(), (tok) => { });
+    }
+
     [PunRPC]
     public void RemoteClientRequiresAction(byte[] actionInfo)
     {
@@ -579,49 +584,45 @@ public class GameController : SFController, IGameController, Observer
         photonView.RPC(methodName, remotePlayer, parameters);
     }
 
-    public void RedrawMapOnAllClients()
+    public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
     {
-        PhotonView photonView = PhotonView.Get(this);
-        photonView.RPC("RedrawMap", RpcTarget.Others, SFFormatter.Serialize(mapModel));
-    }
-
-    [PunRPC]
-    public void RedrawMap(byte[] mapAsBytes)
-    {
-        var mapScript = GetMapScript();
-        mapScript.map = (Map) SFFormatter.Deserialize(mapAsBytes);
-        mapScript.RedrawMap();
-    }
-
-    [PunRPC]
-    void PlayerInfoChangedOnRemoteClient(byte[] newPlayerDataAsBytes)
-    {
-
-        var playerData = (List<Player>)SFFormatter.Deserialize(newPlayerDataAsBytes);
-
-        Debug.Log("Remote client changed player data!");
-        foreach (var player in playerData)
-        {
-            Debug.Log(string.Format("name: {0}, cards: {1}", player.name, player.hand.Count()));
-        }
-
-        UpdatePlayers(playerData);
-    }
-
-    void OnLocalPlayerDataChanged()
-    {
-        Debug.Log("Local player data changed!");
-        foreach (var player in players)
-        {
-            Debug.Log(string.Format("name: {0}, cards: {1}", player.name, player.hand.Count()));
-        }
-
-        UpdatePlayers(players);
-
-        PhotonView photonView = PhotonView.Get(this);
-        photonView.RPC("PlayerInfoChangedOnRemoteClient", RpcTarget.Others, SFFormatter.Serialize(players));
+        Debug.Log("Room properties changed!");
+        var newPlayersAsBytes = (byte[])propertiesThatChanged["players"];
+        var newPlayers = (List<Player>)SFFormatter.Deserialize(newPlayersAsBytes);
         
-            
+        var newMapAsBytes = (byte[])propertiesThatChanged["map"];
+        var newMap = (Map)SFFormatter.Deserialize(newMapAsBytes);
+
+        //fix cross references
+        //tokensOnMap, token owner and player.tokens need to be same instances again
+        foreach (var player in newPlayers)
+        {
+            player.tokens = new List<Token>();
+            foreach (var token in newMap.tokensOnMap)
+            {
+                if (token.owner.name == player.name)
+                {
+                    player.AddToken(token);
+                }
+            }
+        }
+
+        UpdatePlayers(newPlayers);
+        UpdateMap(newMap);
+
+        state.OnGameDataChanged();
+
+    }
+
+    void UpdateMap(Map newMap)
+    {
+        Debug.Log("TH2 - Update map!");
+        mapModel = newMap;
+        var mapScript = GetMapScript();
+        
+        mapScript.UpdateMap(newMap);
+        mapModel.RegisterObserver(this);
+
     }
 
     void UpdatePlayers(List<Player> newPlayerData)
@@ -652,21 +653,16 @@ public class GameController : SFController, IGameController, Observer
         switch (p_event_path)
         {
             case SFNotification.token_was_selected:
-
                 state.OnTokenClicked((Token)p_data[0], (GameObject)p_data[1]);
                 break;
+
             case SFNotification.spacepoint_selected:
                 var point = (SpacePoint)p_data[0];
                 var spacePointObject = (GameObject)p_data[1];
                 state.OnSpacePointClicked(point, spacePointObject);
                 break;
 
-            case SFNotification.map_data_changed:
-                RedrawMapOnAllClients();
-                break;
-
             case SFNotification.HUD_build_token_btn_clicked:
-                var tok = (Token)p_data[0];
                 state.OnBuildShipOptionClicked((Token)p_data[0]);
                 break;
 
@@ -709,8 +705,6 @@ public class GameController : SFController, IGameController, Observer
         return HUD.GetComponent<HUDScript>();
     }
 
-    
-
     public void SubjectDataChanged(object[] data)
     {
         if (testMode)
@@ -719,12 +713,13 @@ public class GameController : SFController, IGameController, Observer
         }
         // if we receive multiple updates in a short time (100ms), only react on the last one
         // TODO: probably better to do this inside the subject, so we have the functionality for all the observable stuff
-        Debug.Log("Map data changed");
+        Debug.Log("GameController: Map or player data changed!");
         try
         {
             StopCoroutine("MakeUpdate");
             Debug.Log("Stopped Make Update coroutine");
-        } catch
+        }
+        catch
         {
             Debug.Log("Couldnt stop coroutine");
         }
@@ -733,9 +728,13 @@ public class GameController : SFController, IGameController, Observer
 
     public IEnumerator MakeUpdate()
     {
-        yield return new WaitForSeconds(0.5F);
+        yield return new WaitForSeconds(0.1F);
         Debug.Log("Updateing GameController!");
-        RedrawMapOnAllClients();
-        OnLocalPlayerDataChanged();
+
+        var hashtable = new ExitGames.Client.Photon.Hashtable();
+        hashtable.Add("players", SFFormatter.Serialize(players));
+        hashtable.Add("map", SFFormatter.Serialize(mapModel));
+        PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable);
+        yield return null;
     }
 }

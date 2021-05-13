@@ -148,4 +148,9 @@ public class CastNormalDiceState : GameState
     {
         //throw new NotImplementedException();
     }
+
+    public override void OnGameDataChanged()
+    {
+        //throw new NotImplementedException();
+    }
 }

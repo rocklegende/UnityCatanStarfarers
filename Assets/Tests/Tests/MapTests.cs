@@ -516,11 +516,10 @@ namespace Tests
             var pointShouldNotBeReachable = new SpacePoint(new HexCoordinates(7, 4), 0);
             Assert.AreEqual(4, mapModel.distanceBetweenPoints(flyableColony.position, pointShouldNotBeReachable));
 
-            var filter = new IsExactlyStepsAwayAndCannotSettleOnPointCounter(flyableColony, 4);
             //point should not fulfill the filter because the tilegroup is not revealed
             var tileGroup = (ResourceTileGroup)mapModel.FindTileGroupAtPoint(pointShouldNotBeReachable);
             Assert.True(!tileGroup.IsRevealed());
-            Assert.True(!filter.pointFulfillsFilter(pointShouldNotBeReachable, mapModel));
+            Assert.True(!flyableColony.ReachableSpacePoints().Contains(pointShouldNotBeReachable));
         }
 
         Token BlockadeSetup(Map map, Player player, Player opponent)
@@ -549,7 +548,7 @@ namespace Tests
         }
 
         [Test]
-        public void SpacePortBlockadePreventionTest()
+        public void LeavingShipAtEndNextTo_Other_SpaceportIsNotAllowed()
         {
             MapGenerator generator = new DefaultMapGenerator();
             var mapModel = generator.GenerateRandomMap();
@@ -562,14 +561,13 @@ namespace Tests
 
             var pointShouldNotBeReachable = new SpacePoint(7, 4, 1);
             Assert.AreEqual(3, mapModel.distanceBetweenPoints(flyableColony.position, pointShouldNotBeReachable));
+            var reachable = flyableColony.ReachableSpacePoints();
 
-            var filter = new IsNeighborOfOwnSpacePortOrNotExactlyStepsAway(flyableColony, player, 3);
-            //point should not fulfill the filter because the point is next to a other spaceport
-            Assert.True(!filter.pointFulfillsFilter(pointShouldNotBeReachable, mapModel));
+            Assert.True(!flyableColony.ReachableSpacePoints().Contains(pointShouldNotBeReachable));
         }
 
         [Test]
-        public void SpacePortBlockadePreventionTestOwnSpacePort()
+        public void LeavingShipAtEndNextTo_Own_SpaceportIsAllowed()
         {
             MapGenerator generator = new DefaultMapGenerator();
             var mapModel = generator.GenerateRandomMap();
@@ -583,9 +581,7 @@ namespace Tests
             var pointShouldBeReachable = new SpacePoint(4, 5, 0);
             Assert.AreEqual(2, mapModel.distanceBetweenPoints(flyableColony.position, pointShouldBeReachable));
 
-            var filter = new IsNeighborOfOwnSpacePortOrNotExactlyStepsAway(flyableColony, player, 2);
-            //point should fulfill the filter because the point is next to own spaceport
-            Assert.True(filter.pointFulfillsFilter(pointShouldBeReachable, mapModel));
+            Assert.True(flyableColony.ReachableSpacePoints().Contains(pointShouldBeReachable));
         }
 
         [Test]
@@ -599,17 +595,33 @@ namespace Tests
         }
 
         [Test]
+        public void MapSerializationTokensOnMapAreSameObjects()
+        {
+            MapGenerator generator = new DefaultMapGenerator();
+            Map original = generator.GenerateRandomMap();
+            var player = new TestHelper().CreateGenericPlayer();
+            var tok = player.BuildColonyShipForFree(
+                original,
+                new SpacePoint(5, 5, 1)
+            );
+
+            Assert.True(original.tokensOnMap.Find(token => token.guid == tok.guid) != null);
+
+            var final = TestHelper.SerializeAndDeserialize(original);
+            Assert.True(final.tokensOnMap.Find(token => token.guid == tok.guid) != null);
+
+        }
+
+        [Test]
         public void MapSerialization()
         {
             MapGenerator generator = new DefaultMapGenerator();
             Map original = generator.GenerateRandomMap();
 
             var player = new TestHelper().CreateGenericPlayer();
-            player.BuildTokenWithoutCost(
+            player.BuildColonyShipForFree(
                 original,
-                new ColonyBaseToken().GetType(),
-                new SpacePoint(5, 5, 1),
-                new SpacePortToken().GetType()
+                new SpacePoint(5, 5, 1)
             );
 
             var final = TestHelper.SerializeAndDeserialize(original);

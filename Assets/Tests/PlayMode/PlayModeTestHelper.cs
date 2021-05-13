@@ -33,7 +33,22 @@ public class PlayModeTestHelper
         yield return null;
     }
 
-    
+    public void DevelopmentSetup(GameController gameController)
+    {
+        var map = new DefaultMapGenerator().GenerateRandomMap();
+
+        var player1 = new Player(new SFColor(Color.white));
+        player1.name = "Tim";
+        var player2 = new Player(new SFColor(Color.black));
+        player2.name = "Paul";
+        var players = new List<Player> { player1, player2
+            };
+        var mainPlayer = players[0];
+
+        gameController.DevelopmentGameStartInformationGenerated(map, players, mainPlayer);
+    }
+
+
 
     public GameController GetGameController()
     {

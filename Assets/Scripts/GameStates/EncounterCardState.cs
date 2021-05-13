@@ -77,4 +77,9 @@ public class EncounterCardState : GameState
     {
         throw new NotImplementedException();
     }
+
+    public override void OnGameDataChanged()
+    {
+        //throw new NotImplementedException();
+    }
 }

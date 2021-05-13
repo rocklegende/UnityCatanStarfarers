@@ -22,6 +22,7 @@ public abstract class GameState
     public abstract void OnBuildUpgradeOptionClicked(Upgrade upgrade);
     public abstract void OnSettleButtonPressed();
     public abstract void OnTokenCanSettle(bool canSettle, Token token);
+    public abstract void OnGameDataChanged();
     public abstract void Setup();
 
 
