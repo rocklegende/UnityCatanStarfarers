@@ -359,6 +359,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
 
     public void Draw()
     {
+        Debug.Log("Drawing hud");
         DrawResourceStacks();
         DrawUpgrades();
         DrawVP();
@@ -469,7 +470,9 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
                 {
                     if (option.buildableToken != null)
                     {
+                        
                         var map = MapObject.GetComponent<MapScript>().map;
+                        var canBeBuild = option.buildableToken.CanBeBuildByPlayer(player, map);
                         dropdown.SetOptionInteractable(option, option.buildableToken.CanBeBuildByPlayer(player, map));
                     }
                 }

@@ -84,25 +84,13 @@ public class TradeAndColonyBuildCondition : BuildCondition
             var buildableToken = (BuildableToken)token;
             if (map.IsNotNull())
             {
+                var buildspots = buildableToken.GetPossibleBuildSpots(player, map);
                 if (buildableToken.GetPossibleBuildSpots(player, map).Count == 0)
                 {
                     return false;
                 }
             }
         }
-        //var filters = new List<SpacePointFilter> {
-        //        new IsValidSpacePointFilter(),
-        //        new IsSpacePointFreeFilter(),
-        //        new IsNeighborOwnSpacePortFilter(player)
-        //    };
-
-        //if (map.IsNotNull())
-        //{
-        //    if (map.GetSpacePointsFullfillingFilters(filters).Count == 0)
-        //    {
-        //        return false;
-        //    }
-        //}
 
         return true;
     }

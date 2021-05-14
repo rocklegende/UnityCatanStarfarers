@@ -22,28 +22,34 @@ namespace Tests
             yield return testHelper.SetupDebugState(new ShipBuildingOneColonyShipAndOneSpacePort(gameController));
         }
 
-        void SelectColonyShipFromDropdown()
+        void SelectDropdownOptionAtIndex(int index)
         {
             var hud = gameController.GetHUDScript();
-            hud.buildShipsDropDownRef.GetComponent<BuildDropDown>().SelectOptionAtIndex(2);
+            var dropdown = hud.buildShipsDropDownRef.GetComponent<BuildDropDown>();
+            Assert.True(dropdown.OptionAtIndexIsClickable(index), "Dropdown option is disabled, cannot click");
+            dropdown.SelectOptionAtIndex(index);
+        }
+
+        void SelectColonyShipFromDropdown()
+        {
+            SelectDropdownOptionAtIndex(2);
         }
 
         void SelectTradeShipFromDropdown()
         {
-            var hud = gameController.GetHUDScript();
-            hud.buildShipsDropDownRef.GetComponent<BuildDropDown>().SelectOptionAtIndex(1);
+            SelectDropdownOptionAtIndex(1);
         }
 
         void SelectSpacePortFromDropdown()
         {
-            var hud = gameController.GetHUDScript();
-            hud.buildShipsDropDownRef.GetComponent<BuildDropDown>().SelectOptionAtIndex(0);
+            SelectDropdownOptionAtIndex(0);
         }
 
         [UnityTest]
         public IEnumerator BuildANewColonyShip()
         {
             var hud = gameController.GetHUDScript();
+            hud.player.AddHand(Hand.FromResources(5,5,5,5,5));
             //open the build panel
             hud.BuildShipsButton.onClick.Invoke();
 

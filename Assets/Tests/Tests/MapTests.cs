@@ -675,22 +675,30 @@ namespace Tests
                 new SpacePortToken().GetType()
             );
 
-            var pointsOfFirstPlayer = map.GetSpacePointsFullfillingFilters(
-                new List<SpacePointFilter>()
-                {
-                    new IsNeighborOwnSpacePortFilter(players[0])
-                }
-            );
-
-            var pointsOfSecondPlayer = map.GetSpacePointsFullfillingFilters(
-                new List<SpacePointFilter>()
-                {
-                    new IsNeighborOwnSpacePortFilter(players[1])
-                }
-            );
+            var NewFlyableToken = new ColonyBaseToken();
+            var pointsOfFirstPlayer = NewFlyableToken.GetPossibleBuildSpots(players[0], map);
 
             Assert.AreEqual(0, pointsOfFirstPlayer.Count);
-            Assert.AreEqual(3, pointsOfSecondPlayer.Count);
+        }
+
+        [Test]
+        public void ShipCanBeBuildNextToOwnSpacePort()
+        {
+            var position = new SpacePoint(8, 6, 1);
+            Map map = new DefaultMapGenerator().GenerateRandomMap();
+            var players = TestHelper.CreateGenericPlayers3();
+            players[0].BuildTokenWithoutCost(
+                map,
+                new ColonyBaseToken().GetType(),
+                position,
+                new SpacePortToken().GetType()
+            );
+            players[0].BuildColonyShipForFree(map, new SpacePoint(8, 6, 0));
+
+            var NewFlyableToken = new ColonyBaseToken();
+            var pointsOfFirstPlayer = NewFlyableToken.GetPossibleBuildSpots(players[0], map);
+
+            Assert.AreEqual(2, pointsOfFirstPlayer.Count);
         }
 
     }

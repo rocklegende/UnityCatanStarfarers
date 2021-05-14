@@ -35,6 +35,15 @@ public class BuildDropDown : SFController
         buttons[index].onClick.Invoke();
     }
 
+    public bool OptionAtIndexIsClickable(int index)
+    {
+        if (index < 0 || index >= options.Count)
+        {
+            throw new ArgumentException("index not valid");
+        }
+        return buttons[index].IsInteractable();
+    }
+
     public List<BuildDropDownOption> GetOptions()
     {
         return options;

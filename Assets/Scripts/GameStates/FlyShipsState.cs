@@ -121,7 +121,11 @@ public class FlyShipsState : GameState
         //make sure we have the correct selected token,
         //because if the whole game data changes we have a selected token
         //with wrong references (token owner is not the actual object anymore and so on)
-        selectedToken = controller.mainPlayer.tokens.Find(tok => tok.guid == selectedToken.guid);
+
+        if (selectedToken != null)
+        {
+            selectedToken = controller.mainPlayer.tokens.Find(tok => tok.guid == selectedToken.guid);
+        }
     }
 
     public override void OnGameDataChanged()
