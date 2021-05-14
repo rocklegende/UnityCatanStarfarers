@@ -16,10 +16,12 @@ namespace com.onebuckgames.UnityStarFarers
         private Tile_[,] mapRepresentation;
         private int offset;
 
+        
+
         public Map(Tile_[,] mapRepresentation, List<TileGroup> tileGroups = null)
         {
             this.mapRepresentation = mapRepresentation;
-            this.offset = getOffset();
+            this.offset = GetOffset();
             this.tileGroups = tileGroups;
             this.tokensOnMap = new List<Token>();
 
@@ -32,6 +34,15 @@ namespace com.onebuckgames.UnityStarFarers
             }
 
             AllAvailableSpacePoints = GetAllAvailableSpacePoints();
+        }
+
+        public void UpdateData(Map newMapData)
+        {
+            tileGroups = newMapData.tileGroups;
+            tokensOnMap = newMapData.tokensOnMap;
+            AllAvailableSpacePoints = newMapData.AllAvailableSpacePoints;
+            offset = newMapData.offset;
+            mapRepresentation = newMapData.mapRepresentation;
         }
 
         void DataChanged()
@@ -388,7 +399,7 @@ namespace com.onebuckgames.UnityStarFarers
             return this.mapRepresentation;
         }
 
-        public int getOffset()
+        public int GetOffset()
         {
             return ((int)Mathf.Ceil((float)height() / 2.0f) - 1);
         }

@@ -100,7 +100,13 @@ public abstract class Subject {
 
     public void RegisterObserver(Observer observer)
     {
-        observers.Add(observer);
+        if (!observers.Contains(observer))
+        {
+            
+            observers.Add(observer);
+        } else {
+            Debug.LogError("Trying to add observer to list that already was added");
+        }
     }
 
     public void RemoveObserver(Observer observer)

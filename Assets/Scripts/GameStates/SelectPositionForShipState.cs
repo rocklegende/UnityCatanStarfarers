@@ -18,12 +18,7 @@ public class SelectPositionForShipState : GameState
     {
         if (token is BuildableToken)
         {
-            //TODO: let Token decide which points to show
-            //var filters = new List<SpacePointFilter> {
-            //    new IsValidSpacePointFilter(),
-            //    new IsSpacePointFreeFilter(),
-            //    new IsNeighborOwnSpacePortFilter(controller.mainPlayer)
-            //};
+            var buildSpots = (token as BuildableToken).GetPossibleBuildSpots(controller.mainPlayer, controller.mapModel);
             controller.Map
                 .GetComponent<MapScript>()
                 .ShowSpacePoints((token as BuildableToken).GetPossibleBuildSpots(controller.mainPlayer, controller.mapModel));

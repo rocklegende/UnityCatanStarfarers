@@ -44,9 +44,7 @@ public class FlyShipsState : GameState
     void SpacePointSelected(SpacePoint point)
     {
         mapScript.HideAllSpacePointButtons();
-        var isOwnerBefore = selectedToken.owner == controller.mainPlayer;
         selectedToken.FlyTo(point);
-        var isOwnerAfter = selectedToken.owner == controller.mainPlayer;
 
         var errors = flightStateChecker.Check(controller.mapModel);
 

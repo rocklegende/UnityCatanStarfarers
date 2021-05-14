@@ -315,11 +315,11 @@ namespace Tests
         public void MapGetOffset()
         {
             Map map = CreateSampleMap4x3();
-            Assert.AreEqual(map.getOffset(), 1);
+            Assert.AreEqual(map.GetOffset(), 1);
             map = CreateSampleMap4x4();
-            Assert.AreEqual(map.getOffset(), 1);
+            Assert.AreEqual(map.GetOffset(), 1);
             map = CreateSampleMap4x5();
-            Assert.AreEqual(map.getOffset(), 2);
+            Assert.AreEqual(map.GetOffset(), 2);
         }
 
         [Test]
@@ -626,7 +626,7 @@ namespace Tests
 
             var final = TestHelper.SerializeAndDeserialize(original);
 
-            Assert.AreEqual(final.getOffset(), original.getOffset());
+            Assert.AreEqual(final.GetOffset(), original.GetOffset());
             Assert.AreEqual(final.width(), original.width());
             Assert.AreEqual(final.height(), original.height());
             Assert.False(object.ReferenceEquals(original, final));

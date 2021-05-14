@@ -26,7 +26,7 @@ public class RahnaDiscardLimitIncrease : RahnaFriendshipCard
     int newDiscardLimit = 12;
     public override void ActivateEffect(Player targetPlayer)
     {
-        targetPlayer.SetDiscardLimit(newDiscardLimit);
+        targetPlayer.DiscardLimit = newDiscardLimit;
     }
 
     public override Sprite GetEffectSprite()

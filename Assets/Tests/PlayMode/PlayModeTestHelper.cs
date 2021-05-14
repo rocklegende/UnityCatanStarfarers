@@ -66,7 +66,19 @@ public class PlayModeTestHelper
 
     public void ClickSpacePointButton(SpacePoint targetPoint, MapScript mapScript)
     {
-        var spacePointToClick = mapScript.GetAllShownSpacePointButtons().Find(pointButton => pointButton.GetComponent<Space.SpacePointButtonScript>().spacePoint.Equals(targetPoint));
+        var allSpacePointButtonScripts = mapScript.gameObject.GetComponentsInChildren<Space.SpacePointButtonScript>();
+        var allSpacePointButtonScriptsList = new List<Space.SpacePointButtonScript>();
+        foreach(var script in allSpacePointButtonScripts)
+        {
+            allSpacePointButtonScriptsList.Add(script);
+        }
+
+        var spacePointToClick =
+            allSpacePointButtonScriptsList
+            .Find(
+                script => script.spacePoint.Equals(targetPoint)
+            );
+        Assert.True(spacePointToClick != null, String.Format("Couldt find SpacePoint button for point {0}", targetPoint.ToString()));
         spacePointToClick.GetComponent<Space.SpacePointButtonScript>().OnClick();
     }
 }

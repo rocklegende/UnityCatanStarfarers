@@ -76,8 +76,7 @@ public class MapScript : SFController, Observer
 
     public void UpdateMap(Map newMap)
     {
-        this.map = newMap;
-        map.RegisterObserver(this);
+        this.map.UpdateData(newMap);
         map.ReObserveTokens();
         RedrawMap();
     }

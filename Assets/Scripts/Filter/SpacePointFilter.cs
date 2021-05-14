@@ -61,6 +61,10 @@ public class IsNeighborOwnSpacePortFilter : SpacePointFilter
 
     public override bool pointFulfillsFilter(SpacePoint point, Map map)
     {
+        if (point.Equals(new SpacePoint(4, 5, 0)))
+        {
+            Debug.Log("hallo");
+        }
         List<SpacePoint> neighborPoints = map.GetNeighborsOfSpacePoint(point);
         foreach (SpacePoint neighbor in neighborPoints)
         {

@@ -88,7 +88,7 @@ public class LostOneFameMedalComparer : PlayerComparer
 {
     public bool comparePlayerStates(Player state1, Player state2)
     {
-        return state1.GetFameMedalPieces() - 1 == state2.GetFameMedalPieces();
+        return state1.FameMedalPieces - 1 == state2.FameMedalPieces;
     }
 }
 
@@ -96,7 +96,7 @@ public class WonOneFameMedalComparer : PlayerComparer
 {
     public bool comparePlayerStates(Player state1, Player state2)
     {
-        return state1.GetFameMedalPieces() + 1 == state2.GetFameMedalPieces();
+        return state1.FameMedalPieces + 1 == state2.FameMedalPieces;
     }
 }
 
@@ -120,9 +120,16 @@ public class Player : SFModel, Observer, IComparable
     public int TurnOrderPosition;
 
     bool fameMedalBuyMadeThisRound = false;
+
     int fameMedalPieces;
+    public int FameMedalPieces { get { return fameMedalPieces; } }
+
     TradingRules rules;
+    public TradingRules Rules { get { return rules; } }
+
     List<AbstractFriendshipCard> friendShipCards;
+    public List<AbstractFriendshipCard> FriendShipCards { get { return friendShipCards; } }
+
     int FriendShipChips;
     int foodProduceBonus;
     int goodsProduceBonus;
@@ -132,7 +139,17 @@ public class Player : SFModel, Observer, IComparable
     int pirateTokenBeatenAwards = 0;
     int twoCardsBonusThreshold = 7;
     int oneCardBonusThreshold = 9;
+
     int discardLimit = 7;
+    /// <summary>
+    /// Get the maximum amount of cards that player can have before he needs to discard if a 7 is rolled.
+    /// </summary>
+    /// <returns></returns>
+    public int DiscardLimit {
+        get { return discardLimit; }
+        set { DataChanged(); discardLimit = value; }
+    }
+
 
     public Player(SFColor color)
     {
@@ -147,7 +164,39 @@ public class Player : SFModel, Observer, IComparable
         FriendShipChips = 0;
     }
 
-    public Player SimpleClone()
+    public void UpdateData(Player newPlayerData)
+    {
+        color = newPlayerData.color;
+        tokens = newPlayerData.tokens; // tokens on gameboard
+        giftedTokens = newPlayerData.giftedTokens;
+        tokenStorage = newPlayerData.tokenStorage;
+        name = newPlayerData.name;
+        receivesBonusOnNoPayout = newPlayerData.receivesBonusOnNoPayout;
+        fameMedalBuyPossible = newPlayerData.fameMedalBuyPossible;
+        ship = newPlayerData.ship;
+        hand = newPlayerData.hand;
+        hasRichHelpPoorBonus = newPlayerData.hasRichHelpPoorBonus;
+        richHelpPoorBonusMadeThisRound = newPlayerData.richHelpPoorBonusMadeThisRound;
+        TurnOrderPosition = newPlayerData.TurnOrderPosition;
+        //DataChanged();
+
+    //    bool fameMedalBuyMadeThisRound = false { get; }
+    //    public int fameMedalPieces { get; }
+    //TradingRules rules;
+    //List<AbstractFriendshipCard> friendShipCards;
+    //int FriendShipChips;
+    //int foodProduceBonus;
+    //int goodsProduceBonus;
+    //int oreProduceBonus;
+    //int carbonProduceBonus;
+    //int fuelProduceBonus;
+    //int pirateTokenBeatenAwards = 0;
+    //int twoCardsBonusThreshold = 7;
+    //int oneCardBonusThreshold = 9;
+    //int discardLimit = 7;
+}
+
+public Player SimpleClone()
     {
         //TODO: make real copy of everything here
         var player = new Player(this.color);
@@ -164,7 +213,7 @@ public class Player : SFModel, Observer, IComparable
     /// <returns></returns>
     public bool ExceedsDiscardLimit()
     {
-        return hand.Count() > GetDiscardLimit();
+        return hand.Count() > DiscardLimit;
     }
 
     public void ActivateRichHelpPoorBonus()
@@ -234,20 +283,20 @@ public class Player : SFModel, Observer, IComparable
         }
     }
 
-    /// <summary>
-    /// Get the maximum amount of cards that player can have before he needs to discard if a 7 is rolled.
-    /// </summary>
-    /// <returns></returns>
-    public int GetDiscardLimit()
-    {
-        return discardLimit;
-    }
+    ///// <summary>
+    ///// Get the maximum amount of cards that player can have before he needs to discard if a 7 is rolled.
+    ///// </summary>
+    ///// <returns></returns>
+    //public int GetDiscardLimit()
+    //{
+    //    return discardLimit;
+    //}
 
-    public void SetDiscardLimit(int limit)
-    {
-        discardLimit = limit;
-        DataChanged();
-    }
+    //public void SetDiscardLimit(int limit)
+    //{
+    //    discardLimit = limit;
+    //    DataChanged();
+    //}
 
     public void AddRangeToFlyableTokens(int range)
     {
@@ -294,11 +343,6 @@ public class Player : SFModel, Observer, IComparable
         {
             throw new ArgumentException("No resource of that type available in the game.");
         }
-    }
-
-    public int GetFameMedalPieces()
-    {
-        return fameMedalPieces;
     }
 
     public void AddCard(CardType cardType)

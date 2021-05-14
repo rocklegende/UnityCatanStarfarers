@@ -298,7 +298,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
 
         ObservePlayers(playersList);
 
-        var playersOtherThanMain = playersList.Where(p => p.name != mainPlayer.name);
+        var playersOtherThanMain = playersList.Where(p => p != mainPlayer);
         SetMainPlayer(mainPlayer);
 
         foreach (var notMainPlayer in playersOtherThanMain) 
@@ -403,7 +403,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
 
     void DrawFameMedalPieces()
     {
-        fameMedalPiecesText.text = player.GetFameMedalPieces().ToString();
+        fameMedalPiecesText.text = player.FameMedalPieces.ToString();
     }
 
     void DrawResourceStacks()

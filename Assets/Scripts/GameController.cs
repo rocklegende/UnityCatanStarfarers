@@ -617,29 +617,26 @@ public class GameController : SFController, IGameController, Observer
     void UpdateMap(Map newMap)
     {
         Debug.Log("TH2 - Update map!");
-        mapModel = newMap;
+        //TODO: gameController probably doesnt need to know about the mapModel? we update mapModel twice, could lead to problems
+        mapModel.UpdateData(newMap);
         var mapScript = GetMapScript();
         
         mapScript.UpdateMap(newMap);
-        mapModel.RegisterObserver(this);
 
     }
 
     void UpdatePlayers(List<Player> newPlayerData)
     {
-
-        var newDict = new Dictionary<Photon.Realtime.Player, Player>();
         foreach (var newData in newPlayerData)
         {
             foreach (var key in networkPlayersOwnPlayersMap.Keys.ToList())
             {
                 if (key.NickName == newData.name)
                 {
-                    newDict[key] = newData;
+                    networkPlayersOwnPlayersMap[key].UpdateData(newData);
                 }
             }
         }
-        networkPlayersOwnPlayersMap = newDict;
         players = GetAllPlayersFromDict();
         mainPlayer = GetMainPlayerFromDict();
 

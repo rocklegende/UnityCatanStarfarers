@@ -123,11 +123,11 @@ namespace Tests
         {
             var player = new TestHelper().CreateGenericPlayer();
             player.AddFameMedals(2);
-            Assert.AreEqual(2, player.GetFameMedalPieces());
+            Assert.AreEqual(2, player.FameMedalPieces);
             FameMedalGainStrategy.HandleFameMedalGain(-2, player);
-            Assert.AreEqual(0, player.GetFameMedalPieces());
+            Assert.AreEqual(0, player.FameMedalPieces);
             FameMedalGainStrategy.HandleFameMedalGain(-2, player); //cant be below 0
-            Assert.AreEqual(0, player.GetFameMedalPieces());
+            Assert.AreEqual(0, player.FameMedalPieces);
         }
 
         [Test]
@@ -206,15 +206,15 @@ namespace Tests
             var players = TestHelper.CreateGenericPlayers3();
 
             // 0 - 0 - 0
-            var player1FameMedalBefore = players[0].GetFameMedalPieces();
-            var player2FameMedalBefore = players[1].GetFameMedalPieces();
-            var player3FameMedalBefore = players[2].GetFameMedalPieces();
+            var player1FameMedalBefore = players[0].FameMedalPieces;
+            var player2FameMedalBefore = players[1].FameMedalPieces;
+            var player3FameMedalBefore = players[2].FameMedalPieces;
 
             MostFreightPodsAction.GiveFameMedalToPlayersWithMostFreightPods(players);
 
-            var player1FameMedalAfter = players[0].GetFameMedalPieces();
-            var player2FameMedalAfter = players[1].GetFameMedalPieces();
-            var player3FameMedalAfter = players[2].GetFameMedalPieces();
+            var player1FameMedalAfter = players[0].FameMedalPieces;
+            var player2FameMedalAfter = players[1].FameMedalPieces;
+            var player3FameMedalAfter = players[2].FameMedalPieces;
 
             Assert.AreEqual(player1FameMedalBefore + 1, player1FameMedalAfter);
             Assert.AreEqual(player2FameMedalBefore + 1, player2FameMedalAfter);
@@ -229,15 +229,15 @@ namespace Tests
             //1 - 0 - 0
             players[0].BuildUpgradeWithoutCost(new FreightPodUpgradeToken());
 
-            var player1FameMedalBefore = players[0].GetFameMedalPieces();
-            var player2FameMedalBefore = players[1].GetFameMedalPieces();
-            var player3FameMedalBefore = players[2].GetFameMedalPieces();
+            var player1FameMedalBefore = players[0].FameMedalPieces;
+            var player2FameMedalBefore = players[1].FameMedalPieces;
+            var player3FameMedalBefore = players[2].FameMedalPieces;
 
             MostFreightPodsAction.GiveFameMedalToPlayersWithMostFreightPods(players);
 
-            var player1FameMedalAfter = players[0].GetFameMedalPieces();
-            var player2FameMedalAfter = players[1].GetFameMedalPieces();
-            var player3FameMedalAfter = players[2].GetFameMedalPieces();
+            var player1FameMedalAfter = players[0].FameMedalPieces;
+            var player2FameMedalAfter = players[1].FameMedalPieces;
+            var player3FameMedalAfter = players[2].FameMedalPieces;
 
             Assert.AreEqual(player1FameMedalBefore + 1, player1FameMedalAfter);
             Assert.AreEqual(player2FameMedalBefore, player2FameMedalAfter);
@@ -253,15 +253,15 @@ namespace Tests
             players[0].BuildUpgradeWithoutCost(new FreightPodUpgradeToken());
             players[1].BuildUpgradeWithoutCost(new FreightPodUpgradeToken());
 
-            var player1FameMedalBefore = players[0].GetFameMedalPieces();
-            var player2FameMedalBefore = players[1].GetFameMedalPieces();
-            var player3FameMedalBefore = players[2].GetFameMedalPieces();
+            var player1FameMedalBefore = players[0].FameMedalPieces;
+            var player2FameMedalBefore = players[1].FameMedalPieces;
+            var player3FameMedalBefore = players[2].FameMedalPieces;
 
             MostFreightPodsAction.GiveFameMedalToPlayersWithMostFreightPods(players);
 
-            var player1FameMedalAfter = players[0].GetFameMedalPieces();
-            var player2FameMedalAfter = players[1].GetFameMedalPieces();
-            var player3FameMedalAfter = players[2].GetFameMedalPieces();
+            var player1FameMedalAfter = players[0].FameMedalPieces;
+            var player2FameMedalAfter = players[1].FameMedalPieces;
+            var player3FameMedalAfter = players[2].FameMedalPieces;
 
             Assert.AreEqual(player1FameMedalBefore + 1, player1FameMedalAfter);
             Assert.AreEqual(player2FameMedalBefore + 1, player2FameMedalAfter);
