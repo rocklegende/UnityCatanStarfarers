@@ -32,7 +32,6 @@ public class FlyShipsState : GameState
     {
         selectedToken = token;
         OpenSpacePointSelectionForToken(selectedToken);
-        //mapScript.SettleToken(selectedToken);
     }
 
     void OpenSpacePointSelectionForToken(Token token)
@@ -59,6 +58,7 @@ public class FlyShipsState : GameState
         controller.PassTurnToNextPlayer();
         controller.SetState(new CastNormalDiceState(controller));
         mapScript.CloseTokenSelection();
+        mapScript.CloseSpacePointSelection();
     }
 
     public override void OnNextButtonClicked()
@@ -103,11 +103,11 @@ public class FlyShipsState : GameState
             if (controller.mainPlayer.GetTokensThatCanFly().Count > 0)
             {
                 mapScript.CloseTokenSelection();
-                controller.SetState(new FlyShipsState(controller));
+                //controller.SetState(new FlyShipsState(controller));
             }
             else
             {
-                // if we switch here, were triggering an update of the gamedata, this interferes with updates from previous stuff
+                //TODO: if we switch here, were triggering an update of the gamedata, this interferes with updates from previous stuff
                 //SwitchToNextState();
             }
 

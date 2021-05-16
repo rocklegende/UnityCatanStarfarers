@@ -74,7 +74,7 @@ public class ShipBuildingOneColonyShipAndOneSpacePort : DebugStartState
 
     public override void Setup()
     {
-        controller.state = new BuildAndTradeState(controller);
+        controller.State = new BuildAndTradeState(controller);
 
         CommonSetup();
         SetUpgradesForMainPlayer(5);
@@ -101,7 +101,7 @@ public class EncounterCardTestingState : DebugStartState
 
     public override void Setup()
     {
-        controller.state = new BuildAndTradeState(controller);
+        controller.State = new BuildAndTradeState(controller);
 
         CommonSetup();
         controller.mainPlayer.BuildUpgradeWithoutCost(new BoosterUpgradeToken());
@@ -133,7 +133,7 @@ public class EncounterCardTestingStateManual : DebugStartState
 
     public override void Setup()
     {
-        controller.state = new BuildAndTradeState(controller);
+        controller.State = new BuildAndTradeState(controller);
 
         CommonSetup();
         controller.mainPlayer.BuildUpgradeWithoutCost(new BoosterUpgradeToken());
@@ -167,8 +167,6 @@ public class TwoTradeShipAndOneSpacePort : DebugStartState
 
     public override void Setup()
     {
-        CommonSetup();
-
         controller.mainPlayer.BuildTokenWithoutCost(
             controller.mapModel,
             new ColonyBaseToken().GetType(),
@@ -192,13 +190,13 @@ public class TwoTradeShipAndOneSpacePort : DebugStartState
 
         if (gameState == "flyShips")
         {
-            controller.state = new FlyShipsState(controller);
+            controller.State = new FlyShipsState(controller);
         } else if (gameState == "encounter")
         {
-            controller.state = new EncounterCardState(controller);
+            controller.State = new EncounterCardState(controller);
         } else
         {
-            controller.state = new FlyShipsState(controller);
+            controller.State = new FlyShipsState(controller);
         }
         
     }
@@ -212,7 +210,7 @@ public class OneTradeOneColonyShipAndOneSpacePort : DebugStartState
 
     public override void Setup()
     {
-        controller.state = new FlyShipsState(controller);
+        controller.State = new FlyShipsState(controller);
 
         CommonSetup();
 
@@ -247,7 +245,7 @@ public class TwoPlayersWithShips : DebugStartState
 
     public override void Setup()
     {
-        controller.state = new FlyShipsState(controller);
+        controller.State = new FlyShipsState(controller);
 
         CommonSetup();
 
@@ -263,7 +261,7 @@ public class TestShipDiceState : DebugStartState
     }
     public override void Setup()
     {
-        controller.state = new CastShipDiceState(controller);
+        controller.State = new CastShipDiceState(controller);
 
         CommonSetup();
         BuildShipsForMainPlayer(controller.mapModel, controller.players[0]);
@@ -279,7 +277,7 @@ public class TestNormalDiceDebugState : DebugStartState
     }
     public override void Setup()
     {
-        controller.state = new CastNormalDiceState(controller);
+        controller.State = new CastNormalDiceState(controller);
 
         CommonSetup();
         BuildShipsForMainPlayer(controller.mapModel, controller.players[0]);
@@ -295,7 +293,7 @@ public class BeatPirateTokenDebugState : DebugStartState
     }
     public override void Setup()
     {
-        controller.state = new FlyShipsState(controller);
+        controller.State = new FlyShipsState(controller);
 
         CommonSetup();
         BuildShipsForMainPlayer(controller.mapModel, controller.players[0]);
@@ -312,7 +310,7 @@ public class BuildASpacePortDebugState : DebugStartState
     }
     public override void Setup()
     {
-        controller.state = new BuildAndTradeState(controller);
+        controller.State = new BuildAndTradeState(controller);
 
         CommonSetup();
         controller.mainPlayer.BuildTokenWithoutCost(controller.mapModel, new ColonyBaseToken().GetType(), new SpacePoint(new HexCoordinates(5, 5), 1));
@@ -327,7 +325,7 @@ public class PlayerHasRichHelpPoorBonusDebugState : DebugStartState
     }
     public override void Setup()
     {
-        controller.state = new BuildAndTradeState(controller);
+        controller.State = new BuildAndTradeState(controller);
 
         controller.players = new List<Player>() { new Player(new SFColor(Color.green)), new Player(new SFColor(Color.yellow)), new Player(new SFColor(Color.blue)), new Player(new SFColor(Color.red)), };
         controller.mainPlayer = controller.players[0];

@@ -76,7 +76,13 @@ public class GameController : SFController, IGameController, Observer
     public GameObject Map;
     public Map mapModel;
 
-    public GameState state;
+
+    private GameState _state;
+    public GameState State {
+        get { return _state; }
+        set { _state = value; }
+    }
+
     public List<Player> players;
     public Dictionary<Photon.Realtime.Player, Player> networkPlayersOwnPlayersMap;
     public Player mainPlayer;
@@ -140,7 +146,7 @@ public class GameController : SFController, IGameController, Observer
 
         mapModel = gameStartInformation.map;
         mapModel.RegisterObserver(this);
-        this.state = new BuildAndTradeState(this);
+        this._state = new BuildAndTradeState(this);
 
         //every client sets up the players itself, no need to send that over wire from MasterClient
         var dict = CreatePlayerMap(gameStartInformation.turnOrder);
@@ -164,7 +170,7 @@ public class GameController : SFController, IGameController, Observer
 
         mapModel = map;
         mapModel.RegisterObserver(this);
-        this.state = new BuildAndTradeState(this);
+        this._state = new BuildAndTradeState(this);
 
         this.players = players;
         this.mainPlayer = mainPlayer;
@@ -174,6 +180,7 @@ public class GameController : SFController, IGameController, Observer
 
     public void Init()
     {
+        //InitialPlayerSetup();
         ObservePlayers(players);
 
         HUD.GetComponent<HUDScript>().SetPlayers(players, mainPlayer);
@@ -525,7 +532,7 @@ public class GameController : SFController, IGameController, Observer
 
     public void SetState(GameState state)
     {
-        this.state = state;
+        this._state = state;
     }
 
     /// <summary>
@@ -610,7 +617,7 @@ public class GameController : SFController, IGameController, Observer
         UpdatePlayers(newPlayers);
         UpdateMap(newMap);
 
-        state.OnGameDataChanged();
+        _state.OnGameDataChanged();
 
     }
 
@@ -650,33 +657,33 @@ public class GameController : SFController, IGameController, Observer
         switch (p_event_path)
         {
             case SFNotification.token_was_selected:
-                state.OnTokenClicked((Token)p_data[0], (GameObject)p_data[1]);
+                _state.OnTokenClicked((Token)p_data[0], (GameObject)p_data[1]);
                 break;
 
             case SFNotification.spacepoint_selected:
                 var point = (SpacePoint)p_data[0];
                 var spacePointObject = (GameObject)p_data[1];
-                state.OnSpacePointClicked(point, spacePointObject);
+                _state.OnSpacePointClicked(point, spacePointObject);
                 break;
 
             case SFNotification.HUD_build_token_btn_clicked:
-                state.OnBuildShipOptionClicked((Token)p_data[0]);
+                _state.OnBuildShipOptionClicked((Token)p_data[0]);
                 break;
 
             case SFNotification.HUD_build_upgrade_btn_clicked:
-                state.OnBuildUpgradeOptionClicked((Upgrade)p_data[0]);
+                _state.OnBuildUpgradeOptionClicked((Upgrade)p_data[0]);
                 break;
 
             case SFNotification.next_button_clicked:
-                state.OnNextButtonClicked();
+                _state.OnNextButtonClicked();
                 break;
 
             case SFNotification.settle_button_clicked:
-                state.OnSettleButtonPressed();
+                _state.OnSettleButtonPressed();
                 break;
 
             case SFNotification.token_can_settle:
-                state.OnTokenCanSettle((bool)p_data[0], (Token)p_data[1]);
+                _state.OnTokenCanSettle((bool)p_data[0], (Token)p_data[1]);
                 break;
 
         }

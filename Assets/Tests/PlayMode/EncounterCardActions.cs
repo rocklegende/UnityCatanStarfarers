@@ -22,7 +22,7 @@ namespace Tests
             this.testHelper = testHelper;
             yield return testHelper.LoadDefaultScene();
             gameController = testHelper.GetGameController();
-            yield return testHelper.SetupDebugState(new TwoTradeShipAndOneSpacePort(gameController));
+            gameController.SetUpDebugState(new TwoTradeShipAndOneSpacePort(gameController));
             
         }
 

@@ -77,6 +77,7 @@ public class MapScript : SFController, Observer
     public void UpdateMap(Map newMap)
     {
         this.map.UpdateData(newMap);
+        TileGroupRenderer.GetComponent<TileGroupRenderer>().UpdateMap(newMap);
         map.ReObserveTokens();
         RedrawMap();
     }
@@ -255,6 +256,7 @@ public class MapScript : SFController, Observer
     public void CloseTokenSelection()
     {
         mode = MapMode.NORMAL;
+        tokenSelectCallback = null;
         RemoveAllHighlights();
     }
 
@@ -351,8 +353,8 @@ public class MapScript : SFController, Observer
             //}
             if (highlightedTokens.Contains(token))
             {
+                this.tokenSelectCallback?.Invoke(token);
                 CloseTokenSelection();
-                this.tokenSelectCallback(token);
             }
             else
             {
@@ -376,6 +378,12 @@ public class MapScript : SFController, Observer
         }
         ShowSpacePoints(spacePointsToChooseFrom);
         this.didSelectSpacePointCallback = didSelectSpacePoint;
+    }
+
+    public void CloseSpacePointSelection()
+    {
+        HideAllSpacePointButtons();
+        this.didSelectSpacePointCallback = null;
     }
 
     public void ShowSpacePointsFulfillingFilters(List<SpacePointFilter> filters)

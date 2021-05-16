@@ -8,11 +8,21 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using com.onebuckgames.UnityStarFarers;
+using Photon.Pun;
 
 public class PlayModeTestHelper
 {
     public PlayModeTestHelper()
     {
+    }
+
+    public IEnumerator StartSinglePlayerGame()
+    {
+        // make sure we leave room if we were inside one from a previous test
+        PhotonNetwork.LeaveRoom();
+
+        yield return LoadLobbyScene();
+        yield return new WaitForSeconds(2);
     }
 
     public IEnumerator LoadScene(int sceneBuildNumber)
@@ -55,13 +65,6 @@ public class PlayModeTestHelper
         var gameControllerObj = GameObject.Find("GameController");
         var gameControllerScript = gameControllerObj.GetComponent<GameController>();
         return gameControllerScript;
-    }
-
-    public IEnumerator SetupDebugState(DebugStartState debugState)
-    {
-        var gameControllerScript = GetGameController();
-        gameControllerScript.SetUpDebugState(debugState);
-        yield return null;
     }
 
     public void ClickSpacePointButton(SpacePoint targetPoint, MapScript mapScript)

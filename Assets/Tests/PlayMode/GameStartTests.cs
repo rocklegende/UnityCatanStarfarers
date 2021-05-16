@@ -31,6 +31,7 @@ namespace Tests
         [UnitySetUp]
         public IEnumerator SetUp()
         {
+            LogAssert.ignoreFailingMessages = true;
             var testHelper = new PlayModeTestHelper();
             this.testHelper = testHelper;
             yield return testHelper.LoadDefaultScene();

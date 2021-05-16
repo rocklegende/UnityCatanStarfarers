@@ -15,11 +15,12 @@ namespace Tests
         [UnitySetUp]
         public IEnumerator SetUp()
         {
+            LogAssert.ignoreFailingMessages = true;
             var testHelper = new PlayModeTestHelper();
             this.testHelper = testHelper;
             yield return testHelper.LoadDefaultScene();
             gameController = testHelper.GetGameController();
-            yield return testHelper.SetupDebugState(new ShipBuildingOneColonyShipAndOneSpacePort(gameController));
+            gameController.SetUpDebugState(new ShipBuildingOneColonyShipAndOneSpacePort(gameController));
         }
 
         void SelectDropdownOptionAtIndex(int index)

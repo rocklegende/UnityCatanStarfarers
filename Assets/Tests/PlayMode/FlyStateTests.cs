@@ -21,12 +21,15 @@ namespace Tests
         [UnitySetUp]
         public IEnumerator SetUp()
         {
+            PhotonNetwork.OfflineMode = true;
+            LogAssert.ignoreFailingMessages = true;
             var testHelper = new PlayModeTestHelper();
             this.testHelper = testHelper;
-            yield return testHelper.LoadDefaultScene();
+            yield return testHelper.StartSinglePlayerGame();
+            //yield return testHelper.LoadDefaultScene();
             gameController = testHelper.GetGameController();
-            yield return testHelper.SetupDebugState(new TwoTradeShipAndOneSpacePort(gameController));
-            //testHelper.DevelopmentSetup(gameController);
+            gameController.SetUpDebugState(new TwoTradeShipAndOneSpacePort(gameController));
+            yield return new WaitForSeconds(5);
         }
 
         [UnityTest]
@@ -38,6 +41,7 @@ namespace Tests
                 .Where(gobj => GetTokenScript(gobj).tokenModel.CanFly())
                 .ToList()
                 .First();
+
 
             //be sure we have enough steps to fly to that point
             var tokenModelFirstClickable = GetTokenScript(firstClickable).tokenModel;
@@ -63,7 +67,7 @@ namespace Tests
         [UnityTest]
         public IEnumerator TestFlyToTradeBaseAndSettle()
         {
-            var WaitTimeBetweenSteps = 0; //use this to debug this test
+            var WaitTimeBetweenSteps = 2; //use this to debug this test
 
             var mapScript = gameController.GetMapScript();
             var allTokenObjects = mapScript.GetAllTokenObjects();

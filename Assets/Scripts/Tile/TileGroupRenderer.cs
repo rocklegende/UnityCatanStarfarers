@@ -21,12 +21,17 @@ public class TileGroupRenderer : SFController, Observer
 
     public void Initialize(Map map)
     {
-        this.map = map;
-        foreach(var group in map.tileGroups)
+        UpdateMap(map);
+        DrawTileGroups();
+    }
+
+    public void UpdateMap(Map newMap)
+    {
+        this.map = newMap;
+        foreach (var group in map.tileGroups)
         {
             group.RegisterObserver(this);
         }
-        DrawTileGroups();
     }
 
     GameObject[] CreateTradeStationDocks(int numDocks, Transform transform)
