@@ -56,9 +56,6 @@ public abstract class DebugStartState
         MapGenerator generator = new DefaultMapGenerator();
         controller.mapModel = generator.GenerateRandomMap();
 
-        controller.Map.GetComponent<MapScript>().SetMap(controller.mapModel);
-        controller.Map.GetComponent<MapScript>().isReceivingNotifications = true;
-
         controller.payoutHandler = new PayoutHandler(controller.mapModel);
         GiveResourcesOfAllTypesToPlayer(controller.mainPlayer, 5);
     }

@@ -20,7 +20,7 @@ public enum MapMode
     SELECT
 }
 
-public class MapScript : SFController, Observer
+public class MapScript : SFController
 {
 
     public GameObject spacePointButton;
@@ -30,8 +30,7 @@ public class MapScript : SFController, Observer
     public GameObject TileGroupRenderer;
 
     public Camera cam;
-    public bool isReceivingNotifications = false;
-    public Map map;
+    public Map map { get { return globalGamecontroller.mapModel; } }
     private MapMode mode = MapMode.NORMAL;
     private System.Action<Token> tokenSelectCallback;
     private System.Action<SpacePoint> didSelectSpacePointCallback;
@@ -63,10 +62,8 @@ public class MapScript : SFController, Observer
         return allSpacePointButtons.Where(btn => btn.activeInHierarchy).ToList();
     }
 
-    public void SetMap(Map map)
+    public void Init()
     {
-        this.map = map;
-        map.RegisterObserver(this);
         hexagonGameObjects = CreateMap(map);
         TileGroupRenderer.GetComponent<TileGroupRenderer>().Initialize(map);
         currentlyDisplayedPlayerTokens = DisplayPlayerTokens();
@@ -76,8 +73,7 @@ public class MapScript : SFController, Observer
 
     public void UpdateMap(Map newMap)
     {
-        this.map.UpdateData(newMap);
-        TileGroupRenderer.GetComponent<TileGroupRenderer>().UpdateMap(newMap);
+        TileGroupRenderer.GetComponent<TileGroupRenderer>().UpdateMap(map);
         map.ReObserveTokens();
         RedrawMap();
     }
@@ -136,20 +132,6 @@ public class MapScript : SFController, Observer
             btn.transform.parent = this.gameObject.transform;
             btn.SetActive(false);
         }
-    }
-
-    GameObject FindHexGameobjectAt(HexCoordinates coords)
-    {
-        foreach (GameObject hexObject in hexagonGameObjects)
-        {
-            HexScript script = hexObject.GetComponent<HexScript>();
-            if (script.hexCoords.Equals(coords))
-            {
-                return hexObject;
-            }
-        }
-
-        return null;
     }
 
     public void HideAllSpacePointButtons()
@@ -290,14 +272,6 @@ public class MapScript : SFController, Observer
         } 
     }
 
-    void DrawCircleAtSpacePoints(List<SpacePoint> points)
-    {
-        foreach (SpacePoint point in points)
-        {
-            DrawCircleAtSpacePoint(point);
-        }
-    }
-
     GameObject DrawCircleAtSpacePoint(SpacePoint point)
     {
         Vector3 position = new Vector3(point.ToUnityPosition().x, point.ToUnityPosition().y, -1);
@@ -338,19 +312,6 @@ public class MapScript : SFController, Observer
         Debug.Log("TOken was clicked");
         if (mode == MapMode.SELECT)
         {
-            //Debug.Log("Num highlighted tokens: " + highlightedTokens.Count);
-            //var findHighlighted = highlightedTokens.Find(t => t.guid == token.guid);
-            //if (findHighlighted != null)
-            //{
-
-            //    this.tokenSelectCallback(token);
-            //    RemoveAllHighlights();
-            //    mode = MapMode.NORMAL;
-            //}
-            //else
-            //{
-            //    Debug.Log("CLicked token not part of highlightedTokens");
-            //}
             if (highlightedTokens.Contains(token))
             {
                 this.tokenSelectCallback?.Invoke(token);
@@ -410,29 +371,18 @@ public class MapScript : SFController, Observer
 
     public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)
     {
-        if (isReceivingNotifications)
-        {
-            switch (p_event_path)
-            {                
-                case SFNotification.token_was_selected:
-                    HandleClickOfToken((Token)p_data[0]);
-                    break;
+        switch (p_event_path)
+        {                
+            case SFNotification.token_was_selected:
+                HandleClickOfToken((Token)p_data[0]);
+                break;
 
-                case SFNotification.spacepoint_selected:
-                    didSelectSpacePointCallback?.Invoke((SpacePoint)p_data[0]);
-                    HideAllSpacePointButtons();
-                    break;
-            }
+            case SFNotification.spacepoint_selected:
+                didSelectSpacePointCallback?.Invoke((SpacePoint)p_data[0]);
+                HideAllSpacePointButtons();
+                break;
         }
-
-    }
-
-    public void SubjectDataChanged(Subject subject, object[] data)
-    {
-        //map data changed
-        //Debug.Log("MapScript reacting to map data change");
-        //OnMapDataChanged();
-    }
+    }    
 
     public void OnMapDataChanged()
     {

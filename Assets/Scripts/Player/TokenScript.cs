@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Space
 {
-    public class TokenScript : SFController, Observer
+    public class TokenScript : SFController
     {
 
         public GameObject shipPrefab;
@@ -110,12 +110,6 @@ namespace Space
             //        break;
 
             //}
-        }
-
-        public void SubjectDataChanged(Subject subject, object[] data)
-        {
-            //TODO: dead code i think
-            //Redraw();
         }
     }
 }

@@ -5,10 +5,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
+public class HUDScript : SFController, FriendShipCardSelectorDelegate
 {
-    public Player player;
-    public List<Player> players;
+    public Player player { get { return globalGamecontroller.mainPlayer; } }
+    public List<Player> players { get { return globalGamecontroller.players; } }
     public Text oreCardStackText;
     public Text carbonCardStackText;
     public Text foodCardStackText;
@@ -84,14 +84,14 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         tradeOfferView.SetActive(false);
         CloseSelection();
         CreateBuildDropDowns();
-      
+
     }
-    
+
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public List<GameObject> GetSmallPlayerViews()
@@ -141,7 +141,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
     }
 
     public void OpenUpgradeSelection(List<Upgrade> selectableUpgrades, System.Action<List<int>> selectedIndexesCallback, int maxSelectable = -1)
-        //TODO: remove Duplication in OpenPlayerSelection and OpenUpgradeSelection methods
+    //TODO: remove Duplication in OpenPlayerSelection and OpenUpgradeSelection methods
     {
         if (selectableUpgrades.Count == 0)
         {
@@ -157,7 +157,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         {
             multiSelectScript.maxSelectable = maxSelectable;
         }
-        
+
     }
 
     public void OpenPlayerSelection(List<Player> selectablePlayers, System.Action<List<int>> selectedIndexesCallback, int maxSelectable = -1)
@@ -175,7 +175,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         {
             multiSelectScript.maxSelectable = maxSelectable;
         }
-        
+
     }
 
     public void OpenNormalDiceThrowRenderer(System.Action<DiceThrow> callback)
@@ -271,19 +271,11 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         stateText.text = text;
     }
 
-    public void SetMainPlayer (Player player)
+    public void SetMainPlayer(Player player)
     {
-        this.player = player;
-        tradePanel.GetComponent<TradePanelScript>().Init(player);
-        OnPlayerDataChanged();
-    }
-
-    void ObservePlayers(List<Player> playersList)
-    {
-        foreach(var p in playersList)
-        {
-            p.RegisterObserver(this);
-        }
+        //this.player = player;
+        //tradePanel.GetComponent<TradePanelScript>().Init(player);
+        //OnPlayerDataChanged();
     }
 
     public void UpdatePlayers(List<Player> playersList, Player mainPlayer)
@@ -292,25 +284,24 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         Draw();
     }
 
-    public void SetPlayers (List<Player> playersList, Player mainPlayer)
+    public void SetPlayers(List<Player> playersList, Player mainPlayer)
     {
-        this.players = playersList;
+        //this.players = playersList;
 
-        ObservePlayers(playersList);
+        //var playersOtherThanMain = playersList.Where(p => p != mainPlayer);
+        //SetMainPlayer(mainPlayer);
 
-        var playersOtherThanMain = playersList.Where(p => p != mainPlayer);
-        SetMainPlayer(mainPlayer);
-
-        foreach (var notMainPlayer in playersOtherThanMain) 
-        {
-            if (smallPlayerViews.Count > 0)
-            {
-                UpdateExistingSmallPlayerView(notMainPlayer);
-            } else
-            {
-                AddSmallPlayerView(notMainPlayer);
-            }
-        }
+        //foreach (var notMainPlayer in playersOtherThanMain)
+        //{
+        //    if (smallPlayerViews.Count > 0)
+        //    {
+        //        UpdateExistingSmallPlayerView(notMainPlayer);
+        //    }
+        //    else
+        //    {
+        //        AddSmallPlayerView(notMainPlayer);
+        //    }
+        //}
 
     }
 
@@ -373,7 +364,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
 
     void DrawSmallPlayerViews()
     {
-        foreach(var smallPlayerView in smallPlayerViews)
+        foreach (var smallPlayerView in smallPlayerViews)
         {
             smallPlayerView.GetComponent<SmallPlayerInfoView>().Draw();
         }
@@ -382,7 +373,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
     public void ActivateAllInteraction(bool isInteractive)
     {
         this.isInteractionActivated = isInteractive;
-        foreach(var button in GetComponentsInChildren<Button>())
+        foreach (var button in GetComponentsInChildren<Button>())
         {
             button.interactable = isInteractive;
         }
@@ -470,7 +461,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
                 {
                     if (option.buildableToken != null)
                     {
-                        
+
                         var map = MapObject.GetComponent<MapScript>().map;
                         var canBeBuild = option.buildableToken.CanBeBuildByPlayer(player, map);
                         dropdown.SetOptionInteractable(option, option.buildableToken.CanBeBuildByPlayer(player, map));
@@ -526,7 +517,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
 
     public void CloseAllDropDowns()
     {
-        
+
         buildShipsDropDownRef.GetComponent<BuildDropDown>().hide();
         upgradesDropDownRef.GetComponent<BuildDropDown>().hide();
     }
@@ -542,7 +533,8 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         if (tradePanel.activeInHierarchy)
         {
             tradePanel.SetActive(false);
-        } else
+        }
+        else
         {
             tradePanel.SetActive(true);
         }
@@ -552,7 +544,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
     {
         if (isReceivingNotifications)
         {
-            switch(p_event_path)
+            switch (p_event_path)
             {
                 case SFNotification.open_friendship_card_selection:
                     var tradeStation = (TradeStation)p_data[0];
@@ -567,11 +559,5 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         CloseFriendshipCardSelection();
         station.RemoveCard(card);
         player.AddFriendShipCard(card);
-    }
-
-    public void SubjectDataChanged(Subject subject, object[] data)
-    {
-        //TODO: should be not necessary
-        //OnPlayerDataChanged();
     }
 }

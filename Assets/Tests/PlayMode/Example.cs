@@ -164,13 +164,13 @@ namespace Tests
         }
 
         [UnityTest]
-        public IEnumerator PlayersHaveHudScriptAsObserversAfterSetup()
+        public IEnumerator PlayersHaveGameControllerAsObserversAfterSetup()
         {
             var hudScript = gameController.GetHUDScript();
             var players = hudScript.players;
             foreach(var player in players)
             {
-                Assert.True(player.GetObservers().Contains(hudScript));
+                Assert.True(player.GetObservers().Contains(gameController));
             }
             yield return null;
         }

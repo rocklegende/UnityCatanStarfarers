@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SmallPlayerInfoView : SFController, Observer
+public class SmallPlayerInfoView : SFController
 {
     public Text playerName;
     public Text vp;
@@ -29,16 +29,7 @@ public class SmallPlayerInfoView : SFController, Observer
     public void SetPlayer(Player player)
     {
         this.player = player;
-        player.RegisterObserver(this);
         Draw();
-    }
-
-    public void SubjectDataChanged(Subject subject, object[] data)
-    {
-        //TODO: dead code
-        //player data changed
-        //Debug.Log("Player data of smallview has changed!");
-        //Draw();
     }
 
     public void Draw()

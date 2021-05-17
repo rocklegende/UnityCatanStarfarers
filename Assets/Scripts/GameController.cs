@@ -186,8 +186,7 @@ public class GameController : SFController, IGameController, Observer
         HUD.GetComponent<HUDScript>().SetPlayers(players, mainPlayer);
         HUD.GetComponent<HUDScript>().isReceivingNotifications = true;
 
-        Map.GetComponent<MapScript>().SetMap(mapModel);
-        Map.GetComponent<MapScript>().isReceivingNotifications = true;
+        Map.GetComponent<MapScript>().Init();
 
         payoutHandler = new PayoutHandler(mapModel);
         OnTurnChanged();
