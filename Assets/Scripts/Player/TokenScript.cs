@@ -112,9 +112,10 @@ namespace Space
             //}
         }
 
-        public void SubjectDataChanged(object[] data)
+        public void SubjectDataChanged(Subject subject, object[] data)
         {
-            Redraw();
+            //TODO: dead code i think
+            //Redraw();
         }
     }
 }

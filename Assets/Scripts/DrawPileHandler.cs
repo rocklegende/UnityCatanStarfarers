@@ -73,7 +73,7 @@ public class MultipleResourcesDrawPileStack : DrawPileStack
 }
 
 public interface Observer {
-    void SubjectDataChanged(object[] data);
+    void SubjectDataChanged(Subject source, object[] data);
 }
 
 [Serializable]
@@ -105,7 +105,7 @@ public abstract class Subject {
             
             observers.Add(observer);
         } else {
-            Debug.LogError("Trying to add observer to list that already was added");
+            Logger.LogError("Trying to add observer to list that already was added");
         }
     }
 
@@ -138,15 +138,15 @@ public abstract class Subject {
         for (int i = 0; i < observers.Count; i++)
         {
             Debug.Log(observers[i].GetType());
-            observers[i].SubjectDataChanged(currentData);
+            observers[i].SubjectDataChanged(this, currentData);
         }
     }
 
-    protected void Notify(object[] data)
+    protected void Notify(Subject subject, object[] data = null)
     {
         foreach (var observer in Helper.CreateCopyOfList(observers))
         {
-            observer.SubjectDataChanged(data);
+            observer.SubjectDataChanged(subject, data);
         }
 
         //currentData = data;

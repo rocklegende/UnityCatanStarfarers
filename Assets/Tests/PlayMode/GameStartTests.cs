@@ -34,7 +34,7 @@ namespace Tests
             LogAssert.ignoreFailingMessages = true;
             var testHelper = new PlayModeTestHelper();
             this.testHelper = testHelper;
-            yield return testHelper.LoadDefaultScene();
+            yield return testHelper.LoadGameScene();
             gameController = testHelper.GetGameController();
         }
 

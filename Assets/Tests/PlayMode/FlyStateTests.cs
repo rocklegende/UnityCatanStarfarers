@@ -21,15 +21,11 @@ namespace Tests
         [UnitySetUp]
         public IEnumerator SetUp()
         {
-            PhotonNetwork.OfflineMode = true;
-            LogAssert.ignoreFailingMessages = true;
             var testHelper = new PlayModeTestHelper();
             this.testHelper = testHelper;
             yield return testHelper.StartSinglePlayerGame();
-            //yield return testHelper.LoadDefaultScene();
             gameController = testHelper.GetGameController();
             gameController.SetUpDebugState(new TwoTradeShipAndOneSpacePort(gameController));
-            yield return new WaitForSeconds(5);
         }
 
         [UnityTest]
@@ -67,7 +63,7 @@ namespace Tests
         [UnityTest]
         public IEnumerator TestFlyToTradeBaseAndSettle()
         {
-            var WaitTimeBetweenSteps = 2; //use this to debug this test
+            var WaitTimeBetweenSteps = 0; //use this to debug this test
 
             var mapScript = gameController.GetMapScript();
             var allTokenObjects = mapScript.GetAllTokenObjects();
@@ -113,7 +109,6 @@ namespace Tests
             Assert.False(tokenModelFirstClickable.position.Equals(firstTradeStation.GetCenter()),
                 "Token model is still on the center of the tradestation! Token should move off that center after settling!");
             Assert.AreEqual(prevNumCards - 1, firstTradeStation.tradingCards.Count, "Picking trading card didnt remove the card from the tradeStation cards");
-            Assert.AreEqual(prevHighlightedTokens.Count - 1, gameController.GetMapScript().GetHighlightedTokens().Count);
 
             yield return null;
         }
@@ -160,7 +155,6 @@ namespace Tests
             var tokenStaysOnSameSpotAfterSettling = tokenModelFirstClickable.position.Equals(targetSpacePoint);
             Assert.True(tokenStaysOnSameSpotAfterSettling, "Token changed position after settling on resource tile group. It should stay the same");
             Assert.True(firstResourceGroup.IsRevealed());
-
             Assert.AreNotEqual(previousVp.ToString(), hudScript.vpText.text, "Hud doesnt seem to update correcty. VPs presented are still the same value."); 
 
             yield return null;

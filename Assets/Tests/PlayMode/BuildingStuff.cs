@@ -18,7 +18,7 @@ namespace Tests
             LogAssert.ignoreFailingMessages = true;
             var testHelper = new PlayModeTestHelper();
             this.testHelper = testHelper;
-            yield return testHelper.LoadDefaultScene();
+            yield return testHelper.StartSinglePlayerGame();
             gameController = testHelper.GetGameController();
             gameController.SetUpDebugState(new ShipBuildingOneColonyShipAndOneSpacePort(gameController));
         }
@@ -74,6 +74,7 @@ namespace Tests
         public IEnumerator BuildANewTradeShip()
         {
             var hud = gameController.GetHUDScript();
+            hud.player.AddHand(Hand.FromResources(5, 5, 5, 5, 5));
             //open the build panel
             hud.BuildShipsButton.onClick.Invoke();
             SelectTradeShipFromDropdown();

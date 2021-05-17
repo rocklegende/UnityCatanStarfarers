@@ -93,7 +93,7 @@ public class TileGroupRenderer : SFController, Observer
         
     }
 
-    public void SubjectDataChanged(object[] data)
+    public void SubjectDataChanged(Subject subject, object[] data)
     {
         if (map != null)
         {

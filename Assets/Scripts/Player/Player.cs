@@ -103,6 +103,7 @@ public class WonOneFameMedalComparer : PlayerComparer
 [Serializable]
 public class Player : SFModel, Observer, IComparable
 {
+    public readonly string guid;
     public SFColor color;
     public List<Token> tokens; // tokens on gameboard
     public List<Token> giftedTokens = new List<Token>();
@@ -162,6 +163,7 @@ public class Player : SFModel, Observer, IComparable
         tokenStorage = new TokenStorage();
         friendShipCards = new List<AbstractFriendshipCard>();
         FriendShipChips = 0;
+        guid = Guid.NewGuid().ToString();
     }
 
     public void UpdateData(Player newPlayerData)
@@ -236,7 +238,7 @@ public Player SimpleClone()
 
     void DataChanged()
     {
-        Notify(new object[] { this });
+        Notify(this);
     }
 
     public void OnTurnReceived()
@@ -725,7 +727,7 @@ public Player SimpleClone()
         }
     }
 
-    public void SubjectDataChanged(object[] data)
+    public void SubjectDataChanged(Subject subject, object[] data)
     {
         //token data changed, delegate this change up
         DataChanged();

@@ -594,9 +594,18 @@ public class GameController : SFController, IGameController, Observer
     public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
     {
         Debug.Log("Room properties changed!");
+
+        Debug.Log("Player id who made last change: " + (string)propertiesThatChanged["playerIdWhoMadeLastChange"]);
+        Debug.Log("Own player id = " + mainPlayer.guid);
+        var weMadeLastChange = (string)propertiesThatChanged["playerIdWhoMadeLastChange"] == mainPlayer.guid;
+        if (weMadeLastChange)
+        {
+            Debug.Log("We made last change to the room properties, we probably adjusted the state locally immediately, therefore not reacting to change here");
+            return;
+        }
         var newPlayersAsBytes = (byte[])propertiesThatChanged["players"];
         var newPlayers = (List<Player>)SFFormatter.Deserialize(newPlayersAsBytes);
-        
+
         var newMapAsBytes = (byte[])propertiesThatChanged["map"];
         var newMap = (Map)SFFormatter.Deserialize(newMapAsBytes);
 
@@ -618,7 +627,6 @@ public class GameController : SFController, IGameController, Observer
         UpdateMap(newMap);
 
         _state.OnGameDataChanged();
-
     }
 
     void UpdateMap(Map newMap)
@@ -709,12 +717,27 @@ public class GameController : SFController, IGameController, Observer
         return HUD.GetComponent<HUDScript>();
     }
 
-    public void SubjectDataChanged(object[] data)
+
+    public void SubjectDataChanged(Subject subject, object[] data)
     {
         if (testMode)
         {
             return;
         }
+
+        //split this up maybe into MapDataChanged, PlayerDataChanged...
+        if (subject is Map)
+        {
+            GetMapScript().OnMapDataChanged();
+        }
+
+        if (subject is Player)
+        {
+            GetHUDScript().OnPlayerDataChanged();
+        }
+
+
+
         // if we receive multiple updates in a short time (100ms), only react on the last one
         // TODO: probably better to do this inside the subject, so we have the functionality for all the observable stuff
         Debug.Log("GameController: Map or player data changed!");
@@ -734,10 +757,11 @@ public class GameController : SFController, IGameController, Observer
     {
         yield return new WaitForSeconds(0.1F);
         Debug.Log("Updateing GameController!");
-
+        
         var hashtable = new ExitGames.Client.Photon.Hashtable();
         hashtable.Add("players", SFFormatter.Serialize(players));
         hashtable.Add("map", SFFormatter.Serialize(mapModel));
+        hashtable.Add("playerIdWhoMadeLastChange", mainPlayer.guid);
         PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable);
         yield return null;
     }

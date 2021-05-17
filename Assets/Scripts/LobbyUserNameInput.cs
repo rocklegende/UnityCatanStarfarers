@@ -69,7 +69,7 @@ namespace com.onebuckgames.UnityStarFarers
             // #Important
             if (string.IsNullOrEmpty(value))
             {
-                Debug.LogError("Player Name is null or empty");
+                Logger.LogError("Player Name is null or empty");
                 return;
             }
             PhotonNetwork.NickName = value;

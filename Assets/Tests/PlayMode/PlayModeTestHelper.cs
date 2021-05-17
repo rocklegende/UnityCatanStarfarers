@@ -18,11 +18,14 @@ public class PlayModeTestHelper
 
     public IEnumerator StartSinglePlayerGame()
     {
-        // make sure we leave room if we were inside one from a previous test
-        PhotonNetwork.LeaveRoom();
+        LogAssert.ignoreFailingMessages = true;
+        if (PhotonNetwork.CurrentRoom != null)
+        {
+            PhotonNetwork.LeaveRoom();
+        }
 
-        yield return LoadLobbyScene();
-        yield return new WaitForSeconds(2);
+        yield return LoadPlayModeSinglePlayerLobbyScene();
+        yield return new WaitForSeconds(1);
     }
 
     public IEnumerator LoadScene(int sceneBuildNumber)
@@ -31,7 +34,13 @@ public class PlayModeTestHelper
         yield return null;
     }
 
-    public IEnumerator LoadDefaultScene()
+    public IEnumerator LoadPlayModeSinglePlayerLobbyScene()
+    {
+        SceneManager.LoadScene(SFScenes.SINGLE_PLAYER_LOBBY_SCENE);
+        yield return null;
+    }
+
+    public IEnumerator LoadGameScene()
     {
         SceneManager.LoadScene(SFScenes.GAME_SCENE);
         yield return null;

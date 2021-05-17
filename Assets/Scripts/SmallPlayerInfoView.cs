@@ -33,8 +33,9 @@ public class SmallPlayerInfoView : SFController, Observer
         Draw();
     }
 
-    public void SubjectDataChanged(object[] data)
+    public void SubjectDataChanged(Subject subject, object[] data)
     {
+        //TODO: dead code
         //player data changed
         //Debug.Log("Player data of smallview has changed!");
         //Draw();

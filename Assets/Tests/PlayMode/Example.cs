@@ -23,16 +23,27 @@ namespace Tests
         {
             var testHelper = new PlayModeTestHelper();
             this.testHelper = testHelper;
-            yield return testHelper.LoadDefaultScene();
+            
+            yield return testHelper.StartSinglePlayerGame();
             gameController = testHelper.GetGameController();
             gameController.SetUpDebugState(new TwoTradeShipAndOneSpacePort(gameController));
             encounterCardHandler = gameController.encounterCardHandler;
             encounterCardFactory = new EncounterCardFactory(gameController);
+            gameController.mainPlayer.AddHand(Hand.FromResources(5, 5, 5, 5, 5));
         }
 
         DecisionDialog GetDecisionDialog(GameController gameController)
         {
             return gameController.GetHUDScript().decisionDialog.GetComponent<DecisionDialog>();
+        }
+
+        [UnityTest]
+        public IEnumerator HudUpdatesImmediatelyOnPlayerDataChange()
+        {
+            var previousVPText = gameController.GetHUDScript().vpText.text;
+            gameController.mainPlayer.AddFameMedals(2);
+            Assert.AreNotEqual(previousVPText, gameController.GetHUDScript().vpText.text);
+            yield return null;
         }
 
 

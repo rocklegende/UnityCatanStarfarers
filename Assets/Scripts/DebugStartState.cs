@@ -76,7 +76,7 @@ public class ShipBuildingOneColonyShipAndOneSpacePort : DebugStartState
     {
         controller.State = new BuildAndTradeState(controller);
 
-        CommonSetup();
+        //CommonSetup();
         SetUpgradesForMainPlayer(5);
 
         controller.mainPlayer.BuildTokenWithoutCost(
@@ -174,18 +174,14 @@ public class TwoTradeShipAndOneSpacePort : DebugStartState
             new SpacePortToken().GetType()
         );
 
-        controller.mainPlayer.BuildTokenWithoutCost(
+        controller.mainPlayer.BuildColonyShipForFree(
             controller.mapModel,
-            new ColonyBaseToken().GetType(),
-            new SpacePoint(new HexCoordinates(5, 5), 0),
-            new ShipToken().GetType()
+            new SpacePoint(5, 5, 0)
         );
 
-        controller.mainPlayer.BuildTokenWithoutCost(
+        controller.mainPlayer.BuildTradeShipForFree(
             controller.mapModel,
-            new TradeBaseToken().GetType(),
-            new SpacePoint(new HexCoordinates(5, 5).W(), 0),
-            new ShipToken().GetType()
+            new SpacePoint(new HexCoordinates(5, 5).W(), 0)
         );
 
         if (gameState == "flyShips")

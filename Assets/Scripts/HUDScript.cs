@@ -324,7 +324,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         }
         else
         {
-            Debug.LogError("Couldnt find smallPlayerView for name: " + playerData.name);
+            Logger.LogError("Couldnt find smallPlayerView for name: " + playerData.name);
         }
     }
 
@@ -352,7 +352,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         settleButton.SetActive(show);
     }
 
-    void OnPlayerDataChanged()
+    public void OnPlayerDataChanged()
     {
         Draw();
     }
@@ -569,8 +569,9 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate, Observer
         player.AddFriendShipCard(card);
     }
 
-    public void SubjectDataChanged(object[] data)
+    public void SubjectDataChanged(Subject subject, object[] data)
     {
-        OnPlayerDataChanged();
+        //TODO: should be not necessary
+        //OnPlayerDataChanged();
     }
 }

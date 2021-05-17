@@ -43,7 +43,7 @@ public class SimpleHandRenderer : MonoBehaviour, Observer
         Draw();
     }
 
-    public void SubjectDataChanged(object[] data)
+    public void SubjectDataChanged(Subject subject, object[] data)
     {
         Draw();
     }

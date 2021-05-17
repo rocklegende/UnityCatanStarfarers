@@ -18,7 +18,7 @@ namespace Tests
         {
             var testHelper = new PlayModeTestHelper();
             this.testHelper = testHelper;
-            yield return testHelper.LoadDefaultScene();
+            yield return testHelper.StartSinglePlayerGame();
             gameController = testHelper.GetGameController();
             gameController.SetUpDebugState(new TwoTradeShipAndOneSpacePort(gameController));
            

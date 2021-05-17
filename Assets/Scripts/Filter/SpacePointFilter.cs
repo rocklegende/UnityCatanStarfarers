@@ -78,10 +78,14 @@ public class IsNeighborOwnSpacePortFilter : SpacePointFilter
                     //
                     // Player.Update(newData)
                     // => if(newData["vp"]) => updateVP and so on...
-                    if (token.attachedToken is SpacePortToken && token.owner.name == mainPlayer.name)
+                    if (token.attachedToken != null)
                     {
-                        return true;
+                        if (token.attachedToken is SpacePortToken && token.owner.guid == mainPlayer.guid)
+                        {
+                            return true;
+                        }
                     }
+                    
                 }
             }
         }

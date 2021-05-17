@@ -12,6 +12,7 @@ namespace com.onebuckgames.UnityStarFarers
 
     public class SFScenes
     {
+        public static int SINGLE_PLAYER_LOBBY_SCENE = 2;
         public static int GAME_SCENE = 1;
         public static int LOBBY_SCENE = 0;
     }
@@ -107,7 +108,7 @@ namespace com.onebuckgames.UnityStarFarers
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                Debug.LogError("PhotonNetwork : Trying to start game but we are not the master Client");
+                Logger.LogError("PhotonNetwork : Trying to start game but we are not the master Client");
             }
             Debug.LogFormat("PhotonNetwork : Loading Level : {0}", PhotonNetwork.CurrentRoom.PlayerCount);
             PhotonNetwork.LoadLevel(SFScenes.GAME_SCENE);

@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.TestTools;
 
 public static class Logger
 {
@@ -21,5 +22,10 @@ public static class Logger
             Debug.Log(message, context);
         }
         
+    }
+
+    public static void LogError(object message)
+    {
+        Debug.Log("ERROR: " + message);
     }
 }

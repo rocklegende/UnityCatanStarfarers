@@ -141,7 +141,7 @@ public abstract class Token : SFModel
 
     public void DataChanged()
     {
-        Notify(new object[] { this });
+        Notify(this);
     }
 
     public bool IsDisabled()

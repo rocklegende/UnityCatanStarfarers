@@ -47,7 +47,7 @@ namespace com.onebuckgames.UnityStarFarers
 
         void DataChanged()
         {
-            Notify(null);
+            Notify(this);
         }
 
         public void ReObserveTokens()
@@ -717,17 +717,11 @@ namespace com.onebuckgames.UnityStarFarers
             return positions;
         }
 
-        public void SubjectDataChanged(object[] data)
+        public void SubjectDataChanged(Subject subject, object[] data)
         {
-            if (data != null)
+            if (subject is Token)
             {
-                if (data.Length > 0)
-                {
-                    if (data[0] is Token)
-                    {
-                        OnTokenDataChanged((Token)data[0]);
-                    }
-                }
+                OnTokenDataChanged((Token)subject);
             } 
             DataChanged();
             //delegate changes up the chain, if something changes inside

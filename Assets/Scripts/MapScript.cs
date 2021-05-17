@@ -403,7 +403,7 @@ public class MapScript : SFController, Observer
             }
             else
             {
-                Debug.LogError("Couldnt find button with spacepoint");
+                Logger.LogError("Couldnt find button with spacepoint");
             }
         }
     }
@@ -427,10 +427,15 @@ public class MapScript : SFController, Observer
 
     }
 
-    public void SubjectDataChanged(object[] data)
+    public void SubjectDataChanged(Subject subject, object[] data)
     {
         //map data changed
-        Debug.Log("MapScript reacting to map data change");
+        //Debug.Log("MapScript reacting to map data change");
+        //OnMapDataChanged();
+    }
+
+    public void OnMapDataChanged()
+    {
         RedrawMap();
     }
 }
