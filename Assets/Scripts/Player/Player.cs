@@ -180,22 +180,20 @@ public class Player : SFModel, Observer, IComparable
         hasRichHelpPoorBonus = newPlayerData.hasRichHelpPoorBonus;
         richHelpPoorBonusMadeThisRound = newPlayerData.richHelpPoorBonusMadeThisRound;
         TurnOrderPosition = newPlayerData.TurnOrderPosition;
-        //DataChanged();
-
-    //    bool fameMedalBuyMadeThisRound = false { get; }
-    //    public int fameMedalPieces { get; }
-    //TradingRules rules;
-    //List<AbstractFriendshipCard> friendShipCards;
-    //int FriendShipChips;
-    //int foodProduceBonus;
-    //int goodsProduceBonus;
-    //int oreProduceBonus;
-    //int carbonProduceBonus;
-    //int fuelProduceBonus;
-    //int pirateTokenBeatenAwards = 0;
-    //int twoCardsBonusThreshold = 7;
-    //int oneCardBonusThreshold = 9;
-    //int discardLimit = 7;
+        fameMedalBuyMadeThisRound = newPlayerData.fameMedalBuyMadeThisRound;
+        fameMedalPieces = newPlayerData.fameMedalPieces;
+        rules = newPlayerData.rules;
+        friendShipCards = newPlayerData.friendShipCards;
+        FriendShipChips = newPlayerData.FriendShipChips;
+        foodProduceBonus = newPlayerData.foodProduceBonus;
+        goodsProduceBonus = newPlayerData.goodsProduceBonus;
+        oreProduceBonus = newPlayerData.oreProduceBonus;
+        carbonProduceBonus = newPlayerData.carbonProduceBonus;
+        fuelProduceBonus = newPlayerData.fuelProduceBonus;
+        pirateTokenBeatenAwards = newPlayerData.pirateTokenBeatenAwards;
+        twoCardsBonusThreshold = newPlayerData.twoCardsBonusThreshold;
+        oneCardBonusThreshold = newPlayerData.oneCardBonusThreshold;
+        discardLimit = newPlayerData.discardLimit;
 }
 
 public Player SimpleClone()

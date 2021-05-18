@@ -36,7 +36,7 @@ public class MapScript : SFController
     private System.Action<SpacePoint> didSelectSpacePointCallback;
 
     List<GameObject> allSpacePointButtons = new List<GameObject>();
-    GameObject[] hexagonGameObjects;
+    List<GameObject> hexagonGameObjects;
     List<GameObject> currentlyDisplayedPlayerTokens;
     List<Token> highlightedTokens = new List<Token>();
     List<GameObject> highlightCircles = new List<GameObject>();
@@ -65,18 +65,18 @@ public class MapScript : SFController
     public void Init()
     {
         hexagonGameObjects = CreateMap(map);
-        TileGroupRenderer.GetComponent<TileGroupRenderer>().Initialize(map);
+        TileGroupRenderer.GetComponent<TileGroupRenderer>().Initialize();
         currentlyDisplayedPlayerTokens = DisplayPlayerTokens();
         CenterCamera();
         CreateAllSpacePointButtons();
     }
 
-    public void UpdateMap(Map newMap)
-    {
-        TileGroupRenderer.GetComponent<TileGroupRenderer>().UpdateMap(map);
-        map.ReObserveTokens();
-        RedrawMap();
-    }
+    //public void UpdateMap(Map newMap)
+    //{
+    //    TileGroupRenderer.GetComponent<TileGroupRenderer>().UpdateMap(map);
+    //    map.ReObserveTokens();
+    //    RedrawMap();
+    //}
 
     void RedrawTokens()
     {
@@ -155,14 +155,7 @@ public class MapScript : SFController
 
     public GameObject FindHexGameObjectWithTile(Tile_ tile)
     {
-        foreach (var gameObject in hexagonGameObjects)
-        {
-            if (gameObject.GetComponent<HexScript>().tile == tile)
-            {
-                return gameObject;
-            }
-        }
-        return null;
+        return hexagonGameObjects.Find(hex => hex.GetComponent<HexScript>().tile == tile);
     }
 
     void CenterCamera()
@@ -191,7 +184,7 @@ public class MapScript : SFController
         return hexagon;
     }
 
-    GameObject[] CreateMap(Map map)
+    List<GameObject> CreateMap(Map map)
     {
         HexCoordinates[] allValidHexCoords = map.getAllHexCoordinates(true);
 
@@ -202,7 +195,7 @@ public class MapScript : SFController
             hexagons.Add(hexagon);
         }
 
-        return hexagons.ToArray();
+        return hexagons;
     }
 
     public static void DrawCircleAroundGameObject(GameObject container, float radius, float lineWidth)
@@ -387,5 +380,7 @@ public class MapScript : SFController
     public void OnMapDataChanged()
     {
         RedrawMap();
+        TileGroupRenderer.GetComponent<TileGroupRenderer>().OnMapDataChanged();
+        map.ReObserveTokens();
     }
 }

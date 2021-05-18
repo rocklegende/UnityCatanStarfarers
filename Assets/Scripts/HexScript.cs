@@ -42,7 +42,6 @@ public class HexScript : MonoBehaviour
                 {
                     if (!rt.diceChip.isFaceUp || rt.diceChip is PirateToken)
                     {
-                        //numberContainer.SetActive(false);
                         textMesh.text = "";
                         string textureName = rt.diceChip.isFaceUp ? rt.diceChip.GetTextureName() : rt.chipGroup.GetTextureName();
 

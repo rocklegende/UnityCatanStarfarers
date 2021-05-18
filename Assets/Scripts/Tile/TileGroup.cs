@@ -163,7 +163,7 @@ public class ResourceTileGroup : TileGroup
         return list.ToArray();
     }
 
-    PirateToken[] GetPirateTokens()
+    public List<PirateToken> GetPirateTokens()
     {
         var pirateTokens = new List<PirateToken>();
         foreach(var tile in ResourceTilesWithPirateToken())
@@ -174,7 +174,7 @@ public class ResourceTileGroup : TileGroup
                 pirateTokens.Add((PirateToken)diceChip);
             }
         }
-        return pirateTokens.ToArray();
+        return pirateTokens;
     }
 
     /// <summary>
@@ -186,7 +186,7 @@ public class ResourceTileGroup : TileGroup
         return isRevealed;
     }
 
-    public bool ShipCanBeatPirateTokens(SpaceShip ship, PirateToken[] pirateTokens)
+    public bool ShipCanBeatPirateTokens(SpaceShip ship, List<PirateToken> pirateTokens)
     {
         foreach(var pirateToken in pirateTokens)
         {
@@ -226,7 +226,7 @@ public class ResourceTileGroup : TileGroup
         }
         
 
-        if (GetPirateTokens().Length > 0)
+        if (GetPirateTokens().Count > 0)
         {
             if (!ShipCanBeatPirateTokens(token.owner.ship, GetPirateTokens()))
             {

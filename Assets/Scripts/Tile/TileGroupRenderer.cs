@@ -8,7 +8,7 @@ public class TileGroupRenderer : SFController, Observer
     public GameObject mapObject;
     public GameObject dockStationPrefab;
 
-    private Map map;
+    private Map map { get { return globalGamecontroller.mapModel; } }
 
     List<GameObject> dockButtons = new List<GameObject>();
 
@@ -19,19 +19,16 @@ public class TileGroupRenderer : SFController, Observer
         // attach this script somewhere inside the map, it will automatically update the tilegroups
     }
 
-    public void Initialize(Map map)
+    public void Initialize()
     {
-        UpdateMap(map);
         DrawTileGroups();
     }
 
-    public void UpdateMap(Map newMap)
+    public void OnMapDataChanged()
     {
-        this.map = newMap;
-        foreach (var group in map.tileGroups)
-        {
-            group.RegisterObserver(this);
-        }
+        Debug.Log("Changing tile group look!");
+        DestroyAllDockButtons();
+        DrawTileGroups();
     }
 
     GameObject[] CreateTradeStationDocks(int numDocks, Transform transform)
@@ -68,6 +65,11 @@ public class TileGroupRenderer : SFController, Observer
             {
                 var tradeStation = (TradeStation)group;
                 var hexGameObject = mapScript.FindHexGameObjectWithTile(tradeStation.GetTiles()[0]);
+                Debug.Log(string.Format("HexGameObjectEmpty: {0}", hexGameObject == null));
+                if (hexGameObject == null)
+                {
+                    continue;
+                }
                 var btns = CreateTradeStationDocks(tradeStation.GetCapacity(), hexGameObject.transform);
                 dockButtons.AddRange(btns);
 
@@ -99,8 +101,8 @@ public class TileGroupRenderer : SFController, Observer
         {
             if (map.tileGroups != null)
             {
-                DestroyAllDockButtons();
-                DrawTileGroups();
+                //DestroyAllDockButtons();
+                //DrawTileGroups();
             }
         }
     }

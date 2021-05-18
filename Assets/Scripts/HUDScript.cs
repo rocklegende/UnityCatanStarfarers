@@ -40,7 +40,6 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     public GameObject goodsCardStack;
     public GameObject foodCardStack;
     public List<BuildDropDownOption> buildDropDownOptions;
-    public bool isReceivingNotifications = false;
     public bool isInteractionActivated = true;
 
     public Text stateText;
@@ -85,6 +84,12 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         CloseSelection();
         CreateBuildDropDowns();
 
+    }
+
+    public void Init()
+    {
+        CreateSmallPlayerViews();
+        Draw();
     }
 
 
@@ -278,46 +283,36 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         //OnPlayerDataChanged();
     }
 
-    public void UpdatePlayers(List<Player> playersList, Player mainPlayer)
+    public void CreateSmallPlayerViews()
     {
-        SetPlayers(playersList, mainPlayer);
-        Draw();
-    }
+        var playersOtherThanMain = players.Where(p => p != player);
 
-    public void SetPlayers(List<Player> playersList, Player mainPlayer)
-    {
-        //this.players = playersList;
-
-        //var playersOtherThanMain = playersList.Where(p => p != mainPlayer);
-        //SetMainPlayer(mainPlayer);
-
-        //foreach (var notMainPlayer in playersOtherThanMain)
-        //{
-        //    if (smallPlayerViews.Count > 0)
-        //    {
-        //        UpdateExistingSmallPlayerView(notMainPlayer);
-        //    }
-        //    else
-        //    {
-        //        AddSmallPlayerView(notMainPlayer);
-        //    }
-        //}
-
-    }
-
-    void UpdateExistingSmallPlayerView(Player playerData)
-    {
-        var playerView = smallPlayerViews.Find(view => view.GetComponent<SmallPlayerInfoView>().player.name == playerData.name);
-        if (playerView != null)
+        foreach (var notMainPlayer in playersOtherThanMain)
         {
-            Debug.Log(string.Format("Setting new player: {0}; num cards: {1}", playerData.name, playerData.hand.Count()));
-            playerView.GetComponent<SmallPlayerInfoView>().SetPlayer(playerData);
-        }
-        else
-        {
-            Logger.LogError("Couldnt find smallPlayerView for name: " + playerData.name);
+            
+            AddSmallPlayerView(notMainPlayer);
         }
     }
+
+    //void UpdateExistingSmallPlayerView(Player playerData)
+    //{
+    //    var playerView = smallPlayerViews.Find(view => view.GetComponent<SmallPlayerInfoView>().player.guid == playerData.guid);
+    //    if (playerView != null)
+    //    {
+    //        Debug.Log(
+    //            string.Format("Setting new player: {0}; num cards: {1}; VP: {2}",
+    //            playerData.name,
+    //            playerData.hand.Count(),
+    //            playerData.GetVictoryPoints()
+    //            )
+    //        );
+    //        playerView.GetComponent<SmallPlayerInfoView>().OnPlayerDataChanged();
+    //    }
+    //    else
+    //    {
+    //        Logger.LogError("Couldnt find smallPlayerView for name: " + playerData.name);
+    //    }
+    //}
 
     void AddSmallPlayerView(Player playerData)
     {
@@ -350,6 +345,11 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
 
     public void Draw()
     {
+        foreach (var p in players)
+        {
+            Debug.Log("HUD: Playername: " + p.name + "; VP: " + p.GetVictoryPoints());
+        }
+        
         Debug.Log("Drawing hud");
         DrawResourceStacks();
         DrawUpgrades();
@@ -542,15 +542,12 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
 
     public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)
     {
-        if (isReceivingNotifications)
+        switch (p_event_path)
         {
-            switch (p_event_path)
-            {
-                case SFNotification.open_friendship_card_selection:
-                    var tradeStation = (TradeStation)p_data[0];
-                    ShowFriendshipCardSelection(tradeStation);
-                    break;
-            }
+            case SFNotification.open_friendship_card_selection:
+                var tradeStation = (TradeStation)p_data[0];
+                ShowFriendshipCardSelection(tradeStation);
+                break;
         }
     }
 

@@ -77,6 +77,7 @@ public class GameController : SFController, IGameController, Observer
     public Map mapModel;
 
 
+
     private GameState _state;
     public GameState State {
         get { return _state; }
@@ -144,8 +145,13 @@ public class GameController : SFController, IGameController, Observer
     {
         var gameStartInformation = (GameStartInformation)SFFormatter.Deserialize(gameStartInformationAsBytes);
 
+        //setup the observers, because after serialization we always lose the observers
         mapModel = gameStartInformation.map;
         mapModel.RegisterObserver(this);
+        foreach(var group in mapModel.tileGroups)
+        {
+            group.RegisterObserver(mapModel);
+        }
         this._state = new BuildAndTradeState(this);
 
         //every client sets up the players itself, no need to send that over wire from MasterClient
@@ -183,8 +189,7 @@ public class GameController : SFController, IGameController, Observer
         //InitialPlayerSetup();
         ObservePlayers(players);
 
-        HUD.GetComponent<HUDScript>().SetPlayers(players, mainPlayer);
-        HUD.GetComponent<HUDScript>().isReceivingNotifications = true;
+        HUD.GetComponent<HUDScript>().Init();
 
         Map.GetComponent<MapScript>().Init();
 
@@ -215,7 +220,7 @@ public class GameController : SFController, IGameController, Observer
 
     public void OpenTokenSelectionForMainPlayer()
     {
-        GetMapScript().OpenTokenSelection(mainPlayer.GetTokensThatCanFly(), (tok) => { });
+        GetHUDScript().OnPlayerDataChanged();
     }
 
     [PunRPC]
@@ -620,6 +625,7 @@ public class GameController : SFController, IGameController, Observer
                     player.AddToken(token);
                 }
             }
+            Debug.Log("Playername: " + player.name + "; VP: " + player.GetVictoryPoints()) ;
         }
 
         UpdatePlayers(newPlayers);
@@ -631,12 +637,8 @@ public class GameController : SFController, IGameController, Observer
     void UpdateMap(Map newMap)
     {
         Debug.Log("TH2 - Update map!");
-        //TODO: gameController probably doesnt need to know about the mapModel? we update mapModel twice, could lead to problems
         mapModel.UpdateData(newMap);
-        var mapScript = GetMapScript();
-        
-        mapScript.UpdateMap(newMap);
-
+        GetMapScript().OnMapDataChanged();
     }
 
     void UpdatePlayers(List<Player> newPlayerData)
@@ -656,7 +658,7 @@ public class GameController : SFController, IGameController, Observer
 
         //we lose the observers by serializing the players, therefore we need to observe them again after the update
         ObservePlayers(newPlayerData);
-        HUD.GetComponent<HUDScript>().UpdatePlayers(players, mainPlayer);
+        GetHUDScript().OnPlayerDataChanged();
     }
 
     public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)

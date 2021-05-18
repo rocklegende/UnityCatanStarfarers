@@ -3,9 +3,9 @@
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "ScriptsAssemblyDef",
         "PhotonUnityNetworking",
-        "PhotonRealtime"
+        "PhotonRealtime",
+        "ScriptsAssemblyDef"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

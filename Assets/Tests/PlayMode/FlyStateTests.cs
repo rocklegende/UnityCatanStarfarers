@@ -116,7 +116,7 @@ namespace Tests
         [UnityTest]
         public IEnumerator TestFlyToResourceGroupAndSettle()
         {
-            var WaitTimeBetweenSteps = 0; //use this to debug this test
+            var WaitTimeBetweenSteps = 5; //use this to debug this test
 
             var mapScript = gameController.GetMapScript();
             var hudScript = gameController.GetHUDScript();
@@ -155,7 +155,8 @@ namespace Tests
             var tokenStaysOnSameSpotAfterSettling = tokenModelFirstClickable.position.Equals(targetSpacePoint);
             Assert.True(tokenStaysOnSameSpotAfterSettling, "Token changed position after settling on resource tile group. It should stay the same");
             Assert.True(firstResourceGroup.IsRevealed());
-            Assert.AreNotEqual(previousVp.ToString(), hudScript.vpText.text, "Hud doesnt seem to update correcty. VPs presented are still the same value."); 
+            Assert.True(firstResourceGroup.GetPirateTokens().Count == 0, "Error: after settling resource group has still at least 1 pirate token left");
+            Assert.AreNotEqual(previousVp.ToString(), hudScript.vpText.text, "Hud doesnt seem to update correcty. VPs presented are still the same value.");
 
             yield return null;
         }

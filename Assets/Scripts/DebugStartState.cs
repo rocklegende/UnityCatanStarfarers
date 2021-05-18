@@ -44,9 +44,8 @@ public abstract class DebugStartState
     {
         controller.players = GetGenericPlayers();
         controller.mainPlayer = controller.players[0];
-        
-        controller.HUD.GetComponent<HUDScript>().SetPlayers(controller.players, controller.mainPlayer);        
-        controller.HUD.GetComponent<HUDScript>().isReceivingNotifications = true;
+
+        controller.HUD.GetComponent<HUDScript>().OnPlayerDataChanged();
 
         CommonMapSetup();
     }
@@ -322,8 +321,7 @@ public class PlayerHasRichHelpPoorBonusDebugState : DebugStartState
 
         controller.players = new List<Player>() { new Player(new SFColor(Color.green)), new Player(new SFColor(Color.yellow)), new Player(new SFColor(Color.blue)), new Player(new SFColor(Color.red)), };
         controller.mainPlayer = controller.players[0];
-        controller.HUD.GetComponent<HUDScript>().SetPlayers(controller.players, controller.mainPlayer);
-        controller.HUD.GetComponent<HUDScript>().isReceivingNotifications = true;
+        controller.HUD.GetComponent<HUDScript>().OnPlayerDataChanged();
 
         foreach (var player in controller.players)
         {

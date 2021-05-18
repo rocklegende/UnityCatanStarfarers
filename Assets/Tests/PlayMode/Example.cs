@@ -176,6 +176,26 @@ namespace Tests
         }
 
         [UnityTest]
+        public IEnumerator GameControllerObservesMap()
+        {
+            var map = gameController.mapModel;
+            Assert.True(map.GetObservers().Contains(gameController));
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator MapObservesTilegroups()
+        {
+            var tileGroups = gameController.mapModel.tileGroups;
+            foreach(var group in tileGroups)
+            {
+                Assert.True(group.GetObservers().Contains(gameController.mapModel));
+            }
+            
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator TradeOfferPanelDisplaysTradeCorrectly()
         {
             var hudScript = gameController.GetHUDScript();
