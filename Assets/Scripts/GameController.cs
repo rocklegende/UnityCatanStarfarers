@@ -638,6 +638,7 @@ public class GameController : SFController, IGameController, Observer
     {
         Debug.Log("TH2 - Update map!");
         mapModel.UpdateData(newMap);
+        mapModel.ReObserveTokens();
         GetMapScript().OnMapDataChanged();
     }
 

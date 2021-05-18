@@ -106,8 +106,6 @@ namespace Tests
             friendshipCardSelectionScript.selectButton.onClick.Invoke();
             yield return new WaitForSeconds(WaitTimeBetweenSteps);
 
-            Assert.False(tokenModelFirstClickable.position.Equals(firstTradeStation.GetCenter()),
-                "Token model is still on the center of the tradestation! Token should move off that center after settling!");
             Assert.AreEqual(prevNumCards - 1, firstTradeStation.tradingCards.Count, "Picking trading card didnt remove the card from the tradeStation cards");
 
             yield return null;

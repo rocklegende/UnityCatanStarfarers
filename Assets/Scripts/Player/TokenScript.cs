@@ -12,9 +12,7 @@ namespace Space
         public GameObject tradeShipPrefab;
         public GameObject spacePortPrefab;
 
-        GameObject tokenInstance;
-
-        public GameObject tokenGameObject;
+        public GameObject tokenInstance;
         public Token tokenModel;
         // Start is called before the first frame update
         void Start()

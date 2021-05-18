@@ -7,14 +7,17 @@ public class TileGroupRenderer : SFController, Observer
 {
     public GameObject mapObject;
     public GameObject dockStationPrefab;
+    
+    public Dictionary<TradeStation, List<GameObject>> TradeStationDocks { get { return _tradeStationDocks; } }
 
     private Map map { get { return globalGamecontroller.mapModel; } }
-
+    private Dictionary<TradeStation, List<GameObject>> _tradeStationDocks;
     List<GameObject> dockButtons = new List<GameObject>();
 
     
     void Start()
     {
+        _tradeStationDocks = new Dictionary<TradeStation, List<GameObject>>();
         // get all the tilegroups from map and render them according to their state
         // attach this script somewhere inside the map, it will automatically update the tilegroups
     }
@@ -24,16 +27,10 @@ public class TileGroupRenderer : SFController, Observer
         DrawTileGroups();
     }
 
-    public void OnMapDataChanged()
-    {
-        Debug.Log("Changing tile group look!");
-        DestroyAllDockButtons();
-        DrawTileGroups();
-    }
-
-    GameObject[] CreateTradeStationDocks(int numDocks, Transform transform)
+    public List<GameObject> CreateTradeStationDocks(TradeStation station, Transform transform)
     {
         List<GameObject> buttons = new List<GameObject>();
+        var numDocks = station.GetCapacity();
         for (int i = 0; i < numDocks; i++)
         {
             //TODO: use width of tile for calculation
@@ -43,17 +40,9 @@ public class TileGroupRenderer : SFController, Observer
             btn.transform.parent = transform;
             buttons.Add(btn);
         }
-        return buttons.ToArray();
+        _tradeStationDocks.Add(station, buttons);
+        return buttons;
 
-    }
-
-    void DestroyAllDockButtons()
-    {
-        foreach (var dockBtn in dockButtons)
-        {
-            GameObject.Destroy(dockBtn);
-        }
-        this.dockButtons.Clear();
     }
 
     void DrawTileGroups()
@@ -70,17 +59,10 @@ public class TileGroupRenderer : SFController, Observer
                 {
                     continue;
                 }
-                var btns = CreateTradeStationDocks(tradeStation.GetCapacity(), hexGameObject.transform);
+                var btns = CreateTradeStationDocks(tradeStation, hexGameObject.transform);
                 dockButtons.AddRange(btns);
 
-                for (int i = 0; i < tradeStation.dockedSpaceships.Count; i++)
-                {
-                    var token = tradeStation.dockedSpaceships[i];
-                    var newPos = btns[i].transform.position;
-                    token.SetPosition(SpacePoint.GarbagePoint);
-                    token.useOwnPositioningSystem = false;
-                    token.SetUnityPosition(newPos);
-                }
+                
             }
         }
     }

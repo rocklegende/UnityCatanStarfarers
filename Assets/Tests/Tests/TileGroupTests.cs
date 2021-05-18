@@ -124,7 +124,8 @@ namespace Tests
             {
                 rtg.RequestSettleOfToken(token);
                 Assert.True(false);
-            } catch (NotOnSettleSpotException e)
+            }
+            catch (NotOnSettleSpotException e)
             {
                 Assert.True(true);
             }
@@ -192,7 +193,8 @@ namespace Tests
             {
                 tuple.Item1.RequestSettleOfToken(tuple.Item2);
                 Assert.True(false);
-            } catch (WrongTokenTypeException e)
+            }
+            catch (WrongTokenTypeException e)
             {
                 Assert.True(true);
             }
@@ -264,7 +266,7 @@ namespace Tests
                 var capacity = tuple.Item1.GetCapacity();
                 for (int i = 0; i < capacity; i++)
                 {
-                    tuple.Item1.dockedSpaceships.Add(new ColonyBaseToken());
+                    tuple.Item1.dockedTokens.Add(new ColonyBaseToken());
                 }
                 tuple.Item1.RequestSettleOfToken(tuple.Item2);
                 Assert.True(false);
@@ -315,9 +317,9 @@ namespace Tests
             token.owner = player;
 
             tradeStation.isNotifying = false;
-            var spaceShipsBefore = tradeStation.dockedSpaceships.Count;
+            var spaceShipsBefore = tradeStation.dockedTokens.Count;
             tradeStation.OnTokenSettled(token);
-            var spaceShipsAfter = tradeStation.dockedSpaceships.Count;
+            var spaceShipsAfter = tradeStation.dockedTokens.Count;
 
             Assert.AreEqual(spaceShipsAfter, spaceShipsBefore + 1);
         }
@@ -342,7 +344,7 @@ namespace Tests
 
             tradeStation.OnTokenSettled(ownToken);
             Assert.True(tradeStation.medal.owner == player); //1:0 
-            Assert.True(player.GetVictoryPointsFromFriendships() == 2); 
+            Assert.True(player.GetVictoryPointsFromFriendships() == 2);
 
             tradeStation.OnTokenSettled(opponentToken);
             Assert.True(tradeStation.medal.owner == player); //1:1, still the same

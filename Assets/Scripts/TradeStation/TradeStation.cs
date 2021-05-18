@@ -25,7 +25,7 @@ public abstract class TradeStation : TileGroup
 {
     public string name;
     public List<AbstractFriendshipCard> tradingCards;
-    public List<Token> dockedSpaceships = new List<Token>();
+    public List<Token> dockedTokens = new List<Token>();
     public TradeStationMedal medal;
     public bool isNotifying = true;
     int capacity = 5;
@@ -63,7 +63,7 @@ public abstract class TradeStation : TileGroup
 
     public bool IsFull()
     {
-        return dockedSpaceships.Count >= capacity;
+        return dockedTokens.Count >= capacity;
     }
 
     public void RemoveCard(AbstractFriendshipCard card)
@@ -73,7 +73,7 @@ public abstract class TradeStation : TileGroup
 
     public override void OnTokenSettled(Token token)
     {
-        dockedSpaceships.Add(token);
+        dockedTokens.Add(token);
         AssignOwnerOfMedal();
 
         if (isNotifying)
@@ -92,7 +92,7 @@ public abstract class TradeStation : TileGroup
     Dictionary<Player, int> GetSpaceShipCountByPlayer()
     {
         var spaceShipCount = new Dictionary<Player, int>();
-        foreach (var spaceShip in dockedSpaceships)
+        foreach (var spaceShip in dockedTokens)
         {
             if (spaceShipCount.ContainsKey(spaceShip.owner))
             {
@@ -155,9 +155,9 @@ public abstract class TradeStation : TileGroup
             throw new TradeStationIsFullException();
         }
 
-        if (token.owner.ship.FreightPods <= dockedSpaceships.Count)
+        if (token.owner.ship.FreightPods <= dockedTokens.Count)
         {
-            throw new NotEnoughFreightPodsToDockException("Owner of token has " + token.owner.ship.FreightPods + " but " + dockedSpaceships.Count + " ships ar already docked");
+            throw new NotEnoughFreightPodsToDockException("Owner of token has " + token.owner.ship.FreightPods + " but " + dockedTokens.Count + " ships ar already docked");
         }
 
         return true;

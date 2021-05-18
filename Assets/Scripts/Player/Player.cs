@@ -169,7 +169,7 @@ public class Player : SFModel, Observer, IComparable
     public void UpdateData(Player newPlayerData)
     {
         color = newPlayerData.color;
-        tokens = newPlayerData.tokens; // tokens on gameboard
+        tokens = newPlayerData.tokens;
         giftedTokens = newPlayerData.giftedTokens;
         tokenStorage = newPlayerData.tokenStorage;
         name = newPlayerData.name;

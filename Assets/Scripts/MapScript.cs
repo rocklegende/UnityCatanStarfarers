@@ -65,18 +65,11 @@ public class MapScript : SFController
     public void Init()
     {
         hexagonGameObjects = CreateMap(map);
-        TileGroupRenderer.GetComponent<TileGroupRenderer>().Initialize();
         currentlyDisplayedPlayerTokens = DisplayPlayerTokens();
+        TileGroupRenderer.GetComponent<TileGroupRenderer>().Initialize();
         CenterCamera();
         CreateAllSpacePointButtons();
     }
-
-    //public void UpdateMap(Map newMap)
-    //{
-    //    TileGroupRenderer.GetComponent<TileGroupRenderer>().UpdateMap(map);
-    //    map.ReObserveTokens();
-    //    RedrawMap();
-    //}
 
     void RedrawTokens()
     {
@@ -94,8 +87,10 @@ public class MapScript : SFController
     List<GameObject> DisplayPlayerTokens()
     {
         List<GameObject> tokens = new List<GameObject>();
+
         foreach (Token token in map.tokensOnMap)
         {
+            
             var go = DisplayToken(token);
             tokens.Add(go);
         }
@@ -104,19 +99,43 @@ public class MapScript : SFController
     }
 
 
+    
+
 
     public GameObject DisplayToken(Token token)
     {
         GameObject prefab = tokenRendererPrefab;
 
         GameObject tokenInstance = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity);
-        DontDestroyOnLoad(tokenInstance);
-        tokenInstance.GetComponent<Space.TokenScript>().tokenGameObject = tokenInstance;
         tokenInstance.GetComponent<Space.TokenScript>().tokenModel = token;
         tokenInstance.GetComponent<Space.TokenScript>().Draw();
 
+        var tuple = GetTradestationWhichThisTokenIsDocked(token);
+        if (tuple != null)
+        {
+            tokenInstance.GetComponent<Space.TokenScript>().tokenInstance.transform.position = GetTradeStationDockPosition(tuple.Item2, tuple.Item1);
+        }
         tokenInstance.transform.parent = this.gameObject.transform;
         return tokenInstance;
+    }
+
+
+    Vector3 GetTradeStationDockPosition (TradeStation station, int index)
+    {
+        return TileGroupRenderer.GetComponent<TileGroupRenderer>().TradeStationDocks[station][index].transform.position;
+    }
+
+    System.Tuple<int, TradeStation> GetTradestationWhichThisTokenIsDocked(Token token)
+    {
+        foreach(var tradestation in map.GetTradeStations())
+        {
+            var index = tradestation.dockedTokens.FindIndex(tok => tok == token);
+            if (index != -1)
+            {
+                return new System.Tuple<int, TradeStation>(index, tradestation);
+            } 
+        }
+        return null;
     }
 
     void CreateAllSpacePointButtons()
@@ -380,7 +399,5 @@ public class MapScript : SFController
     public void OnMapDataChanged()
     {
         RedrawMap();
-        TileGroupRenderer.GetComponent<TileGroupRenderer>().OnMapDataChanged();
-        map.ReObserveTokens();
     }
 }

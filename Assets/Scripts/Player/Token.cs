@@ -19,29 +19,9 @@ public abstract class SFModel : Subject
 }
 
 [Serializable]
-public class SerializableVector3
-{
-    public float x;
-    public float y;
-    public float z;
-    public SerializableVector3(Vector3 unityVector3)
-    {
-        this.x = unityVector3.x;
-        this.y = unityVector3.y;
-        this.z = unityVector3.z;
-    }
-
-    public Vector3 ToUnityVector3()
-    {
-        return new Vector3(x, y, z);
-    }
-}
-
-[Serializable]
 public abstract class Token : SFModel
 {
     public SpacePoint position = null;
-    public SerializableVector3 unityPosition = null;
     public bool useOwnPositioningSystem = true;
     public Cost cost;
     public Guid guid;
@@ -53,7 +33,7 @@ public abstract class Token : SFModel
 
     protected SFColor color;
     protected bool isTokenAttachable;
-    protected bool isDisabled = false; //TODO should only be readable from the outside
+    protected bool isDisabled = false; 
 
     public Token(string id, bool isTokenAttachable, Cost cost)
     {
@@ -173,13 +153,7 @@ public abstract class Token : SFModel
 
     public Vector3 GetUnityPosition()
     {
-        if (useOwnPositioningSystem)
-        {
-            return position.ToUnityPosition();
-        } else
-        {
-            return unityPosition.ToUnityVector3();
-        }
+        return position.ToUnityPosition();
     }
 
     protected abstract void OnSettle();
@@ -308,13 +282,11 @@ public abstract class Token : SFModel
 
     public void SetPosition(SpacePoint pos)
     {
+        if (pos.Equals(position))
+        {
+            return;
+        }
         this.position = pos;
-        DataChanged();
-    }
-
-    public void SetUnityPosition(Vector3 pos)
-    {
-        this.unityPosition = new SerializableVector3(pos);
         DataChanged();
     }
 

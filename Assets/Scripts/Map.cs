@@ -80,7 +80,6 @@ namespace com.onebuckgames.UnityStarFarers
             var tileGroup = FindTileGroupAtPoint(token.position);
             if (tileGroup != null)
             {
-                var observers = tileGroup.GetObservers();
                 tileGroup.HandleTokenSettled(token);
             }
             Debug.Log("Jo");
