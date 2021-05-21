@@ -24,7 +24,7 @@ public class On7RollStrategy
         var remoteClientAction = new RemoteClientAction(
             RemoteClientActionType.SEVEN_ROLL_DISCARD,
             null,
-            gameController.GetIndexOfPlayer(gameController.mainPlayer)
+            gameController.mainPlayer
         );
         var dispatcher = new RemoteActionDispatcher(gameController);
         dispatcher.RequestActionFromPlayers(

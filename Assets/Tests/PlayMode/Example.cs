@@ -394,6 +394,21 @@ namespace Tests
             yield return null;
         }
 
+        [UnityTest]
+        public IEnumerator RequestingATradeWithoutAnythingIsNotAllowed()
+        {
+            //open trade panel
+            gameController.GetHUDScript().OpenTradePanel((hand1, hand2) => { });
+
+            var tradePanelScript = gameController.GetHUDScript().tradePanel.GetComponent<TradePanelScript>();
+            var bankTradePossible = tradePanelScript.MakeTradeWithBankButton.IsInteractable();
+            var playerTradePossible = tradePanelScript.MakeTradeWithPlayersButton.IsInteractable();
+            //bank trade button is not interactive
+            Assert.False(bankTradePossible);
+            Assert.False(playerTradePossible);
+            yield return null;
+        }
+
 
     }
 }

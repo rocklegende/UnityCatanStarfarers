@@ -593,8 +593,8 @@ public class GetResourceFromEveryPlayer : EncounterCardAction
 
     public override void Execute()
     {
-        var mainPlayerIndex = gameController.GetIndexOfPlayer(gameController.mainPlayer);
-        var actionInfo = new RemoteClientAction(RemoteClientActionType.GIVE_RESOURCE, new object[] { numResources }, mainPlayerIndex);
+        var mainPlayer = gameController.mainPlayer;
+        var actionInfo = new RemoteClientAction(RemoteClientActionType.GIVE_RESOURCE, new object[] { numResources }, mainPlayer);
 
         var otherPlayers = GetTargetPlayers(gameController.players);
         if (otherPlayers.Count == 0)
@@ -763,7 +763,7 @@ public class MakeTradeAction : EncounterCardAction
 
     public override void Execute()
     {
-        hud.OpenTradePanel(numCardsToGive, numCardsToReceive, TradeMade);
+        hud.OpenTradePanelForExactTrade(numCardsToGive, numCardsToReceive, TradeMade);
     }
 
     public void TradeMade(Hand inputHand, Hand outputHand)
@@ -914,7 +914,7 @@ public class DiscardIfMoreThanLimitUpgradesAction : EncounterCardAction
         var action = new RemoteClientAction(
             RemoteClientActionType.GIVEUP_UPGRADE,
             new object[] { 1 },
-            gameController.GetIndexOfPlayer(gameController.mainPlayer)
+            gameController.mainPlayer
         );
 
         var dispatcher = new RemoteActionDispatcher(gameController);

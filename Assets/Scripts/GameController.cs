@@ -43,13 +43,13 @@ namespace com.onebuckgames.UnityStarFarers
     {
         public readonly RemoteClientActionType actionType;
         public readonly object[] parameters;
-        public readonly int sendFromPlayerIndex;
+        public readonly Player sendFromPlayer;
 
-        public RemoteClientAction(RemoteClientActionType actionType, object[] parameters, int sendFromPlayerIndex)
+        public RemoteClientAction(RemoteClientActionType actionType, object[] parameters, Player sendFromPlayer)
         {
             this.actionType = actionType;
             this.parameters = parameters;
-            this.sendFromPlayerIndex = sendFromPlayerIndex;
+            this.sendFromPlayer = sendFromPlayer;
         }
     }
 }
@@ -94,6 +94,8 @@ public class GameController : SFController, IGameController, Observer
     public DrawPileHandler drawPileHandler;
     public DebugStartState debugStartState;
     public Photon.Realtime.Player recentPhotonResponsePlayer;
+    public int numPlayersUpdated = 0;
+    public int numMapUpdated = 0;
 
     /// <summary>
     /// Run GameController in testMode
@@ -259,7 +261,7 @@ public class GameController : SFController, IGameController, Observer
         GetHUDScript().OpenDiscardResourcePicker((hand) => {
             Debug.Log("hand picked, count: " + hand.Count());
 
-            var sfTargetPlayer = players[remoteAction.sendFromPlayerIndex];
+            var sfTargetPlayer = remoteAction.sendFromPlayer;
             mainPlayer.PayToOtherPlayer(sfTargetPlayer, hand);
             Debug.Log("paying hand to player: " + sfTargetPlayer.name);
 
@@ -288,16 +290,12 @@ public class GameController : SFController, IGameController, Observer
 
     void SendResponseBackToCallerOfRemoteClientAction(RemoteClientAction remoteAction)
     {
-        var sfTargetPlayer = players[remoteAction.sendFromPlayerIndex];
-        var photonTargetPlayer = SFPlayerToPhotonPlayer(sfTargetPlayer);
-        recentPhotonResponsePlayer = photonTargetPlayer;
-        Debug.Log("Sending response to player: " + photonTargetPlayer.NickName);
-        RunRPC("RemoteClientFulfilledAction", photonTargetPlayer, SFFormatter.Serialize(new RemoteActionCallbackData(mainPlayer)));
+        SendResponseBackToCallerOfRemoteClientAction(remoteAction, new RemoteActionCallbackData(mainPlayer));
     }
 
     void SendResponseBackToCallerOfRemoteClientAction(RemoteClientAction remoteAction, RemoteActionCallbackData data)
     {
-        var sfTargetPlayer = players[remoteAction.sendFromPlayerIndex];
+        var sfTargetPlayer = remoteAction.sendFromPlayer;
         var photonTargetPlayer = SFPlayerToPhotonPlayer(sfTargetPlayer);
         recentPhotonResponsePlayer = photonTargetPlayer;
         Debug.Log("Sending response to player: " + photonTargetPlayer.NickName);
@@ -336,7 +334,7 @@ public class GameController : SFController, IGameController, Observer
         var remoteCallbackData = (RemoteActionCallbackData) SFFormatter.Deserialize(data);
         var playerWhoFullfilledAction = remoteCallbackData.player;
         Debug.Log("Response from " + playerWhoFullfilledAction.name + " received");
-        dispatcherSomeoneFullfilledActionCallback(remoteCallbackData);
+        dispatcherSomeoneFullfilledActionCallback?.Invoke(remoteCallbackData);
     }
 
     void InitialPlayerSetup()
@@ -412,11 +410,11 @@ public class GameController : SFController, IGameController, Observer
         return dict;
     }
 
-    public int GetIndexOfPlayer(Player searchedPlayer)
-    {
-        var allPlayers = GetAllPlayersFromDict();
-        return allPlayers.FindIndex(p => p.name == searchedPlayer.name);
-    }
+    //public int GetIndexOfPlayer(Player searchedPlayer)
+    //{
+    //    var allPlayers = GetAllPlayersFromDict();
+    //    return allPlayers.FindIndex(p => p.name == searchedPlayer.name);
+    //}
 
     Player GetMainPlayerFromDict()
     {
@@ -435,7 +433,7 @@ public class GameController : SFController, IGameController, Observer
 
     public bool IsMyTurn()
     {
-        return GetCurrentPlayerAtTurn().name == mainPlayer.name;
+        return GetCurrentPlayerAtTurn().guid == mainPlayer.guid;
     }
 
     Dictionary<Photon.Realtime.Player, Player> MapPhotonPlayersToOwnPlayerModelDict(Dictionary<string, int> turnOrder)
@@ -597,8 +595,14 @@ public class GameController : SFController, IGameController, Observer
 
     public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
     {
+        var hashtable = (Dictionary<object, object>)propertiesThatChanged;
         Debug.Log("Room properties changed!");
+        OnRoomPropertiesUpdateFromOwnDict(hashtable);
+    }
 
+    //extracted for easier testability
+    public void OnRoomPropertiesUpdateFromOwnDict(Dictionary<object, object> propertiesThatChanged)
+    {
         Debug.Log("Player id who made last change: " + (string)propertiesThatChanged["playerIdWhoMadeLastChange"]);
         Debug.Log("Own player id = " + mainPlayer.guid);
         var weMadeLastChange = (string)propertiesThatChanged["playerIdWhoMadeLastChange"] == mainPlayer.guid;
@@ -625,7 +629,7 @@ public class GameController : SFController, IGameController, Observer
                     player.AddToken(token);
                 }
             }
-            Debug.Log("Playername: " + player.name + "; VP: " + player.GetVictoryPoints()) ;
+            Debug.Log("Playername: " + player.name + "; VP: " + player.GetVictoryPoints());
         }
 
         UpdatePlayers(newPlayers);
@@ -636,6 +640,7 @@ public class GameController : SFController, IGameController, Observer
 
     void UpdateMap(Map newMap)
     {
+        numMapUpdated += 1;
         Debug.Log("TH2 - Update map!");
         mapModel.UpdateData(newMap);
         mapModel.ReObserveTokens();
@@ -644,6 +649,7 @@ public class GameController : SFController, IGameController, Observer
 
     void UpdatePlayers(List<Player> newPlayerData)
     {
+        numPlayersUpdated += 1;
         foreach (var newData in newPlayerData)
         {
             foreach (var key in networkPlayersOwnPlayersMap.Keys.ToList())
@@ -727,7 +733,6 @@ public class GameController : SFController, IGameController, Observer
             return;
         }
 
-        //split this up maybe into MapDataChanged, PlayerDataChanged...
         if (subject is Map)
         {
             GetMapScript().OnMapDataChanged();
@@ -737,8 +742,6 @@ public class GameController : SFController, IGameController, Observer
         {
             GetHUDScript().OnPlayerDataChanged();
         }
-
-
 
         // if we receive multiple updates in a short time (100ms), only react on the last one
         // TODO: probably better to do this inside the subject, so we have the functionality for all the observable stuff

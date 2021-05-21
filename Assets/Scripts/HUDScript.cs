@@ -90,6 +90,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     {
         CreateSmallPlayerViews();
         Draw();
+        tradePanel.GetComponent<TradePanelScript>().Init(player);
     }
 
 
@@ -345,10 +346,6 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
 
     public void Draw()
     {
-        foreach (var p in players)
-        {
-            Debug.Log("HUD: Playername: " + p.name + "; VP: " + p.GetVictoryPoints());
-        }
         
         Debug.Log("Drawing hud");
         DrawResourceStacks();
@@ -472,13 +469,19 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         }
     }
 
-    public void OpenTradePanel(int numCardsToGive, int numCardsToReceive, System.Action<Hand, Hand> callback)
+    public void OpenTradePanel(System.Action<Hand, Hand> callback)
     {
         tradePanel.SetActive(true);
         var tradePanelScript = tradePanel.GetComponent<TradePanelScript>();
+        tradePanelScript.callback = callback;
+    }
+
+    public void OpenTradePanelForExactTrade(int numCardsToGive, int numCardsToReceive, System.Action<Hand, Hand> callback)
+    {
+        OpenTradePanel(callback);
+        var tradePanelScript = tradePanel.GetComponent<TradePanelScript>();
         tradePanelScript.SetExactInput(numCardsToGive);
         tradePanelScript.SetExactOutput(numCardsToReceive);
-        tradePanelScript.callback = callback;
     }
 
     public void CloseTradePanel()

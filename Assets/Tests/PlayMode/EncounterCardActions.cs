@@ -29,7 +29,7 @@ namespace Tests
         [UnityTest]
         public IEnumerator Receiving_GIVE_RESOURCES_FromRemoteClientOpensResourcePicker()
         {
-            var action = new RemoteClientAction(RemoteClientActionType.GIVE_RESOURCE, new object[] { 1 }, 1);
+            var action = new RemoteClientAction(RemoteClientActionType.GIVE_RESOURCE, new object[] { 1 }, gameController.mainPlayer);
             gameController.RemoteClientRequiresAction(SFFormatter.Serialize(action));
 
             var hudScript = gameController.GetHUDScript();
@@ -43,7 +43,7 @@ namespace Tests
         {
             gameController.mainPlayer.AddHand(Hand.FromResources(4, 4, 4, 4));
 
-            var action = new RemoteClientAction(RemoteClientActionType.SEVEN_ROLL_DISCARD, null, 1);
+            var action = new RemoteClientAction(RemoteClientActionType.SEVEN_ROLL_DISCARD, null, gameController.mainPlayer);
             gameController.RemoteClientRequiresAction(SFFormatter.Serialize(action));
 
             var hudScript = gameController.GetHUDScript();
@@ -57,7 +57,7 @@ namespace Tests
         {
             gameController.mainPlayer.BuildUpgradeWithoutCost(new FreightPodUpgradeToken());
 
-            var action = new RemoteClientAction(RemoteClientActionType.GIVEUP_UPGRADE, new object[] { 1 }, 1);
+            var action = new RemoteClientAction(RemoteClientActionType.GIVEUP_UPGRADE, new object[] { 1 }, gameController.mainPlayer);
             gameController.RemoteClientRequiresAction(SFFormatter.Serialize(action));
 
             var hudScript = gameController.GetHUDScript();
@@ -69,11 +69,20 @@ namespace Tests
         [UnityTest]
         public IEnumerator Receiving_TRADE_OFFER_FromRemoteClientOpensUpgradeSelection()
         {
-            var action = new RemoteClientAction(RemoteClientActionType.TRADE_OFFER, new object[] { new TradeOffer(new Hand(), new Hand(), new TestHelper().CreateGenericPlayer()) }, 1);
-            gameController.RemoteClientRequiresAction(SFFormatter.Serialize(action));
+            var dispatcher = new RemoteActionDispatcher(gameController);
+            var action = new RemoteClientAction(
+                RemoteClientActionType.TRADE_OFFER,
+                new object[] { new TradeOffer(new Hand(), new Hand(), new TestHelper().CreateGenericPlayer())
+            }, gameController.mainPlayer);
+            dispatcher.RequestActionFromPlayers(new List<Player>() { gameController.mainPlayer }, action, (dict) => { });
 
             var hudScript = gameController.GetHUDScript();
             Assert.True(hudScript.tradeOfferView.activeInHierarchy);
+            yield return new WaitForSeconds(30);
+            //click accept
+            //..
+
+            //checken ob wir true als antwort zurückschicken
 
             yield return null;
         }

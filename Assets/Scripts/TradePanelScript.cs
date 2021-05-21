@@ -134,11 +134,11 @@ public class TradePanelScript : SFController
 
         
         //var sendToPlayers = globalGamecontroller.players; //For dev: 
-        var sendToPlayers = globalGamecontroller.players.Where(player => player.name != globalGamecontroller.mainPlayer.name).ToList(); //For prod: 
+        var sendToPlayers = globalGamecontroller.players.Where(player => player != globalGamecontroller.mainPlayer).ToList(); //For prod: 
 
         var tradeOffer = new TradeOffer(inputHand, outputHand, player);
         currentTradeOffer = tradeOffer;
-        var action = new RemoteClientAction(RemoteClientActionType.TRADE_OFFER, new object[] { tradeOffer }, globalGamecontroller.GetIndexOfPlayer(player));
+        var action = new RemoteClientAction(RemoteClientActionType.TRADE_OFFER, new object[] { tradeOffer }, globalGamecontroller.mainPlayer);
 
         tradeOfferResponseTableView.GetComponent<TradeOfferResponseTableView>().callback = AcceptAcceptedTradeOffer;
         foreach (var sendToPlayer in sendToPlayers)
@@ -151,6 +151,8 @@ public class TradePanelScript : SFController
 
     void PlayerRespondedToTradeOffer(Dictionary<string, RemoteActionCallbackData> responses)
     {
+        var playerWhoResponded = responses.Values.ToList().First().player;
+        Debug.Log(string.Format("Player responded to trade offer: ", playerWhoResponded.name));
         if ((bool)responses.Values.ToList().First().data == true)
         {
             tradeOfferResponseTableView.GetComponent<TradeOfferResponseTableView>().AddRow(responses.Values.ToList().First().player);

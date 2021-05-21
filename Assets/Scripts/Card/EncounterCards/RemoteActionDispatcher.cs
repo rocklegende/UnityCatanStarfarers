@@ -40,7 +40,7 @@ public class RemoteActionDispatcher
         }
     }
 
-    public void ResponseReceivedFromPlayer(RemoteActionCallbackData data)
+    void ResponseReceivedFromPlayer(RemoteActionCallbackData data)
     {
         Debug.Log("Received response from player: " + data.player.name);
         Debug.Log("playersRespondedDict #3: " + playerRespondedDict.ToList().Count);
