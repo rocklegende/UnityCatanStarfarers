@@ -16,6 +16,10 @@ public class PlayModeTestHelper
     {
     }
 
+    public readonly int ColonyShipDropdownIndex = 2;
+    public readonly int TradeBaseDropDownIndex = 1;
+    public readonly int SpacePortDropDownIndex = 0;
+
     public IEnumerator StartSinglePlayerGame()
     {
         LogAssert.ignoreFailingMessages = true;
@@ -50,6 +54,31 @@ public class PlayModeTestHelper
     {
         SceneManager.LoadScene(SFScenes.LOBBY_SCENE);
         yield return null;
+    }
+
+    void SelectDropdownOptionAtIndex(int index, GameController gameController)
+    {
+        var hud = gameController.GetHUDScript();
+        var dropdown = hud.buildShipsDropDownRef.GetComponent<BuildDropDown>();
+        Assert.True(dropdown.OptionAtIndexIsClickable(index), "Dropdown option is disabled, cannot click");
+        dropdown.SelectOptionAtIndex(index);
+    }
+
+
+
+    public void SelectColonyShipFromDropdown(GameController gameController)
+    {
+        SelectDropdownOptionAtIndex(ColonyShipDropdownIndex, gameController);
+    }
+
+    public void SelectTradeShipFromDropdown(GameController gameController)
+    {
+        SelectDropdownOptionAtIndex(TradeBaseDropDownIndex, gameController);
+    }
+
+    public void SelectSpacePortFromDropdown(GameController gameController)
+    {
+        SelectDropdownOptionAtIndex(SpacePortDropDownIndex, gameController);
     }
 
     public void DevelopmentSetup(GameController gameController)

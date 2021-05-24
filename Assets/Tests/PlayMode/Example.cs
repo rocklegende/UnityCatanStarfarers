@@ -409,6 +409,31 @@ namespace Tests
             yield return null;
         }
 
+        [UnityTest]
+        public IEnumerator RemoteActionDispatcherCorrectTarget()
+        {
+            var self = new Player(new SFColor(Color.green));
+            var targets = new List<Player>() { new Player(new SFColor(Color.black)) };
+            var tradeOffer = new TradeOffer(Hand.FromResources(0, 0, 2, 2), Hand.FromResources(2, 2), self);
+
+            gameController.GetHUDScript().OpenTradePanel((hand1, hand2) => { });
+
+            yield return new WaitForSeconds(10);
+
+            var tradePanelScript = gameController.GetHUDScript().tradePanel.GetComponent<TradePanelScript>();
+            tradePanelScript.SetDispatcher(new MockRemoteActionDispatcher(gameController));
+            tradePanelScript.OfferTradeToPlayers(tradeOffer, targets);
+
+            yield return new WaitForSeconds(10);
+            //target immediately responds because of MockRemoteActionDispatcher
+
+            //Assert that we have a new tablerow for that player
+            var CurrentNumRows = tradePanelScript.tradeOfferResponseTableView.GetComponent<TradeOfferResponseTableView>().Rows.Count;
+            Assert.AreEqual(1, CurrentNumRows);
+
+            yield return null;
+        }
+
 
     }
 }

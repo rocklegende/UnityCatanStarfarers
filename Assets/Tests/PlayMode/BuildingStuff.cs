@@ -23,28 +23,7 @@ namespace Tests
             gameController.SetUpDebugState(new ShipBuildingOneColonyShipAndOneSpacePort(gameController));
         }
 
-        void SelectDropdownOptionAtIndex(int index)
-        {
-            var hud = gameController.GetHUDScript();
-            var dropdown = hud.buildShipsDropDownRef.GetComponent<BuildDropDown>();
-            Assert.True(dropdown.OptionAtIndexIsClickable(index), "Dropdown option is disabled, cannot click");
-            dropdown.SelectOptionAtIndex(index);
-        }
-
-        void SelectColonyShipFromDropdown()
-        {
-            SelectDropdownOptionAtIndex(2);
-        }
-
-        void SelectTradeShipFromDropdown()
-        {
-            SelectDropdownOptionAtIndex(1);
-        }
-
-        void SelectSpacePortFromDropdown()
-        {
-            SelectDropdownOptionAtIndex(0);
-        }
+        
 
         [UnityTest]
         public IEnumerator BuildANewColonyShip()
@@ -54,7 +33,7 @@ namespace Tests
             //open the build panel
             hud.BuildShipsButton.onClick.Invoke();
 
-            SelectColonyShipFromDropdown();
+            testHelper.SelectColonyShipFromDropdown(gameController);
 
             //select point
             var mapScript = gameController.GetMapScript();
@@ -77,7 +56,7 @@ namespace Tests
             hud.player.AddHand(Hand.FromResources(5, 5, 5, 5, 5));
             //open the build panel
             hud.BuildShipsButton.onClick.Invoke();
-            SelectTradeShipFromDropdown();
+            testHelper.SelectTradeShipFromDropdown(gameController);
 
             //select point
             var mapScript = gameController.GetMapScript();

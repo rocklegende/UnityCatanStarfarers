@@ -85,10 +85,6 @@ namespace com.onebuckgames.UnityStarFarers
             Debug.Log("PUN Basics Tutorial/Launcher: OnJoinedRoom() called by PUN. Now this client is in a room.");
             progressLabel.GetComponentInChildren<Text>().text = "Joined a room,  waiting for others..";
 
-            if (GameConstants.isDevelopment)
-            {
-                StartGame(); // start game immediately when in development mode, dont wait on multiple players
-            }
         }
 
         public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
@@ -127,7 +123,6 @@ namespace com.onebuckgames.UnityStarFarers
         /// </summary>
         void Awake()
         {
-            PhotonNetwork.OfflineMode = GameConstants.isDevelopment;
             // #Critical
             // this makes sure we can use PhotonNetwork.LoadLevel() on the master client and all clients in the same room sync their level automatically
             PhotonNetwork.AutomaticallySyncScene = true;
@@ -144,12 +139,7 @@ namespace com.onebuckgames.UnityStarFarers
             if (autoConnect)
             {
                 StartCoroutine("Wait1SecondsThenConnect");
-            }
-
-            if (GameConstants.isDevelopment && loadGameSceneDirectlyWithoutLogin)
-            {
-                SceneManager.LoadScene(SFScenes.GAME_SCENE);
-            }
+            }          
         }
 
         IEnumerator Wait1SecondsThenConnect()

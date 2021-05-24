@@ -81,7 +81,7 @@ public class GameController : SFController, IGameController, Observer
     private GameState _state;
     public GameState State {
         get { return _state; }
-        set { _state = value; }
+        set { _state = value; OnStateChanged(); }
     }
 
     public List<Player> players;
@@ -122,6 +122,22 @@ public class GameController : SFController, IGameController, Observer
             var gameStartInformationAsBytes = SFFormatter.Serialize(gameStartInformation);
             photonView.RPC("GameStartInformationGenerated", RpcTarget.All, gameStartInformationAsBytes);
         }
+    }
+
+    void OnStateChanged()
+    {
+        // tell others the state changed
+
+        // tell others the current player changed
+
+        // if (isMyTurn()) {} ...
+        RunRPC("RemoteClientChangedState", RpcTarget.Others, State.GetType().Name);
+    }
+
+    [PunRPC]
+    void RemoteClientChangedState(string newStateName)
+    {
+        GetHUDScript().SetStateText(newStateName);
     }
 
     Dictionary<string, int> GenerateRandomTurnOrder()
@@ -222,7 +238,7 @@ public class GameController : SFController, IGameController, Observer
 
     public void OpenTokenSelectionForMainPlayer()
     {
-        GetHUDScript().OnPlayerDataChanged();
+        GetHUDScript().Draw();
     }
 
     [PunRPC]
@@ -408,13 +424,7 @@ public class GameController : SFController, IGameController, Observer
     {
         var dict = MapPhotonPlayersToOwnPlayerModelDict(turnOrder);
         return dict;
-    }
-
-    //public int GetIndexOfPlayer(Player searchedPlayer)
-    //{
-    //    var allPlayers = GetAllPlayersFromDict();
-    //    return allPlayers.FindIndex(p => p.name == searchedPlayer.name);
-    //}
+    }    
 
     Player GetMainPlayerFromDict()
     {
@@ -534,7 +544,7 @@ public class GameController : SFController, IGameController, Observer
 
     public void SetState(GameState state)
     {
-        this._state = state;
+        State = state;
     }
 
     /// <summary>
@@ -624,7 +634,7 @@ public class GameController : SFController, IGameController, Observer
             player.tokens = new List<Token>();
             foreach (var token in newMap.tokensOnMap)
             {
-                if (token.owner.name == player.name)
+                if (token.owner.guid == player.guid)
                 {
                     player.AddToken(token);
                 }
@@ -635,6 +645,11 @@ public class GameController : SFController, IGameController, Observer
         UpdatePlayers(newPlayers);
         UpdateMap(newMap);
 
+        //we need to update at the very end because the hud updates some
+        //functionality based on the current map and therefore updates faulty if we change the map afterwards
+        GetHUDScript().OnPlayerDataChanged();
+        GetMapScript().OnMapDataChanged();
+
         _state.OnGameDataChanged();
     }
 
@@ -644,7 +659,6 @@ public class GameController : SFController, IGameController, Observer
         Debug.Log("TH2 - Update map!");
         mapModel.UpdateData(newMap);
         mapModel.ReObserveTokens();
-        GetMapScript().OnMapDataChanged();
     }
 
     void UpdatePlayers(List<Player> newPlayerData)
@@ -665,7 +679,6 @@ public class GameController : SFController, IGameController, Observer
 
         //we lose the observers by serializing the players, therefore we need to observe them again after the update
         ObservePlayers(newPlayerData);
-        GetHUDScript().OnPlayerDataChanged();
     }
 
     public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)

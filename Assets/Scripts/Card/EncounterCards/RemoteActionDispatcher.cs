@@ -5,47 +5,69 @@ using UnityEngine;
 using System.Collections.Generic;
 using com.onebuckgames.UnityStarFarers;
 
-public class RemoteActionDispatcher
+public abstract class RemoteActionDispatcher
 {
-    GameController gameController;
-    Action<Dictionary<string, RemoteActionCallbackData>> isDoneCallback;
-    bool isWaitingForResponse = false;
-    Dictionary<string, RemoteActionCallbackData> playerRespondedDict = new Dictionary<string, RemoteActionCallbackData>();
+    protected GameController gameController;
+    protected Action<Dictionary<string, RemoteActionCallbackData>> allResponsesReceivedCallback;
+    protected Action<RemoteActionCallbackData> singleResponseReceivedCallback;
+
+    protected bool isWaitingForResponse = false;
+    protected Dictionary<string, RemoteActionCallbackData> playerRespondedDict = new Dictionary<string, RemoteActionCallbackData>();
+    protected List<Player> targetPlayers;
+    protected RemoteClientAction action;
+
     public RemoteActionDispatcher(GameController gameController)
     {
         this.gameController = gameController;
     }
 
-    public void RequestActionFromPlayers(List<Player> players, RemoteClientAction action, Action<Dictionary<string, RemoteActionCallbackData>> isDoneCallback)
+    public void SetTargets(List<Player> targetPlayers)
+    {
+        this.targetPlayers = targetPlayers;
+    }
+
+    public void SetAction(RemoteClientAction action)
+    {
+        this.action = action;
+    }
+
+    public void MakeRequest(
+        Action<RemoteActionCallbackData> singleResponseReceivedCallback,
+        Action<Dictionary<string, RemoteActionCallbackData>> allResponsesReceivedCallback
+    )
     {
         if (isWaitingForResponse)
         {
-            throw new ArgumentException("Dispatcher is still waiting for responses, aborting");
+            throw new ArgumentException("Dispatcher is still waiting for responses from a previous, aborting here..");
         }
-        isWaitingForResponse = true;
-        this.isDoneCallback = isDoneCallback;
-        foreach (var player in players)
+
+        if (targetPlayers == null)
         {
-            Debug.Log("num players: " + players.Count);
-            Debug.Log("playersRespondedDict #1: " + playerRespondedDict.ToList().Count);
-            playerRespondedDict[player.name] = null;
-            Debug.Log("Requesting response from player: " + player.name);
-            Debug.Log("playersRespondedDict #2: " + playerRespondedDict.ToList().Count);
-            gameController.RunRPC(
-                "RemoteClientRequiresAction",
-                gameController.SFPlayerToPhotonPlayer(player),
-                ResponseReceivedFromPlayer,
-                SFFormatter.Serialize(action)
-            );
+            throw new ArgumentException("No targets are set, please set target players via SetTargets method");
         }
+
+        if (action == null)
+        {
+            throw new ArgumentException("No action is set, please set target players via SetAction method");
+        }
+
+        isWaitingForResponse = true;
+        this.allResponsesReceivedCallback = allResponsesReceivedCallback;
+        this.singleResponseReceivedCallback = singleResponseReceivedCallback;
+        RequestTemplateMethod();
     }
 
-    void ResponseReceivedFromPlayer(RemoteActionCallbackData data)
+    protected abstract void RequestTemplateMethod();
+
+
+    protected void ResponseReceivedFromPlayer(RemoteActionCallbackData data)
     {
         Debug.Log("Received response from player: " + data.player.name);
         Debug.Log("playersRespondedDict #3: " + playerRespondedDict.ToList().Count);
         playerRespondedDict[data.player.name] = data;
         Debug.Log("playersRespondedDict #4: " + playerRespondedDict.ToList().Count);
+        var singleResponseDict = new Dictionary<string, RemoteActionCallbackData>();
+        singleResponseReceivedCallback(data);
         if (AllPlayersResponded())
         {
             OnAllResponsesReceived();
@@ -68,14 +90,74 @@ public class RemoteActionDispatcher
     public void OnAllResponsesReceived()
     {
         Debug.Log("Received response from every player!!!!");
-        isDoneCallback(playerRespondedDict);
+        allResponsesReceivedCallback(
+            playerRespondedDict);
         Reset();
     }
 
     void Reset()
     {
-        isDoneCallback = null;
+        allResponsesReceivedCallback
+            = null;
         isWaitingForResponse = false;
         playerRespondedDict = new Dictionary<string, RemoteActionCallbackData>();
+    }
+}
+
+public class DefaultRemoteActionDispatcher : RemoteActionDispatcher {
+
+    public DefaultRemoteActionDispatcher(GameController gameController) : base(gameController)
+    {
+        this.gameController = gameController;
+    }
+
+    protected override void RequestTemplateMethod()
+    {
+        foreach (var player in targetPlayers)
+        {
+            Debug.Log("num players: " + targetPlayers.Count);
+            Debug.Log("playersRespondedDict #1: " + playerRespondedDict.ToList().Count);
+            playerRespondedDict[player.name] = null;
+            Debug.Log("Requesting response from player: " + player.name);
+            Debug.Log("playersRespondedDict #2: " + playerRespondedDict.ToList().Count);
+            gameController.RunRPC(
+                "RemoteClientRequiresAction",
+                gameController.SFPlayerToPhotonPlayer(player),
+                ResponseReceivedFromPlayer,
+                SFFormatter.Serialize(action)
+            );
+        }
+    }
+}
+
+public class MockRemoteActionDispatcher : RemoteActionDispatcher
+{
+
+    public MockRemoteActionDispatcher(GameController gameController) : base(gameController)
+    {
+        this.gameController = gameController;
+    }
+
+
+
+    protected override void RequestTemplateMethod()
+    {
+        //foreach (var player in targetPlayers)
+        //{
+        //    Debug.Log("num players: " + targetPlayers.Count);
+        //    Debug.Log("playersRespondedDict #1: " + playerRespondedDict.ToList().Count);
+        //    playerRespondedDict[player.name] = null;
+        //    Debug.Log("Requesting response from player: " + player.name);
+        //    Debug.Log("playersRespondedDict #2: " + playerRespondedDict.ToList().Count);
+        //    gameController.RunRPC(
+        //        "RemoteClientRequiresAction",
+        //        gameController.SFPlayerToPhotonPlayer(player),
+        //        ResponseReceivedFromPlayer,
+        //        SFFormatter.Serialize(action)
+        //    );
+        //}
+        var player = new Player(new SFColor(Color.red));
+        player.name = "Thomas";
+        singleResponseReceivedCallback(new RemoteActionCallbackData(player, true));
     }
 }

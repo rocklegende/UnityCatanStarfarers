@@ -12,6 +12,7 @@ public class SinglePlayerLauncher : MonoBehaviourPunCallbacks
     public void Launch()
     {
         PhotonNetwork.OfflineMode = true;
+        PhotonNetwork.NickName = "Tim";
         PhotonNetwork.JoinRandomRoom();
     }
 

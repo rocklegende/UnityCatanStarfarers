@@ -26,20 +26,22 @@ public class TradePanelScript : SFController
     public Button MakeTradeWithBankButton;
     public Button MakeTradeWithPlayersButton;
     public GameObject GiveResourceStackRenderer;
-    ResourceCardStackRenderer _GiveResourcesStackScript;
+    public GameObject tradeOfferResponseTableView;
     public GameObject ReceiveResourceStackRenderer;
+
+    RemoteActionDispatcher dispatcher;
+    ResourceCardStackRenderer _GiveResourcesStackScript;
     ResourceCardStackRenderer _ReceiveResourcesStackScript;
     TradeOffer currentTradeOffer;
     TradingCalculator calculator;
     Player player;
-    public GameObject tradeOfferResponseTableView;
-
     int exactInput = -1;
     int exactOutput = -1;
 
     // Start is called before the first frame update
     void Start()
     {
+        SetDispatcher(new DefaultRemoteActionDispatcher(globalGamecontroller));
     }
 
     public void Init(Player player)
@@ -138,24 +140,40 @@ public class TradePanelScript : SFController
 
         var tradeOffer = new TradeOffer(inputHand, outputHand, player);
         currentTradeOffer = tradeOffer;
+
+        OfferTradeToPlayers(tradeOffer, sendToPlayers);
+    }
+
+    public void SetDispatcher(RemoteActionDispatcher dispatcher)
+    {
+        this.dispatcher = dispatcher;
+    }
+
+    public void OfferTradeToPlayers(TradeOffer tradeOffer, List<Player> players)
+    {
         var action = new RemoteClientAction(RemoteClientActionType.TRADE_OFFER, new object[] { tradeOffer }, globalGamecontroller.mainPlayer);
 
         tradeOfferResponseTableView.GetComponent<TradeOfferResponseTableView>().callback = AcceptAcceptedTradeOffer;
-        foreach (var sendToPlayer in sendToPlayers)
+        foreach (var sendToPlayer in players)
         {
-            var dispatcher = new RemoteActionDispatcher(globalGamecontroller);
-            dispatcher.RequestActionFromPlayers(new List<Player>() { sendToPlayer }, action, PlayerRespondedToTradeOffer);
+            dispatcher.SetTargets(new List<Player>() { sendToPlayer });
+            dispatcher.SetAction(action);
+            dispatcher.MakeRequest(PlayerRespondedToTradeOffer, AllPlayersResponded);
         }
-        
     }
 
-    void PlayerRespondedToTradeOffer(Dictionary<string, RemoteActionCallbackData> responses)
+    public void AllPlayersResponded(Dictionary<string, RemoteActionCallbackData> responses)
     {
-        var playerWhoResponded = responses.Values.ToList().First().player;
+        //
+    }
+
+    void PlayerRespondedToTradeOffer(RemoteActionCallbackData response)
+    {
+        var playerWhoResponded = response.player;
         Debug.Log(string.Format("Player responded to trade offer: ", playerWhoResponded.name));
-        if ((bool)responses.Values.ToList().First().data == true)
+        if ((bool)response.data == true)
         {
-            tradeOfferResponseTableView.GetComponent<TradeOfferResponseTableView>().AddRow(responses.Values.ToList().First().player);
+            tradeOfferResponseTableView.GetComponent<TradeOfferResponseTableView>().AddRow(playerWhoResponded);
         }
     }
 

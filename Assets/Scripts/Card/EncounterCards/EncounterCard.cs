@@ -594,7 +594,7 @@ public class GetResourceFromEveryPlayer : EncounterCardAction
     public override void Execute()
     {
         var mainPlayer = gameController.mainPlayer;
-        var actionInfo = new RemoteClientAction(RemoteClientActionType.GIVE_RESOURCE, new object[] { numResources }, mainPlayer);
+        var action = new RemoteClientAction(RemoteClientActionType.GIVE_RESOURCE, new object[] { numResources }, mainPlayer);
 
         var otherPlayers = GetTargetPlayers(gameController.players);
         if (otherPlayers.Count == 0)
@@ -603,8 +603,10 @@ public class GetResourceFromEveryPlayer : EncounterCardAction
             return;
         }
 
-        var dispatcher = new RemoteActionDispatcher(gameController);
-        dispatcher.RequestActionFromPlayers(otherPlayers, actionInfo, ResponseReceived);
+        var dispatcher = new DefaultRemoteActionDispatcher(gameController);
+        dispatcher.SetAction(action);
+        dispatcher.SetTargets(otherPlayers);
+        dispatcher.MakeRequest((response) => { }, ResponseReceived);
     }
 
     public List<Player> GetTargetPlayers(List<Player> players)
@@ -917,12 +919,16 @@ public class DiscardIfMoreThanLimitUpgradesAction : EncounterCardAction
             gameController.mainPlayer
         );
 
-        var dispatcher = new RemoteActionDispatcher(gameController);
-        dispatcher.RequestActionFromPlayers(
-            GetPlayersWithMoreThanLimit(gameController.players, this.limit),
-            action,
-            AllPlayersMadeDecision
-        );
+        //var dispatcher = new RemoteActionDispatcher(gameController);
+        //dispatcher.RequestActionFromPlayers(
+            
+        //    action,
+        //    AllPlayersMadeDecision
+        //);
+        var dispatcher = new DefaultRemoteActionDispatcher(gameController);
+        dispatcher.SetTargets(GetPlayersWithMoreThanLimit(gameController.players, this.limit));
+        dispatcher.SetAction(action);
+        dispatcher.MakeRequest((response) => { }, AllPlayersMadeDecision);
     }
 
     public static List<Player> GetPlayersWithMoreThanLimit(List<Player> players, int lim)

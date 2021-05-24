@@ -176,9 +176,6 @@ MonoBehaviour:
     type: 3}
   TileGroupRenderer: {fileID: 86781946}
   cam: {fileID: 519420031}
-  isReceivingNotifications: 0
-  map:
-    AllAvailableSpacePoints: []
 --- !u!1 &15347560
 GameObject:
   m_ObjectHideFlags: 0
@@ -6681,24 +6678,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playersShared: []
-  player:
-    name: 
-    receivesBonusOnNoPayout: 0
-    fameMedalBuyPossible: 0
-    ship:
-      Cannons: 0
-      CannonsMaxCapacity: 0
-      CannonsBonus: 0
-      FreightPods: 0
-      FreightPodsMaxCapacity: 0
-      FreightPodsBonus: 0
-      Boosters: 0
-      BoostersMaxCapacity: 0
-      BoostersBonus: 0
-    hasRichHelpPoorBonus: 0
-    richHelpPoorBonusMadeThisRound: 0
-    TurnOrderPosition: 0
-  players: []
   oreCardStackText: {fileID: 880728729}
   carbonCardStackText: {fileID: 1712599411}
   foodCardStackText: {fileID: 1834005181}
@@ -6724,7 +6703,6 @@ MonoBehaviour:
   fuelCardStack: {fileID: 0}
   goodsCardStack: {fileID: 0}
   foodCardStack: {fileID: 0}
-  isReceivingNotifications: 0
   isInteractionActivated: 1
   stateText: {fileID: 1152645940}
   settleButton: {fileID: 2067213578}
@@ -6745,6 +6723,9 @@ MonoBehaviour:
   playerSelectionView: {fileID: 764293694}
   multiSelectionView: {fileID: 15347560}
   BuildShipsButton: {fileID: 2027855246}
+  NextButton: {fileID: 2038571665}
+  BuildUpgradesButton: {fileID: 1943412758}
+  MakeTradeButton: {fileID: 947991715}
 --- !u!1 &1147678336
 GameObject:
   m_ObjectHideFlags: 0
@@ -9505,8 +9486,8 @@ MonoBehaviour:
   MakeTradeWithBankButton: {fileID: 1147678338}
   MakeTradeWithPlayersButton: {fileID: 84950645}
   GiveResourceStackRenderer: {fileID: 904836230}
-  ReceiveResourceStackRenderer: {fileID: 1135324638}
   tradeOfferResponseTableView: {fileID: 372304442958093797}
+  ReceiveResourceStackRenderer: {fileID: 1135324638}
 --- !u!114 &1622169125
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10803,6 +10784,8 @@ MonoBehaviour:
   currentPlayerAtTurnIndex: 0
   encounterCardHandler: {fileID: 144255071}
   drawPileHandler: {fileID: 1997335516}
+  numPlayersUpdated: 0
+  numMapUpdated: 0
 --- !u!114 &1901680715
 MonoBehaviour:
   m_ObjectHideFlags: 0

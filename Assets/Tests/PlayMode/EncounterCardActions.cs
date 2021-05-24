@@ -69,12 +69,15 @@ namespace Tests
         [UnityTest]
         public IEnumerator Receiving_TRADE_OFFER_FromRemoteClientOpensUpgradeSelection()
         {
-            var dispatcher = new RemoteActionDispatcher(gameController);
+            var dispatcher = new DefaultRemoteActionDispatcher(gameController);
+            var targets = new List<Player>() { gameController.mainPlayer };
             var action = new RemoteClientAction(
                 RemoteClientActionType.TRADE_OFFER,
                 new object[] { new TradeOffer(new Hand(), new Hand(), new TestHelper().CreateGenericPlayer())
             }, gameController.mainPlayer);
-            dispatcher.RequestActionFromPlayers(new List<Player>() { gameController.mainPlayer }, action, (dict) => { });
+            dispatcher.SetTargets(targets);
+            dispatcher.SetAction(action);
+            dispatcher.MakeRequest((singleResponse) => { }, (allResponses) => { });
 
             var hudScript = gameController.GetHUDScript();
             Assert.True(hudScript.tradeOfferView.activeInHierarchy);

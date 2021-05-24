@@ -26,15 +26,18 @@ public class On7RollStrategy
             null,
             gameController.mainPlayer
         );
-        var dispatcher = new RemoteActionDispatcher(gameController);
-        dispatcher.RequestActionFromPlayers(
-            players.Where(player => player.ExceedsDiscardLimit()).ToList(),
-            remoteClientAction,
-            PlayersDumpedCards
-        );
+        var dispatcher = new DefaultRemoteActionDispatcher(gameController);
+        dispatcher.SetTargets(players.Where(player => player.ExceedsDiscardLimit()).ToList());
+        dispatcher.SetAction(remoteClientAction);
+        dispatcher.MakeRequest((response) => { }, AllPlayersDumpedCards);
+        //dispatcher.RequestActionFromPlayers(
+            
+        //    remoteClientAction,
+        //    PlayersDumpedCards
+        //);
     }
 
-    void PlayersDumpedCards(Dictionary<string, RemoteActionCallbackData> dict)
+    void AllPlayersDumpedCards(Dictionary<string, RemoteActionCallbackData> dict)
     {
         var selectablePlayers = gameController.players.Where(p => p.hand.Count() > 0 && p.name != gameController.mainPlayer.name).ToList();
         gameController.GetHUDScript().OpenPlayerSelection(

@@ -72,15 +72,10 @@ public class IsNeighborOwnSpacePortFilter : SpacePointFilter
             {
                 if (token.position.Equals(neighbor))
                 {
-                    //TODO: we must be careful here, because sometimes we get a stale reference, because we updated the main player from serialized data
-                    // and then token.owner == mainPlayer will not work anymore, because theyre not the same object anymore!
-                    // probably better to just update the mainPlayer info instead of creating a whole new object
-                    //
-                    // Player.Update(newData)
-                    // => if(newData["vp"]) => updateVP and so on...
+                    
                     if (token.attachedToken != null)
                     {
-                        if (token.attachedToken is SpacePortToken && token.owner.guid == mainPlayer.guid)
+                        if (token.attachedToken is SpacePortToken && token.owner.name == mainPlayer.name)
                         {
                             return true;
                         }

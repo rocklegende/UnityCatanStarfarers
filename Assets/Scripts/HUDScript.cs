@@ -65,7 +65,11 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     public GameObject playerSelectionView;
     public GameObject multiSelectionView;
     List<GameObject> smallPlayerViews = new List<GameObject>();
+
     public Button BuildShipsButton;
+    public Button NextButton;
+    public Button BuildUpgradesButton;
+    public Button MakeTradeButton;
 
     private List<BuildDropDownOption> buildShipsDropdownOptions;
     private List<BuildDropDownOption> buildUpgradesDropdownOptions;
@@ -295,26 +299,6 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         }
     }
 
-    //void UpdateExistingSmallPlayerView(Player playerData)
-    //{
-    //    var playerView = smallPlayerViews.Find(view => view.GetComponent<SmallPlayerInfoView>().player.guid == playerData.guid);
-    //    if (playerView != null)
-    //    {
-    //        Debug.Log(
-    //            string.Format("Setting new player: {0}; num cards: {1}; VP: {2}",
-    //            playerData.name,
-    //            playerData.hand.Count(),
-    //            playerData.GetVictoryPoints()
-    //            )
-    //        );
-    //        playerView.GetComponent<SmallPlayerInfoView>().OnPlayerDataChanged();
-    //    }
-    //    else
-    //    {
-    //        Logger.LogError("Couldnt find smallPlayerView for name: " + playerData.name);
-    //    }
-    //}
-
     void AddSmallPlayerView(Player playerData)
     {
         GameObject smallPlayerView = Instantiate(smallPlayerViewPrefab, transform, false);
@@ -370,10 +354,10 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     public void ActivateAllInteraction(bool isInteractive)
     {
         this.isInteractionActivated = isInteractive;
-        foreach (var button in GetComponentsInChildren<Button>())
-        {
-            button.interactable = isInteractive;
-        }
+        MakeTradeButton.interactable = isInteractive;
+        BuildShipsButton.interactable = isInteractive;
+        BuildUpgradesButton.interactable = isInteractive;
+        NextButton.interactable = isInteractive;
     }
 
     void DrawName()
@@ -458,10 +442,8 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
                 {
                     if (option.buildableToken != null)
                     {
-
-                        var map = MapObject.GetComponent<MapScript>().map;
-                        var canBeBuild = option.buildableToken.CanBeBuildByPlayer(player, map);
-                        dropdown.SetOptionInteractable(option, option.buildableToken.CanBeBuildByPlayer(player, map));
+                        var canBeBuild = option.buildableToken.CanBeBuildByPlayer(player, globalGamecontroller.mapModel);
+                        dropdown.SetOptionInteractable(option, option.buildableToken.CanBeBuildByPlayer(player, globalGamecontroller.mapModel));
                     }
                 }
             }
