@@ -8,8 +8,10 @@ public abstract class TileGroup : SFModel
     protected Tile_[] tiles;
     protected List<SpacePoint> settlePoints;
     protected SpacePoint center;
+    public readonly Guid guid;
     public TileGroup(Tile_[] tiles, int rightShifts = 0)
     {
+        this.guid = Guid.NewGuid();
         // shifts: shifts the tiles x times
         if (tiles.Length != 3)
         {

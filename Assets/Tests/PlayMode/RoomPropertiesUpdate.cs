@@ -87,16 +87,19 @@ namespace Tests
         [UnityTest]
         public IEnumerator HudDropDownsUpdateCorrectlyAfterRoomPropertiesChanged()
         {
+            var currentMap = gameController.mapModel;
             var newMap = new DefaultMapGenerator().GenerateRandomMap();
 
             var newPlayerData = new Player(gameController.mainPlayer.color);
             newPlayerData.name = gameController.mainPlayer.name;
+            newPlayerData.BuildUpgradeWithoutCost(new FreightPodUpgradeToken());
             newPlayerData.BuildTokenWithoutCost(
                 newMap,
                 new ColonyBaseToken().GetType(),
                 new SpacePoint(new HexCoordinates(5, 5), 1),
                 new SpacePortToken().GetType()
             );
+            newPlayerData.BuildTradeShipForFree(newMap, new SpacePoint(4, 5, 0));
             newPlayerData.AddHand(Hand.FromResources(5, 5, 5, 5, 5));
 
             var previousMapModel = gameController.mapModel;

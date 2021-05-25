@@ -8,16 +8,16 @@ public class TileGroupRenderer : SFController, Observer
     public GameObject mapObject;
     public GameObject dockStationPrefab;
     
-    public Dictionary<TradeStation, List<GameObject>> TradeStationDocks { get { return _tradeStationDocks; } }
+    public Dictionary<SpacePoint, List<GameObject>> TradeStationDocks { get { return _tradeStationDocks; } }
 
     private Map map { get { return globalGamecontroller.mapModel; } }
-    private Dictionary<TradeStation, List<GameObject>> _tradeStationDocks;
+    private Dictionary<SpacePoint, List<GameObject>> _tradeStationDocks;
     List<GameObject> dockButtons = new List<GameObject>();
 
     
     void Start()
     {
-        _tradeStationDocks = new Dictionary<TradeStation, List<GameObject>>();
+        _tradeStationDocks = new Dictionary<SpacePoint, List<GameObject>>();
         // get all the tilegroups from map and render them according to their state
         // attach this script somewhere inside the map, it will automatically update the tilegroups
     }
@@ -35,12 +35,12 @@ public class TileGroupRenderer : SFController, Observer
         {
             //TODO: use width of tile for calculation
             var rad = Mathf.Deg2Rad * (i * 360f / numDocks);
-            Vector3 position = new Vector3(Mathf.Cos(rad) * 0.5f, Mathf.Sin(rad) * 0.5f, 0) + transform.position;
+            var position = new Vector3(Mathf.Cos(rad) * 0.5f, Mathf.Sin(rad) * 0.5f, 0) + transform.position;
             GameObject btn = (GameObject)Instantiate(dockStationPrefab, position, Quaternion.identity);
             btn.transform.parent = transform;
             buttons.Add(btn);
         }
-        _tradeStationDocks.Add(station, buttons);
+        _tradeStationDocks.Add(station.GetCenter(), buttons);
         return buttons;
 
     }
@@ -79,13 +79,6 @@ public class TileGroupRenderer : SFController, Observer
 
     public void SubjectDataChanged(Subject subject, object[] data)
     {
-        if (map != null)
-        {
-            if (map.tileGroups != null)
-            {
-                //DestroyAllDockButtons();
-                //DrawTileGroups();
-            }
-        }
+        
     }
 }

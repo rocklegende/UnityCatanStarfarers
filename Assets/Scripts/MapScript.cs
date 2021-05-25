@@ -122,7 +122,18 @@ public class MapScript : SFController
 
     Vector3 GetTradeStationDockPosition (TradeStation station, int index)
     {
-        return TileGroupRenderer.GetComponent<TileGroupRenderer>().TradeStationDocks[station][index].transform.position;
+        var tradeStationDocks = TileGroupRenderer.GetComponent<TileGroupRenderer>().TradeStationDocks;
+        if (tradeStationDocks == null)
+        {
+            throw new System.ArgumentException("bla");
+        }
+
+        if (!tradeStationDocks.ContainsKey(station.GetCenter()))
+        {
+            throw new System.ArgumentException("no tradestation of that kind");
+        }
+
+        return tradeStationDocks[station.GetCenter()][index].transform.position;
     }
 
     System.Tuple<int, TradeStation> GetTradestationWhichThisTokenIsDocked(Token token)
@@ -339,6 +350,7 @@ public class MapScript : SFController
     public void SettleToken(Token token)
     {
         map.SettleToken(token);
+        OnMapDataChanged();
         
     }
 

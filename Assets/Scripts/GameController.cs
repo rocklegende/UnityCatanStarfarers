@@ -239,6 +239,7 @@ public class GameController : SFController, IGameController, Observer
     public void OpenTokenSelectionForMainPlayer()
     {
         GetHUDScript().Draw();
+        GetMapScript().OnMapDataChanged();
     }
 
     [PunRPC]
