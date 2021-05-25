@@ -281,13 +281,6 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         stateText.text = text;
     }
 
-    public void SetMainPlayer(Player player)
-    {
-        //this.player = player;
-        //tradePanel.GetComponent<TradePanelScript>().Init(player);
-        //OnPlayerDataChanged();
-    }
-
     public void CreateSmallPlayerViews()
     {
         var playersOtherThanMain = players.Where(p => p != player);
@@ -325,6 +318,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
 
     public void OnPlayerDataChanged()
     {
+        tradePanel.GetComponent<TradePanelScript>().Init(player);
         Draw();
     }
 
