@@ -318,13 +318,12 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
 
     public void OnPlayerDataChanged()
     {
-        tradePanel.GetComponent<TradePanelScript>().Init(player);
         Draw();
     }
 
     public void Draw()
     {
-        
+        tradePanel.GetComponent<TradePanelScript>().Init(player);
         Debug.Log("Drawing hud");
         DrawResourceStacks();
         DrawUpgrades();

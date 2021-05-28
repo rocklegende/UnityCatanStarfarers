@@ -1,0 +1,13 @@
+Ich sende Trade an 3 Leute
+- es entsteht eine Tabelle mit allen Targets und ein Ladekreis, wenn es noch keine Antwort gibt
+
+-> Ich entscheide mich um und cancel den Trade (schicke Nachricht an alle, dass der Trade abgebrochen wurde -> sie schließen ihr TradeOffer Fenster)
+
+
+
+Ich empfange Trade
+
+1. ich lehne den Trade ab, dann sollte bei dem Trade Ersteller ein Kreuz entstehen in der Liste
+2. ich akzeptiere den Trade, dann entsteht bei dem Trade Ersteller ein Haken und er kann annehmen
+3. ich antworte nicht drauf, dann bleibt immer noch ein Ladekreis beim Trade Ersteller
+4. der Trade Ersteller cancels den Trade, dann schließt sich bei mir das TradeFenster

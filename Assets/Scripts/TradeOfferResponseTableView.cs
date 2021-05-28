@@ -11,10 +11,24 @@ public class TradeOfferResponseTableView : MonoBehaviour
 
     public void AddRow(Player player)
     {
-        var row = Instantiate(tableRowPrefab, this.transform, false);
+        var row = Instantiate(tableRowPrefab, this.gameObject.transform, false);
         row.GetComponent<TradeOfferResponseView>().Init(player, TradeOfferAcceptedFromPlayer);
-        row.transform.parent = transform.parent;
+        row.transform.parent = this.gameObject.transform;
         _rows.Add(row.GetComponent<TradeOfferResponseView>());
+    }
+
+    public void RemoveAllRows()
+    {
+        foreach (var row in _rows)
+        {
+            Destroy(row.gameObject);
+        }
+        _rows = new List<TradeOfferResponseView>();
+    }
+
+    public TradeOfferResponseView FindRowWithPlayer(Player player)
+    {
+        return _rows.Find(row => row.player.name == player.name);
     }
 
     void TradeOfferAcceptedFromPlayer(Player player, bool isAccepted)

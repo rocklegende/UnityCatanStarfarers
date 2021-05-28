@@ -410,7 +410,7 @@ namespace Tests
         }
 
         [UnityTest]
-        public IEnumerator RemoteActionDispatcherCorrectTarget()
+        public IEnumerator TradePanelReceivingResponseToTradeOfferAddsRow()
         {
             var self = new Player(new SFColor(Color.green));
             var targets = new List<Player>() { new Player(new SFColor(Color.black)) };
@@ -418,13 +418,13 @@ namespace Tests
 
             gameController.GetHUDScript().OpenTradePanel((hand1, hand2) => { });
 
-            yield return new WaitForSeconds(10);
+            yield return new WaitForSeconds(1);
 
             var tradePanelScript = gameController.GetHUDScript().tradePanel.GetComponent<TradePanelScript>();
             tradePanelScript.SetDispatcher(new MockRemoteActionDispatcher(gameController));
             tradePanelScript.OfferTradeToPlayers(tradeOffer, targets);
 
-            yield return new WaitForSeconds(10);
+            yield return new WaitForSeconds(1);
             //target immediately responds because of MockRemoteActionDispatcher
 
             //Assert that we have a new tablerow for that player
@@ -432,6 +432,102 @@ namespace Tests
             Assert.AreEqual(1, CurrentNumRows);
 
             yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator TradePanelSendingOfferCreatesTableWithSpinner()
+        {
+            //TODO: complete this test
+            var self = new Player(new SFColor(Color.green));
+            var targets = new List<Player>() {
+                new Player(new SFColor(Color.black), "Hi"),
+                new Player(new SFColor(Color.red), "Lololol")
+            };
+            var tradeOffer = new TradeOffer(Hand.FromResources(0, 0, 2, 2), Hand.FromResources(2, 2), self);
+
+            gameController.GetHUDScript().OpenTradePanel((hand1, hand2) => { });
+            yield return null;
+
+            var tradePanelScript = gameController.GetHUDScript().tradePanel.GetComponent<TradePanelScript>();
+            tradePanelScript.SetDispatcher(new NoResponseRemoteActionDispatcher(gameController));
+            tradePanelScript.OfferTradeToPlayers(tradeOffer, targets);
+            yield return new WaitForSeconds(3);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator TradePanelReceivingAcceptedOfferCreatesAcceptButton()
+        {
+            //TODO: complete this test
+            var self = new Player(new SFColor(Color.green));
+            var targets = new List<Player>() {
+                new Player(new SFColor(Color.black), "Hi"),
+                new Player(new SFColor(Color.red), "Lololol")
+            };
+            var tradeOffer = new TradeOffer(Hand.FromResources(0, 0, 2, 2), Hand.FromResources(2, 2), self);
+
+            gameController.GetHUDScript().OpenTradePanel((hand1, hand2) => { });
+            yield return null;
+
+            var tradePanelScript = gameController.GetHUDScript().tradePanel.GetComponent<TradePanelScript>();
+            tradePanelScript.SetDispatcher(new PositiveResponseRemoteActionDispatcher(gameController));
+            tradePanelScript.OfferTradeToPlayers(tradeOffer, targets);
+            yield return new WaitForSeconds(3);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator TradePanelReceivingDeclinedOfferShowDeclinedText()
+        {
+            //TODO: complete this test
+            var self = new Player(new SFColor(Color.green));
+            var targets = new List<Player>() {
+                new Player(new SFColor(Color.black), "Hi"),
+                new Player(new SFColor(Color.red), "Lololol")
+            };
+            var tradeOffer = new TradeOffer(Hand.FromResources(0, 0, 2, 2), Hand.FromResources(2, 2), self);
+
+            gameController.GetHUDScript().OpenTradePanel((hand1, hand2) => { });
+            yield return null;
+
+            var tradePanelScript = gameController.GetHUDScript().tradePanel.GetComponent<TradePanelScript>();
+            tradePanelScript.SetDispatcher(new NegativeResponseRemoteActionDispatcher(gameController));
+            tradePanelScript.OfferTradeToPlayers(tradeOffer, targets);
+            yield return new WaitForSeconds(3);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ClosingTradePanelSendingTradeCancelCallToOthers()
+        {
+            var self = new Player(new SFColor(Color.green));
+            var targets = new List<Player>() {
+                new Player(new SFColor(Color.black), "Hi"),
+                new Player(new SFColor(Color.red), "Lololol")
+            };
+            var tradeOffer = new TradeOffer(Hand.FromResources(0, 0, 2, 2), Hand.FromResources(2, 2), self);
+
+            gameController.GetHUDScript().OpenTradePanel((hand1, hand2) => { });
+            yield return null;
+
+            var tradePanelScript = gameController.GetHUDScript().tradePanel.GetComponent<TradePanelScript>();
+            tradePanelScript.SetDispatcher(new NoResponseRemoteActionDispatcher(gameController));
+            tradePanelScript.OfferTradeToPlayers(tradeOffer, targets);
+            yield return new WaitForSeconds(3);
+            yield return null;
+            tradePanelScript.OnCancelButtonClicked();
+            var weSentCancelCallToOthers = gameController.recentRpcCalls.Find(call => call.methodName == RpcMethods.OtherPlayerCancelledTrade) != null;
+            Assert.True(weSentCancelCallToOthers);
+        }
+
+        [UnityTest]
+        public IEnumerator ReceivingTradeCancelCallClosesTradeOfferView()
+        {
+            gameController.GetHUDScript().tradeOfferView.SetActive(true);
+            yield return null;
+            gameController.RunRPC(RpcMethods.OtherPlayerCancelledTrade, PhotonNetwork.LocalPlayer);
+
+            Assert.False(gameController.GetHUDScript().tradeOfferView.activeInHierarchy);
         }
 
 

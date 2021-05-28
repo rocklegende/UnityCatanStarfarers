@@ -69,6 +69,23 @@ public class GameStartInformation
     }
 }
 
+public static class RpcMethods
+{
+    public static string OtherPlayerCancelledTrade = "OtherPlayerCancelledTrade";
+}
+
+public class RpcCall
+{
+    public readonly string methodName;
+    public readonly Photon.Pun.RpcTarget target;
+    
+    public RpcCall(string methodName, Photon.Pun.RpcTarget target)
+    {
+        this.methodName = methodName;
+        this.target = target;
+    }
+}
+
 
 public class GameController : SFController, IGameController, Observer
 {
@@ -96,6 +113,7 @@ public class GameController : SFController, IGameController, Observer
     public Photon.Realtime.Player recentPhotonResponsePlayer;
     public int numPlayersUpdated = 0;
     public int numMapUpdated = 0;
+    public List<RpcCall> recentRpcCalls = new List<RpcCall>();
 
     /// <summary>
     /// Run GameController in testMode
@@ -206,11 +224,8 @@ public class GameController : SFController, IGameController, Observer
     {
         //InitialPlayerSetup();
         ObservePlayers(players);
-
         HUD.GetComponent<HUDScript>().Init();
-
         Map.GetComponent<MapScript>().Init();
-
         payoutHandler = new PayoutHandler(mapModel);
         OnTurnChanged();
     }
@@ -261,6 +276,12 @@ public class GameController : SFController, IGameController, Observer
                 HandleTradeOfferActionFromRemoteClient(remoteAction);
                 break;
         }
+    }
+
+    [PunRPC]
+    public void OtherPlayerCancelledTrade()
+    {
+        GetHUDScript().tradeOfferView.SetActive(false);
     }
 
     void HandleTradeOfferActionFromRemoteClient(RemoteClientAction remoteAction)
@@ -583,12 +604,14 @@ public class GameController : SFController, IGameController, Observer
         PhotonView photonView = PhotonView.Get(this);
         this.dispatcherSomeoneFullfilledActionCallback = rpcCallback;
         photonView.RPC(methodName, target, parameters);
+        recentRpcCalls.Add(new RpcCall(methodName, target));
     }
 
     public void RunRPC(string methodName, RpcTarget target, params object[] parameters)
     {
         PhotonView photonView = PhotonView.Get(this);
         photonView.RPC(methodName, target, parameters);
+        recentRpcCalls.Add(new RpcCall(methodName, target));
     }
 
     public void RunRPC(string methodName, Photon.Realtime.Player remotePlayer, System.Action<RemoteActionCallbackData> rpcCallback, params object[] parameters)

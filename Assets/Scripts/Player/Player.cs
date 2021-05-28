@@ -108,7 +108,7 @@ public class Player : SFModel, Observer, IComparable
     public List<Token> tokens; // tokens on gameboard
     public List<Token> giftedTokens = new List<Token>();
     public TokenStorage tokenStorage;
-    public string name = "DefaultPlayerName";
+    public string name;
     public bool receivesBonusOnNoPayout = false;
     public bool fameMedalBuyPossible = false;
     public SpaceShip ship;
@@ -152,9 +152,10 @@ public class Player : SFModel, Observer, IComparable
     }
 
 
-    public Player(SFColor color)
+    public Player(SFColor color, string name = "DefaultPlayerName")
     {
         this.color = color;
+        this.name = name;
         fameMedalPieces = 0;
         ship = new SpaceShip(DataChanged);
         hand = new Hand();

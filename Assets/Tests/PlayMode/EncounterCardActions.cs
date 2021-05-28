@@ -81,11 +81,6 @@ namespace Tests
 
             var hudScript = gameController.GetHUDScript();
             Assert.True(hudScript.tradeOfferView.activeInHierarchy);
-            yield return new WaitForSeconds(30);
-            //click accept
-            //..
-
-            //checken ob wir true als antwort zurückschicken
 
             yield return null;
         }

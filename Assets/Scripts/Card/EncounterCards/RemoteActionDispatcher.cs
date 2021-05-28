@@ -26,6 +26,11 @@ public abstract class RemoteActionDispatcher
         this.targetPlayers = targetPlayers;
     }
 
+    public List<Player> GetTargets()
+    {
+        return this.targetPlayers;
+    }
+
     public void SetAction(RemoteClientAction action)
     {
         this.action = action;
@@ -159,5 +164,55 @@ public class MockRemoteActionDispatcher : RemoteActionDispatcher
         var player = new Player(new SFColor(Color.red));
         player.name = "Thomas";
         singleResponseReceivedCallback(new RemoteActionCallbackData(player, true));
+    }
+}
+
+public class NoResponseRemoteActionDispatcher : RemoteActionDispatcher
+{
+
+    public NoResponseRemoteActionDispatcher(GameController gameController) : base(gameController)
+    {
+        this.gameController = gameController;
+    }
+
+    protected override void RequestTemplateMethod()
+    {
+
+    }
+}
+
+public class PositiveResponseRemoteActionDispatcher : RemoteActionDispatcher
+{
+
+    public PositiveResponseRemoteActionDispatcher(GameController gameController) : base(gameController)
+    {
+        this.gameController = gameController;
+    }
+
+    protected override void RequestTemplateMethod()
+    {
+        foreach (var player in targetPlayers)
+        {
+            singleResponseReceivedCallback(new RemoteActionCallbackData(player, true));
+        }
+        
+    }
+}
+
+public class NegativeResponseRemoteActionDispatcher : RemoteActionDispatcher
+{
+
+    public NegativeResponseRemoteActionDispatcher(GameController gameController) : base(gameController)
+    {
+        this.gameController = gameController;
+    }
+
+    protected override void RequestTemplateMethod()
+    {
+        foreach (var player in targetPlayers)
+        {
+            singleResponseReceivedCallback(new RemoteActionCallbackData(player, false));
+        }
+
     }
 }

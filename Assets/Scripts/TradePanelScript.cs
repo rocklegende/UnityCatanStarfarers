@@ -63,9 +63,26 @@ public class TradePanelScript : SFController
         _GiveResourcesStackScript.SetHandLimit(this.player.hand);
     }
 
+    public void OnCancelButtonClicked()
+    {
+        CancelTrade();
+    }
+
+    public void OnCloseButtonClicked()
+    {
+        CancelTrade();
+        Close();
+    }
+
     public void Close()
     {
         gameObject.SetActive(false);
+    }
+
+    void CancelTrade()
+    {
+        globalGamecontroller.RunRPC(RpcMethods.OtherPlayerCancelledTrade, Photon.Pun.RpcTarget.Others);
+        tradeOfferResponseTableView.GetComponent<TradeOfferResponseTableView>().RemoveAllRows();
     }
 
     /// <summary>
@@ -154,12 +171,22 @@ public class TradePanelScript : SFController
         var action = new RemoteClientAction(RemoteClientActionType.TRADE_OFFER, new object[] { tradeOffer }, globalGamecontroller.mainPlayer);
 
         tradeOfferResponseTableView.GetComponent<TradeOfferResponseTableView>().callback = AcceptAcceptedTradeOffer;
+
+        dispatcher.SetTargets(players);
+        dispatcher.SetAction(action);
         foreach (var sendToPlayer in players)
         {
-            dispatcher.SetTargets(new List<Player>() { sendToPlayer });
-            dispatcher.SetAction(action);
-            dispatcher.MakeRequest(PlayerRespondedToTradeOffer, AllPlayersResponded);
+            tradeOfferResponseTableView.GetComponent<TradeOfferResponseTableView>().AddRow(sendToPlayer);
         }
+        dispatcher.MakeRequest(PlayerRespondedToTradeOffer, AllPlayersResponded);
+        
+    }
+
+    
+
+    public void CancelPlayerTrade()
+    {
+
     }
 
     public void AllPlayersResponded(Dictionary<string, RemoteActionCallbackData> responses)
@@ -171,9 +198,21 @@ public class TradePanelScript : SFController
     {
         var playerWhoResponded = response.player;
         Debug.Log(string.Format("Player responded to trade offer: ", playerWhoResponded.name));
-        if ((bool)response.data == true)
+        var tableView = tradeOfferResponseTableView.GetComponent<TradeOfferResponseTableView>();
+        if (tableView != null)
         {
-            tradeOfferResponseTableView.GetComponent<TradeOfferResponseTableView>().AddRow(playerWhoResponded);
+            var row = tableView.FindRowWithPlayer(playerWhoResponded);
+            if (row != null)
+            {
+                if ((bool)response.data == true)
+                {
+                    row.OfferWasAccepted();
+                }
+                else
+                {
+                    row.OfferWasDeclined();
+                }
+            }
         }
     }
 
