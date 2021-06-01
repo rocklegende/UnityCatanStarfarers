@@ -3,10 +3,10 @@
 [Serializable]
 public class Cost
 {
-    public Resource[] resources;
-    public Cost(Resource[] resources)
+    public Hand hand;
+    public Cost(Hand hand)
     {
-        this.resources = resources;
+        this.hand = hand;
     }
 
 

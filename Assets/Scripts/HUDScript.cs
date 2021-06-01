@@ -31,6 +31,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     public Text TradeLeft;
     public Text PortLeft;
 
+    public GameObject waitingForOtherPlayersPopup;
     public GameObject buildShipsDropDownRef;
     public GameObject upgradesDropDownRef;
 
@@ -85,6 +86,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         tradePanel.SetActive(false);
         resourcePicker.SetActive(false);
         tradeOfferView.SetActive(false);
+        waitingForOtherPlayersPopup.SetActive(false);
         CloseSelection();
         CreateBuildDropDowns();
 
@@ -199,7 +201,12 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         normalDiceThrowRenderer.SetActive(false);
     }
 
-    public void OpenResourcePicker(System.Action<Hand> callback, int cardLimit = -1, int onlySelectableAtValue = -1, bool resetValues = true)
+    public void OpenResourcePicker(
+        System.Action<Hand> callback,
+        int cardLimit = -1,
+        int onlySelectableAtValue = -1,
+        bool resetValues = true,
+        string text = "")
     {
         //TODO: possibly better to instantiate a new gameobject here to reset all values, so we dont run into problems if we open this multiple times
 
@@ -209,7 +216,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         {
             resourcePicker.GetComponent<ResourcePicker>().Reset();
         }
-
+        resourcePicker.GetComponent<ResourcePicker>().SetText(text);
         resourcePicker.GetComponent<ResourcePicker>().SetTotalMaximum(cardLimit);
         resourcePicker.GetComponent<ResourcePicker>().SetOnlySelectableAtValue(onlySelectableAtValue);
         resourcePicker.GetComponent<ResourcePicker>().SetCallback(callback);
@@ -225,7 +232,7 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
     {
         //TODO: possibly better to instantiate a new gameobject here to reset all values, so we dont run into problems if we open this multiple times
 
-        OpenResourcePicker(callback, cardLimit, onlySelectableAtValue);
+        OpenResourcePicker(callback, cardLimit, onlySelectableAtValue, true, string.Format("Please drop {0} cards", onlySelectableAtValue));
         resourcePicker.GetComponent<ResourcePicker>().SetHandLimit(player.hand);
     }
 

@@ -15,13 +15,13 @@ public interface IGameController
     HUDScript GetHUDScript();
 }
 
-public enum RemoteClientActionType
-{
-    GIVE_RESOURCE,
-    GIVEUP_UPGRADE,
-    SEVEN_ROLL_DISCARD,
-    TRADE_OFFER
-}
+//public enum RemoteClientActionType
+//{
+//    GIVE_RESOURCE,
+//    GIVEUP_UPGRADE,
+//    SEVEN_ROLL_DISCARD,
+//    TRADE_OFFER
+//}
 
 [System.Serializable]
 public class RemoteActionCallbackData
@@ -39,17 +39,56 @@ public class RemoteActionCallbackData
 namespace com.onebuckgames.UnityStarFarers
 {
     [System.Serializable]
-    public class RemoteClientAction
+    public abstract class RemoteClientAction
     {
-        public readonly RemoteClientActionType actionType;
         public readonly object[] parameters;
         public readonly Player sendFromPlayer;
+        public readonly bool isBlockingInteraction;
 
-        public RemoteClientAction(RemoteClientActionType actionType, object[] parameters, Player sendFromPlayer)
+        public RemoteClientAction(object[] parameters, Player sendFromPlayer, bool isBlockingInteraction)
         {
-            this.actionType = actionType;
             this.parameters = parameters;
             this.sendFromPlayer = sendFromPlayer;
+            this.isBlockingInteraction = isBlockingInteraction;
+        }
+    }
+
+    [System.Serializable]
+    public class DiscardRemoteClientAction : RemoteClientAction
+    {
+        public DiscardRemoteClientAction(Player sendFromPlayer) : base(null, sendFromPlayer, true)
+        {
+
+        }
+    }
+
+    [System.Serializable]
+    public class TradeOfferRemoteClientAction : RemoteClientAction
+    {
+        public readonly TradeOffer tradeOffer;
+        public TradeOfferRemoteClientAction(TradeOffer tradeOffer, Player sendFromPlayer) : base(null, sendFromPlayer, false)
+        {
+            this.tradeOffer = tradeOffer;
+        }
+    }
+
+    [System.Serializable]
+    public class GiveResourceRemoteClientAction : RemoteClientAction
+    {
+        public readonly int numResources;
+        public GiveResourceRemoteClientAction(int numResources, Player sendFromPlayer) : base(null, sendFromPlayer, true)
+        {
+            this.numResources = numResources;
+        }
+    }
+
+    [System.Serializable]
+    public class GiveUpgradeRemoteClientAction : RemoteClientAction
+    {
+        public readonly int numUpgradesToDiscard;
+        public GiveUpgradeRemoteClientAction(int numUpgradesToDiscard, Player sendFromPlayer) : base(null, sendFromPlayer, true)
+        {
+            this.numUpgradesToDiscard = numUpgradesToDiscard;
         }
     }
 }
@@ -93,8 +132,6 @@ public class GameController : SFController, IGameController, Observer
     public GameObject Map;
     public Map mapModel;
 
-
-
     private GameState _state;
     public GameState State {
         get { return _state; }
@@ -114,6 +151,7 @@ public class GameController : SFController, IGameController, Observer
     public int numPlayersUpdated = 0;
     public int numMapUpdated = 0;
     public List<RpcCall> recentRpcCalls = new List<RpcCall>();
+    public RemoteActionDispatcher dispatcher; 
 
     /// <summary>
     /// Run GameController in testMode
@@ -124,6 +162,7 @@ public class GameController : SFController, IGameController, Observer
     void Start()
     {
         encounterCardHandler.encounterCardStack = new DefaultEncounterCardStack(this);
+        dispatcher = new DefaultRemoteActionDispatcher(this);
 
         if (PhotonNetwork.IsMasterClient)
         {
@@ -144,11 +183,6 @@ public class GameController : SFController, IGameController, Observer
 
     void OnStateChanged()
     {
-        // tell others the state changed
-
-        // tell others the current player changed
-
-        // if (isMyTurn()) {} ...
         RunRPC("RemoteClientChangedState", RpcTarget.Others, State.GetType().Name);
     }
 
@@ -253,28 +287,50 @@ public class GameController : SFController, IGameController, Observer
 
     public void OpenTokenSelectionForMainPlayer()
     {
-        GetHUDScript().Draw();
-        GetMapScript().OnMapDataChanged();
+        //GetHUDScript().Draw();
+        //GetMapScript().OnMapDataChanged();
+        On7Rolled();
     }
+
+    public void RequestActionFromPlayers(
+        RemoteClientAction remoteClientAction,
+        List<Player> targets,
+        System.Action<RemoteActionCallbackData> singleResponseReceivedCallback,
+        System.Action<Dictionary<string, RemoteActionCallbackData>> allResponsesReceivedCallback
+    )
+    {
+        dispatcher.SetTargets(targets);
+        dispatcher.SetAction(remoteClientAction);
+        dispatcher.MakeRequest(singleResponseReceivedCallback, allResponsesReceivedCallback);
+    } 
 
     [PunRPC]
     public void RemoteClientRequiresAction(byte[] actionInfo)
     {
         var remoteAction = (RemoteClientAction)SFFormatter.Deserialize(actionInfo);
-        switch (remoteAction.actionType)
+
+        if (remoteAction is GiveResourceRemoteClientAction)
         {
-            case RemoteClientActionType.GIVE_RESOURCE:
-                HandleGiveResourceActionFromRemoteClient(remoteAction);
-                break;
-            case RemoteClientActionType.GIVEUP_UPGRADE:
-                HandleGiveupUpgradeActionFromRemoteClient(remoteAction);
-                break;
-            case RemoteClientActionType.SEVEN_ROLL_DISCARD:
-                HandleSevenRollDiscardActionFromRemoteClient(remoteAction);
-                break;
-            case RemoteClientActionType.TRADE_OFFER:
-                HandleTradeOfferActionFromRemoteClient(remoteAction);
-                break;
+            HandleGiveResourceActionFromRemoteClient((GiveResourceRemoteClientAction)remoteAction);
+            return;
+        }
+
+        if (remoteAction is GiveUpgradeRemoteClientAction)
+        {
+            HandleGiveupUpgradeActionFromRemoteClient((GiveUpgradeRemoteClientAction)remoteAction);
+            return;
+        }
+
+        if (remoteAction is DiscardRemoteClientAction)
+        {
+            HandleSevenRollDiscardActionFromRemoteClient((DiscardRemoteClientAction)remoteAction);
+            return;
+        }
+
+        if (remoteAction is TradeOfferRemoteClientAction)
+        {
+            HandleTradeOfferActionFromRemoteClient((TradeOfferRemoteClientAction)remoteAction);
+            return;
         }
     }
 
@@ -284,18 +340,18 @@ public class GameController : SFController, IGameController, Observer
         GetHUDScript().tradeOfferView.SetActive(false);
     }
 
-    void HandleTradeOfferActionFromRemoteClient(RemoteClientAction remoteAction)
+    void HandleTradeOfferActionFromRemoteClient(TradeOfferRemoteClientAction remoteAction)
     {
-        var tradeOffer = (TradeOffer)remoteAction.parameters[0];
+        var tradeOffer = remoteAction.tradeOffer;
         GetHUDScript().DisplayTradeOffer(tradeOffer, (accept) =>
         {
             SendResponseBackToCallerOfRemoteClientAction(remoteAction, new RemoteActionCallbackData(mainPlayer, accept));
         });
     }
-
-    void HandleGiveResourceActionFromRemoteClient(RemoteClientAction remoteAction)
+    
+    void HandleGiveResourceActionFromRemoteClient(GiveResourceRemoteClientAction remoteAction)
     {
-        var requiredResources = (int)remoteAction.parameters[0];
+        var requiredResources = remoteAction.numResources;
         GetHUDScript().OpenDiscardResourcePicker((hand) => {
             Debug.Log("hand picked, count: " + hand.Count());
 
@@ -307,16 +363,16 @@ public class GameController : SFController, IGameController, Observer
         }, requiredResources, requiredResources);
     }
 
-    void HandleGiveupUpgradeActionFromRemoteClient(RemoteClientAction remoteAction)
+    void HandleGiveupUpgradeActionFromRemoteClient(GiveUpgradeRemoteClientAction remoteAction)
     {
-        var upgradesToDiscard = (int)remoteAction.parameters[0];
+        var upgradesToDiscard = remoteAction.numUpgradesToDiscard;
 
         var encounterAction = new RemoveUpgradeAction(this);
         encounterAction.callback = ((value) => SendResponseBackToCallerOfRemoteClientAction(remoteAction));
         encounterAction.Execute();
     }
 
-    void HandleSevenRollDiscardActionFromRemoteClient(RemoteClientAction remoteAction)
+    void HandleSevenRollDiscardActionFromRemoteClient(DiscardRemoteClientAction remoteAction)
     {
         var numCardsToDump = On7RollStrategy.NumCardsToDump(mainPlayer.hand.Count());
         GetHUDScript().OpenDiscardResourcePicker((handPicked) =>
@@ -386,12 +442,13 @@ public class GameController : SFController, IGameController, Observer
                 player.BuildUpgradeWithoutCost(new BoosterUpgradeToken());
                 player.BuildUpgradeWithoutCost(new CannonUpgradeToken());
             }
-        }
-
-        foreach (var player in players)
-        {
             player.AddHand(Hand.FromResources(5, 5, 5, 5, 5));
         }
+
+        //foreach (var player in players)
+        //{
+        //    player.AddHand(Hand.FromResources(5, 5, 5, 5, 5));
+        //}
 
         if (players.Count == 2)
         {

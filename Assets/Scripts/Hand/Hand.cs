@@ -16,6 +16,20 @@ public class Hand : Subject
         Notify(null);
     }
 
+    public List<Resource> ToResourceList()
+    {
+        var list = new List<Resource>();
+        foreach (var card in cards)
+        {
+            if (card is ResourceCard)
+            {
+                var resourceCard = (ResourceCard)card;
+                list.Add(resourceCard.resource);
+            }
+        }
+        return list;
+    }
+
     public void RemoveCard(Card card)
     {
         cards.Remove(card);
@@ -207,14 +221,14 @@ public class Hand : Subject
     public bool CanPayCost(Cost cost)
     {
 
-        if (cost.resources.Length == 0)
+        if (cost.hand.Count() == 0)
         {
             return true;
         }
 
         List<Card> cardsCopy = cards.GetRange(0, cards.Count);
 
-        foreach (Resource rc in cost.resources)
+        foreach (Resource rc in cost.hand.ToResourceList())
         {
             List<ResourceCard> resourceCards = GetAllResourceCards(cardsCopy);
             ResourceCard bla = resourceCards.Find(c => c.resource.Name == rc.Name);
@@ -268,7 +282,7 @@ public class Hand : Subject
             throw new NotEnoughResourcesException();
         }
 
-        foreach (Resource rc in cost.resources)
+        foreach (Resource rc in cost.hand.ToResourceList())
         {
             List<ResourceCard> resourceCards = GetAllResourceCards(cards);
             ResourceCard bla = resourceCards.Find(c => c.resource.Name == rc.Name);

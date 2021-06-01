@@ -7,7 +7,7 @@ using com.onebuckgames.UnityStarFarers;
 public class SpacePortToken : Token, BuildableToken
 {
     BuildCondition buildCondition;
-    public SpacePortToken() : base("spaceport_token", false, new Cost(new Resource[] { new CarbonResource(), new CarbonResource(), new CarbonResource(), new FoodResource(), new FoodResource() }))
+    public SpacePortToken() : base("spaceport_token", false, new Cost(Hand.FromResources(2, 0, 0, 0, 3)))
     {
         buildCondition = new SpacePortBuildCondition();
     }
@@ -128,7 +128,7 @@ public class SpacePortBuildCondition : BuildCondition
 public class ColonyBaseToken : Token, BuildableToken
 {
     BuildCondition buildCondition;
-    public ColonyBaseToken() : base("colonybase_token", true, new Cost(new Resource[] { new FuelResource(), new OreResource(), new CarbonResource(), new FoodResource() }))
+    public ColonyBaseToken() : base("colonybase_token", true, new Cost(Hand.FromResources(1, 0, 1, 1, 1)))
     {
         buildCondition = new TradeAndColonyBuildCondition();
     }
@@ -189,7 +189,7 @@ public class ColonyBaseToken : Token, BuildableToken
 public class TradeBaseToken : Token, BuildableToken
 {
     BuildCondition buildCondition;
-    public TradeBaseToken() : base("tradebase_token", true, new Cost(new Resource[] { new OreResource(), new FuelResource(), new GoodsResource(), new GoodsResource() }))
+    public TradeBaseToken() : base("tradebase_token", true, new Cost(Hand.FromResources(0, 2, 1, 1, 0)))
     {
         buildCondition = new TradeAndColonyBuildCondition();
     }
@@ -244,7 +244,7 @@ public class TradeBaseToken : Token, BuildableToken
 [Serializable]
 public class ShipToken : Token
 {
-    public ShipToken() : base("ship_token", false, new Cost(new Resource[] { }))
+    public ShipToken() : base("ship_token", false, new Cost(Hand.FromResources()))
     {
     }
 
@@ -279,7 +279,7 @@ public class ShipToken : Token
 [Serializable]
 public class BoosterUpgradeToken : Upgrade, BuildableToken
 {
-    public BoosterUpgradeToken() : base("booster_upgrade", new Cost(new Resource[] { new FuelResource(), new FuelResource() }))
+    public BoosterUpgradeToken() : base("booster_upgrade", new Cost(Hand.FromResources(0, 0, 2, 0, 0)))
     {
 
     }
@@ -308,7 +308,7 @@ public class BoosterUpgradeToken : Upgrade, BuildableToken
 [Serializable]
 public class CannonUpgradeToken : Upgrade, BuildableToken
 {
-    public CannonUpgradeToken() : base("cannon_upgrade", new Cost(new Resource[] { new CarbonResource(), new CarbonResource() }))
+    public CannonUpgradeToken() : base("cannon_upgrade", new Cost(Hand.FromResources(0, 0, 0, 0, 2)))
     {
 
     }
@@ -352,7 +352,7 @@ public abstract class Upgrade : SFModel
 [Serializable]
 public class FreightPodUpgradeToken : Upgrade, BuildableToken
 {
-    public FreightPodUpgradeToken() : base("freight_pod_upgrade", new Cost(new Resource[] { new OreResource(), new OreResource() }))
+    public FreightPodUpgradeToken() : base("freight_pod_upgrade", new Cost(Hand.FromResources(0, 0, 0, 2, 0)))
     {
 
     }

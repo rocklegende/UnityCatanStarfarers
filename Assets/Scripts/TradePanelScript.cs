@@ -168,7 +168,7 @@ public class TradePanelScript : SFController
 
     public void OfferTradeToPlayers(TradeOffer tradeOffer, List<Player> players)
     {
-        var action = new RemoteClientAction(RemoteClientActionType.TRADE_OFFER, new object[] { tradeOffer }, globalGamecontroller.mainPlayer);
+        var action = new TradeOfferRemoteClientAction(tradeOffer, globalGamecontroller.mainPlayer);
 
         tradeOfferResponseTableView.GetComponent<TradeOfferResponseTableView>().callback = AcceptAcceptedTradeOffer;
 

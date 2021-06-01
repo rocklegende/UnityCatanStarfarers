@@ -8,44 +8,55 @@ public class TradeOfferView : SFController
     public System.Action<bool> callback;
     public Button AcceptButton;
     public Button DeclineButton;
-    public GameObject GiveResourceStackRenderer;
+    public GameObject GiveResourceCostRenderer;
     public TradeOffer tradeOffer;
-    ResourceCardStackRenderer _GiveResourcesStackScript;
-    public GameObject ReceiveResourceStackRenderer;
-    ResourceCardStackRenderer _ReceiveResourcesStackScript;
+    CostRenderer _GiveResourcesCostRendererScript;
+    public GameObject ReceiveResourceCostRenderer;
+    CostRenderer _ReceiveResourcesCostRendererScript;
         
 
     // Start is called before the first frame update
     void Start()
     {
-        _GiveResourcesStackScript = GiveResourceStackRenderer.GetComponent<ResourceCardStackRenderer>();
-        _ReceiveResourcesStackScript = ReceiveResourceStackRenderer.GetComponent<ResourceCardStackRenderer>();
+        _GiveResourcesCostRendererScript = GiveResourceCostRenderer.GetComponent<CostRenderer>();
+        _ReceiveResourcesCostRendererScript = ReceiveResourceCostRenderer.GetComponent<CostRenderer>();
     }
 
+    public Hand GetGiveHand()
+    {
+        return GiveResourceCostRenderer.GetComponent<CostRenderer>().cost.hand;
+    }
+
+    public Hand GetReceiveHand()
+    {
+        return ReceiveResourceCostRenderer.GetComponent<CostRenderer>().cost.hand;
+    }
+        
     public void Init(TradeOffer tradeOffer, System.Action<bool> callback)
     {
         this.tradeOffer = tradeOffer;
         this.callback = callback;
 
-        GiveResourceStackRenderer.GetComponent<ResourceCardStackRenderer>().SetHand(tradeOffer.receiveHand); //is flipped on purpose because the trade offer is always from the perspective of the trade offerer
-        ReceiveResourceStackRenderer.GetComponent<ResourceCardStackRenderer>().SetHand(tradeOffer.giveHand);
+        GiveResourceCostRenderer.GetComponent<CostRenderer>().SetCost(new Cost(tradeOffer.receiveHand)); //is flipped on purpose because the trade offer is always from the perspective of the trade offerer
+        ReceiveResourceCostRenderer.GetComponent<CostRenderer>().SetCost(new Cost(tradeOffer.giveHand));
     }
 
     public void Draw()
     {
-        GiveResourceStackRenderer.GetComponent<ResourceCardStackRenderer>().Draw();
-        ReceiveResourceStackRenderer.GetComponent<ResourceCardStackRenderer>().Draw();
+        GiveResourceCostRenderer.GetComponent<CostRenderer>().Draw();
+        ReceiveResourceCostRenderer.GetComponent<CostRenderer>().Draw();
     }
 
 
     public void AcceptButtonPressed()
     {
-        callback(true);
+        callback?.Invoke(true);
     }
 
     public void DeclineButtonPressed()
     {
-        callback(false);
+        gameObject.SetActive(false);
+        callback?.Invoke(false);
     }
 
     public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)

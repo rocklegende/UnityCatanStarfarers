@@ -21,20 +21,15 @@ public class On7RollStrategy
     public void Execute()
     {
         var players = gameController.players;
-        var remoteClientAction = new RemoteClientAction(
-            RemoteClientActionType.SEVEN_ROLL_DISCARD,
-            null,
+        var remoteClientAction = new DiscardRemoteClientAction(
             gameController.mainPlayer
         );
+
         var dispatcher = new DefaultRemoteActionDispatcher(gameController);
         dispatcher.SetTargets(players.Where(player => player.ExceedsDiscardLimit()).ToList());
         dispatcher.SetAction(remoteClientAction);
         dispatcher.MakeRequest((response) => { }, AllPlayersDumpedCards);
-        //dispatcher.RequestActionFromPlayers(
-            
-        //    remoteClientAction,
-        //    PlayersDumpedCards
-        //);
+
     }
 
     void AllPlayersDumpedCards(Dictionary<string, RemoteActionCallbackData> dict)

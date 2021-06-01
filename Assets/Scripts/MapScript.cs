@@ -34,6 +34,7 @@ public class MapScript : SFController
     private MapMode mode = MapMode.NORMAL;
     private System.Action<Token> tokenSelectCallback;
     private System.Action<SpacePoint> didSelectSpacePointCallback;
+    public bool isInteractive = true;
 
     List<GameObject> allSpacePointButtons = new List<GameObject>();
     List<GameObject> hexagonGameObjects;
@@ -45,6 +46,11 @@ public class MapScript : SFController
     {
         
 
+    }
+
+    public void ActivateAllInteraction(bool isInteractive)
+    {
+        this.isInteractive = isInteractive;
     }
 
     public List<Token> GetHighlightedTokens()

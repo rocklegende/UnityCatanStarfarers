@@ -20,7 +20,7 @@ namespace Tests
             hand.AddCard(new FuelCard());
             hand.AddCard(new FuelCard());
 
-            Assert.True(hand.CanPayCost(new Cost(new Resource[] { new FuelResource(), new FuelResource() })));
+            Assert.True(hand.CanPayCost(new Cost(Hand.FromResources(0, 0, 2, 0, 0))));
         }
 
         // A Test behaves as an ordinary method
@@ -33,7 +33,7 @@ namespace Tests
             hand.AddCard(new FuelCard());
             hand.AddCard(new FuelCard());
 
-            Assert.False(hand.CanPayCost(new Cost(new Resource[] { new CarbonResource(), new FuelResource() })));
+            Assert.False(hand.CanPayCost(new Cost(Hand.FromResources(0, 0, 0, 0, 2))));
         }
 
         [Test]
@@ -44,7 +44,7 @@ namespace Tests
             Hand hand = new Hand();
             hand.AddCard(new FuelCard());
             hand.AddCard(new FuelCard());
-            Assert.True(hand.CanPayCost(new Cost(new Resource[] { })));
+            Assert.True(hand.CanPayCost(new Cost(new Hand())));
         }
 
         [Test]
@@ -134,7 +134,7 @@ namespace Tests
             hand.AddCard(new FuelCard());
             hand.AddCard(new FuelCard());
 
-            hand.PayCost(new Cost(new Resource[] { }));
+            hand.PayCost(new Cost(new Hand()));
             var groupedResources = hand.GetGroupedResources();
             Assert.True(groupedResources[new FuelCard().resource.Name] == 2);
         }
@@ -148,7 +148,7 @@ namespace Tests
             hand.AddCard(new FuelCard());
             hand.AddCard(new FuelCard());
 
-            hand.PayCost(new Cost(new Resource[] { new FuelResource() }));
+            hand.PayCost(new Cost(Hand.FromResources(0, 0, 1, 0, 0)));
             var groupedResources = hand.GetGroupedResources();
             Assert.True(groupedResources[new FuelCard().resource.Name] == 1);
         }
@@ -162,7 +162,7 @@ namespace Tests
             hand.AddCard(new FuelCard());
             hand.AddCard(new FuelCard());
 
-            hand.PayCost(new Cost(new Resource[] { new FuelResource(), new FuelResource() }));
+            hand.PayCost(new Cost(Hand.FromResources(0, 0, 2, 0, 0)));
             var groupedResources = hand.GetGroupedResources();
             Assert.False(groupedResources.ContainsKey(new FuelCard().resource.Name));
         }
@@ -178,7 +178,7 @@ namespace Tests
 
             try
             {
-                hand.PayCost(new Cost(new Resource[] { new FuelResource(), new FuelResource(), new FuelResource() }));
+                hand.PayCost(new Cost(Hand.FromResources(0, 0, 3, 0, 0)));
                 Assert.True(false);
             } catch (NotEnoughResourcesException e)
             {
@@ -197,7 +197,7 @@ namespace Tests
 
             try
             {
-                hand.PayCost(new Cost(new Resource[] { new FuelResource(), new FuelResource(), new FuelResource() }));
+                hand.PayCost(new Cost(Hand.FromResources(0, 0, 3, 0, 0)));
                 Assert.True(false);
             }
             catch (NotEnoughResourcesException e)

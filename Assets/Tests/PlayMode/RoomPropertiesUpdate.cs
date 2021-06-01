@@ -43,7 +43,6 @@ namespace Tests
             propertiesThatChanged.Add(PlayerWhoMadeLastChangeKey, PlayerWhoMadeLastChange);
             propertiesThatChanged.Add(MapKey, mapAsBytes);
             propertiesThatChanged.Add(PlayersKey, playersAsBytes);
-            //return propertiesThatChanged;
 
             gameController.OnRoomPropertiesUpdateFromOwnDict(propertiesThatChanged);
         }

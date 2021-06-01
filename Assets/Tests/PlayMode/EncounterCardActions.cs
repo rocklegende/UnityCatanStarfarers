@@ -29,7 +29,7 @@ namespace Tests
         [UnityTest]
         public IEnumerator Receiving_GIVE_RESOURCES_FromRemoteClientOpensResourcePicker()
         {
-            var action = new RemoteClientAction(RemoteClientActionType.GIVE_RESOURCE, new object[] { 1 }, gameController.mainPlayer);
+            var action = new GiveResourceRemoteClientAction( 1, gameController.mainPlayer);
             gameController.RemoteClientRequiresAction(SFFormatter.Serialize(action));
 
             var hudScript = gameController.GetHUDScript();
@@ -43,7 +43,7 @@ namespace Tests
         {
             gameController.mainPlayer.AddHand(Hand.FromResources(4, 4, 4, 4));
 
-            var action = new RemoteClientAction(RemoteClientActionType.SEVEN_ROLL_DISCARD, null, gameController.mainPlayer);
+            var action = new DiscardRemoteClientAction(gameController.mainPlayer);
             gameController.RemoteClientRequiresAction(SFFormatter.Serialize(action));
 
             var hudScript = gameController.GetHUDScript();
@@ -57,7 +57,7 @@ namespace Tests
         {
             gameController.mainPlayer.BuildUpgradeWithoutCost(new FreightPodUpgradeToken());
 
-            var action = new RemoteClientAction(RemoteClientActionType.GIVEUP_UPGRADE, new object[] { 1 }, gameController.mainPlayer);
+            var action = new GiveUpgradeRemoteClientAction(1, gameController.mainPlayer);
             gameController.RemoteClientRequiresAction(SFFormatter.Serialize(action));
 
             var hudScript = gameController.GetHUDScript();
@@ -71,10 +71,9 @@ namespace Tests
         {
             var dispatcher = new DefaultRemoteActionDispatcher(gameController);
             var targets = new List<Player>() { gameController.mainPlayer };
-            var action = new RemoteClientAction(
-                RemoteClientActionType.TRADE_OFFER,
-                new object[] { new TradeOffer(new Hand(), new Hand(), new TestHelper().CreateGenericPlayer())
-            }, gameController.mainPlayer);
+            var action = new TradeOfferRemoteClientAction(
+                new TradeOffer(new Hand(), new Hand(), new TestHelper().CreateGenericPlayer())
+            , gameController.mainPlayer);
             dispatcher.SetTargets(targets);
             dispatcher.SetAction(action);
             dispatcher.MakeRequest((singleResponse) => { }, (allResponses) => { });

@@ -16,7 +16,7 @@ public class CostRenderer : MonoBehaviour
     {
         Dictionary<string, int> resourcesCount = new Dictionary<string, int>();
 
-        foreach(Resource resource in cost.resources)
+        foreach(Resource resource in cost.hand.ToResourceList())
         {
             try
             {

@@ -207,13 +207,13 @@ namespace Tests
             hudScript.DisplayTradeOffer(tradeOffer, (decision) => { });
             Assert.True(hudScript.tradeOfferView.activeInHierarchy);
             var tradeOfferViewScript = hudScript.tradeOfferView.GetComponent<TradeOfferView>();
-            var displayedGiveHand = tradeOfferViewScript.GiveResourceStackRenderer.GetComponent<ResourceCardStackRenderer>().GetDisplayedHand();
-            var displayedReceiveHand = tradeOfferViewScript.ReceiveResourceStackRenderer.GetComponent<ResourceCardStackRenderer>().GetDisplayedHand();
+            var displayedGiveHand = tradeOfferViewScript.GetGiveHand();
+            var displayedReceiveHand = tradeOfferViewScript.GetReceiveHand();
 
             Assert.True(displayedGiveHand.HasSameCardsAs(receiveHandInTradeOffer));
             Assert.True(displayedReceiveHand.HasSameCardsAs(giveHandInTradeOffer));
 
-            yield return null;
+            yield return new WaitForSeconds(15);
         }
 
         [UnityTest]
@@ -526,6 +526,16 @@ namespace Tests
             gameController.GetHUDScript().tradeOfferView.SetActive(true);
             yield return null;
             gameController.RunRPC(RpcMethods.OtherPlayerCancelledTrade, PhotonNetwork.LocalPlayer);
+
+            Assert.False(gameController.GetHUDScript().tradeOfferView.activeInHierarchy);
+        }
+
+        [UnityTest]
+        public IEnumerator TradeOfferViewDeclineClosesTradeOfferView()
+        {
+            gameController.GetHUDScript().tradeOfferView.SetActive(true);
+            yield return null;
+            gameController.GetHUDScript().tradeOfferView.GetComponent<TradeOfferView>().DeclineButtonPressed();
 
             Assert.False(gameController.GetHUDScript().tradeOfferView.activeInHierarchy);
         }

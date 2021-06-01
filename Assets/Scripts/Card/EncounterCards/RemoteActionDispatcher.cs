@@ -56,6 +56,13 @@ public abstract class RemoteActionDispatcher
             throw new ArgumentException("No action is set, please set target players via SetAction method");
         }
 
+        if (action.isBlockingInteraction)
+        {
+            gameController.GetHUDScript().waitingForOtherPlayersPopup.SetActive(true);
+            gameController.GetHUDScript().ActivateAllInteraction(false);
+            gameController.GetMapScript().ActivateAllInteraction(false);
+        }
+
         isWaitingForResponse = true;
         this.allResponsesReceivedCallback = allResponsesReceivedCallback;
         this.singleResponseReceivedCallback = singleResponseReceivedCallback;
@@ -81,6 +88,7 @@ public abstract class RemoteActionDispatcher
 
     public bool AllPlayersResponded()
     {
+        
         Debug.Log("playersRespondedDict #5: " + playerRespondedDict.ToList().Count);
         foreach (var entry in playerRespondedDict)
         {
@@ -95,8 +103,13 @@ public abstract class RemoteActionDispatcher
     public void OnAllResponsesReceived()
     {
         Debug.Log("Received response from every player!!!!");
-        allResponsesReceivedCallback(
-            playerRespondedDict);
+        if (action.isBlockingInteraction)
+        {
+            gameController.GetHUDScript().waitingForOtherPlayersPopup.SetActive(false);
+            gameController.GetMapScript().ActivateAllInteraction(true);
+            gameController.GetHUDScript().ActivateAllInteraction(true);
+        }
+        allResponsesReceivedCallback(playerRespondedDict);
         Reset();
     }
 
@@ -179,6 +192,30 @@ public class NoResponseRemoteActionDispatcher : RemoteActionDispatcher
     {
 
     }
+
+    public void FakeResponseFromAllPlayers(object data)
+    {
+        var fakeResponseDict = new Dictionary<string, RemoteActionCallbackData>();
+        foreach( var target in targetPlayers)
+        {
+            fakeResponseDict.Add(target.name, new RemoteActionCallbackData(target, data));
+        }
+
+        playerRespondedDict = fakeResponseDict;
+        OnAllResponsesReceived();
+    }
+
+    public void FakeResponseFromSinglePlayer(string playername, object data)
+    {
+        var playerWithThatName = targetPlayers.Find(target => target.name == playername);
+        if (playerWithThatName == null)
+        {
+            throw new System.ArgumentException(string.Format("Could not find player with name: {0}", playername));
+        }
+        singleResponseReceivedCallback(new RemoteActionCallbackData(playerWithThatName, data));
+    }
+
+
 }
 
 public class PositiveResponseRemoteActionDispatcher : RemoteActionDispatcher

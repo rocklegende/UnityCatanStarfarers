@@ -8,6 +8,7 @@ public class ResourcePicker : MonoBehaviour
     Action<Hand> callback;
     public GameObject resourceCardStack;
     public Button selectButton;
+    public Text title;
     /// <summary>
     /// Decides if the selection is only possible at a specific value, -1 means all is selectable
     /// </summary>
@@ -25,6 +26,11 @@ public class ResourcePicker : MonoBehaviour
     public void Reset()
     {
         resourceCardStack.GetComponent<ResourceCardStackRenderer>().ResetStacks();
+    }
+
+    public void SetText(string text)
+    {
+        title.text = text;
     }
 
     public void SetOnlySelectableAtValue(int value)

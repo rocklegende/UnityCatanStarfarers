@@ -594,7 +594,7 @@ public class GetResourceFromEveryPlayer : EncounterCardAction
     public override void Execute()
     {
         var mainPlayer = gameController.mainPlayer;
-        var action = new RemoteClientAction(RemoteClientActionType.GIVE_RESOURCE, new object[] { numResources }, mainPlayer);
+        var action = new GiveResourceRemoteClientAction(numResources, mainPlayer);
 
         var otherPlayers = GetTargetPlayers(gameController.players);
         if (otherPlayers.Count == 0)
@@ -913,18 +913,7 @@ public class DiscardIfMoreThanLimitUpgradesAction : EncounterCardAction
 
     public override void Execute()
     {
-        var action = new RemoteClientAction(
-            RemoteClientActionType.GIVEUP_UPGRADE,
-            new object[] { 1 },
-            gameController.mainPlayer
-        );
-
-        //var dispatcher = new RemoteActionDispatcher(gameController);
-        //dispatcher.RequestActionFromPlayers(
-            
-        //    action,
-        //    AllPlayersMadeDecision
-        //);
+        var action = new GiveUpgradeRemoteClientAction(1, gameController.mainPlayer );
         var dispatcher = new DefaultRemoteActionDispatcher(gameController);
         dispatcher.SetTargets(GetPlayersWithMoreThanLimit(gameController.players, this.limit));
         dispatcher.SetAction(action);

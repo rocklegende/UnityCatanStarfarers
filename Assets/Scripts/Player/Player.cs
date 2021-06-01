@@ -279,7 +279,7 @@ public Player SimpleClone()
         } else
         {
             fameMedalBuyMadeThisRound = true;
-            hand.PayCost(new Cost(new Resource[] { new GoodsResource() }));
+            hand.PayCost(new Cost(Hand.FromResources(0, 1, 0, 0, 0)));
             AddFameMedal();
         }
     }

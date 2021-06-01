@@ -44,7 +44,7 @@ namespace Tests
             var gameController = testHelper.GetGameController();
             var actionRequiredFromPlayer = gameController.GetPlayers().Find(p => p.guid != gameController.GetMainPlayer().guid);
 
-            var action = new RemoteClientAction(RemoteClientActionType.GIVE_RESOURCE, null, actionRequiredFromPlayer);
+            var action = new GiveResourceRemoteClientAction(1, actionRequiredFromPlayer);
             gameController.RemoteClientRequiresAction(SFFormatter.Serialize(action));
 
             var hudScript = gameController.GetHUDScript();
