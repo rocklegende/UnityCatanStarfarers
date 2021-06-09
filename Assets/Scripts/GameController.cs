@@ -97,20 +97,18 @@ namespace com.onebuckgames.UnityStarFarers
 public class GameStartInformation
 {
     public Map map { get; }
-    /// <summary>
-    /// Key: player name, Value: internal turn order position
-    /// </summary>
-    public Dictionary<string, int> turnOrder { get; }
-    public GameStartInformation(Map map, Dictionary<string, int> turnOrder)
+    public GameStartInformation(Map map)
     {
         this.map = map;
-        this.turnOrder = turnOrder;
     }
 }
 
 public static class RpcMethods
 {
     public static string OtherPlayerCancelledTrade = "OtherPlayerCancelledTrade";
+    public static string ActivateNormalPlayStep = "ActivateNormalPlayStep";
+    public static string ActivateSetupPlayStep = "ActivateSetupPlayStep";
+    public static string DeactivatePlayStep = "DeactivatePlayStep";
 }
 
 public class RpcCall
@@ -141,7 +139,6 @@ public class GameController : SFController, IGameController, Observer
     public List<Player> players;
     public Dictionary<Photon.Realtime.Player, Player> networkPlayersOwnPlayersMap;
     public Player mainPlayer;
-    public int currentPlayerAtTurnIndex = 0;
     public PayoutHandler payoutHandler;
 
     public EncounterCardHandler encounterCardHandler;
@@ -151,13 +148,14 @@ public class GameController : SFController, IGameController, Observer
     public int numPlayersUpdated = 0;
     public int numMapUpdated = 0;
     public List<RpcCall> recentRpcCalls = new List<RpcCall>();
-    public RemoteActionDispatcher dispatcher; 
+    public RemoteActionDispatcher dispatcher;
 
     /// <summary>
     /// Run GameController in testMode
     /// </summary>
     private bool testMode = false;
     private System.Action<RemoteActionCallbackData> dispatcherSomeoneFullfilledActionCallback;
+    private GlobalTurnManager globalTurnManager;
 
     void Start()
     {
@@ -173,11 +171,10 @@ public class GameController : SFController, IGameController, Observer
             MapGenerator generator = new DefaultMapGenerator();
             mapModel = generator.GenerateRandomMap();
 
-            var turnOrder = GenerateRandomTurnOrder();
-            var gameStartInformation = new GameStartInformation(mapModel, turnOrder);
-
+            var gameStartInformation = new GameStartInformation(mapModel);
+           
             var gameStartInformationAsBytes = SFFormatter.Serialize(gameStartInformation);
-            photonView.RPC("GameStartInformationGenerated", RpcTarget.All, gameStartInformationAsBytes);
+            photonView.RPC("GameStartInformationGenerated", RpcTarget.All, gameStartInformationAsBytes);   
         }
     }
 
@@ -186,29 +183,36 @@ public class GameController : SFController, IGameController, Observer
         RunRPC("RemoteClientChangedState", RpcTarget.Others, State.GetType().Name);
     }
 
+    public void SkipSetupPhase()
+    {
+        globalTurnManager.SkipSetupPhase();
+    }
+
+    Photon.Realtime.Player GetCurrentPlayerAtTurn()
+    {
+        return globalTurnManager.GetCurrentPlayerAtTurn();
+    }
+
+    public int GetCurrentPlayerAtTurnIndex()
+    {
+        return 0;
+        //var globalTurnManager = GameObject.Find("GlobalTurnManager");
+        //var globalTurnManagerScript = globalTurnManager.GetComponent<GlobalTurnManager>();
+        //return globalTurnManagerScript.GetCurrentPlayerAtTurnIndex();
+    }
+
+    public void ActivateAllInteraction(bool isActivated)
+    {
+        GetHUDScript().ActivateAllInteraction(isActivated);
+        GetMapScript().ActivateAllInteraction(isActivated);
+    }
+
     [PunRPC]
     void RemoteClientChangedState(string newStateName)
     {
         GetHUDScript().SetStateText(newStateName);
     }
 
-    Dictionary<string, int> GenerateRandomTurnOrder()
-    {
-        var turnOrder = new Dictionary<string, int>();
-        var numPlayers = PhotonNetwork.CurrentRoom.PlayerCount;
-        var order = new List<int>();
-        for (int i = 0; i < numPlayers; i++)
-        {
-            order.Add(i);
-        }
-        //order.Shuffle();
-
-        for (int i = 0; i < numPlayers; i++)
-        {
-            turnOrder[PhotonNetwork.CurrentRoom.Players.Values.ToList()[i].NickName] = order[i];
-        }
-        return turnOrder;
-    }
 
     [PunRPC]
     void GameStartInformationGenerated(byte[] gameStartInformationAsBytes)
@@ -225,12 +229,20 @@ public class GameController : SFController, IGameController, Observer
         this._state = new BuildAndTradeState(this);
 
         //every client sets up the players itself, no need to send that over wire from MasterClient
-        var dict = CreatePlayerMap(gameStartInformation.turnOrder);
+        var dict = CreatePlayerMap();
         networkPlayersOwnPlayersMap = dict;
         players = GetAllPlayersFromDict();
         mainPlayer = GetMainPlayerFromDict();
 
+        
+
         Init();
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            globalTurnManager = new GlobalTurnManager(this);
+            globalTurnManager.StartGameLoop();
+        }
     }
 
     /// <summary>
@@ -261,7 +273,43 @@ public class GameController : SFController, IGameController, Observer
         HUD.GetComponent<HUDScript>().Init();
         Map.GetComponent<MapScript>().Init();
         payoutHandler = new PayoutHandler(mapModel);
-        OnTurnChanged();
+    }
+
+    public void IFinishedMyTurn()
+    {
+        RunRPC("TurnCompletedByPlayer", RpcTarget.MasterClient, PhotonNetwork.LocalPlayer.ActorNumber);
+        
+    }
+
+    [PunRPC]
+    public void TurnCompletedByPlayer(int actornumber)
+    {
+        var player = PhotonNetwork.CurrentRoom.Players[actornumber];
+        globalTurnManager.TurnCompletedByPlayer(player);
+    }
+
+    [PunRPC]
+    void ActivateNormalPlayStep()
+    {
+        Debug.Log("Im requested to play a normal step");
+        ActivateAllInteraction(true);
+        PayoutLowPointsBonus(mainPlayer);
+        mainPlayer.OnTurnReceived();
+        SetState(new BuildAndTradeState(this));
+    }
+
+    [PunRPC]
+    public void ActivateSetupPlayStep()
+    {
+        Debug.Log("Im requested to play a setup step");
+        ActivateAllInteraction(true);
+        SetState(new InitialSetupState(this));
+    }
+
+    [PunRPC]
+    void DeactivatePlayStep()
+    {
+        ActivateAllInteraction(false);
     }
 
     public int OwnPlayerIndex()
@@ -499,9 +547,9 @@ public class GameController : SFController, IGameController, Observer
         }
     }
 
-    Dictionary<Photon.Realtime.Player, Player> CreatePlayerMap(Dictionary<string, int> turnOrder)
+    Dictionary<Photon.Realtime.Player, Player> CreatePlayerMap()
     {
-        var dict = MapPhotonPlayersToOwnPlayerModelDict(turnOrder);
+        var dict = MapPhotonPlayersToOwnPlayerModelDict();
         return dict;
     }    
 
@@ -515,17 +563,7 @@ public class GameController : SFController, IGameController, Observer
         return networkPlayersOwnPlayersMap.Values.ToList();
     }
 
-    public Player GetCurrentPlayerAtTurn()
-    {
-        return players.Find(p => p.TurnOrderPosition == currentPlayerAtTurnIndex);
-    }
-
-    public bool IsMyTurn()
-    {
-        return GetCurrentPlayerAtTurn().guid == mainPlayer.guid;
-    }
-
-    Dictionary<Photon.Realtime.Player, Player> MapPhotonPlayersToOwnPlayerModelDict(Dictionary<string, int> turnOrder)
+    Dictionary<Photon.Realtime.Player, Player> MapPhotonPlayersToOwnPlayerModelDict()
     {
         var dict = new Dictionary<Photon.Realtime.Player, Player>();
 
@@ -543,7 +581,6 @@ public class GameController : SFController, IGameController, Observer
             var networkPlayer = dictEntry.Value;
             var SFPlayer = new Player(colors[idx]);
             SFPlayer.name = networkPlayer.NickName;
-            SFPlayer.TurnOrderPosition = turnOrder[dictEntry.Value.NickName];
             dict.Add(networkPlayer, SFPlayer);
             idx++;
         }
@@ -577,41 +614,6 @@ public class GameController : SFController, IGameController, Observer
     {
         var strategy = new On7RollStrategy(this);
         strategy.Execute();
-    }
-
-    public void PassTurnToNextPlayer()
-    {
-        currentPlayerAtTurnIndex += 1;
-        if (currentPlayerAtTurnIndex == players.Count)
-        {
-            currentPlayerAtTurnIndex = 0;
-        }
-        RunRPC("CurrentPlayerAtTurnChanged", RpcTarget.All, currentPlayerAtTurnIndex);
-    }
-
-    void OnTurnChanged()
-    {
-        Debug.Log("currentPlayerAtTurnIndex" + currentPlayerAtTurnIndex);
-        Debug.Log("Current player: " + GetCurrentPlayerAtTurn().name);
-        Debug.Log("Is my turn: " + IsMyTurn());
-
-        if (IsMyTurn())
-        {
-            PayoutLowPointsBonus(mainPlayer);
-            mainPlayer.OnTurnReceived();
-            GetHUDScript().ActivateAllInteraction(true);
-            SetState(new BuildAndTradeState(this));
-        } else
-        {
-            GetHUDScript().ActivateAllInteraction(false);
-        }
-    }
-
-    [PunRPC]
-    void CurrentPlayerAtTurnChanged(int newPlayerAtTurnIndex)
-    {
-        currentPlayerAtTurnIndex = newPlayerAtTurnIndex;
-        OnTurnChanged();
     }
 
     public void PayoutLowPointsBonus(Player player)

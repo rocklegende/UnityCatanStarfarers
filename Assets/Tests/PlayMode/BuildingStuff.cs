@@ -20,7 +20,9 @@ namespace Tests
             this.testHelper = testHelper;
             yield return testHelper.StartSinglePlayerGame();
             gameController = testHelper.GetGameController();
+            gameController.SkipSetupPhase();
             gameController.SetUpDebugState(new ShipBuildingOneColonyShipAndOneSpacePort(gameController));
+            gameController.SetState(new BuildAndTradeState(gameController));
         }
 
         

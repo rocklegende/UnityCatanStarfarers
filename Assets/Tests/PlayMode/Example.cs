@@ -223,7 +223,19 @@ namespace Tests
             hudScript.OpenDiscardResourcePicker((hand) => { Assert.False(hudScript.resourcePicker.activeInHierarchy); });
             Assert.True(hudScript.resourcePicker.activeInHierarchy);
             yield return new WaitForSeconds(4);
+            //bypassing the protection here (button is actually disabled and not clickable),
+            //actually it should never happen that you are able to select a hand with no cards
             hudScript.resourcePicker.GetComponent<ResourcePicker>().selectButton.onClick.Invoke();
+        }
+
+        [UnityTest]
+        public IEnumerator IfMoreThan7CardsSelectingLessThanHalfOnDiscardIsNotAllowed()
+        {
+            var hudScript = gameController.GetHUDScript();
+            hudScript.OpenDiscardResourcePicker((hand) => { });
+            yield return new WaitForSeconds(5);
+            Assert.False(hudScript.resourcePicker.GetComponent<ResourcePicker>().selectButton.IsInteractable());
+            yield return null;
         }
 
         [UnityTest]
@@ -234,6 +246,8 @@ namespace Tests
             hudScript.OpenPlayerSelection(players, (hand) => { Assert.False(hudScript.multiSelectionView.activeInHierarchy); });
             Assert.True(hudScript.multiSelectionView.activeInHierarchy);
             yield return new WaitForSeconds(4);
+            //bypassing the protection here (button is actually disabled and not clickable),
+            //actually the player has to select the required num of players in that selection
             hudScript.multiSelectionView.GetComponent<MultiSelection>().selectButton.onClick.Invoke();
         }
 

@@ -12,6 +12,7 @@ namespace com.onebuckgames.UnityStarFarers
         public List<TileGroup> tileGroups;
         public List<Token> tokensOnMap;
         public List<SpacePoint> AllAvailableSpacePoints;
+        public List<SpacePoint> gamestartSettlingSpots;
 
         private Tile_[,] mapRepresentation;
         private int offset;

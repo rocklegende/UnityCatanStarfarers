@@ -154,8 +154,19 @@ public class DefaultMapGenerator : MapGenerator
         SetupSpaceColonies();
         spaceTileGroupsCopy.AddRange(baseTileGroupsCopy);
         map.tileGroups = spaceTileGroupsCopy;
+        map.gamestartSettlingSpots = GetGameStartSettlingSpots();
 
         return map;
+    }
+
+    List<SpacePoint> GetGameStartSettlingSpots()
+    {
+        var list = new List<SpacePoint>();
+        foreach( var group in baseTileGroupsCopy)
+        {
+            list.AddRange(group.GetSettlePoints());
+        }
+        return list;
     }
 
     void RotateRandomSpawnTileGroups() {

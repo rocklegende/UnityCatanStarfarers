@@ -55,7 +55,7 @@ public class FlyShipsState : GameState
 
     void SwitchToNextState()
     {
-        controller.PassTurnToNextPlayer();
+        controller.IFinishedMyTurn();
         controller.SetState(new CastNormalDiceState(controller));
         mapScript.CloseTokenSelection();
         mapScript.CloseSpacePointSelection();

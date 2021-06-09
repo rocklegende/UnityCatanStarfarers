@@ -56,16 +56,23 @@ public abstract class RemoteActionDispatcher
             throw new ArgumentException("No action is set, please set target players via SetAction method");
         }
 
+        
+
         if (action.isBlockingInteraction)
         {
             gameController.GetHUDScript().waitingForOtherPlayersPopup.SetActive(true);
-            gameController.GetHUDScript().ActivateAllInteraction(false);
-            gameController.GetMapScript().ActivateAllInteraction(false);
+            gameController.ActivateAllInteraction(false);
         }
 
         isWaitingForResponse = true;
         this.allResponsesReceivedCallback = allResponsesReceivedCallback;
         this.singleResponseReceivedCallback = singleResponseReceivedCallback;
+        if (targetPlayers.Count == 0)
+        {
+            playerRespondedDict = new Dictionary<string, RemoteActionCallbackData>();
+            OnAllResponsesReceived();
+            return;
+        }
         RequestTemplateMethod();
     }
 
@@ -106,10 +113,9 @@ public abstract class RemoteActionDispatcher
         if (action.isBlockingInteraction)
         {
             gameController.GetHUDScript().waitingForOtherPlayersPopup.SetActive(false);
-            gameController.GetMapScript().ActivateAllInteraction(true);
-            gameController.GetHUDScript().ActivateAllInteraction(true);
+            gameController.ActivateAllInteraction(true);
         }
-        allResponsesReceivedCallback(playerRespondedDict);
+        allResponsesReceivedCallback?.Invoke(playerRespondedDict);
         Reset();
     }
 

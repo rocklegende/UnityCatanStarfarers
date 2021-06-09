@@ -48,7 +48,7 @@ namespace Tests
                 });
 
             Assert.True(GameInteractionIsDeactivated());
-            yield return new WaitForSeconds(5);
+            yield return new WaitForSeconds(1);
             dispatcher.FakeResponseFromAllPlayers(true);            
         }
 
@@ -64,7 +64,7 @@ namespace Tests
                 });
 
             Assert.True(GameInteractionIsDeactivated());
-            yield return new WaitForSeconds(5);
+            yield return new WaitForSeconds(1);
             dispatcher.FakeResponseFromAllPlayers(true);
         }
 
@@ -98,8 +98,47 @@ namespace Tests
                 }, null);
 
             Assert.True(GameInteractionIsDeactivated());
-            yield return new WaitForSeconds(5);
+            yield return new WaitForSeconds(1);
             dispatcher.FakeResponseFromSinglePlayer("Joachim", true);
+        }
+
+        [UnityTest]
+        public IEnumerator IfITriggerSevenRollHandlingAndNoPlayerHasMoreThan7Cards()
+        {
+            //no one has more than 7 cards..
+            gameController.mainPlayer.hand = new Hand();
+            gameController.On7Rolled();
+            // we should be immediately able to get back to the game, since there is no one to pick and no one having more than 7 cards
+            yield return new WaitForSeconds(1);
+            Assert.True(GameInteractionIsActivated());
+        }
+
+        [UnityTest]
+        public IEnumerator RequestingActionWithEmptyTargetListImmediatelyReturns()
+        {
+            gameController.dispatcher = new DefaultRemoteActionDispatcher(gameController);
+            var targets = new List<Player>() { };
+            gameController.RequestActionFromPlayers(
+                new DiscardRemoteClientAction(gameController.mainPlayer),
+                targets,
+                null,
+                null
+            );
+            yield return new WaitForSeconds(3);
+            Assert.True(GameInteractionIsActivated());            
+        }
+
+        [UnityTest]
+        public IEnumerator OpeningPlayerSelectionWithoutAnyPlayersToSelectFromShouldReturnImmediately()
+        {
+            var didCallbackImmediately = false;
+            gameController.GetHUDScript().OpenPlayerSelection(
+                new List<Player>() { },
+                (selectedIndexes) => {
+                    didCallbackImmediately = true;
+                });
+            Assert.True(didCallbackImmediately);
+            yield return null;
         }
 
 

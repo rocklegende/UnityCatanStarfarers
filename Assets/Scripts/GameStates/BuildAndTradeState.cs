@@ -7,7 +7,7 @@ public class BuildAndTradeState : GameState
 {
     public BuildAndTradeState(GameController controller) : base(controller)
     {
-        hudScript.SetStateText("Build&Trade Player " + controller.currentPlayerAtTurnIndex);
+        //hudScript.SetStateText("Build&Trade Player " + controller.GetCurrentPlayerAtTurnIndex());
         hudScript.ShowSettleButton(false);
     }
 
