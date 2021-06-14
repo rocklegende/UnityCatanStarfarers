@@ -11,13 +11,13 @@ public class TileGroupRenderer : SFController, Observer
     public Dictionary<SpacePoint, List<GameObject>> TradeStationDocks { get { return _tradeStationDocks; } }
 
     private Map map { get { return globalGamecontroller.mapModel; } }
-    private Dictionary<SpacePoint, List<GameObject>> _tradeStationDocks;
+    private Dictionary<SpacePoint, List<GameObject>> _tradeStationDocks = new Dictionary<SpacePoint, List<GameObject>>();
     List<GameObject> dockButtons = new List<GameObject>();
 
     
     void Start()
     {
-        _tradeStationDocks = new Dictionary<SpacePoint, List<GameObject>>();
+        //_tradeStationDocks = new Dictionary<SpacePoint, List<GameObject>>();
         // get all the tilegroups from map and render them according to their state
         // attach this script somewhere inside the map, it will automatically update the tilegroups
     }
@@ -30,6 +30,10 @@ public class TileGroupRenderer : SFController, Observer
     public List<GameObject> CreateTradeStationDocks(TradeStation station, Transform transform)
     {
         List<GameObject> buttons = new List<GameObject>();
+        if (station == null)
+        {
+            throw new System.ArgumentException("station was null");
+        }
         var numDocks = station.GetCapacity();
         for (int i = 0; i < numDocks; i++)
         {

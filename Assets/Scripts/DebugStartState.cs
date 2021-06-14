@@ -43,7 +43,7 @@ public abstract class DebugStartState
     public void CommonSetup()
     {
         controller.players = GetGenericPlayers();
-        controller.mainPlayer = controller.players[0];
+        controller.mainPlayerGuid = controller.players[0].guid;
 
         controller.HUD.GetComponent<HUDScript>().OnPlayerDataChanged();
 
@@ -320,7 +320,7 @@ public class PlayerHasRichHelpPoorBonusDebugState : DebugStartState
         controller.State = new BuildAndTradeState(controller);
 
         controller.players = new List<Player>() { new Player(new SFColor(Color.green)), new Player(new SFColor(Color.yellow)), new Player(new SFColor(Color.blue)), new Player(new SFColor(Color.red)), };
-        controller.mainPlayer = controller.players[0];
+        controller.mainPlayerGuid = controller.players[0].guid;
         controller.HUD.GetComponent<HUDScript>().OnPlayerDataChanged();
 
         foreach (var player in controller.players)

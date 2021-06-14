@@ -52,7 +52,7 @@ namespace Tests
             yield return new WaitForSeconds(5);
             //force select the current resource picker collection
             hudScript.resourcePicker.GetComponent<ResourcePicker>().OnSelectButtonClick();
-            Assert.True(gameController.recentPhotonResponsePlayer.NickName == gameController.SFPlayerToPhotonPlayer(actionRequiredFromPlayer).NickName);
+            Assert.True(gameController.recentPhotonResponsePlayer.NickName == gameController.gameClient.SFPlayerToPhotonPlayer(actionRequiredFromPlayer).NickName);
 
             yield return null;
         }

@@ -146,7 +146,7 @@ public class DefaultRemoteActionDispatcher : RemoteActionDispatcher {
             Debug.Log("playersRespondedDict #2: " + playerRespondedDict.ToList().Count);
             gameController.RunRPC(
                 "RemoteClientRequiresAction",
-                gameController.SFPlayerToPhotonPlayer(player),
+                gameController.gameClient.SFPlayerToPhotonPlayer(player),
                 ResponseReceivedFromPlayer,
                 SFFormatter.Serialize(action)
             );

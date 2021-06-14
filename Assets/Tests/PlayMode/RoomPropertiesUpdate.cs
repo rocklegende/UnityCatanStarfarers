@@ -36,15 +36,15 @@ namespace Tests
             Map newMap
         )
         {
-            var propertiesThatChanged = new Dictionary<object, object>();
-            var mapAsBytes = SFFormatter.Serialize(newMap);
-            var playersAsBytes = SFFormatter.Serialize(newPlayerData);
+            //var propertiesThatChanged = new Dictionary<object, object>();
+            //var mapAsBytes = SFFormatter.Serialize(newMap);
+            //var playersAsBytes = SFFormatter.Serialize(newPlayerData);
 
-            propertiesThatChanged.Add(PlayerWhoMadeLastChangeKey, PlayerWhoMadeLastChange);
-            propertiesThatChanged.Add(MapKey, mapAsBytes);
-            propertiesThatChanged.Add(PlayersKey, playersAsBytes);
+            //propertiesThatChanged.Add(PlayerWhoMadeLastChangeKey, PlayerWhoMadeLastChange);
+            //propertiesThatChanged.Add(MapKey, mapAsBytes);
+            //propertiesThatChanged.Add(PlayersKey, playersAsBytes);
 
-            gameController.OnRoomPropertiesUpdateFromOwnDict(propertiesThatChanged);
+            //gameController.OnRoomPropertiesUpdateFromOwnDict(propertiesThatChanged);
         }
 
         [UnityTest]

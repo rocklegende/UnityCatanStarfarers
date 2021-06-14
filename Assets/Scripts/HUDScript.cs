@@ -88,13 +88,13 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
         tradeOfferView.SetActive(false);
         waitingForOtherPlayersPopup.SetActive(false);
         CloseSelection();
-        CreateBuildDropDowns();
 
     }
 
     public void Init()
     {
         CreateSmallPlayerViews();
+        CreateBuildDropDowns();
         Draw();
         tradePanel.GetComponent<TradePanelScript>().Init(player);
     }
@@ -290,8 +290,10 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
 
     public void CreateSmallPlayerViews()
     {
-        var playersOtherThanMain = players.Where(p => p != player);
-
+        Debug.Log("Players 0" + player.IsNull());
+        Debug.Log("Contains main player" + players.Contains(player));
+        var playersOtherThanMain = players.Where(p => p.guid != player.guid);
+        Debug.Log("Players 1" + playersOtherThanMain.IsNull());
         foreach (var notMainPlayer in playersOtherThanMain)
         {
             

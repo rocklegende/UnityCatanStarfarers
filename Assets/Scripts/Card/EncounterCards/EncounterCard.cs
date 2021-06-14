@@ -812,9 +812,9 @@ public class HasMoreBoostersThanNeighborAction : EncounterCardAction
 
     public override void Execute()
     {
-        var opponentPlayerIndex = EncounterCardHelper.GetOpponentPlayerIndex(opponent, gameController.GetCurrentPlayerAtTurnIndex(), gameController.players.Count);
-        var opponentPlayer = gameController.players[opponentPlayerIndex];
-        ResultFound(HasEqualOrMoreBoosters(gameController.mainPlayer, opponentPlayer));
+        //var opponentPlayerIndex = EncounterCardHelper.GetOpponentPlayerIndex(opponent, gameController.GetCurrentPlayerAtTurnIndex(), gameController.players.Count);
+        //var opponentPlayer = gameController.players[opponentPlayerIndex];
+        //ResultFound(HasEqualOrMoreBoosters(gameController.mainPlayer, opponentPlayer));
     }
 
     bool HasEqualOrMoreBoosters(Player origin, Player playerToCompareTo)

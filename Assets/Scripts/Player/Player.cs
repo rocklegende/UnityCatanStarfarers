@@ -525,6 +525,11 @@ public Player SimpleClone()
     public int GetVictoryPointsFromTokens()
     {
         int sum = 0;
+        if (tokens == null)
+        {
+            return sum;
+        }
+            
         foreach (Token tok in tokens)
         {
             sum += tok.GetVictoryPoints();

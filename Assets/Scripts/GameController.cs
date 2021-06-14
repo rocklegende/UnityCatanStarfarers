@@ -136,9 +136,22 @@ public class GameController : SFController, IGameController, Observer
         set { _state = value; OnStateChanged(); }
     }
 
+    public SFGameClient_ gameClient;
+    public string mainPlayerGuid;
+    public GameObject photonServiceObj;
     public List<Player> players;
-    public Dictionary<Photon.Realtime.Player, Player> networkPlayersOwnPlayersMap;
-    public Player mainPlayer;
+
+    public Player mainPlayer {
+        get
+        {
+            if (mainPlayerGuid != null && players != null)
+            {
+
+                return players.Find(p => p.name == mainPlayerGuid);
+            }
+            return null;
+        }
+    }
     public PayoutHandler payoutHandler;
 
     public EncounterCardHandler encounterCardHandler;
@@ -149,33 +162,93 @@ public class GameController : SFController, IGameController, Observer
     public int numMapUpdated = 0;
     public List<RpcCall> recentRpcCalls = new List<RpcCall>();
     public RemoteActionDispatcher dispatcher;
+    public string stateText;
+    private SFGameStateInfo currentGameStateInfo;
 
     /// <summary>
     /// Run GameController in testMode
     /// </summary>
     private bool testMode = false;
     private System.Action<RemoteActionCallbackData> dispatcherSomeoneFullfilledActionCallback;
-    private GlobalTurnManager globalTurnManager;
+
+    void Awake()
+    {
+        var photonService = photonServiceObj.GetComponent<PhotonService>(); 
+        gameClient = new SFGameClient_();
+        gameClient.photonService = photonService;
+        photonService.sfGameClient = gameClient;
+        gameClient.gameController = this;
+        gameClient.Start();
+    }
+
+    void Update()
+    {
+        
+    }
+
+    void SaveGameState()
+    {
+        //We made changes to the game state, upload them so others get it
+        var currentState = GetCurrentState();
+        gameClient.SaveGameStateToProps(currentState);
+    }
+
+    SFGameStateInfo GetCurrentState()
+    {
+        var info = new SFGameStateInfo();
+        info.players = players;
+        info.mapmodel = mapModel;
+        info.state = stateText;
+        info.turnNumber = currentGameStateInfo.turnNumber;
+        info.playerToActTurnOrderPosition = currentGameStateInfo.playerToActTurnOrderPosition;
+        return info;
+    }
+
+    public bool IsMyTurn
+    {
+        get
+        {
+            if (currentGameStateInfo == null)
+            {
+                return false;
+            }
+            //Debug.Log(PlayerIdToMakeThisTurn + "'s turn. You are: " + this.LocalPlayer.ID);
+            return this.currentGameStateInfo.playerToActTurnOrderPosition == mainPlayer.TurnOrderPosition;
+        }
+    }
+
+    public void OnGameStateChangedRemotely(SFGameStateInfo newGameState) //interface method that will be called from the SFGameClient
+    {
+        // others changed the state, update our ui
+        LoadGameState(newGameState);
+    }
+
+    public void Initialize(SFGameStateInfo info, string mainPlayerGuid)
+    {
+        players = info.players;
+        mapModel = info.mapmodel;
+        this.mainPlayerGuid = mainPlayerGuid;
+        mapModel.RegisterObserver(this);
+        foreach (var group in mapModel.tileGroups)
+        {
+            group.RegisterObserver(mapModel);
+        }
+        this._state = new BuildAndTradeState(this);
+        Debug.Log("Initializing GameController");
+        foreach (var player in players)
+        {
+            Debug.Log(player.guid);
+        }
+        Debug.Log("main player guid" + mainPlayerGuid);
+        Init(info);
+        encounterCardHandler.encounterCardStack = new DefaultEncounterCardStack(this);
+        dispatcher = new DefaultRemoteActionDispatcher(this);
+    }
 
     void Start()
     {
-        encounterCardHandler.encounterCardStack = new DefaultEncounterCardStack(this);
-        dispatcher = new DefaultRemoteActionDispatcher(this);
+        
 
-        if (PhotonNetwork.IsMasterClient)
-        {
-            PhotonView photonView = PhotonView.Get(this);
-
-            //MasterClient generates map and sends it to all clients, so we dont create different maps
-            //MasterClient also determines the order of the players and sends this information to all players
-            MapGenerator generator = new DefaultMapGenerator();
-            mapModel = generator.GenerateRandomMap();
-
-            var gameStartInformation = new GameStartInformation(mapModel);
-           
-            var gameStartInformationAsBytes = SFFormatter.Serialize(gameStartInformation);
-            photonView.RPC("GameStartInformationGenerated", RpcTarget.All, gameStartInformationAsBytes);   
-        }
     }
 
     void OnStateChanged()
@@ -183,23 +256,7 @@ public class GameController : SFController, IGameController, Observer
         RunRPC("RemoteClientChangedState", RpcTarget.Others, State.GetType().Name);
     }
 
-    public void SkipSetupPhase()
-    {
-        globalTurnManager.SkipSetupPhase();
-    }
-
-    Photon.Realtime.Player GetCurrentPlayerAtTurn()
-    {
-        return globalTurnManager.GetCurrentPlayerAtTurn();
-    }
-
-    public int GetCurrentPlayerAtTurnIndex()
-    {
-        return 0;
-        //var globalTurnManager = GameObject.Find("GlobalTurnManager");
-        //var globalTurnManagerScript = globalTurnManager.GetComponent<GlobalTurnManager>();
-        //return globalTurnManagerScript.GetCurrentPlayerAtTurnIndex();
-    }
+    
 
     public void ActivateAllInteraction(bool isActivated)
     {
@@ -214,36 +271,27 @@ public class GameController : SFController, IGameController, Observer
     }
 
 
-    [PunRPC]
-    void GameStartInformationGenerated(byte[] gameStartInformationAsBytes)
-    {
-        var gameStartInformation = (GameStartInformation)SFFormatter.Deserialize(gameStartInformationAsBytes);
+    //[PunRPC]
+    //void GameStartInformationGenerated(byte[] gameStartInformationAsBytes)
+    //{
+    //    var gameStartInformation = (GameStartInformation)SFFormatter.Deserialize(gameStartInformationAsBytes);
 
-        //setup the observers, because after serialization we always lose the observers
-        mapModel = gameStartInformation.map;
-        mapModel.RegisterObserver(this);
-        foreach(var group in mapModel.tileGroups)
-        {
-            group.RegisterObserver(mapModel);
-        }
-        this._state = new BuildAndTradeState(this);
+    //    //setup the observers, because after serialization we always lose the observers
+    //    mapModel = gameStartInformation.map;
+    //    mapModel.RegisterObserver(this);
+    //    foreach(var group in mapModel.tileGroups)
+    //    {
+    //        group.RegisterObserver(mapModel);
+    //    }
+    //    this._state = new BuildAndTradeState(this);
+    //    Init();
 
-        //every client sets up the players itself, no need to send that over wire from MasterClient
-        var dict = CreatePlayerMap();
-        networkPlayersOwnPlayersMap = dict;
-        players = GetAllPlayersFromDict();
-        mainPlayer = GetMainPlayerFromDict();
-
-        
-
-        Init();
-
-        if (PhotonNetwork.IsMasterClient)
-        {
-            globalTurnManager = new GlobalTurnManager(this);
-            globalTurnManager.StartGameLoop();
-        }
-    }
+    //    if (PhotonNetwork.IsMasterClient)
+    //    {
+    //        globalTurnManager = new GlobalTurnManager(this);
+    //        globalTurnManager.StartGameLoop();
+    //    }
+    //}
 
     /// <summary>
     /// Initialize the gamecontroller without Photon. Useful for test purposes.
@@ -261,31 +309,24 @@ public class GameController : SFController, IGameController, Observer
         this._state = new BuildAndTradeState(this);
 
         this.players = players;
-        this.mainPlayer = mainPlayer;
+        this.mainPlayerGuid = mainPlayer.guid;
 
-        Init();
+        Init(new SFGameStateInfo());
     }
 
-    public void Init()
+    public void Init(SFGameStateInfo gameStateInfo)
     {
         //InitialPlayerSetup();
         ObservePlayers(players);
         HUD.GetComponent<HUDScript>().Init();
         Map.GetComponent<MapScript>().Init();
         payoutHandler = new PayoutHandler(mapModel);
+        LoadGameState(gameStateInfo);
     }
 
     public void IFinishedMyTurn()
     {
-        RunRPC("TurnCompletedByPlayer", RpcTarget.MasterClient, PhotonNetwork.LocalPlayer.ActorNumber);
-        
-    }
-
-    [PunRPC]
-    public void TurnCompletedByPlayer(int actornumber)
-    {
-        var player = PhotonNetwork.CurrentRoom.Players[actornumber];
-        globalTurnManager.TurnCompletedByPlayer(player);
+        gameClient.HandoverTurnToNextPlayer();        
     }
 
     [PunRPC]
@@ -438,7 +479,7 @@ public class GameController : SFController, IGameController, Observer
     void SendResponseBackToCallerOfRemoteClientAction(RemoteClientAction remoteAction, RemoteActionCallbackData data)
     {
         var sfTargetPlayer = remoteAction.sendFromPlayer;
-        var photonTargetPlayer = SFPlayerToPhotonPlayer(sfTargetPlayer);
+        var photonTargetPlayer = gameClient.SFPlayerToPhotonPlayer(sfTargetPlayer);
         recentPhotonResponsePlayer = photonTargetPlayer;
         Debug.Log("Sending response to player: " + photonTargetPlayer.NickName);
         RunRPC("RemoteClientFulfilledAction", photonTargetPlayer, SFFormatter.Serialize(data));
@@ -453,22 +494,7 @@ public class GameController : SFController, IGameController, Observer
         GetHUDScript().tradeOfferView.SetActive(false);
     }
 
-    public Player PhotonPlayerToSFPlayer(Photon.Realtime.Player photonPlayer)
-    {
-        return networkPlayersOwnPlayersMap[photonPlayer];
-    }
-
-    public Photon.Realtime.Player SFPlayerToPhotonPlayer(Player sfPlayer)
-    {
-        foreach(var entry in networkPlayersOwnPlayersMap)
-        {
-            if (entry.Value.name == sfPlayer.name)
-            {
-                return entry.Key;
-            }
-        }
-        return null;
-    }
+    
 
     [PunRPC]
     void RemoteClientFulfilledAction(byte[] data)
@@ -546,47 +572,11 @@ public class GameController : SFController, IGameController, Observer
             );
         }
     }
+  
 
-    Dictionary<Photon.Realtime.Player, Player> CreatePlayerMap()
-    {
-        var dict = MapPhotonPlayersToOwnPlayerModelDict();
-        return dict;
-    }    
+    
 
-    Player GetMainPlayerFromDict()
-    {
-        return networkPlayersOwnPlayersMap[PhotonNetwork.LocalPlayer];
-    }
-
-    List<Player> GetAllPlayersFromDict()
-    {
-        return networkPlayersOwnPlayersMap.Values.ToList();
-    }
-
-    Dictionary<Photon.Realtime.Player, Player> MapPhotonPlayersToOwnPlayerModelDict()
-    {
-        var dict = new Dictionary<Photon.Realtime.Player, Player>();
-
-        var colors = new SFColor[]
-        {
-            new SFColor(Color.white),
-            new SFColor(Color.green),
-            new SFColor(Color.blue),
-            new SFColor(Color.grey),
-        };
-
-        int idx = 0;
-        foreach(var dictEntry in PhotonNetwork.CurrentRoom.Players)
-        {
-            var networkPlayer = dictEntry.Value;
-            var SFPlayer = new Player(colors[idx]);
-            SFPlayer.name = networkPlayer.NickName;
-            dict.Add(networkPlayer, SFPlayer);
-            idx++;
-        }
-
-        return dict;
-    }
+    
 
     void ObservePlayers(List<Player> playersList)
     {
@@ -595,10 +585,6 @@ public class GameController : SFController, IGameController, Observer
             p.RegisterObserver(this);
         }
     }
-
-    
-
-    
 
     public void SetUpDebugState(DebugStartState state)
     {
@@ -618,8 +604,9 @@ public class GameController : SFController, IGameController, Observer
 
     public void PayoutLowPointsBonus(Player player)
     {
-        var cards = drawPileHandler.availablePiles.DrawCardsFromHiddenDrawPile(2);
-        player.AddHand(Hand.FromResourceCards(cards));
+        //TODO:
+        //var cards = drawPileHandler.availablePiles.DrawCardsFromHiddenDrawPile(2);
+        //player.AddHand(Hand.FromResourceCards(cards));
         
     }
 
@@ -686,54 +673,79 @@ public class GameController : SFController, IGameController, Observer
         photonView.RPC(methodName, remotePlayer, parameters);
     }
 
-    public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
+    public void LoadGameState(SFGameStateInfo info)
     {
-        var hashtable = (Dictionary<object, object>)propertiesThatChanged;
-        Debug.Log("Room properties changed!");
-        OnRoomPropertiesUpdateFromOwnDict(hashtable);
-    }
-
-    //extracted for easier testability
-    public void OnRoomPropertiesUpdateFromOwnDict(Dictionary<object, object> propertiesThatChanged)
-    {
-        Debug.Log("Player id who made last change: " + (string)propertiesThatChanged["playerIdWhoMadeLastChange"]);
-        Debug.Log("Own player id = " + mainPlayer.guid);
-        var weMadeLastChange = (string)propertiesThatChanged["playerIdWhoMadeLastChange"] == mainPlayer.guid;
-        if (weMadeLastChange)
-        {
-            Debug.Log("We made last change to the room properties, we probably adjusted the state locally immediately, therefore not reacting to change here");
-            return;
-        }
-        var newPlayersAsBytes = (byte[])propertiesThatChanged["players"];
-        var newPlayers = (List<Player>)SFFormatter.Deserialize(newPlayersAsBytes);
-
-        var newMapAsBytes = (byte[])propertiesThatChanged["map"];
-        var newMap = (Map)SFFormatter.Deserialize(newMapAsBytes);
+        currentGameStateInfo = info;
+        var newPlayers = info.players;
+        var newMap = info.mapmodel;
 
         //fix cross references
         //tokensOnMap, token owner and player.tokens need to be same instances again
-        foreach (var player in newPlayers)
+        //foreach (var player in newPlayers)
+        //{
+        //    player.tokens = new List<Token>();
+        //    foreach (var token in newMap.tokensOnMap)
+        //    {
+        //        if (token.owner.guid == player.guid)
+        //        {
+        //            player.AddToken(token);
+        //        }
+        //    }
+        //    Debug.Log("Playername: " + player.name + "; VP: " + player.GetVictoryPoints());
+        //}
+
+        if (info.turnType != null)
         {
-            player.tokens = new List<Token>();
-            foreach (var token in newMap.tokensOnMap)
+            if (IsMyTurn)
             {
-                if (token.owner.guid == player.guid)
+                Debug.Log("Its my turn!");
+                Debug.Log(this.currentGameStateInfo.playerToActTurnOrderPosition);
+                Debug.Log(mainPlayer.TurnOrderPosition);
+                Debug.Log(mainPlayer.name);
+
+                var turnType = (TurnType)info.turnType;
+                if (turnType == TurnType.NORMAL)
                 {
-                    player.AddToken(token);
+                    ActivateNormalPlayStep();
                 }
+                if (turnType == TurnType.SETUP)
+                {
+                    ActivateSetupPlayStep();
+                }
+            } else
+            {
+                ActivateAllInteraction(false);
             }
-            Debug.Log("Playername: " + player.name + "; VP: " + player.GetVictoryPoints());
+        }
+        if (info.players != null && info.mapmodel != null)
+        {
+            UpdatePlayers(newPlayers);
+            UpdateMap(newMap);
+
+            //we need to update at the very end because the hud updates some
+            //functionality based on the current map and therefore updates faulty if we change the map afterwards
+            GetHUDScript().OnPlayerDataChanged();
+            GetMapScript().OnMapDataChanged();
+
         }
 
-        UpdatePlayers(newPlayers);
-        UpdateMap(newMap);
-
-        //we need to update at the very end because the hud updates some
-        //functionality based on the current map and therefore updates faulty if we change the map afterwards
-        GetHUDScript().OnPlayerDataChanged();
-        GetMapScript().OnMapDataChanged();
-
         _state.OnGameDataChanged();
+    }
+
+    void UpdatePlayers(List<Player> newPlayerData)
+    {
+        numPlayersUpdated += 1;
+        foreach (var newData in newPlayerData)
+        {
+            var player = players.Find(p => p.guid == newData.guid);
+            if (player != null)
+            {
+                player.UpdateData(newData);
+            }
+        }
+
+        //we lose the observers by serializing the players, therefore we need to observe them again after the update
+        //TODO: ObservePlayers(newPlayerData);
     }
 
     void UpdateMap(Map newMap)
@@ -744,25 +756,13 @@ public class GameController : SFController, IGameController, Observer
         mapModel.ReObserveTokens();
     }
 
-    void UpdatePlayers(List<Player> newPlayerData)
+    public int GetCurrentPlayerAtTurnIndex()
     {
-        numPlayersUpdated += 1;
-        foreach (var newData in newPlayerData)
-        {
-            foreach (var key in networkPlayersOwnPlayersMap.Keys.ToList())
-            {
-                if (key.NickName == newData.name)
-                {
-                    networkPlayersOwnPlayersMap[key].UpdateData(newData);
-                }
-            }
-        }
-        players = GetAllPlayersFromDict();
-        mainPlayer = GetMainPlayerFromDict();
-
-        //we lose the observers by serializing the players, therefore we need to observe them again after the update
-        ObservePlayers(newPlayerData);
+        return 0;
     }
+
+
+
 
     public override void OnNotification(string p_event_path, Object p_target, params object[] p_data)
     {
@@ -831,12 +831,12 @@ public class GameController : SFController, IGameController, Observer
 
         if (subject is Map)
         {
-            GetMapScript().OnMapDataChanged();
+            //GetMapScript().OnMapDataChanged();
         }
 
         if (subject is Player)
         {
-            GetHUDScript().OnPlayerDataChanged();
+            //GetHUDScript().OnPlayerDataChanged();
         }
 
         // if we receive multiple updates in a short time (100ms), only react on the last one
@@ -858,12 +858,8 @@ public class GameController : SFController, IGameController, Observer
     {
         yield return new WaitForSeconds(0.1F);
         Debug.Log("Updateing GameController!");
-        
-        var hashtable = new ExitGames.Client.Photon.Hashtable();
-        hashtable.Add("players", SFFormatter.Serialize(players));
-        hashtable.Add("map", SFFormatter.Serialize(mapModel));
-        hashtable.Add("playerIdWhoMadeLastChange", mainPlayer.guid);
-        PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable);
+
+        SaveGameState();
         yield return null;
     }
 }
