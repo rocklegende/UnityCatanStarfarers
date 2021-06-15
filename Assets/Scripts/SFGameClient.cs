@@ -201,18 +201,18 @@ public class SFGameClient_ : LoadBalancingClient
         {
             UpdatePlayers(newGameStateInfo.players);
             //FixCrossReferences
-            foreach (var player in newGameStateInfo.players)
-            {
-                player.tokens = new List<Token>();
-                foreach (var token in newGameStateInfo.mapmodel.tokensOnMap)
-                {
-                    if (token.owner.guid == player.guid)
-                    {
-                        player.AddToken(token);
-                    }
-                }
-                Debug.Log("Playername: " + player.name + "; VP: " + player.GetVictoryPoints());
-            }
+            //foreach (var player in newGameStateInfo.players)
+            //{
+            //    player.tokens = new List<Token>();
+            //    foreach (var token in newGameStateInfo.mapmodel.tokensOnMap)
+            //    {
+            //        if (token.owner.guid == player.guid)
+            //        {
+            //            player.AddToken(token);
+            //        }
+            //    }
+            //    Debug.Log("Playername: " + player.name + "; VP: " + player.GetVictoryPoints());
+            //}
             if (!gameControllerIsInitialized)
             {
                 gameControllerIsInitialized = true;

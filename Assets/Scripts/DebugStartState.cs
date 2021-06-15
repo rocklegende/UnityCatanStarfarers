@@ -42,21 +42,25 @@ public abstract class DebugStartState
 
     public void CommonSetup()
     {
-        controller.players = GetGenericPlayers();
-        controller.mainPlayerGuid = controller.players[0].guid;
+        MapGenerator generator = new DefaultMapGenerator();
+
+        var gameStateInfo = new SFGameStateInfo();
+        gameStateInfo.players = GetGenericPlayers();
+        gameStateInfo.mapmodel = generator.GenerateRandomMap();
+        controller.mainPlayerGuid = controller.players[0].name;
+        controller.LoadGameState(gameStateInfo);
 
         controller.HUD.GetComponent<HUDScript>().OnPlayerDataChanged();
 
-        CommonMapSetup();
+        
+
+        controller.payoutHandler = new PayoutHandler(controller.mapModel);
+        GiveResourcesOfAllTypesToPlayer(controller.mainPlayer, 5);
     }
 
     void CommonMapSetup()
     {
-        MapGenerator generator = new DefaultMapGenerator();
-        controller.mapModel = generator.GenerateRandomMap();
-
-        controller.payoutHandler = new PayoutHandler(controller.mapModel);
-        GiveResourcesOfAllTypesToPlayer(controller.mainPlayer, 5);
+        
     }
 
     public abstract void Setup();
@@ -319,8 +323,8 @@ public class PlayerHasRichHelpPoorBonusDebugState : DebugStartState
     {
         controller.State = new BuildAndTradeState(controller);
 
-        controller.players = new List<Player>() { new Player(new SFColor(Color.green)), new Player(new SFColor(Color.yellow)), new Player(new SFColor(Color.blue)), new Player(new SFColor(Color.red)), };
-        controller.mainPlayerGuid = controller.players[0].guid;
+        //controller.players = new List<Player>() { new Player(new SFColor(Color.green)), new Player(new SFColor(Color.yellow)), new Player(new SFColor(Color.blue)), new Player(new SFColor(Color.red)), };
+        controller.mainPlayerGuid = controller.players[0].name;
         controller.HUD.GetComponent<HUDScript>().OnPlayerDataChanged();
 
         foreach (var player in controller.players)

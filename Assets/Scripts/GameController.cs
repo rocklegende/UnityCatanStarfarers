@@ -128,7 +128,17 @@ public class GameController : SFController, IGameController, Observer
 {
     public GameObject HUD;
     public GameObject Map;
-    public Map mapModel;
+    public Map mapModel
+    {
+        get
+        {
+            if (currentGameStateInfo == null)
+            {
+                return null;
+            }
+            return currentGameStateInfo.mapmodel;
+        }
+    }
 
     private GameState _state;
     public GameState State {
@@ -139,7 +149,17 @@ public class GameController : SFController, IGameController, Observer
     public SFGameClient_ gameClient;
     public string mainPlayerGuid;
     public GameObject photonServiceObj;
-    public List<Player> players;
+    public List<Player> players
+    {
+        get 
+        {
+            if (currentGameStateInfo == null)
+            {
+                return null;
+            }
+            return currentGameStateInfo.players;
+        }
+    }
 
     public Player mainPlayer {
         get
@@ -164,6 +184,7 @@ public class GameController : SFController, IGameController, Observer
     public RemoteActionDispatcher dispatcher;
     public string stateText;
     private SFGameStateInfo currentGameStateInfo;
+    private bool turnWasReceived = false;
 
     /// <summary>
     /// Run GameController in testMode
@@ -189,20 +210,20 @@ public class GameController : SFController, IGameController, Observer
     void SaveGameState()
     {
         //We made changes to the game state, upload them so others get it
-        var currentState = GetCurrentState();
-        gameClient.SaveGameStateToProps(currentState);
+        //var currentState = GetCurrentState();
+        gameClient.SaveGameStateToProps(currentGameStateInfo);
     }
 
-    SFGameStateInfo GetCurrentState()
-    {
-        var info = new SFGameStateInfo();
-        info.players = players;
-        info.mapmodel = mapModel;
-        info.state = stateText;
-        info.turnNumber = currentGameStateInfo.turnNumber;
-        info.playerToActTurnOrderPosition = currentGameStateInfo.playerToActTurnOrderPosition;
-        return info;
-    }
+    //SFGameStateInfo GetCurrentState()
+    //{
+    //    //var info = new SFGameStateInfo();
+    //    //info.players = players;
+    //    //info.mapmodel = mapModel;
+    //    //info.state = stateText;
+    //    //info.turnNumber = currentGameStateInfo.turnNumber;
+    //    //info.playerToActTurnOrderPosition = currentGameStateInfo.playerToActTurnOrderPosition;
+    //    //return info;
+    //}
 
     public bool IsMyTurn
     {
@@ -220,13 +241,13 @@ public class GameController : SFController, IGameController, Observer
     public void OnGameStateChangedRemotely(SFGameStateInfo newGameState) //interface method that will be called from the SFGameClient
     {
         // others changed the state, update our ui
+        Debug.Log("OnGameStateChangedRemotely");
         LoadGameState(newGameState);
     }
 
     public void Initialize(SFGameStateInfo info, string mainPlayerGuid)
     {
-        players = info.players;
-        mapModel = info.mapmodel;
+        currentGameStateInfo = info;
         this.mainPlayerGuid = mainPlayerGuid;
         mapModel.RegisterObserver(this);
         foreach (var group in mapModel.tileGroups)
@@ -304,12 +325,12 @@ public class GameController : SFController, IGameController, Observer
         PhotonNetwork.OfflineMode = true;
         testMode = true;
 
-        mapModel = map;
-        mapModel.RegisterObserver(this);
-        this._state = new BuildAndTradeState(this);
+        //mapModel = map;
+        //mapModel.RegisterObserver(this);
+        //this._state = new BuildAndTradeState(this);
 
-        this.players = players;
-        this.mainPlayerGuid = mainPlayer.guid;
+        //this.players = players;
+        //this.mainPlayerGuid = mainPlayer.guid;
 
         Init(new SFGameStateInfo());
     }
@@ -318,20 +339,25 @@ public class GameController : SFController, IGameController, Observer
     {
         //InitialPlayerSetup();
         ObservePlayers(players);
+        var observersOfMainPlayer = mainPlayer.GetObservers();
         HUD.GetComponent<HUDScript>().Init();
         Map.GetComponent<MapScript>().Init();
         payoutHandler = new PayoutHandler(mapModel);
+        observersOfMainPlayer = mainPlayer.GetObservers();
         LoadGameState(gameStateInfo);
+        observersOfMainPlayer = mainPlayer.GetObservers();
     }
 
     public void IFinishedMyTurn()
     {
+        turnWasReceived = false;
         gameClient.HandoverTurnToNextPlayer();        
     }
 
     [PunRPC]
     void ActivateNormalPlayStep()
     {
+        
         Debug.Log("Im requested to play a normal step");
         ActivateAllInteraction(true);
         PayoutLowPointsBonus(mainPlayer);
@@ -376,9 +402,8 @@ public class GameController : SFController, IGameController, Observer
 
     public void OpenTokenSelectionForMainPlayer()
     {
-        //GetHUDScript().Draw();
-        //GetMapScript().OnMapDataChanged();
-        On7Rolled();
+        GetHUDScript().OnPlayerDataChanged();
+        GetMapScript().OnMapDataChanged();
     }
 
     public void RequestActionFromPlayers(
@@ -507,6 +532,7 @@ public class GameController : SFController, IGameController, Observer
 
     void InitialPlayerSetup()
     {
+        ObservePlayers(players);
         var playersWithFullUpgrades = new List<Player>() { mainPlayer };
         foreach (var player in playersWithFullUpgrades)
         {
@@ -676,23 +702,24 @@ public class GameController : SFController, IGameController, Observer
     public void LoadGameState(SFGameStateInfo info)
     {
         currentGameStateInfo = info;
+        
         var newPlayers = info.players;
         var newMap = info.mapmodel;
 
         //fix cross references
         //tokensOnMap, token owner and player.tokens need to be same instances again
-        //foreach (var player in newPlayers)
-        //{
-        //    player.tokens = new List<Token>();
-        //    foreach (var token in newMap.tokensOnMap)
-        //    {
-        //        if (token.owner.guid == player.guid)
-        //        {
-        //            player.AddToken(token);
-        //        }
-        //    }
-        //    Debug.Log("Playername: " + player.name + "; VP: " + player.GetVictoryPoints());
-        //}
+        foreach (var player in newPlayers)
+        {
+            player.tokens = new List<Token>();
+            foreach (var token in newMap.tokensOnMap)
+            {
+                if (token.owner.guid == player.guid)
+                {
+                    player.AddToken(token);
+                }
+            }
+            Debug.Log("Playername: " + player.name + "; VP: " + player.GetVictoryPoints());
+        }
 
         if (info.turnType != null)
         {
@@ -702,15 +729,18 @@ public class GameController : SFController, IGameController, Observer
                 Debug.Log(this.currentGameStateInfo.playerToActTurnOrderPosition);
                 Debug.Log(mainPlayer.TurnOrderPosition);
                 Debug.Log(mainPlayer.name);
-
-                var turnType = (TurnType)info.turnType;
-                if (turnType == TurnType.NORMAL)
+                if (!turnWasReceived)
                 {
-                    ActivateNormalPlayStep();
-                }
-                if (turnType == TurnType.SETUP)
-                {
-                    ActivateSetupPlayStep();
+                    turnWasReceived = true;
+                    var turnType = (TurnType)info.turnType;
+                    if (turnType == TurnType.NORMAL)
+                    {
+                        ActivateNormalPlayStep();
+                    }
+                    if (turnType == TurnType.SETUP)
+                    {
+                        ActivateSetupPlayStep();
+                    }
                 }
             } else
             {
@@ -730,6 +760,7 @@ public class GameController : SFController, IGameController, Observer
         }
 
         _state.OnGameDataChanged();
+        ObservePlayers(currentGameStateInfo.players);
     }
 
     void UpdatePlayers(List<Player> newPlayerData)
@@ -831,12 +862,12 @@ public class GameController : SFController, IGameController, Observer
 
         if (subject is Map)
         {
-            //GetMapScript().OnMapDataChanged();
+            GetMapScript().OnMapDataChanged();
         }
 
         if (subject is Player)
         {
-            //GetHUDScript().OnPlayerDataChanged();
+            GetHUDScript().OnPlayerDataChanged();
         }
 
         // if we receive multiple updates in a short time (100ms), only react on the last one

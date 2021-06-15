@@ -23,7 +23,9 @@ public class FlyShipsState : GameState
 
     void OpenTokenSelectionForAllFlyableTokens()
     {
-        var tokens = controller.mainPlayer.tokens.Where(tok => tok.CanFly());
+        var tokens = controller.mainPlayer.GetTokensThatCanFly();
+        var tokensOfMainPlayer = controller.mainPlayer.tokens;
+        
 
         mapScript.OpenTokenSelection(controller.mainPlayer.GetTokensThatCanFly(), TokenSelected);
     }

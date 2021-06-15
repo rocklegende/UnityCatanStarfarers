@@ -210,6 +210,9 @@ public abstract class Token : SFModel
     /// <returns></returns>
     public bool CanFly()
     {
+        var shipOn = HasShipTokenOnTop();
+        var set = stepsLeft;
+        var isSi = !isDisabled;
         return HasShipTokenOnTop() && stepsLeft > 0 && !isDisabled;
     }
 
