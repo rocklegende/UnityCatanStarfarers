@@ -128,6 +128,7 @@ public class GameController : SFController, IGameController, Observer
 {
     public GameObject HUD;
     public GameObject Map;
+    public bool InteractionIsActive = true;
     public Map mapModel
     {
         get
@@ -143,7 +144,19 @@ public class GameController : SFController, IGameController, Observer
     private GameState _state;
     public GameState State {
         get { return _state; }
-        set { _state = value; OnStateChanged(); }
+        set
+        {
+            if (_state != null)
+            {
+                _state.OnLeaveState();
+            }
+            _state = value;
+            if (_state != null)
+            {
+                _state.Setup();
+            }
+            OnStateChanged();
+        }
     }
 
     public SFGameClient_ gameClient;
@@ -214,17 +227,6 @@ public class GameController : SFController, IGameController, Observer
         gameClient.SaveGameStateToProps(currentGameStateInfo);
     }
 
-    //SFGameStateInfo GetCurrentState()
-    //{
-    //    //var info = new SFGameStateInfo();
-    //    //info.players = players;
-    //    //info.mapmodel = mapModel;
-    //    //info.state = stateText;
-    //    //info.turnNumber = currentGameStateInfo.turnNumber;
-    //    //info.playerToActTurnOrderPosition = currentGameStateInfo.playerToActTurnOrderPosition;
-    //    //return info;
-    //}
-
     public bool IsMyTurn
     {
         get
@@ -274,45 +276,18 @@ public class GameController : SFController, IGameController, Observer
 
     void OnStateChanged()
     {
-        RunRPC("RemoteClientChangedState", RpcTarget.Others, State.GetType().Name);
+
     }
 
     
 
     public void ActivateAllInteraction(bool isActivated)
     {
+        InteractionIsActive = isActivated;
         GetHUDScript().ActivateAllInteraction(isActivated);
         GetMapScript().ActivateAllInteraction(isActivated);
     }
 
-    [PunRPC]
-    void RemoteClientChangedState(string newStateName)
-    {
-        GetHUDScript().SetStateText(newStateName);
-    }
-
-
-    //[PunRPC]
-    //void GameStartInformationGenerated(byte[] gameStartInformationAsBytes)
-    //{
-    //    var gameStartInformation = (GameStartInformation)SFFormatter.Deserialize(gameStartInformationAsBytes);
-
-    //    //setup the observers, because after serialization we always lose the observers
-    //    mapModel = gameStartInformation.map;
-    //    mapModel.RegisterObserver(this);
-    //    foreach(var group in mapModel.tileGroups)
-    //    {
-    //        group.RegisterObserver(mapModel);
-    //    }
-    //    this._state = new BuildAndTradeState(this);
-    //    Init();
-
-    //    if (PhotonNetwork.IsMasterClient)
-    //    {
-    //        globalTurnManager = new GlobalTurnManager(this);
-    //        globalTurnManager.StartGameLoop();
-    //    }
-    //}
 
     /// <summary>
     /// Initialize the gamecontroller without Photon. Useful for test purposes.
@@ -346,33 +321,29 @@ public class GameController : SFController, IGameController, Observer
 
     public void IFinishedMyTurn()
     {
+        WaitForOpponent();
         turnWasReceived = false;
-        gameClient.HandoverTurnToNextPlayer(currentGameStateInfo);        
+        gameClient.HandoverTurnToNextPlayer(currentGameStateInfo);
     }
 
-    [PunRPC]
     void ActivateNormalPlayStep()
     {
         
         Debug.Log("Im requested to play a normal step");
-        ActivateAllInteraction(true);
         PayoutLowPointsBonus(mainPlayer);
         mainPlayer.OnTurnReceived();
-        SetState(new BuildAndTradeState(this));
+        SetState(new CastNormalDiceState(this));
     }
 
-    [PunRPC]
     public void ActivateSetupPlayStep()
     {
         Debug.Log("Im requested to play a setup step");
-        ActivateAllInteraction(true);
         SetState(new InitialSetupState(this));
     }
 
-    [PunRPC]
-    void DeactivatePlayStep()
+    public void WaitForOpponent()
     {
-        ActivateAllInteraction(false);
+        this.State = new WaitForOpponentState(this);
     }
 
     public int OwnPlayerIndex()
@@ -598,11 +569,7 @@ public class GameController : SFController, IGameController, Observer
             );
         }
     }
-  
 
-    
-
-    
 
     void ObservePlayers(List<Player> playersList)
     {
@@ -743,7 +710,7 @@ public class GameController : SFController, IGameController, Observer
                 }
             } else
             {
-                ActivateAllInteraction(false);
+                WaitForOpponent();
             }
         }
         if (info.players != null && info.mapmodel != null)
@@ -876,7 +843,7 @@ public class GameController : SFController, IGameController, Observer
         {
             GetHUDScript().OnPlayerDataChanged();
         }
-
+        
         // if we receive multiple updates in a short time (100ms), only react on the last one
         // TODO: probably better to do this inside the subject, so we have the functionality for all the observable stuff
         Debug.Log("GameController: Map or player data changed!");

@@ -167,7 +167,7 @@ public class TwoTradeShipAndOneSpacePort : DebugStartState
 
     public override void Setup()
     {
-        controller.mainPlayer.BuildTokenWithoutCost(
+        var colony = controller.mainPlayer.BuildTokenWithoutCost(
             controller.mapModel,
             new ColonyBaseToken().GetType(),
             new SpacePoint(new HexCoordinates(5, 5), 1),
@@ -184,6 +184,8 @@ public class TwoTradeShipAndOneSpacePort : DebugStartState
             new SpacePoint(new HexCoordinates(5, 5).W(), 0)
         );
 
+        var contains = controller.mapModel.tokensOnMap.Contains(colony);
+
         if (gameState == "flyShips")
         {
             controller.State = new FlyShipsState(controller);
@@ -194,6 +196,7 @@ public class TwoTradeShipAndOneSpacePort : DebugStartState
         {
             controller.State = new FlyShipsState(controller);
         }
+        
         
     }
 }

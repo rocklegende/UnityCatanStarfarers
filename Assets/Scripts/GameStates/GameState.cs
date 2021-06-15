@@ -23,6 +23,7 @@ public abstract class GameState
     public abstract void OnSettleButtonPressed();
     public abstract void OnTokenCanSettle(bool canSettle, Token token);
     public abstract void OnGameDataChanged();
+    public abstract void OnLeaveState();
     public abstract void Setup();
 
 

@@ -39,7 +39,7 @@ public class MapScript : SFController
     List<GameObject> allSpacePointButtons = new List<GameObject>();
     List<GameObject> hexagonGameObjects;
     List<GameObject> currentlyDisplayedPlayerTokens;
-    List<Token> highlightedTokens = new List<Token>();
+    List<string> highlightedTokensGuids = new List<string>();
     List<GameObject> highlightCircles = new List<GameObject>();
 
     void Start()
@@ -53,9 +53,9 @@ public class MapScript : SFController
         this.isInteractive = isInteractive;
     }
 
-    public List<Token> GetHighlightedTokens()
+    public List<string> GetHighlightedTokens()
     {
-        return highlightedTokens;
+        return highlightedTokensGuids;
     }
 
     public List<GameObject> GetAllTokenObjects()
@@ -273,7 +273,7 @@ public class MapScript : SFController
 
     public void RemoveAllHighlights()
     {
-        highlightedTokens = new List<Token>();
+        highlightedTokensGuids = new List<string>();
         foreach(var obj in highlightCircles)
         {
             Destroy(obj);
@@ -292,7 +292,7 @@ public class MapScript : SFController
     {
         if (map.tokensOnMap.Contains(token))
         {
-            highlightedTokens.Add(token);
+            highlightedTokensGuids.Add(token.guid.ToString());
             var circleHighlight = DrawCircleAtSpacePoint(token.position);
             highlightCircles.Add(circleHighlight);
         } else
@@ -341,7 +341,7 @@ public class MapScript : SFController
         Debug.Log("TOken was clicked");
         if (mode == MapMode.SELECT)
         {
-            if (highlightedTokens.Contains(token))
+            if (highlightedTokensGuids.Contains(token.guid.ToString()))
             {
                 this.tokenSelectCallback?.Invoke(token);
                 CloseTokenSelection();

@@ -151,4 +151,9 @@ public class CastNormalDiceState : GameState
     {
         //throw new NotImplementedException();
     }
+
+    public override void OnLeaveState()
+    {
+        //throw new NotImplementedException();
+    }
 }

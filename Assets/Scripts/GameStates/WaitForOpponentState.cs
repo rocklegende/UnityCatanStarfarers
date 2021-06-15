@@ -1,27 +1,12 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InitialSetupState : GameState
+public class WaitForOpponentState : GameState
 {
-    public InitialSetupState(GameController controller) : base(controller)
+    public WaitForOpponentState(GameController gameController) : base(gameController)
     {
-        hudScript.SetStateText("Setup of " + controller.GetCurrentPlayerAtTurnIndex());
-        hudScript.ShowSettleButton(false);
-
-        var freeGameStartSettlingSpots = controller.mapModel.applyFilter(
-            controller.mapModel.gamestartSettlingSpots,
-            new IsSpacePointFreeFilter()
-        );
-        mapScript.OpenSpacePointSelection(freeGameStartSettlingSpots, (selectedSpacePoint) =>
-        {
-            controller.mainPlayer.BuildTokenWithoutCost(
-                controller.mapModel,
-                new ColonyBaseToken().GetType(),
-                selectedSpacePoint
-            );
-            
-        });
+        
     }
 
     public override void OnBackButtonClicked()
@@ -47,11 +32,11 @@ public class InitialSetupState : GameState
     public override void OnLeaveState()
     {
         //throw new System.NotImplementedException();
+        controller.ActivateAllInteraction(true);
     }
 
     public override void OnNextButtonClicked()
     {
-        controller.IFinishedMyTurn();
         //throw new System.NotImplementedException();
     }
 
@@ -77,6 +62,6 @@ public class InitialSetupState : GameState
 
     public override void Setup()
     {
-        //throw new System.NotImplementedException();
+        controller.ActivateAllInteraction(false);
     }
 }

@@ -46,6 +46,34 @@ namespace Tests
             yield return null;
         }
 
+        [UnityTest]
+        public IEnumerator SwitchingToWaitForOpponentStateDisablesInterface()
+        {
+            gameController.WaitForOpponent();
+            Assert.False(gameController.InteractionIsActive);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator SwitchingToWaitForOpponentStateAndBackActivatesInterface()
+        {
+            gameController.WaitForOpponent();
+            gameController.ActivateSetupPlayStep();
+            Assert.True(gameController.InteractionIsActive);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator SwitchingFromFlyShipsStateToNextDisablesInterface()
+        {
+            gameController.State = new FlyShipsState(gameController);
+            var flyShipsState = (FlyShipsState)gameController.State;
+            flyShipsState.OnNextButtonClicked();
+
+            Assert.False(gameController.InteractionIsActive);
+            yield return null;
+        }
+
 
         void PressButtonInsideDecisionDialog(string buttonText, DecisionDialog decisionDialog)
         {

@@ -8,7 +8,7 @@ public class BuildAndTradeState : GameState
     public BuildAndTradeState(GameController controller) : base(controller)
     {
         //hudScript.SetStateText("Build&Trade Player " + controller.GetCurrentPlayerAtTurnIndex());
-        hudScript.ShowSettleButton(false);
+        
     }
 
 
@@ -53,15 +53,21 @@ public class BuildAndTradeState : GameState
 
     public override void OnTokenCanSettle(bool canSettle, Token token)
     {
-        Debug.Log("Do nothing");//throw new NotImplementedException();
+        //Debug.Log("Do nothing");//throw new NotImplementedException();
     }
 
     public override void Setup()
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
+        hudScript.ShowSettleButton(false);
     }
 
     public override void OnGameDataChanged()
+    {
+        //throw new NotImplementedException();
+    }
+
+    public override void OnLeaveState()
     {
         //throw new NotImplementedException();
     }

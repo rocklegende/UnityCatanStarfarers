@@ -82,4 +82,9 @@ public class EncounterCardState : GameState
     {
         //throw new NotImplementedException();
     }
+
+    public override void OnLeaveState()
+    {
+        //throw new NotImplementedException();
+    }
 }

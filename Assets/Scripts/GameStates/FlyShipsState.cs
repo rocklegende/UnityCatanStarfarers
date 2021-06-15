@@ -58,7 +58,6 @@ public class FlyShipsState : GameState
     void SwitchToNextState()
     {
         controller.IFinishedMyTurn();
-        controller.SetState(new CastNormalDiceState(controller));
         mapScript.CloseTokenSelection();
         mapScript.CloseSpacePointSelection();
     }
@@ -147,6 +146,11 @@ public class FlyShipsState : GameState
 
     public override void Setup()
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
+    }
+
+    public override void OnLeaveState()
+    {
+        //throw new NotImplementedException();
     }
 }

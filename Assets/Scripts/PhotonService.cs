@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using com.onebuckgames.UnityStarFarers;
+using System;
 
 public class PhotonService : MonoBehaviourPunCallbacks
 {
@@ -44,6 +45,13 @@ public class PhotonService : MonoBehaviourPunCallbacks
         }
         PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable);
 
+        //var hashtable = new ExitGames.Client.Photon.Hashtable();
+        //hashtable.Add("key", 1);
+        //PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable);
+
+        long milliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+        Debug.Log("send timestamp: " + milliseconds);
+
     }
 
     public SFGameStateInfo GetGameStateFromProps(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
@@ -73,20 +81,22 @@ public class PhotonService : MonoBehaviourPunCallbacks
         {
             gameStateInfo.turnType = (TurnType)propertiesThatChanged["turnType"];
         }
-        var message = "PHOTONSERVICE 2!";
+        //var message = "PHOTONSERVICE 2!";
 
-        foreach (var player in gameStateInfo.players)
-        {
-            message += "Playername: " + player.name + "; VP: " + player.GetVictoryPoints();
-        }
-        Debug.Log(message);
-        var hashtable = new ExitGames.Client.Photon.Hashtable();
+        //foreach (var player in gameStateInfo.players)
+        //{
+        //    message += "Playername: " + player.name + "; VP: " + player.GetVictoryPoints();
+        //}
+        //Debug.Log(message);
+        //var hashtable = new ExitGames.Client.Photon.Hashtable();
         return gameStateInfo;
     }
 
     public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
     {
         base.OnRoomPropertiesUpdate(propertiesThatChanged);
+        long milliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+        Debug.Log("received timestamp: " + milliseconds);
         var gameState = GetGameStateFromProps(propertiesThatChanged);
         sfGameClient.GameStateInfoChanged(gameState);
     }

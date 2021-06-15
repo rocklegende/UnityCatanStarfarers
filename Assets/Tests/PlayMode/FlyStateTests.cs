@@ -25,7 +25,28 @@ namespace Tests
             this.testHelper = testHelper;
             yield return testHelper.StartSinglePlayerGame();
             gameController = testHelper.GetGameController();
-            gameController.SetUpDebugState(new TwoTradeShipAndOneSpacePort(gameController));
+            //gameController.SetUpDebugState(new TwoTradeShipAndOneSpacePort(gameController));
+            var colony = gameController.mainPlayer.BuildTokenWithoutCost(
+                gameController.mapModel,
+                new ColonyBaseToken().GetType(),
+                new SpacePoint(new HexCoordinates(5, 5), 1),
+                new SpacePortToken().GetType()
+            );
+
+            gameController.mainPlayer.BuildColonyShipForFree(
+                gameController.mapModel,
+                new SpacePoint(5, 5, 0)
+            );
+
+            gameController.mainPlayer.BuildTradeShipForFree(
+                gameController.mapModel,
+                new SpacePoint(new HexCoordinates(5, 5).W(), 0)
+            );
+
+            var contains = gameController.mapModel.tokensOnMap.Contains(colony);
+
+            gameController.State = new FlyShipsState(gameController);
+            yield return new WaitForSeconds(3);
         }
 
         [UnityTest]
@@ -44,7 +65,8 @@ namespace Tests
             tokenModelFirstClickable.addSteps(100);
 
             //simulate click on token by calling OnClick directly
-            GetTokenScript(firstClickable).OnClick(); 
+            GetTokenScript(firstClickable).OnClick();
+            yield return new WaitForSeconds(10);
 
             //simulate click on spacepointtoken
             var targetSpacePoint = new SpacePoint(11, 5, 0);
