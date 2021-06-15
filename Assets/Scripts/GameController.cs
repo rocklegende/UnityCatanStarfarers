@@ -337,21 +337,17 @@ public class GameController : SFController, IGameController, Observer
 
     public void Init(SFGameStateInfo gameStateInfo)
     {
-        //InitialPlayerSetup();
         ObservePlayers(players);
-        var observersOfMainPlayer = mainPlayer.GetObservers();
         HUD.GetComponent<HUDScript>().Init();
         Map.GetComponent<MapScript>().Init();
         payoutHandler = new PayoutHandler(mapModel);
-        observersOfMainPlayer = mainPlayer.GetObservers();
         LoadGameState(gameStateInfo);
-        observersOfMainPlayer = mainPlayer.GetObservers();
     }
 
     public void IFinishedMyTurn()
     {
         turnWasReceived = false;
-        gameClient.HandoverTurnToNextPlayer();        
+        gameClient.HandoverTurnToNextPlayer(currentGameStateInfo);        
     }
 
     [PunRPC]
@@ -402,6 +398,10 @@ public class GameController : SFController, IGameController, Observer
 
     public void OpenTokenSelectionForMainPlayer()
     {
+        foreach(var player in players)
+        {
+            Debug.Log("Playername: " + player.name + "; VP: " + player.GetVictoryPoints());
+        }
         GetHUDScript().OnPlayerDataChanged();
         GetMapScript().OnMapDataChanged();
     }
@@ -718,7 +718,6 @@ public class GameController : SFController, IGameController, Observer
                     player.AddToken(token);
                 }
             }
-            Debug.Log("Playername: " + player.name + "; VP: " + player.GetVictoryPoints());
         }
 
         if (info.turnType != null)
@@ -758,6 +757,14 @@ public class GameController : SFController, IGameController, Observer
             GetMapScript().OnMapDataChanged();
 
         }
+
+        var message = "PHOTONSERVICE 3!";
+
+        foreach (var player in info.players)
+        {
+            message += "Playername: " + player.name + "; VP: " + player.GetVictoryPoints();
+        }
+        Debug.Log(message);
 
         _state.OnGameDataChanged();
         ObservePlayers(currentGameStateInfo.players);
@@ -888,8 +895,13 @@ public class GameController : SFController, IGameController, Observer
     public IEnumerator MakeUpdate()
     {
         yield return new WaitForSeconds(0.1F);
-        Debug.Log("Updateing GameController!");
+        var message = "Updating GameController!";
 
+        foreach (var player in players)
+        {
+            message += "Playername: " + player.name + "; VP: " + player.GetVictoryPoints();
+        }
+        Debug.Log(message);
         SaveGameState();
         yield return null;
     }

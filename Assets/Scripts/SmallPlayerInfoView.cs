@@ -44,7 +44,6 @@ public class SmallPlayerInfoView : SFController
             playerName.text = player.name;
             vp.text = "VP: " + player.GetVictoryPoints().ToString();
             numResourceCards.text = "Cards: " + player.hand.Count();
-            Debug.Log(string.Format("name: {0}, vp: {1}", player.name, player.GetVictoryPoints()));
         }
     }
 

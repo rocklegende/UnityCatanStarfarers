@@ -10,6 +10,13 @@ public class PhotonService : MonoBehaviourPunCallbacks
 
     public void SaveGameStateToProps(SFGameStateInfo gameStateInfo)
     {
+        var message = "PHOTONSERVICE!";
+
+        foreach (var player in gameStateInfo.players)
+        {
+            message += "Playername: " + player.name + "; VP: " + player.GetVictoryPoints();
+        }
+        Debug.Log(message);
         var hashtable = new ExitGames.Client.Photon.Hashtable();
         if (gameStateInfo.players != null)
         {
@@ -66,6 +73,14 @@ public class PhotonService : MonoBehaviourPunCallbacks
         {
             gameStateInfo.turnType = (TurnType)propertiesThatChanged["turnType"];
         }
+        var message = "PHOTONSERVICE 2!";
+
+        foreach (var player in gameStateInfo.players)
+        {
+            message += "Playername: " + player.name + "; VP: " + player.GetVictoryPoints();
+        }
+        Debug.Log(message);
+        var hashtable = new ExitGames.Client.Photon.Hashtable();
         return gameStateInfo;
     }
 

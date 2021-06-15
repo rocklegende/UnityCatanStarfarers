@@ -347,10 +347,12 @@ public class HUDScript : SFController, FriendShipCardSelectorDelegate
 
     void DrawSmallPlayerViews()
     {
-        foreach (var smallPlayerView in smallPlayerViews)
+        foreach(var gameObj in smallPlayerViews)
         {
-            smallPlayerView.GetComponent<SmallPlayerInfoView>().Draw();
+            GameObject.Destroy(gameObj);
         }
+        smallPlayerViews = new List<GameObject>();
+        CreateSmallPlayerViews();
     }
 
     public void ActivateAllInteraction(bool isInteractive)

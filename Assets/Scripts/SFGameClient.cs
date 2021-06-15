@@ -43,30 +43,29 @@ public class SFGameClient_ : LoadBalancingClient
         return turnNumber % networkPlayersOwnPlayersMap.Count;
     }
 
-    void PlayNextStep()
+    void PlayNextStep(SFGameStateInfo currentInfo)
     {
-        var gameState = new SFGameStateInfo();
         turnNumber++;
         Debug.Log("Turnorder position before" + PlayerToActTurnOrderPosition);
         PlayerToActTurnOrderPosition = GetCurrentPlayerTurnOrderPosition();
-        gameState.playerToActTurnOrderPosition = PlayerToActTurnOrderPosition;
+        currentInfo.playerToActTurnOrderPosition = PlayerToActTurnOrderPosition;
         Debug.Log("Turnorder position after" + PlayerToActTurnOrderPosition);
-        gameState.turnNumber = turnNumber;
+        currentInfo.turnNumber = turnNumber;
         if (turnNumber < GetNumSetupSteps() && !SkipSetupPhase)
         {
-            gameState.turnType = TurnType.SETUP;
+            currentInfo.turnType = TurnType.SETUP;
         }
         else
         {
-            gameState.turnType = TurnType.NORMAL;
+            currentInfo.turnType = TurnType.NORMAL;
         }
-        SaveGameStateToProps(gameState);
+        SaveGameStateToProps(currentInfo);
 
     }
 
-    public void HandoverTurnToNextPlayer()
+    public void HandoverTurnToNextPlayer(SFGameStateInfo currentInfo)
     {
-        PlayNextStep();
+        PlayNextStep(currentInfo);
     }
 
     public void Start()
